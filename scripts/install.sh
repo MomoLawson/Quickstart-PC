@@ -20,17 +20,17 @@ install_software() {
     esac
     
     if [[ -z "$install_cmd" ]]; then
-        log_warn "不支持的平台: $software_key"
+        log_warn "$LANG_PLATFORM_NOT_SUPPORTED: $software_key"
         return 1
     fi
     
-    log_step "安装: $software_key"
+    log_step "$LANG_INSTALLING: $software_key"
     eval "$install_cmd" 2>/dev/null
     
     if [[ $? -eq 0 ]]; then
-        log_success "$software_key 安装完成"
+        log_success "$software_key $LANG_INSTALL_SUCCESS"
     else
-        log_error "$software_key 安装失败"
+        log_error "$software_key $LANG_INSTALL_FAILED"
     fi
 }
 

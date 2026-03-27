@@ -13,9 +13,6 @@ show_menu() {
     local profile_descs=()
     
     local in_profiles=0
-    local current_key=""
-    
-    local in_profiles=0
     
     while IFS= read -r line; do
         if [[ "$line" =~ ^profiles: ]]; then
@@ -34,7 +31,7 @@ show_menu() {
     done < "$profiles_yaml"
     
     echo ""
-    log_header "选择安装套餐"
+    log_header "$LANG_SELECT_PROFILES"
     echo ""
     
     local num_profiles=${#profile_keys[@]}
@@ -51,10 +48,10 @@ show_menu() {
         echo ""
     done
     
-    echo "  [0] 开始安装"
+    echo "  [0] $LANG_START_INSTALLATION"
     echo ""
     
-    read -p "输入选项（空格分隔，如 1 2 4）: " -a choices
+    read -p "$LANG_INPUT_OPTIONS: " -a choices
     
     eval "$selected_ref=()"
     for choice in "${choices[@]}"; do
@@ -63,13 +60,4 @@ show_menu() {
             eval "$selected_ref+=('${profile_keys[idx]}')"
         fi
     done
-}
-
-show_banner() {
-    echo ""
-    echo -e "${CYAN}╔════════════════════════════════════════╗${NC}"
-    echo -e "${CYAN}║         ${BOLD}Quickstart-PC v1.0${CYAN}             ║${NC}"
-    echo -e "${CYAN}║    快速配置新电脑软件环境              ║${NC}"
-    echo -e "${CYAN}╚════════════════════════════════════════╝${NC}"
-    echo ""
 }

@@ -10,84 +10,94 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="$SCRIPT_DIR/config"
 UTILS_DIR="$SCRIPT_DIR/utils"
 SCRIPTS_DIR="$SCRIPT_DIR/scripts"
+LANG_DIR="$SCRIPT_DIR/languages"
 
 source "$UTILS_DIR/log.sh"
 source "$SCRIPTS_DIR/detect.sh"
 source "$SCRIPTS_DIR/menu.sh"
 source "$SCRIPTS_DIR/install.sh"
 
+# 加载语言配置
+source "$LANG_DIR/loader.sh"
+DETECTED_LANG=$(detect_language)
+load_language "$DETECTED_LANG"
+
 load_config() {
     local config_file="$CONFIG_DIR/profiles.yaml"
     
-    # 如果指定了云端配置链接，优先从云端获取
     if [[ -n "$CONFIG_URL" ]]; then
-        log_info "正在从云端获取配置..." >&2
+        log_info "$LANG_LOADING_REMOTE_CONFIG" >&2
         local tmp_config=$(mktemp /tmp/quickstart-config-XXXXXX.yaml)
         
         if curl -fsSL --connect-timeout 5 --max-time 10 "$CONFIG_URL" -o "$tmp_config" 2>/dev/null; then
-            # 验证文件是否是有效的 YAML（简单检查）
             if grep -q "^profiles:" "$tmp_config" && grep -q "^software:" "$tmp_config"; then
-                log_success "云端配置加载成功" >&2
+                log_success "$LANG_REMOTE_CONFIG_SUCCESS" >&2
                 echo "$tmp_config"
                 return 0
             else
-                log_warn "云端配置格式无效，使用本地配置" >&2
+                log_warn "$LANG_REMOTE_CONFIG_INVALID" >&2
                 rm -f "$tmp_config"
             fi
         else
-            log_warn "云端配置获取失败，使用本地配置" >&2
+            log_warn "$LANG_REMOTE_CONFIG_FAILED" >&2
             rm -f "$tmp_config"
         fi
     fi
     
-    # 使用本地配置
     if [[ -f "$config_file" ]]; then
-        log_info "使用本地配置: $config_file" >&2
+        log_info "$LANG_USING_LOCAL_CONFIG: $config_file" >&2
         echo "$config_file"
         return 0
     else
-        log_error "配置文件不存在: $config_file" >&2
+        log_error "$LANG_CONFIG_NOT_FOUND: $config_file" >&2
         return 1
     fi
+}
+
+show_banner() {
+    echo ""
+    echo -e "${CYAN}╔════════════════════════════════════════╗${NC}"
+    echo -e "${CYAN}║         ${BOLD}${LANG_BANNER_TITLE}${CYAN}             ║${NC}"
+    echo -e "${CYAN}║    ${LANG_BANNER_DESC}              ║${NC}"
+    echo -e "${CYAN}╚════════════════════════════════════════╝${NC}"
+    echo ""
 }
 
 main() {
     show_banner
     
-    log_info "检测系统环境..."
+    log_info "$LANG_DETECTING_SYSTEM"
     local os=$(detect_os)
     local system_info=$(get_system_info)
     local pkg_manager=$(check_package_manager "$os")
     
-    log_info "系统: $system_info"
-    log_info "包管理器: $pkg_manager"
+    log_info "$LANG_SYSTEM_INFO: $system_info"
+    log_info "$LANG_PACKAGE_MANAGER: $pkg_manager"
     
     if [[ "$os" == "unknown" ]]; then
-        log_error "不支持的操作系统"
+        log_error "$LANG_UNSUPPORTED_OS"
         exit 1
     fi
     
     if [[ "$pkg_manager" == "none" ]]; then
-        log_warn "未检测到包管理器"
+        log_warn "$LANG_NO_PACKAGE_MANAGER"
         echo ""
-        read -p "是否自动安装包管理器？[Y/n]: " install_mgr
+        read -p "$LANG_INSTALL_PACKAGE_MANAGER " install_mgr
         if [[ ! "$install_mgr" =~ ^[Nn] ]]; then
             if install_package_manager "$os" "scoop"; then
                 pkg_manager=$(check_package_manager "$os")
-                log_info "包管理器已更新为: $pkg_manager"
+                log_info "$LANG_PACKAGE_MANAGER_UPDATED: $pkg_manager"
             else
-                log_error "包管理器安装失败，部分软件可能无法自动安装"
+                log_error "$LANG_PACKAGE_MANAGER_FAILED"
             fi
         fi
     fi
     
-    # 加载配置（云端或本地）
     local config_file=$(load_config)
     if [[ $? -ne 0 ]]; then
         exit 1
     fi
     
-    # 如果是临时文件，退出时清理
     if [[ "$config_file" == /tmp/quickstart-config-* ]]; then
         trap 'rm -f "$config_file"' EXIT
     fi
@@ -96,39 +106,39 @@ main() {
     show_menu "$config_file" selected_profiles
     
     if [[ ${#selected_profiles[@]} -eq 0 ]]; then
-        log_warn "未选择任何套餐"
+        log_warn "$LANG_NO_PROFILE_SELECTED"
         exit 0
     fi
     
-    log_info "选择的套餐: ${selected_profiles[*]}"
+    log_info "$LANG_SELECTED_PROFILES: ${selected_profiles[*]}"
     
     echo ""
-    read -p "确认安装？[Y/n]: " confirm
+    read -p "$LANG_CONFIRM_INSTALL " confirm
     if [[ "$confirm" =~ ^[Nn] ]]; then
-        log_info "已取消"
+        log_info "$LANG_CANCELLED"
         exit 0
     fi
     
     local software_list=($(resolve_software_list "$os" "${selected_profiles[@]}"))
     
     if [[ ${#software_list[@]} -eq 0 ]]; then
-        log_warn "没有软件需要安装"
+        log_warn "$LANG_NO_SOFTWARE_TO_INSTALL"
         exit 0
     fi
     
-    log_header "开始安装软件"
+    log_header "$LANG_START_INSTALLING"
     
     local total=${#software_list[@]}
     local current=0
     
     for sw in "${software_list[@]}"; do
         ((current++))
-        log_progress $current $total "安装 $sw"
+        log_progress $current $total "$LANG_INSTALLING $sw"
         install_software "$os" "$sw"
     done
     
-    log_header "安装完成"
-    log_success "共安装 $total 个软件"
+    log_header "$LANG_INSTALLATION_COMPLETE"
+    log_success "$LANG_TOTAL_INSTALLED $total"
 }
 
 main "$@"
