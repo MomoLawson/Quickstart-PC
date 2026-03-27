@@ -21,14 +21,22 @@
 ### Linux / macOS
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/quickstart.sh | bash
+curl -fsSL https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.sh | bash
+```
+
+Or download and run manually:
+
+```bash
+curl -fsSL https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.sh -o quickstart.sh
+chmod +x quickstart.sh
+./quickstart.sh
 ```
 
 ### Windows
 
 ```powershell
 # Download script
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/quickstart.ps1" -OutFile "quickstart.ps1"
+Invoke-WebRequest -Uri "https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.ps1" -OutFile "quickstart.ps1"
 
 # Run (requires admin privileges)
 .\quickstart.ps1
