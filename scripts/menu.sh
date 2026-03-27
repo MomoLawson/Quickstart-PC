@@ -53,11 +53,14 @@ show_menu() {
     
     read -p "$LANG_INPUT_OPTIONS: " -a choices
     
-    eval "$selected_ref=()"
+    # Build selected profiles
+    SELECTED_PROFILES=()
     for choice in "${choices[@]}"; do
         if [[ $choice =~ ^[0-9]+$ ]] && [[ $choice -ge 1 ]] && [[ $choice -le $num_profiles ]]; then
             local idx=$((choice-1))
-            eval "$selected_ref+=('${profile_keys[idx]}')"
+            SELECTED_PROFILES+=("${profile_keys[idx]}")
         fi
     done
 }
+
+SELECTED_PROFILES=()

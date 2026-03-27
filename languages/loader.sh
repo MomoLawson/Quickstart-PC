@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
 
-# 语言配置加载器
-# 用法: source languages/loader.sh
-
 LANG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# 支持的语言列表
 SUPPORTED_LANGS=("en-US" "zh-CN")
 
-# 加载语言文件
 load_language() {
     local lang="$1"
-    local lang_file="$LANG_DIR/${lang}.sh"
     
+    # Check if language variables are already defined (single file version)
+    if [[ -n "$LANG_BANNER_TITLE" ]]; then
+        return 0
+    fi
+    
+    # Multi-file version: load from file
+    local lang_file="$LANG_DIR/${lang}.sh"
     if [[ -f "$lang_file" ]]; then
         source "$lang_file"
         return 0
     else
-        # 回退到英语
         source "$LANG_DIR/en-US.sh"
         return 1
     fi

@@ -102,8 +102,8 @@ main() {
         trap 'rm -f "$config_file"' EXIT
     fi
     
-    local selected_profiles=()
-    show_menu "$config_file" selected_profiles
+    show_menu "$config_file"
+    local selected_profiles=("${SELECTED_PROFILES[@]}")
     
     if [[ ${#selected_profiles[@]} -eq 0 ]]; then
         log_warn "$LANG_NO_PROFILE_SELECTED"

@@ -7,92 +7,87 @@ OUTPUT="$SCRIPT_DIR/dist/quickstart.sh"
 
 mkdir -p "$SCRIPT_DIR/dist"
 
-cat > "$OUTPUT" << 'HEADER'
+# Start building
+cat > "$OUTPUT" << 'EOF'
 #!/usr/bin/env bash
 # Quickstart-PC - One-click computer setup
 # Auto-generated single file version, do not edit manually
-# Usage: curl -fsSL https://example.com/quickstart.sh | bash
 
 set -e
-
 if [ -z "$BASH_VERSION" ]; then exec bash "$0" "$@"; fi
 
-# ===== Configuration =====
-CONFIG_URL=""  # Remote config URL, leave empty for embedded config
-# Example: CONFIG_URL="https://raw.githubusercontent.com/user/repo/main/config/profiles.yaml"
-
-HEADER
-
-# Embed language files
-echo "# ===== Language: English (US) =====" >> "$OUTPUT"
-cat "$SCRIPT_DIR/languages/en-US.sh" | grep -v '^#!/' >> "$OUTPUT"
-echo "" >> "$OUTPUT"
-
-echo "# ===== Language: Chinese (Simplified) =====" >> "$OUTPUT"
-cat "$SCRIPT_DIR/languages/zh-CN.sh" | grep -v '^#!/' >> "$OUTPUT"
-echo "" >> "$OUTPUT"
+CONFIG_URL=""
+EOF
 
 # Embed language loader
-echo "# ===== Language Loader =====" >> "$OUTPUT"
-cat "$SCRIPT_DIR/languages/loader.sh" | grep -v '^#!/' >> "$OUTPUT"
-echo "" >> "$OUTPUT"
+cat >> "$OUTPUT" << 'EOF'
+
+SUPPORTED_LANGS=("en-US" "zh-CN")
+
+detect_language() {
+    local lang=""
+    if [[ -n "$LANG" ]]; then
+        lang="${LANG%%.*}"
+        lang="${lang%%@*}"
+        lang="${lang/_/-}"
+    fi
+    case "$lang" in
+        zh-CN|zh_CN|zh*|*CN*) echo "zh-CN" ;;
+        *) echo "en-US" ;;
+    esac
+}
+
+load_language() {
+    case "$1" in
+        zh-CN)
+EOF
+
+# Embed Chinese
+grep -v '^#!/' "$SCRIPT_DIR/languages/zh-CN.sh" | sed 's/^/            /' >> "$OUTPUT"
+
+cat >> "$OUTPUT" << 'EOF'
+            ;;
+        *)
+EOF
+
+# Embed English  
+grep -v '^#!/' "$SCRIPT_DIR/languages/en-US.sh" | sed 's/^/            /' >> "$OUTPUT"
+
+cat >> "$OUTPUT" << 'EOF'
+            ;;
+    esac
+}
+EOF
 
 # Embed config
-echo "# ===== Embedded Configuration =====" >> "$OUTPUT"
-echo 'EMBEDDED_CONFIG=$(cat << '\''CONFIGEOF'\''
-' >> "$OUTPUT"
+echo "" >> "$OUTPUT"
+echo 'EMBEDDED_CONFIG='"'"'' >> "$OUTPUT"
 cat "$SCRIPT_DIR/config/profiles.yaml" >> "$OUTPUT"
-echo '
-CONFIGEOF
-)' >> "$OUTPUT"
-echo "" >> "$OUTPUT"
+echo ''"'"'' >> "$OUTPUT"
 
-# Embed log utilities
-echo "# ===== Log Utilities =====" >> "$OUTPUT"
-cat "$SCRIPT_DIR/utils/log.sh" | grep -v '^#!/' >> "$OUTPUT"
-echo "" >> "$OUTPUT"
-
-# Embed system detection
-echo "# ===== System Detection =====" >> "$OUTPUT"
-cat "$SCRIPT_DIR/scripts/detect.sh" | grep -v '^#!/' >> "$OUTPUT"
-echo "" >> "$OUTPUT"
-
-# Embed menu
-echo "# ===== Menu =====" >> "$OUTPUT"
-cat "$SCRIPT_DIR/scripts/menu.sh" | grep -v '^#!/' | sed 's/source "$SCRIPT_DIR\/..\/utils\/log.sh"/# Uses embedded log functions/' >> "$OUTPUT"
-echo "" >> "$OUTPUT"
-
-# Embed install logic
-echo "# ===== Install Logic =====" >> "$OUTPUT"
-cat "$SCRIPT_DIR/scripts/install.sh" | grep -v '^#!/' | sed 's/source "$SCRIPT_DIR\/..\/utils\/log.sh"/# Uses embedded log functions/' >> "$OUTPUT"
-echo "" >> "$OUTPUT"
+# Embed log, detect, menu, install
+grep -v '^#!/' "$SCRIPT_DIR/utils/log.sh" >> "$OUTPUT"
+grep -v '^#!/' "$SCRIPT_DIR/scripts/detect.sh" >> "$OUTPUT"
+grep -v '^#!/' "$SCRIPT_DIR/scripts/menu.sh" | sed 's/source.*log.sh//' >> "$OUTPUT"
+grep -v '^#!/' "$SCRIPT_DIR/scripts/install.sh" | sed 's/source.*log.sh//' >> "$OUTPUT"
 
 # Main function
-cat >> "$OUTPUT" << 'MAIN'
-
-# ===== Config Loading =====
+cat >> "$OUTPUT" << 'EOF'
 
 load_config() {
     CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.yaml)
-    
     if [[ -n "$CONFIG_URL" ]]; then
         log_info "$LANG_LOADING_REMOTE_CONFIG"
-        
         if curl -fsSL --connect-timeout 5 --max-time 10 "$CONFIG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
             if grep -q "^profiles:" "$CONFIG_FILE" && grep -q "^software:" "$CONFIG_FILE"; then
                 log_success "$LANG_REMOTE_CONFIG_SUCCESS"
                 return 0
-            else
-                log_warn "$LANG_REMOTE_CONFIG_INVALID"
             fi
-        else
-            log_warn "$LANG_REMOTE_CONFIG_FAILED"
         fi
+        log_warn "$LANG_REMOTE_CONFIG_FAILED"
     fi
-    
     log_info "$LANG_USING_EMBEDDED_CONFIG"
     echo "$EMBEDDED_CONFIG" > "$CONFIG_FILE"
-    return 0
 }
 
 show_banner() {
@@ -104,20 +99,14 @@ show_banner() {
     echo ""
 }
 
-# ===== Main Program =====
-
 main() {
-    # Detect and load language
     DETECTED_LANG=$(detect_language)
     load_language "$DETECTED_LANG"
-    
     show_banner
-    
     log_info "$LANG_DETECTING_SYSTEM"
     local os=$(detect_os)
     local system_info=$(get_system_info)
     local pkg_manager=$(check_package_manager "$os")
-    
     log_info "$LANG_SYSTEM_INFO: $system_info"
     log_info "$LANG_PACKAGE_MANAGER: $pkg_manager"
     
@@ -141,9 +130,8 @@ main() {
     fi
     
     load_config
-    
-    local selected_profiles=()
-    show_menu "$CONFIG_FILE" selected_profiles
+    show_menu "$CONFIG_FILE"
+    local selected_profiles=("${SELECTED_PROFILES[@]}")
     
     if [[ ${#selected_profiles[@]} -eq 0 ]]; then
         log_warn "$LANG_NO_PROFILE_SELECTED"
@@ -151,7 +139,6 @@ main() {
     fi
     
     log_info "$LANG_SELECTED_PROFILES: ${selected_profiles[*]}"
-    
     echo ""
     read -p "$LANG_CONFIRM_INSTALL " confirm
     if [[ "$confirm" =~ ^[Nn] ]]; then
@@ -160,33 +147,27 @@ main() {
     fi
     
     local software_list=($(resolve_software_list "$os" "${selected_profiles[@]}"))
-    
     if [[ ${#software_list[@]} -eq 0 ]]; then
         log_warn "$LANG_NO_SOFTWARE_TO_INSTALL"
         exit 0
     fi
     
     log_header "$LANG_START_INSTALLING"
-    
     local total=${#software_list[@]}
     local current=0
-    
     for sw in "${software_list[@]}"; do
         ((current++))
         log_progress $current $total "$LANG_INSTALLING $sw"
         install_software "$os" "$sw"
     done
-    
     log_header "$LANG_INSTALLATION_COMPLETE"
     log_success "$LANG_TOTAL_INSTALLED $total"
 }
 
 trap 'rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
-
-SCRIPT_DIR="/tmp/quickstart"
-
 main "$@"
-MAIN
+
+EOF
 
 chmod +x "$OUTPUT"
 
