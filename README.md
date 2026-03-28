@@ -18,18 +18,19 @@
 
 ## Quick Start
 
-### Linux / macOS
+### Linux / macOS (Recommended)
 
 ```bash
-curl -fsSL https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.sh | bash
-```
-
-Or download and run manually:
-
-```bash
+# Download and run
 curl -fsSL https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.sh -o quickstart.sh
 chmod +x quickstart.sh
 ./quickstart.sh
+```
+
+### Alternative (One-liner)
+
+```bash
+bash <(curl -fsSL https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.sh)
 ```
 
 ### Windows
