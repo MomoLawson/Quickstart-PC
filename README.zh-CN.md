@@ -18,16 +18,7 @@
 
 ## 快速开始
 
-### Linux / macOS（推荐）
-
-```bash
-# 下载并运行
-curl -fsSL https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.sh -o quickstart.sh
-chmod +x quickstart.sh
-./quickstart.sh
-```
-
-### 其他方式（单行命令）
+### 单行命令（推荐）
 
 ```bash
 bash <(curl -fsSL https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.sh)

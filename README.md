@@ -18,16 +18,7 @@
 
 ## Quick Start
 
-### Linux / macOS (Recommended)
-
-```bash
-# Download and run
-curl -fsSL https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.sh -o quickstart.sh
-chmod +x quickstart.sh
-./quickstart.sh
-```
-
-### Alternative (One-liner)
+### One-liner (Recommended)
 
 ```bash
 bash <(curl -fsSL https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.sh)
