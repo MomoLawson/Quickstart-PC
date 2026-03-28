@@ -31,9 +31,12 @@ LANG_CONFIG_NOT_FOUND="Configuration file not found"
 
 # Menu
 LANG_SELECT_PROFILES="Select Installation Profiles"
+LANG_SELECT_SOFTWARE="Select Software to Install"
 LANG_START_INSTALLATION="Start Installation"
 LANG_INPUT_OPTIONS="Enter options (space-separated, e.g., 1 2 4)"
+LANG_SELECT_ALL="Select All"
 LANG_NO_PROFILE_SELECTED="No profile selected"
+LANG_NO_SOFTWARE_SELECTED="No software selected"
 LANG_SELECTED_PROFILES="Selected profiles"
 
 # Confirmation
