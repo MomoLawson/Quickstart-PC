@@ -9,7 +9,7 @@
 Thumbs.db
 
 # Build artifacts
-dist/
+# dist/  # 注释掉，允许跟踪 dist/quickstart.sh
 
 # Temp files
 *.tmp
