@@ -383,7 +383,6 @@ show_profile_menu() {
     
     tput civis 2>/dev/null || true
     
-    # 所有显示输出重定向到 stderr，只有返回值走 stdout
     echo "" >&2
     log_header "$LANG_SELECT_PROFILES" >&2
     echo "" >&2
@@ -394,8 +393,6 @@ show_profile_menu() {
     local running=true
     
     while [[ "$running" == "true" ]]; do
-        debug_log "绘制菜单，光标位置: $cursor"
-        
         for ((i=0; i<num; i++)); do
             if [[ $i -eq $cursor ]]; then
                 echo -e "  ${REVERSE} ▶ ${names[$i]}${NC}" >&2
@@ -442,12 +439,9 @@ show_profile_menu() {
                 ;;
         esac
         
-        # 使用 ANSI 转义码上移光标并清除行
-        printf '\033[%dA' "$num" >&2
         for ((i=0; i<num; i++)); do
-            printf '\033[2K' >&2
+            printf '\033[A\033[2K' >&2
         done
-        printf '\033[%dA' "$num" >&2
     done
     
     tput cnorm 2>/dev/null || true
@@ -496,7 +490,6 @@ show_software_menu() {
     
     tput civis 2>/dev/null || true
     
-    # 所有显示输出重定向到 stderr
     echo "" >&2
     log_header "$LANG_SELECT_SOFTWARE" >&2
     echo "" >&2
@@ -504,8 +497,6 @@ show_software_menu() {
     echo "" >&2
     
     while [[ "$running" == "true" ]]; do
-        debug_log "绘制软件菜单，光标: $cursor"
-        
         for ((i=0; i<num_items; i++)); do
             if [[ $i -eq $cursor ]]; then
                 if [[ ${checked[$i]} -eq 1 ]]; then
@@ -572,12 +563,9 @@ show_software_menu() {
                 ;;
         esac
         
-        # 使用 ANSI 转义码上移光标并清除行
-        printf '\033[%dA' "$num_items" >&2
         for ((i=0; i<num_items; i++)); do
-            printf '\033[2K' >&2
+            printf '\033[A\033[2K' >&2
         done
-        printf '\033[%dA' "$num_items" >&2
     done
     
     tput cnorm 2>/dev/null || true
