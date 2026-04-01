@@ -173,7 +173,7 @@ function Select-Language {
     Write-Host ""
     Write-Host "╔════════════════════════════════════════╗" -ForegroundColor Cyan
     Write-Host "║         " -ForegroundColor Cyan -NoNewline
-    Write-Host "Quickstart-PC v0.8.0" -ForegroundColor White -BackgroundColor Cyan -NoNewline
+    Write-Host "Quickstart-PC v0.12.0" -ForegroundColor White -BackgroundColor Cyan -NoNewline
     [Console]::ResetColor()
     Write-Host "             ║" -ForegroundColor Cyan
     Write-Host "╚════════════════════════════════════════╝" -ForegroundColor Cyan
@@ -196,7 +196,7 @@ $DETECTED_LANG = Select-Language
 # Load language strings
 if ($DETECTED_LANG -eq "zh-CN") {
     $LANG = @{
-        BANNER_TITLE = "Quickstart-PC v0.8.0"
+        BANNER_TITLE = "Quickstart-PC v0.12.0"
         BANNER_DESC = "快速配置新电脑软件环境"
         DETECTING_SYSTEM = "检测系统环境..."
         SYSTEM_INFO = "系统"
@@ -320,7 +320,7 @@ software:
 "@
 } else {
     $LANG = @{
-        BANNER_TITLE = "Quickstart-PC v0.8.0"
+        BANNER_TITLE = "Quickstart-PC v0.12.0"
         BANNER_DESC = "Quick setup for new computers"
         DETECTING_SYSTEM = "Detecting system environment..."
         SYSTEM_INFO = "System"

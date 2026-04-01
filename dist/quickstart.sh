@@ -133,7 +133,7 @@ select_language() {
     
     echo ""
     echo "╔════════════════════════════════════════╗"
-    echo "║         Quickstart-PC v0.11.2          ║"
+    echo "║         Quickstart-PC v0.12.0          ║"
     echo "╚════════════════════════════════════════╝"
     echo ""
     echo "  Please select language / 请选择语言:"
@@ -153,7 +153,7 @@ select_language() {
 DETECTED_LANG=$(select_language)
 
 if [[ "$DETECTED_LANG" == "zh-CN" ]]; then
-    LANG_BANNER="Quickstart-PC v0.11.2 - 快速配置新电脑软件环境"
+    LANG_BANNER="Quickstart-PC v0.12.0 - 快速配置新电脑软件环境"
     LANG_SELECT_PROFILES="选择安装套餐"
     LANG_SELECT_SOFTWARE="选择要安装的软件"
     LANG_NAVIGATE="↑↓ 移动 | 空格 选择 | 回车 确认"
@@ -169,7 +169,7 @@ if [[ "$DETECTED_LANG" == "zh-CN" ]]; then
     LANG_DEV_MODE="开发者模式"
     LANG_FAKE_MODE="假装安装模式"
 else
-    LANG_BANNER="Quickstart-PC v0.11.2 - Quick setup for new computers"
+    LANG_BANNER="Quickstart-PC v0.12.0 - Quick setup for new computers"
     LANG_SELECT_PROFILES="Select Installation Profiles"
     LANG_SELECT_SOFTWARE="Select Software to Install"
     LANG_NAVIGATE="↑↓ Move | SPACE Select | ENTER Confirm"
@@ -523,7 +523,7 @@ show_software_menu() {
 main() {
     echo ""
     echo "╔════════════════════════════════════════╗"
-    echo "║         Quickstart-PC v0.11.2          ║"
+    echo "║         Quickstart-PC v0.12.0          ║"
     echo "║    $LANG_BANNER"
     echo "╚════════════════════════════════════════╝"
     echo ""
