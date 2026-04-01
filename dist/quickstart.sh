@@ -395,7 +395,6 @@ show_profile_menu() {
     
     while [[ "$running" == "true" ]]; do
         debug_log "绘制菜单，光标位置: $cursor"
-        tput sc 2>/dev/null || true
         
         for ((i=0; i<num; i++)); do
             if [[ $i -eq $cursor ]]; then
@@ -443,8 +442,12 @@ show_profile_menu() {
                 ;;
         esac
         
-        tput rc 2>/dev/null || true
-        tput cuu $num 2>/dev/null || true
+        # 使用 ANSI 转义码上移光标并清除行
+        printf '\033[%dA' "$num" >&2
+        for ((i=0; i<num; i++)); do
+            printf '\033[2K' >&2
+        done
+        printf '\033[%dA' "$num" >&2
     done
     
     tput cnorm 2>/dev/null || true
@@ -502,7 +505,6 @@ show_software_menu() {
     
     while [[ "$running" == "true" ]]; do
         debug_log "绘制软件菜单，光标: $cursor"
-        tput sc 2>/dev/null || true
         
         for ((i=0; i<num_items; i++)); do
             if [[ $i -eq $cursor ]]; then
@@ -570,8 +572,12 @@ show_software_menu() {
                 ;;
         esac
         
-        tput rc 2>/dev/null || true
-        tput cuu $num_items 2>/dev/null || true
+        # 使用 ANSI 转义码上移光标并清除行
+        printf '\033[%dA' "$num_items" >&2
+        for ((i=0; i<num_items; i++)); do
+            printf '\033[2K' >&2
+        done
+        printf '\033[%dA' "$num_items" >&2
     done
     
     tput cnorm 2>/dev/null || true
