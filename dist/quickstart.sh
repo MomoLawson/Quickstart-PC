@@ -383,11 +383,12 @@ show_profile_menu() {
     
     tput civis 2>/dev/null || true
     
-    echo ""
-    log_header "$LANG_SELECT_PROFILES"
-    echo ""
-    echo -e "  ${CYAN}$LANG_NAVIGATE${NC}"
-    echo ""
+    # 所有显示输出重定向到 stderr，只有返回值走 stdout
+    echo "" >&2
+    log_header "$LANG_SELECT_PROFILES" >&2
+    echo "" >&2
+    echo -e "  ${CYAN}$LANG_NAVIGATE${NC}" >&2
+    echo "" >&2
     
     local cursor=0
     local running=true
@@ -398,9 +399,9 @@ show_profile_menu() {
         
         for ((i=0; i<num; i++)); do
             if [[ $i -eq $cursor ]]; then
-                echo -e "  ${REVERSE} ▶ ${names[$i]}${NC}"
+                echo -e "  ${REVERSE} ▶ ${names[$i]}${NC}" >&2
             else
-                echo -e "    ${names[$i]}"
+                echo -e "    ${names[$i]}" >&2
             fi
         done
         
@@ -492,11 +493,12 @@ show_software_menu() {
     
     tput civis 2>/dev/null || true
     
-    echo ""
-    log_header "$LANG_SELECT_SOFTWARE"
-    echo ""
-    echo -e "  ${CYAN}$LANG_NAVIGATE${NC}"
-    echo ""
+    # 所有显示输出重定向到 stderr
+    echo "" >&2
+    log_header "$LANG_SELECT_SOFTWARE" >&2
+    echo "" >&2
+    echo -e "  ${CYAN}$LANG_NAVIGATE${NC}" >&2
+    echo "" >&2
     
     while [[ "$running" == "true" ]]; do
         debug_log "绘制软件菜单，光标: $cursor"
@@ -505,15 +507,15 @@ show_software_menu() {
         for ((i=0; i<num_items; i++)); do
             if [[ $i -eq $cursor ]]; then
                 if [[ ${checked[$i]} -eq 1 ]]; then
-                    echo -e "  ${REVERSE}${GREEN}${LANG_SELECTED}${NC}${REVERSE}${names[$i]}${NC}"
+                    echo -e "  ${REVERSE}${GREEN}${LANG_SELECTED}${NC}${REVERSE}${names[$i]}${NC}" >&2
                 else
-                    echo -e "  ${REVERSE}${LANG_NOT_SELECTED}${names[$i]}${NC}"
+                    echo -e "  ${REVERSE}${LANG_NOT_SELECTED}${names[$i]}${NC}" >&2
                 fi
             else
                 if [[ ${checked[$i]} -eq 1 ]]; then
-                    echo -e "  ${GREEN}${LANG_SELECTED}${NC}${names[$i]}"
+                    echo -e "  ${GREEN}${LANG_SELECTED}${NC}${names[$i]}" >&2
                 else
-                    echo -e "  ${LANG_NOT_SELECTED}${names[$i]}"
+                    echo -e "  ${LANG_NOT_SELECTED}${names[$i]}" >&2
                 fi
             fi
         done
