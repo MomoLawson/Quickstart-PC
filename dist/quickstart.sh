@@ -23,6 +23,7 @@ Quickstart-PC - 一键配置新电脑
   --lang LANG        设置语言 (en, zh)
   --dev              开发模式
   --fake-install     假装安装
+  --debug            调试模式（显示详细错误信息）
   --help             显示帮助
 HELPZH
     else
@@ -35,6 +36,7 @@ Options:
   --lang LANG        Set language (en, zh)
   --dev              Dev mode
   --fake-install     Fake install
+  --debug            Debug mode (show detailed error info)
   --help             Show help
 HELPEN
     fi
@@ -43,12 +45,14 @@ HELPEN
 
 DEV_MODE=false
 FAKE_INSTALL=false
+DEBUG_MODE=false
 LANG_OVERRIDE=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --dev) DEV_MODE=true; shift ;;
         --fake-install) FAKE_INSTALL=true; shift ;;
+        --debug) DEBUG_MODE=true; shift ;;
         --lang) LANG_OVERRIDE="$2"; shift 2 ;;
         --help|-h) show_help ;;
         *) shift ;;
@@ -321,21 +325,51 @@ detect_os() {
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
 CYAN='\033[0;36m'
 ORANGE='\033[38;5;208m'
 GRAY='\033[0;90m'
 NC='\033[0m'
 REVERSE='\033[7m'
 
+trap 'log_error "Error on line $LINENO"; exit 1' ERR
+
+# 调试模式（可通过 --debug 参数启用）
+DEBUG_MODE=false
+
+debug_log() {
+    if [[ "$DEBUG_MODE" == "true" ]]; then
+        echo -e "${GRAY}[DEBUG] $*${NC}" >&2
+    fi
+}
+
+# 捕获并报告错误
+handle_error() {
+    local exit_code=$?
+    local line_no=$1
+    log_error "脚本错误：行 $line_no，退出码 $exit_code"
+    log_error "最后执行的命令可能有问题"
+    exit $exit_code
+}
+
+trap 'handle_error $LINENO' ERR
+
 log_info() { echo -e "${CYAN}[INFO]${NC} $*"; }
 log_success() { echo -e "${GREEN}[✓]${NC} $*"; }
 log_warn() { echo -e "${YELLOW}[!]${NC} $*"; }
+log_error() { echo -e "${RED}[✗]${NC} $*" >&2; }
 log_step() { echo -e "${CYAN}[→]${NC} $*"; }
-log_header() { echo ""; echo "========================================"; echo "  $*"; echo "========================================"; }
+log_header() {
+    echo ""
+    echo "========================================"
+    echo "  $*"
+    echo "========================================"
+}
 
 SELECTED_SW=()
 
 show_profile_menu() {
+    debug_log "进入 show_profile_menu"
     local num=${#PROFILE_KEYS[@]}
     local -a names=()
     
@@ -344,6 +378,8 @@ show_profile_menu() {
         local pdesc=$(eval "echo \$PROFILE_DESC_$i")
         names+=("$pname - $pdesc")
     done
+    
+    debug_log "配置文件数量: $num"
     
     tput civis 2>/dev/null || true
     
@@ -357,7 +393,7 @@ show_profile_menu() {
     local running=true
     
     while [[ "$running" == "true" ]]; do
-        # 清屏重绘
+        debug_log "绘制菜单，光标位置: $cursor"
         tput sc 2>/dev/null || true
         
         for ((i=0; i<num; i++)); do
@@ -368,9 +404,14 @@ show_profile_menu() {
             fi
         done
         
-        # 读取按键
         local key=""
         IFS= read -rsn1 key < /dev/tty
+        if [[ $? -ne 0 ]]; then
+            debug_log "读取按键失败"
+            break
+        fi
+        
+        debug_log "按键: $(printf '%q' "$key")"
         
         case "$key" in
             $'\x1b')
@@ -381,40 +422,48 @@ show_profile_menu() {
                         local key3=""
                         IFS= read -rsn1 key3 < /dev/tty
                         case "$key3" in
-                            'A') # 上箭头
+                            'A')
                                 ((cursor--))
                                 [[ $cursor -lt 0 ]] && cursor=$((num - 1))
+                                debug_log "上箭头，新光标: $cursor"
                                 ;;
-                            'B') # 下箭头
+                            'B')
                                 ((cursor++))
                                 [[ $cursor -ge $num ]] && cursor=0
+                                debug_log "下箭头，新光标: $cursor"
                                 ;;
                         esac
                         ;;
                 esac
                 ;;
-            '') # 回车
+            '')
+                debug_log "回车，选择: $cursor"
                 running=false
                 ;;
         esac
         
-        # 恢复光标位置
         tput rc 2>/dev/null || true
         tput cuu $num 2>/dev/null || true
     done
     
     tput cnorm 2>/dev/null || true
     
+    debug_log "返回选择: $cursor"
     echo "$cursor"
 }
 
 show_software_menu() {
+    debug_log "进入 show_software_menu"
     local os=$1
     local profile_idx=$2
+    
+    debug_log "操作系统: $os, 配置文件索引: $profile_idx"
     
     local sw_list=$(eval "echo \$PROFILE_SW_$profile_idx")
     local -a sw_keys=($sw_list)
     local num_sw=${#sw_keys[@]}
+    
+    debug_log "软件列表: $sw_list, 数量: $num_sw"
     
     local -a names=()
     local -a checked=()
@@ -439,6 +488,8 @@ show_software_menu() {
     local cursor=0
     local running=true
     
+    debug_log "菜单项数量: $num_items"
+    
     tput civis 2>/dev/null || true
     
     echo ""
@@ -448,7 +499,7 @@ show_software_menu() {
     echo ""
     
     while [[ "$running" == "true" ]]; do
-        # 清屏重绘
+        debug_log "绘制软件菜单，光标: $cursor"
         tput sc 2>/dev/null || true
         
         for ((i=0; i<num_items; i++)); do
@@ -467,9 +518,14 @@ show_software_menu() {
             fi
         done
         
-        # 读取按键
         local key=""
         IFS= read -rsn1 key < /dev/tty
+        if [[ $? -ne 0 ]]; then
+            debug_log "读取按键失败"
+            break
+        fi
+        
+        debug_log "按键: $(printf '%q' "$key")"
         
         case "$key" in
             $'\x1b')
@@ -483,10 +539,12 @@ show_software_menu() {
                             'A')
                                 ((cursor--))
                                 [[ $cursor -lt 0 ]] && cursor=$((num_items - 1))
+                                debug_log "上箭头，新光标: $cursor"
                                 ;;
                             'B')
                                 ((cursor++))
                                 [[ $cursor -ge $num_items ]] && cursor=0
+                                debug_log "下箭头，新光标: $cursor"
                                 ;;
                         esac
                         ;;
@@ -498,16 +556,18 @@ show_software_menu() {
                     for ((i=0; i<num_items; i++)); do
                         checked[$i]=$new_state
                     done
+                    debug_log "全选切换: $new_state"
                 else
                     checked[$cursor]=$((1 - checked[$cursor]))
+                    debug_log "单选切换: $cursor -> ${checked[$cursor]}"
                 fi
                 ;;
             '')
+                debug_log "回车确认"
                 running=false
                 ;;
         esac
         
-        # 恢复光标位置
         tput rc 2>/dev/null || true
         tput cuu $num_items 2>/dev/null || true
     done
@@ -518,6 +578,8 @@ show_software_menu() {
     for ((i=1; i<num_items; i++)); do
         [[ ${checked[$i]} -eq 1 ]] && SELECTED_SW+=("${sw_keys[$((i-1))]}")
     done
+    
+    debug_log "选择的软件: ${SELECTED_SW[*]}"
 }
 
 main() {
