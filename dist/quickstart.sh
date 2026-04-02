@@ -155,13 +155,18 @@ is_installed() {
         *) return 1 ;;
     esac
     
-    local check_cmd=$(get_json_software_field "$json_file" "$key" "$check_field")
+    local check_cmd
+    check_cmd=$(get_json_software_field "$json_file" "$key" "$check_field")
     [[ -z "$check_cmd" ]] && return 1
-    eval "$check_cmd" &>/dev/null
-    return $?
+    
+    local result=0
+    eval "$check_cmd" &>/dev/null || result=$?
+    return $result
 }
 
 # 语言选择
+TUI_RESULT=""
+
 tui_interactive_select() {
     local -a items=("$@")
     local num_items=${#items[@]}
@@ -206,7 +211,7 @@ tui_interactive_select() {
     done
     
     tput cnorm 2>/dev/null || true
-    return $cursor
+    TUI_RESULT=$cursor
 }
 
 select_language() {
@@ -229,7 +234,7 @@ select_language() {
     
     local lang_items=("English" "简体中文")
     tui_interactive_select "${lang_items[@]}" >&2
-    local choice=$?
+    local choice=$TUI_RESULT
     
     case $choice in
         0) echo "en-US" ;;
