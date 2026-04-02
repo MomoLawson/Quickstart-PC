@@ -36,6 +36,8 @@ Quickstart-PC - 一键配置新电脑
   --log-file FILE    将日志写入文件
   --list-profiles    列出所有可用套餐
   --show-profile KEY 显示指定套餐详情
+  --skip SW          跳过指定软件（可多次使用）
+  --only SW          只安装指定软件（可多次使用）
   --help             显示此帮助信息
 HELPZH
     else
@@ -56,6 +58,8 @@ Options:
   --log-file FILE    Write logs to file
   --list-profiles    List all available profiles
   --show-profile KEY Show profile details
+  --skip SW          Skip specified software (repeatable)
+  --only SW          Only install specified software (repeatable)
   --help             Show this help message
 HELPEN
     fi
@@ -69,6 +73,8 @@ VERBOSE=false
 LOG_FILE=""
 LIST_PROFILES=false
 SHOW_PROFILE=""
+SKIP_SW=()
+ONLY_SW=()
 LANG_OVERRIDE=""
 CFG_PATH=""
 CFG_URL=""
@@ -83,6 +89,8 @@ while [[ $# -gt 0 ]]; do
         --log-file) LOG_FILE="$2"; shift 2 ;;
         --list-profiles) LIST_PROFILES=true; shift ;;
         --show-profile) SHOW_PROFILE="$2"; shift 2 ;;
+        --skip) SKIP_SW+=("$2"); shift 2 ;;
+        --only) ONLY_SW+=("$2"); shift 2 ;;
         --lang) LANG_OVERRIDE="$2"; shift 2 ;;
         --cfg-path) CFG_PATH="$2"; shift 2 ;;
         --cfg-url) CFG_URL="$2"; shift 2 ;;
@@ -643,6 +651,17 @@ show_software_menu() {
     local -a sw_keys=()
     while IFS= read -r key; do
         [[ -z "$key" ]] && continue
+        
+        # --only 过滤
+        if [[ ${#ONLY_SW[@]} -gt 0 ]] && [[ ! " ${ONLY_SW[*]} " =~ " $key " ]]; then
+            continue
+        fi
+        
+        # --skip 过滤
+        if [[ ${#SKIP_SW[@]} -gt 0 ]] && [[ " ${SKIP_SW[*]} " =~ " $key " ]]; then
+            continue
+        fi
+        
         sw_keys+=("$key")
     done < <(get_json_profile_includes "$json_file" "$profile_key")
     
