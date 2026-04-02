@@ -158,6 +158,7 @@ is_installed() {
     local check_cmd=$(get_json_software_field "$json_file" "$key" "$check_field")
     [[ -z "$check_cmd" ]] && return 1
     eval "$check_cmd" &>/dev/null
+    return $?
 }
 
 # 语言选择
