@@ -38,6 +38,7 @@ Quickstart-PC - 一键配置新电脑
   --show-profile KEY 显示指定套餐详情
   --skip SW          跳过指定软件（可多次使用）
   --only SW          只安装指定软件（可多次使用）
+  --fail-fast        遇到错误时立即停止
   --help             显示此帮助信息
 HELPZH
     else
@@ -60,6 +61,7 @@ Options:
   --show-profile KEY Show profile details
   --skip SW          Skip specified software (repeatable)
   --only SW          Only install specified software (repeatable)
+  --fail-fast        Stop on first error
   --help             Show this help message
 HELPEN
     fi
@@ -75,6 +77,7 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
+FAIL_FAST=false
 LANG_OVERRIDE=""
 CFG_PATH=""
 CFG_URL=""
@@ -91,6 +94,7 @@ while [[ $# -gt 0 ]]; do
         --show-profile) SHOW_PROFILE="$2"; shift 2 ;;
         --skip) SKIP_SW+=("$2"); shift 2 ;;
         --only) ONLY_SW+=("$2"); shift 2 ;;
+        --fail-fast) FAIL_FAST=true; shift ;;
         --lang) LANG_OVERRIDE="$2"; shift 2 ;;
         --cfg-path) CFG_PATH="$2"; shift 2 ;;
         --cfg-url) CFG_URL="$2"; shift 2 ;;
@@ -860,6 +864,11 @@ main() {
                 installed_list+=("$sw_name")
             else
                 failed_list+=("$sw_name")
+                if [[ "$FAIL_FAST" == "true" ]]; then
+                    echo ""
+                    log_error "Fail-fast: stopping at $sw_name"
+                    break
+                fi
             fi
         fi
     done
