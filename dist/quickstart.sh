@@ -513,8 +513,8 @@ show_software_menu() {
 
 install_software() {
     local json_file=$1
-    local os=$1
-    local key=$2
+    local os=$2
+    local key=$3
     local platform
     
     case "$os" in
