@@ -119,7 +119,7 @@ quickstart.sh --cfg-path /path/to/profiles.json
 |--------|-------------|
 | `--lang LANG` | Set language (en, zh) |
 | `--dev` | Dev mode: show selections without installing |
-| `--fake-install` / `--dry-run` | Fake install: show process without installing |
+| `--dry-run` | Fake install: show process without installing |
 | `--yes` / `-y` | Auto-confirm all prompts |
 | `--cfg-path PATH` | Use local profiles.json |
 | `--cfg-url URL` | Use remote profiles.json URL |

@@ -29,8 +29,8 @@ Quickstart-PC - 一键配置新电脑
   --cfg-path PATH    使用本地 profiles.json 文件
   --cfg-url URL      使用远程 profiles.json URL
   --dev              开发模式：显示选择的软件但不安装
-  --fake-install     假装安装：展示安装过程但不实际安装
-  --dry-run          同 --fake-install
+  --dry-run          假装安装：展示安装过程但不实际安装
+  --fake-install     同 --dry-run（已弃用）
   --yes, -y          自动确认所有提示
   --help             显示此帮助信息
 HELPZH
@@ -45,8 +45,8 @@ Options:
   --cfg-path PATH    Use local profiles.json file
   --cfg-url URL      Use remote profiles.json URL
   --dev              Dev mode
-  --fake-install     Fake install
-  --dry-run          Alias for --fake-install
+  --dry-run          Fake install: show process without installing
+  --fake-install     Alias for --dry-run (deprecated)
   --yes, -y          Auto-confirm all prompts
   --help             Show this help message
 HELPEN
@@ -64,7 +64,8 @@ CFG_URL=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --dev) DEV_MODE=true; shift ;;
-        --fake-install|--dry-run) FAKE_INSTALL=true; shift ;;
+        --dry-run) FAKE_INSTALL=true; shift ;;
+        --fake-install) FAKE_INSTALL=true; log_warn "--fake-install is deprecated, use --dry-run instead" >&2; shift ;;
         --yes|-y) AUTO_YES=true; shift ;;
         --lang) LANG_OVERRIDE="$2"; shift 2 ;;
         --cfg-path) CFG_PATH="$2"; shift 2 ;;
