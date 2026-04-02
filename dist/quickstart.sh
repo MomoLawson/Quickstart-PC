@@ -146,7 +146,14 @@ is_installed() {
     local json_file=$1
     local os=$2
     local key=$3
-    local check_field="check_${os:0:3}"
+    local check_field
+    
+    case "$os" in
+        macos) check_field="check_mac" ;;
+        windows) check_field="check_win" ;;
+        linux) check_field="check_linux" ;;
+        *) return 1 ;;
+    esac
     
     local check_cmd=$(get_json_software_field "$json_file" "$key" "$check_field")
     [[ -z "$check_cmd" ]] && return 1
