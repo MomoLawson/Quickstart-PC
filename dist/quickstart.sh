@@ -230,41 +230,59 @@ else
     LANG_FAKE_INSTALLING="Simulating install"
 fi
 
-EMBEDDED_CONFIG='{
-  "profiles": {
-    "recommended": {
-      "name": "推荐套餐/Recommended",
-      "desc": "综合均衡/Balanced setup",
-      "icon": "⭐",
-      "includes": ["chrome", "vscode", "git", "nodejs", "python", "wps", "vlc"]
-    },
-    "ai": {
-      "name": "AI 赋能/AI Powered",
-      "desc": "AI 工具/AI tools",
-      "icon": "🤖",
-      "includes": ["cursor", "ollama"]
-    },
-    "developer": {
-      "name": "开发者/Developer",
-      "desc": "开发工具/Dev tools",
-      "icon": "💻",
-      "includes": ["vscode", "git", "nodejs", "python"]
-    }
-  },
-  "software": {
-    "chrome": {"name": "Chrome", "desc": "浏览器/Browser", "win": "winget install Google.Chrome", "mac": "brew install --cask google-chrome", "linux": "sudo apt install -y google-chrome-stable"},
-    "vscode": {"name": "VS Code", "desc": "代码编辑器/Code editor", "win": "winget install Microsoft.VisualStudioCode", "mac": "brew install --cask visual-studio-code", "linux": "sudo snap install --classic code"},
-    "git": {"name": "Git", "desc": "版本控制/Version control", "win": "winget install Git.Git", "mac": "brew install git", "linux": "sudo apt install -y git"},
-    "nodejs": {"name": "Node.js", "desc": "JavaScript 运行时/Runtime", "win": "winget install OpenJS.NodeJS.LTS", "mac": "brew install node", "linux": "curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt install -y nodejs"},
-    "python": {"name": "Python", "desc": "Python 编程语言/Programming language", "win": "winget install Python.Python.3.12", "mac": "brew install python@3.12", "linux": "sudo apt install -y python3 python3-pip"},
-    "cursor": {"name": "Cursor", "desc": "AI 代码编辑器/AI editor", "win": "winget install Cursor.Cursor", "mac": "brew install --cask cursor", "linux": "echo Download from https://cursor.sh"},
-    "ollama": {"name": "Ollama", "desc": "本地 LLM/Local LLM", "win": "winget install Ollama.Ollama", "mac": "brew install ollama", "linux": "curl -fsSL https://ollama.ai/install.sh | sh"},
-    "wps": {"name": "WPS Office", "desc": "办公套件/Office suite", "win": "winget install Kingsoft.WPSOffice", "mac": "brew install --cask wps-office", "linux": "sudo apt install -y wps-office"},
-    "obsidian": {"name": "Obsidian", "desc": "笔记工具/Notes", "win": "winget install Obsidian.Obsidian", "mac": "brew install --cask obsidian", "linux": "sudo snap install obsidian --classic"},
-    "vlc": {"name": "VLC", "desc": "媒体播放器/Media player", "win": "winget install VideoLAN.VLC", "mac": "brew install --cask vlc", "linux": "sudo apt install -y vlc"},
-    "ffmpeg": {"name": "FFmpeg", "desc": "音视频工具/Media tool", "win": "winget install FFmpeg", "mac": "brew install ffmpeg", "linux": "sudo apt install -y ffmpeg"}
-  }
-}'
+# Profile data
+PROFILE_KEYS=(recommended ai developer)
+PROFILE_NAMES=("推荐套餐/Recommended" "AI 赋能/AI Powered" "开发者/Developer")
+PROFILE_ICONS=("⭐" "🤖" "💻")
+PROFILE_DESCS=("综合均衡/Balanced" "AI 工具/AI tools" "开发工具/Dev tools")
+PROFILE_SW_0="chrome vscode git nodejs python wps vlc"
+PROFILE_SW_1="cursor ollama"
+PROFILE_SW_2="vscode git nodejs python"
+
+# Software data
+SW_KEYS_ALL=(chrome vscode git nodejs python cursor ollama wps vlc ffmpeg)
+SW_NAME_0="Chrome" SW_DESC_0="浏览器/Browser"
+SW_NAME_1="VS Code" SW_DESC_1="代码编辑器/Code editor"
+SW_NAME_2="Git" SW_DESC_2="版本控制/Version control"
+SW_NAME_3="Node.js" SW_DESC_3="JavaScript 运行时/Runtime"
+SW_NAME_4="Python" SW_DESC_4="Python 编程语言/Programming language"
+SW_NAME_5="Cursor" SW_DESC_5="AI 代码编辑器/AI editor"
+SW_NAME_6="Ollama" SW_DESC_6="本地 LLM/Local LLM"
+SW_NAME_7="WPS Office" SW_DESC_7="办公套件/Office suite"
+SW_NAME_8="VLC" SW_DESC_8="媒体播放器/Media player"
+SW_NAME_9="FFmpeg" SW_DESC_9="音视频工具/Media tool"
+
+# Install commands
+SW_WIN_0="winget install Google.Chrome"
+SW_MAC_0="brew install --cask google-chrome"
+SW_LINUX_0="sudo apt install -y google-chrome-stable"
+SW_WIN_1="winget install Microsoft.VisualStudioCode"
+SW_MAC_1="brew install --cask visual-studio-code"
+SW_LINUX_1="sudo snap install --classic code"
+SW_WIN_2="winget install Git.Git"
+SW_MAC_2="brew install git"
+SW_LINUX_2="sudo apt install -y git"
+SW_WIN_3="winget install OpenJS.NodeJS.LTS"
+SW_MAC_3="brew install node"
+SW_LINUX_3="curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt install -y nodejs"
+SW_WIN_4="winget install Python.Python.3.12"
+SW_MAC_4="brew install python@3.12"
+SW_LINUX_4="sudo apt install -y python3 python3-pip"
+SW_WIN_5="winget install Cursor.Cursor"
+SW_MAC_5="brew install --cask cursor"
+SW_LINUX_5="echo Download from https://cursor.sh"
+SW_WIN_6="winget install Ollama.Ollama"
+SW_MAC_6="brew install ollama"
+SW_LINUX_6="curl -fsSL https://ollama.ai/install.sh | sh"
+SW_WIN_7="winget install Kingsoft.WPSOffice"
+SW_MAC_7="brew install --cask wps-office"
+SW_LINUX_7="sudo apt install -y wps-office"
+SW_WIN_8="winget install VideoLAN.VLC"
+SW_MAC_8="brew install --cask vlc"
+SW_LINUX_8="sudo apt install -y vlc"
+SW_WIN_9="winget install FFmpeg"
+SW_MAC_9="brew install ffmpeg"
+SW_LINUX_9="sudo apt install -y ffmpeg"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -309,78 +327,37 @@ check_package_manager() {
     esac
 }
 
-get_json_value() {
-    echo "$1" | grep -o "\"$2\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" | head -1 | sed 's/.*" *: *"//;s/"$//'
-}
-
-get_json_array() {
-    echo "$1" | grep -o "\"$2\"[[:space:]]*:[[:space:]]*\[[^\]]*\]" | sed 's/.*\[/[/;s/\]$//'
-}
-
-parse_profiles() {
-    local config="$1"
-    local platform="$2"
-    
-    PROFILE_KEYS=()
-    PROFILE_NAMES=()
-    PROFILE_ICONS=()
-    PROFILE_DESCS=()
-    
-    local profiles_json=$(echo "$config" | grep -o '"profiles"[[:space:]]*:[[:space:]]*{[^}]*}' | sed 's/"profiles"[[:space:]]*:[[:space:]]*{/{/')
-    
-    while IFS= read -r key; do
-        key=$(echo "$key" | tr -d '"' | tr -d ',' | tr -d ' ')
-        [[ -z "$key" ]] && continue
-        
-        PROFILE_KEYS+=("$key")
-        
-        local profile_json=$(echo "$config" | grep -o "\"$key\"[[:space:]]*:[[:space:]]*{[^}]*}")
-        PROFILE_NAMES+=("$(get_json_value "$profile_json" "name")")
-        PROFILE_ICONS+=("$(get_json_value "$profile_json" "icon")")
-        PROFILE_DESCS+=("$(get_json_value "$profile_json" "desc")")
-    done < <(echo "$profiles_json" | grep -o '"[a-z_]*"' | grep -v '"profiles"')
-}
-
-parse_software() {
-    local config="$1"
-    local platform="$2"
-    shift 2
-    local profiles=("$@")
-    
-    SW_KEYS=()
-    SW_NAMES=()
-    SW_DESCS=()
-    
-    local sw_keys_temp=()
-    
-    for profile in "${profiles[@]}"; do
-        local profile_json=$(echo "$config" | grep -o "\"$profile\"[[:space:]]*:[[:space:]]*{[^}]*}")
-        local includes=$(get_json_array "$profile_json" "includes")
-        
-        local temp=$(echo "$includes" | tr -d '[]"' | tr ',' '\n')
-        while IFS= read -r key; do
-            key=$(echo "$key" | tr -d ' ')
-            [[ -z "$key" ]] && continue
-            if [[ ! " ${sw_keys_temp[@]} " =~ " $key " ]]; then
-                sw_keys_temp+=("$key")
-            fi
-        done <<< "$temp"
+get_sw_index() {
+    local key=$1
+    for ((i=0; i<${#SW_KEYS_ALL[@]}; i++)); do
+        if [[ "${SW_KEYS_ALL[$i]}" == "$key" ]]; then
+            echo $i
+            return
+        fi
     done
-    
-    for key in "${sw_keys_temp[@]}"; do
-        SW_KEYS+=("$key")
-        local sw_json=$(echo "$config" | grep -o "\"$key\"[[:space:]]*:[[:space:]]*{[^}]*}")
-        SW_NAMES+=("$(get_json_value "$sw_json" "name")")
-        SW_DESCS+=("$(get_json_value "$sw_json" "desc")")
-    done
+    echo "-1"
+}
+
+get_sw_name() {
+    local idx=$1
+    eval "echo \$SW_NAME_$idx"
+}
+
+get_sw_desc() {
+    local idx=$1
+    eval "echo \$SW_DESC_$idx"
+}
+
+get_sw_cmd() {
+    local idx=$1
+    local os=$2
+    eval "echo \$SW_${os}_$idx"
 }
 
 SELECTED_PROFILES=()
 SELECTED_SOFTWARE=()
 
 show_profile_menu() {
-    parse_profiles "$CONFIG_FILE"
-    
     local num_profiles=${#PROFILE_KEYS[@]}
     local -a menu_names
     local cursor=0
@@ -396,8 +373,6 @@ show_profile_menu() {
     echo ""
     echo -e "  ${CYAN}$LANG_NAVIGATE${NC}"
     echo ""
-    
-    local start_line=$(tput lines 2>/dev/null || echo 24)
     
     draw_menu() {
         for ((i=0; i<num_profiles; i++)); do
@@ -439,10 +414,12 @@ show_profile_menu() {
 
 show_software_menu() {
     local os=$1
-    shift
-    parse_software "$CONFIG_FILE" "$os" "$@"
+    local profile_idx=$2
     
-    local num_sw=${#SW_KEYS[@]}
+    local sw_list=$(eval "echo \$PROFILE_SW_$profile_idx")
+    local -a sw_keys=($sw_list)
+    local num_sw=${#sw_keys[@]}
+    
     local -a menu_keys menu_names
     local -a checked
     
@@ -450,9 +427,10 @@ show_software_menu() {
     menu_names=("${ORANGE}$LANG_SELECT_ALL${NC}")
     checked=(0)
     
-    for ((i=0; i<num_sw; i++)); do
-        menu_keys+=("${SW_KEYS[$i]}")
-        menu_names+=("${SW_NAMES[$i]} - ${SW_DESCS[$i]}")
+    for key in "${sw_keys[@]}"; do
+        local idx=$(get_sw_index "$key")
+        menu_keys+=("$key")
+        menu_names+=("$(get_sw_name $idx) - $(get_sw_desc $idx)")
         checked+=(0)
     done
     
@@ -526,27 +504,24 @@ show_software_menu() {
     done
 }
 
-get_install_cmd() {
-    local config="$1"
-    local key="$2"
-    local platform="$3"
-    
-    local sw_json=$(echo "$config" | grep -o "\"$key\"[[:space:]]*:[[:space:]]*{[^}]*}")
-    get_json_value "$sw_json" "$platform"
-}
-
 install_software() {
     local os=$1
     local key=$2
     local platform
+    local idx=$(get_sw_index "$key")
     
     case "$os" in
-        windows) platform="win" ;;
-        macos) platform="mac" ;;
-        linux) platform="linux" ;;
+        windows) platform="WIN" ;;
+        macos) platform="MAC" ;;
+        linux) platform="LINUX" ;;
     esac
     
-    local cmd=$(get_install_cmd "$CONFIG_FILE" "$key" "$platform")
+    if [[ $idx -eq -1 ]]; then
+        log_warn "$LANG_PLATFORM_NOT_SUPPORTED: $key"
+        return 1
+    fi
+    
+    local cmd=$(get_sw_cmd $idx "$platform")
     
     if [[ -z "$cmd" ]]; then
         log_warn "$LANG_PLATFORM_NOT_SUPPORTED: $key"
@@ -568,44 +543,6 @@ install_software() {
         log_error "$key $LANG_INSTALL_FAILED"
         return 1
     fi
-}
-
-load_config() {
-    CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
-    
-    if [[ -n "$CFG_PATH" ]]; then
-        if [[ -f "$CFG_PATH" ]]; then
-            if grep -q '"profiles"' "$CFG_PATH" && grep -q '"software"' "$CFG_PATH"; then
-                log_info "$LANG_USING_CUSTOM_CONFIG: $CFG_PATH"
-                cp "$CFG_PATH" "$CONFIG_FILE"
-                return 0
-            else
-                log_error "$LANG_CONFIG_INVALID: $CFG_PATH"
-                exit 1
-            fi
-        else
-            log_error "$LANG_CONFIG_NOT_FOUND: $CFG_PATH"
-            exit 1
-        fi
-    fi
-    
-    if [[ -n "$CFG_URL" ]]; then
-        log_info "$LANG_USING_REMOTE_CONFIG: $CFG_URL"
-        if curl -fsSL --connect-timeout 10 --max-time 30 "$CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
-            if grep -q '"profiles"' "$CONFIG_FILE" && grep -q '"software"' "$CONFIG_FILE"; then
-                return 0
-            else
-                log_error "$LANG_CONFIG_INVALID: $CFG_URL"
-                exit 1
-            fi
-        else
-            log_error "$LANG_CONFIG_NOT_FOUND: $CFG_URL"
-            exit 1
-        fi
-    fi
-    
-    log_info "$LANG_USING_EMBEDDED_CONFIG"
-    echo "$EMBEDDED_CONFIG" > "$CONFIG_FILE"
 }
 
 show_banner() {
@@ -633,7 +570,6 @@ main() {
     
     [[ "$os" == "unknown" ]] && log_error "$LANG_UNSUPPORTED_OS" && exit 1
     
-    load_config
     show_profile_menu
     
     [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
@@ -668,5 +604,5 @@ main() {
     [[ $failed -eq 0 ]] && log_success "$LANG_TOTAL_INSTALLED $total" || log_warn "$LANG_TOTAL_INSTALLED $((total - failed)) / $total ($failed failed)"
 }
 
-trap 'tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
+trap 'tput cnorm 2>/dev/null || true' EXIT
 main "$@"
