@@ -727,41 +727,56 @@ main() {
     log_header "$LANG_INSTALLATION_COMPLETE"
     echo ""
     echo -e "${GREEN}Installed:${NC}"
+    log_to_file "Installed:"
     if [[ ${#installed_list[@]} -eq 0 ]]; then
         echo -e "${GRAY}  (none)${NC}"
+        log_to_file "  (none)"
     else
         for item in "${installed_list[@]}"; do
             echo -e "  ${GREEN}- $item${NC}"
+            log_to_file "  - $item"
         done
     fi
     
     echo ""
     echo -e "${CYAN}Skipped:${NC}"
+    log_to_file ""
+    log_to_file "Skipped:"
     if [[ ${#skipped_list[@]} -eq 0 ]]; then
         echo -e "${GRAY}  (none)${NC}"
+        log_to_file "  (none)"
     else
         for item in "${skipped_list[@]}"; do
             echo -e "  ${GRAY}- $item${NC}"
+            log_to_file "  - $item"
         done
     fi
     
     echo ""
     echo -e "${RED}Failed:${NC}"
+    log_to_file ""
+    log_to_file "Failed:"
     if [[ ${#failed_list[@]} -eq 0 ]]; then
         echo -e "${GRAY}  (none)${NC}"
+        log_to_file "  (none)"
     else
         for item in "${failed_list[@]}"; do
             echo -e "  ${RED}- $item${NC}"
+            log_to_file "  - $item"
         done
     fi
     
     echo ""
     echo -e "${YELLOW}Warnings:${NC}"
+    log_to_file ""
+    log_to_file "Warnings:"
     if [[ ${#warning_list[@]} -eq 0 ]]; then
         echo -e "${GRAY}  (none)${NC}"
+        log_to_file "  (none)"
     else
         for item in "${warning_list[@]}"; do
             echo -e "  ${YELLOW}- $item${NC}"
+            log_to_file "  - $item"
         done
     fi
     
@@ -772,11 +787,18 @@ main() {
     if [[ "$VERBOSE" == "true" ]]; then
         echo ""
         echo "===== Verbose Debug Info ====="
+        log_to_file ""
+        log_to_file "===== Verbose Debug Info ====="
         echo "[PLATFORM] $(detect_os) - $(get_system_info)"
+        log_to_file "[PLATFORM] $(detect_os) - $(get_system_info)"
         echo "[PKG_MANAGER] $(check_package_manager "$os")"
+        log_to_file "[PKG_MANAGER] $(check_package_manager "$os")"
         echo "[CONFIG] $CONFIG_FILE"
+        log_to_file "[CONFIG] $CONFIG_FILE"
         echo "[PROFILE] ${SELECTED_PROFILES[*]}"
+        log_to_file "[PROFILE] ${SELECTED_PROFILES[*]}"
         echo ""
+        log_to_file ""
         for sw in "${SELECTED_SOFTWARE[@]}"; do
             local sw_name=$(get_json_software_field "$CONFIG_FILE" "$sw" "name")
             local check_field
@@ -790,16 +812,23 @@ main() {
             
             if [[ " ${skipped_list[*]} " =~ " $sw_name " ]]; then
                 echo "[CHECK] $sw_name -> installed"
+                log_to_file "[CHECK] $sw_name -> installed"
             elif [[ " ${failed_list[*]} " =~ " $sw_name " ]]; then
                 echo "[CHECK] $sw_name -> not installed"
+                log_to_file "[CHECK] $sw_name -> not installed"
                 echo "[PLAN] $sw_name -> $install_cmd"
+                log_to_file "[PLAN] $sw_name -> $install_cmd"
                 echo "[FAIL] $sw_name -> installation failed"
+                log_to_file "[FAIL] $sw_name -> installation failed"
             else
                 echo "[CHECK] $sw_name -> not installed"
+                log_to_file "[CHECK] $sw_name -> not installed"
                 echo "[PLAN] $sw_name -> $install_cmd"
+                log_to_file "[PLAN] $sw_name -> $install_cmd"
             fi
         done
         echo "===== End Verbose ====="
+        log_to_file "===== End Verbose ====="
     fi
 }
 
