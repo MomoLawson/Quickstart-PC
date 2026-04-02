@@ -30,6 +30,8 @@ Quickstart-PC - 一键配置新电脑
   --cfg-url URL      使用远程 profiles.json URL
   --dev              开发模式：显示选择的软件但不安装
   --fake-install     假装安装：展示安装过程但不实际安装
+  --dry-run          同 --fake-install
+  --yes, -y          自动确认所有提示
   --help             显示此帮助信息
 HELPZH
     else
@@ -44,6 +46,8 @@ Options:
   --cfg-url URL      Use remote profiles.json URL
   --dev              Dev mode
   --fake-install     Fake install
+  --dry-run          Alias for --fake-install
+  --yes, -y          Auto-confirm all prompts
   --help             Show this help message
 HELPEN
     fi
@@ -52,6 +56,7 @@ HELPEN
 
 DEV_MODE=false
 FAKE_INSTALL=false
+AUTO_YES=false
 LANG_OVERRIDE=""
 CFG_PATH=""
 CFG_URL=""
@@ -59,7 +64,8 @@ CFG_URL=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --dev) DEV_MODE=true; shift ;;
-        --fake-install) FAKE_INSTALL=true; shift ;;
+        --fake-install|--dry-run) FAKE_INSTALL=true; shift ;;
+        --yes|-y) AUTO_YES=true; shift ;;
         --lang) LANG_OVERRIDE="$2"; shift 2 ;;
         --cfg-path) CFG_PATH="$2"; shift 2 ;;
         --cfg-url) CFG_URL="$2"; shift 2 ;;
@@ -650,24 +656,82 @@ main() {
     
     [[ "$DEV_MODE" == "true" ]] && log_info "Dev mode: Done" && exit 0
     
-    read -p "$LANG_CONFIRM_INSTALL " confirm < /dev/tty
-    [[ "$confirm" =~ ^[Nn] ]] && log_info "$LANG_CANCELLED" && exit 0
+    if [[ "$AUTO_YES" == "true" ]]; then
+        echo ""
+    else
+        read -p "$LANG_CONFIRM_INSTALL " confirm < /dev/tty
+        [[ "$confirm" =~ ^[Nn] ]] && log_info "$LANG_CANCELLED" && exit 0
+    fi
     
     log_header "$LANG_START_INSTALLING"
     
     local total=${#SELECTED_SOFTWARE[@]}
     local current=0
-    local failed=0
+    local -a installed_list=()
+    local -a skipped_list=()
+    local -a failed_list=()
+    local -a warning_list=()
     
     for sw in "${SELECTED_SOFTWARE[@]}"; do
         ((current++))
-        printf "\r${CYAN}[%3d%%]${NC} %s" "$((current * 100 / total))" "$LANG_INSTALLING $sw"
-        install_software "$CONFIG_FILE" "$os" "$sw" || ((failed++))
+        local sw_name=$(get_json_software_field "$CONFIG_FILE" "$sw" "name")
+        printf "\r${CYAN}[%3d%%]${NC} %s" "$((current * 100 / total))" "$LANG_INSTALLING $sw_name"
+        
+        if is_installed "$CONFIG_FILE" "$os" "$sw"; then
+            skipped_list+=("$sw_name")
+        else
+            if install_software "$CONFIG_FILE" "$os" "$sw"; then
+                installed_list+=("$sw_name")
+            else
+                failed_list+=("$sw_name")
+            fi
+        fi
     done
     echo ""
     
     log_header "$LANG_INSTALLATION_COMPLETE"
-    [[ $failed -eq 0 ]] && log_success "$LANG_TOTAL_INSTALLED $total" || log_warn "$LANG_TOTAL_INSTALLED $((total - failed)) / $total ($failed failed)"
+    echo ""
+    echo -e "${GREEN}Installed:${NC}"
+    if [[ ${#installed_list[@]} -eq 0 ]]; then
+        echo -e "${GRAY}  (none)${NC}"
+    else
+        for item in "${installed_list[@]}"; do
+            echo -e "  ${GREEN}- $item${NC}"
+        done
+    fi
+    
+    echo ""
+    echo -e "${CYAN}Skipped:${NC}"
+    if [[ ${#skipped_list[@]} -eq 0 ]]; then
+        echo -e "${GRAY}  (none)${NC}"
+    else
+        for item in "${skipped_list[@]}"; do
+            echo -e "  ${GRAY}- $item${NC}"
+        done
+    fi
+    
+    echo ""
+    echo -e "${RED}Failed:${NC}"
+    if [[ ${#failed_list[@]} -eq 0 ]]; then
+        echo -e "${GRAY}  (none)${NC}"
+    else
+        for item in "${failed_list[@]}"; do
+            echo -e "  ${RED}- $item${NC}"
+        done
+    fi
+    
+    echo ""
+    echo -e "${YELLOW}Warnings:${NC}"
+    if [[ ${#warning_list[@]} -eq 0 ]]; then
+        echo -e "${GRAY}  (none)${NC}"
+    else
+        for item in "${warning_list[@]}"; do
+            echo -e "  ${YELLOW}- $item${NC}"
+        done
+    fi
+    
+    echo ""
+    log_success "$LANG_TOTAL_INSTALLED ${#installed_list[@]} / $total"
 }
 
 trap 'tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
