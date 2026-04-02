@@ -444,7 +444,18 @@ show_profile_menu() {
 
 show_software_menu() {
     local os=$1
-    local profile_idx=$2
+    local profile_key=$2
+    
+    # 查找 profile 索引
+    local profile_idx=-1
+    for ((i=0; i<${#PROFILE_KEYS[@]}; i++)); do
+        if [[ "${PROFILE_KEYS[$i]}" == "$profile_key" ]]; then
+            profile_idx=$i
+            break
+        fi
+    done
+    
+    [[ $profile_idx -eq -1 ]] && return 1
     
     local sw_list=$(eval "echo \$PROFILE_SW_$profile_idx")
     local -a sw_keys=($sw_list)
