@@ -3,6 +3,21 @@
 clear
 tput civis 2>/dev/null || true
 
+error_handler() {
+    local line=$1
+    local command=$2
+    local code=$3
+    echo ""
+    echo -e "\033[0;31m[ERROR] Script failed at line $line\033[0m"
+    echo -e "\033[0;31m  Command: $command\033[0m"
+    echo -e "\033[0;31m  Exit code: $code\033[0m"
+    echo ""
+    tput cnorm 2>/dev/null || true
+    exit 1
+}
+
+trap 'error_handler ${LINENO} "$BASH_COMMAND" $?' ERR
+
 LANG_FOR_HELP="en"
 args=("$@")
 for i in "${!args[@]}"; do
@@ -21,9 +36,16 @@ Quickstart-PC - 一键配置新电脑
 
 选项:
   --lang LANG        设置语言 (en, zh)
-  --dev              开发模式
-  --fake-install     假装安装
-  --help             显示帮助
+  --cfg-path PATH    使用本地 profiles.json 文件
+  --cfg-url URL      使用远程 profiles.json URL
+  --dev              开发模式：显示选择的软件但不安装
+  --fake-install     假装安装：展示安装过程但不实际安装
+  --help             显示此帮助信息
+
+示例:
+  quickstart.sh --lang zh
+  quickstart.sh --cfg-path /path/to/profiles.json
+  quickstart.sh --fake-install
 HELPZH
     else
         cat << 'HELPEN'
@@ -33,9 +55,16 @@ Usage: quickstart.sh [OPTIONS]
 
 Options:
   --lang LANG        Set language (en, zh)
-  --dev              Dev mode
-  --fake-install     Fake install
-  --help             Show help
+  --cfg-path PATH    Use local profiles.json file
+  --cfg-url URL      Use remote profiles.json URL
+  --dev              Dev mode: show selected software without installing
+  --fake-install     Fake install: show installation process without actually installing
+  --help             Show this help message
+
+Examples:
+  quickstart.sh --lang en
+  quickstart.sh --cfg-path /path/to/profiles.json
+  quickstart.sh --fake-install
 HELPEN
     fi
     exit 0
@@ -44,16 +73,34 @@ HELPEN
 DEV_MODE=false
 FAKE_INSTALL=false
 LANG_OVERRIDE=""
+CFG_PATH=""
+CFG_URL=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --dev) DEV_MODE=true; shift ;;
         --fake-install) FAKE_INSTALL=true; shift ;;
         --lang) LANG_OVERRIDE="$2"; shift 2 ;;
+        --cfg-path) CFG_PATH="$2"; shift 2 ;;
+        --cfg-url) CFG_URL="$2"; shift 2 ;;
         --help|-h) show_help ;;
-        *) shift ;;
+        *) echo "Unknown option: $1"; exit 1 ;;
     esac
 done
+
+tui_draw_menu() {
+    local cursor=$1
+    shift
+    local -a items=("$@")
+    for ((i=0; i<${#items[@]}; i++)); do
+        printf "\033[2K"
+        if [[ $i -eq $cursor ]]; then
+            echo -e "  \033[7m ▶ ${items[$i]} \033[0m"
+        else
+            echo -e "    ${items[$i]}"
+        fi
+    done
+}
 
 tui_interactive_select() {
     local -a items=("$@")
@@ -61,61 +108,26 @@ tui_interactive_select() {
     local cursor=0
     
     tput civis 2>/dev/null || true
-    
-    for ((i=0; i<num_items; i++)); do
-        if [[ $i -eq $cursor ]]; then
-            printf "  \033[7m ▶ %s\033[0m\n" "${items[$i]}"
-        else
-            printf "    %s\n" "${items[$i]}"
-        fi
-    done
+    tui_draw_menu $cursor "${items[@]}"
     
     while true; do
-        tput sc 2>/dev/null || true
+        tput cuu $num_items 2>/dev/null || true
+        tui_draw_menu $cursor "${items[@]}"
         
-        for ((i=0; i<num_items; i++)); do
-            printf "\033[2K"
-            if [[ $i -eq $cursor ]]; then
-                printf "  \033[7m ▶ %s\033[0m\n" "${items[$i]}"
-            else
-                printf "    %s\n" "${items[$i]}"
-            fi
-        done
-        
-        local key=""
+        local key
         IFS= read -rsn1 key < /dev/tty
-        if [[ $? -ne 0 ]]; then
-            break
-        fi
+        local key_code=$(printf '%d' "'$key" 2>/dev/null || echo 0)
         
-        case "$key" in
-            $'\x1b')
-                local key2=""
-                IFS= read -rsn1 key2 < /dev/tty
-                case "$key2" in
-                    '[')
-                        local key3=""
-                        IFS= read -rsn1 key3 < /dev/tty
-                        case "$key3" in
-                            'A')
-                                ((cursor--))
-                                [[ $cursor -lt 0 ]] && cursor=$((num_items - 1))
-                                ;;
-                            'B')
-                                ((cursor++))
-                                [[ $cursor -ge $num_items ]] && cursor=0
-                                ;;
-                        esac
-                        ;;
+        case $key_code in
+            27)
+                IFS= read -rsn2 key < /dev/tty
+                case "$key" in
+                    '[A') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
+                    '[B') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
                 esac
                 ;;
-            '')
-                break
-                ;;
+            10|13|0) break ;;
         esac
-        
-        tput rc 2>/dev/null || true
-        tput cuu $num_items 2>/dev/null || true
     done
     
     tput cnorm 2>/dev/null || true
@@ -125,16 +137,16 @@ tui_interactive_select() {
 select_language() {
     if [[ -n "$LANG_OVERRIDE" ]]; then
         case "$LANG_OVERRIDE" in
-            zh|zh-CN) echo "zh-CN" ;;
+            zh|zh-CN|zh_CN) echo "zh-CN" ;;
             *) echo "en-US" ;;
         esac
         return
     fi
     
     echo ""
-    echo "╔════════════════════════════════════════╗"
-    echo "║         Quickstart-PC v0.12.0          ║"
-    echo "╚════════════════════════════════════════╝"
+    echo -e "\033[0;36m╔════════════════════════════════════════╗\033[0m"
+    echo -e "\033[0;36m║         \033[1mQuickstart-PC v1.0.0\033[0m\033[0;36m             ║\033[0m"
+    echo -e "\033[0;36m╚════════════════════════════════════════╝\033[0m"
     echo ""
     echo "  Please select language / 请选择语言:"
     echo ""
@@ -153,196 +165,228 @@ select_language() {
 DETECTED_LANG=$(select_language)
 
 if [[ "$DETECTED_LANG" == "zh-CN" ]]; then
-    LANG_BANNER="Quickstart-PC v0.12.0 - 快速配置新电脑软件环境"
+    LANG_BANNER_TITLE="Quickstart-PC v1.0.0"
+    LANG_BANNER_DESC="快速配置新电脑软件环境"
+    LANG_DETECTING_SYSTEM="检测系统环境..."
+    LANG_SYSTEM_INFO="系统"
+    LANG_PACKAGE_MANAGER="包管理器"
+    LANG_UNSUPPORTED_OS="不支持的操作系统"
+    LANG_USING_CUSTOM_CONFIG="使用自定义配置"
+    LANG_USING_REMOTE_CONFIG="使用远程配置"
+    LANG_USING_EMBEDDED_CONFIG="使用内嵌配置"
+    LANG_CONFIG_NOT_FOUND="配置文件不存在"
+    LANG_CONFIG_INVALID="配置文件格式无效"
     LANG_SELECT_PROFILES="选择安装套餐"
     LANG_SELECT_SOFTWARE="选择要安装的软件"
     LANG_NAVIGATE="↑↓ 移动 | 空格 选择 | 回车 确认"
     LANG_SELECTED="[✓] "
     LANG_NOT_SELECTED="[  ] "
-    LANG_INSTALLED="(已安装)"
     LANG_SELECT_ALL="全选"
-    LANG_CONFIRM="确认安装？[Y/n]"
+    LANG_NO_PROFILE_SELECTED="未选择任何套餐"
+    LANG_NO_SOFTWARE_SELECTED="未选择任何软件"
+    LANG_CONFIRM_INSTALL="确认安装？[Y/n]"
     LANG_CANCELLED="已取消"
+    LANG_START_INSTALLING="开始安装软件"
     LANG_INSTALLING="安装"
-    LANG_DONE="安装完成"
-    LANG_SKIP="跳过"
-    LANG_DEV_MODE="开发者模式"
-    LANG_FAKE_MODE="假装安装模式"
+    LANG_INSTALL_SUCCESS="安装完成"
+    LANG_INSTALL_FAILED="安装失败"
+    LANG_PLATFORM_NOT_SUPPORTED="不支持的平台"
+    LANG_INSTALLATION_COMPLETE="安装完成"
+    LANG_TOTAL_INSTALLED="共安装"
+    LANG_DEV_MODE="开发者模式：仅显示选择的软件，不实际安装"
+    LANG_FAKE_INSTALL_MODE="假装安装模式：展示安装过程但不实际安装"
+    LANG_FAKE_INSTALLING="模拟安装"
 else
-    LANG_BANNER="Quickstart-PC v0.12.0 - Quick setup for new computers"
+    LANG_BANNER_TITLE="Quickstart-PC v1.0.0"
+    LANG_BANNER_DESC="Quick setup for new computers"
+    LANG_DETECTING_SYSTEM="Detecting system environment..."
+    LANG_SYSTEM_INFO="System"
+    LANG_PACKAGE_MANAGER="Package Manager"
+    LANG_UNSUPPORTED_OS="Unsupported operating system"
+    LANG_USING_CUSTOM_CONFIG="Using custom configuration"
+    LANG_USING_REMOTE_CONFIG="Using remote configuration"
+    LANG_USING_EMBEDDED_CONFIG="Using embedded configuration"
+    LANG_CONFIG_NOT_FOUND="Configuration file not found"
+    LANG_CONFIG_INVALID="Configuration file format invalid"
     LANG_SELECT_PROFILES="Select Installation Profiles"
     LANG_SELECT_SOFTWARE="Select Software to Install"
     LANG_NAVIGATE="↑↓ Move | SPACE Select | ENTER Confirm"
     LANG_SELECTED="[✓] "
     LANG_NOT_SELECTED="[  ] "
-    LANG_INSTALLED="(installed)"
     LANG_SELECT_ALL="Select All"
-    LANG_CONFIRM="Confirm installation? [Y/n]"
+    LANG_NO_PROFILE_SELECTED="No profile selected"
+    LANG_NO_SOFTWARE_SELECTED="No software selected"
+    LANG_CONFIRM_INSTALL="Confirm installation? [Y/n]"
     LANG_CANCELLED="Cancelled"
+    LANG_START_INSTALLING="Starting software installation"
     LANG_INSTALLING="Installing"
-    LANG_DONE="Installation Complete"
-    LANG_SKIP="Skipped"
-    LANG_DEV_MODE="Dev mode"
-    LANG_FAKE_MODE="Fake install mode"
+    LANG_INSTALL_SUCCESS="installed successfully"
+    LANG_INSTALL_FAILED="installation failed"
+    LANG_PLATFORM_NOT_SUPPORTED="Platform not supported"
+    LANG_INSTALLATION_COMPLETE="Installation Complete"
+    LANG_TOTAL_INSTALLED="Total installed"
+    LANG_DEV_MODE="Dev mode: Show selected software without installing"
+    LANG_FAKE_INSTALL_MODE="Fake install mode: Show installation process without actually installing"
+    LANG_FAKE_INSTALLING="Simulating install"
 fi
 
-# Profile data
-PROFILE_KEYS=(recommended ai developer)
-PROFILE_NAME_0="⭐ 推荐套餐/Recommended"
-PROFILE_DESC_0="综合均衡/Balanced"
-PROFILE_NAME_1="🤖 AI 赋能/AI Powered"
-PROFILE_DESC_1="AI 工具/AI tools"
-PROFILE_NAME_2="💻 开发者/Developer"
-PROFILE_DESC_2="开发工具/Dev tools"
-
-# Profile to software mapping
-PROFILE_SW_0="chrome vscode git nodejs python wps vlc"
-PROFILE_SW_1="cursor ollama"
-PROFILE_SW_2="vscode git nodejs python"
-
-# Software data (index based)
-SW_KEYS=(chrome vscode git nodejs python cursor ollama wps vlc ffmpeg)
-SW_NAME_0="Chrome" SW_DESC_0="浏览器/Browser"
-SW_NAME_1="VS Code" SW_DESC_1="代码编辑器/Editor"
-SW_NAME_2="Git" SW_DESC_2="版本控制/Version control"
-SW_NAME_3="Node.js" SW_DESC_3="JavaScript 运行时"
-SW_NAME_4="Python" SW_DESC_4="Python 语言"
-SW_NAME_5="Cursor" SW_DESC_5="AI 编辑器/AI editor"
-SW_NAME_6="Ollama" SW_DESC_6="本地 LLM/Local LLM"
-SW_NAME_7="WPS Office" SW_DESC_7="办公套件/Office"
-SW_NAME_8="VLC" SW_DESC_8="播放器/Player"
-SW_NAME_9="FFmpeg" SW_DESC_9="音视频工具/Media"
-
-# Install commands
-SW_WIN_0="winget install Google.Chrome"
-SW_MAC_0="brew install --cask google-chrome"
-SW_LINUX_0="sudo apt install -y google-chrome-stable"
-
-SW_WIN_1="winget install Microsoft.VisualStudioCode"
-SW_MAC_1="brew install --cask visual-studio-code"
-SW_LINUX_1="sudo snap install --classic code"
-
-SW_WIN_2="winget install Git.Git"
-SW_MAC_2="brew install git"
-SW_LINUX_2="sudo apt install -y git"
-
-SW_WIN_3="winget install OpenJS.NodeJS.LTS"
-SW_MAC_3="brew install node"
-SW_LINUX_3="curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt install -y nodejs"
-
-SW_WIN_4="winget install Python.Python.3.12"
-SW_MAC_4="brew install python@3.12"
-SW_LINUX_4="sudo apt install -y python3 python3-pip"
-
-SW_WIN_5="winget install Cursor.Cursor"
-SW_MAC_5="brew install --cask cursor"
-SW_LINUX_5="echo Download from cursor.sh"
-
-SW_WIN_6="winget install Ollama.Ollama"
-SW_MAC_6="brew install ollama"
-SW_LINUX_6="curl -fsSL https://ollama.ai/install.sh | sh"
-
-SW_WIN_7="winget install Kingsoft.WPSOffice"
-SW_MAC_7="brew install --cask wps-office"
-SW_LINUX_7="sudo apt install -y wps-office"
-
-SW_WIN_8="winget install VideoLAN.VLC"
-SW_MAC_8="brew install --cask vlc"
-SW_LINUX_8="sudo apt install -y vlc"
-
-SW_WIN_9="winget install FFmpeg"
-SW_MAC_9="brew install ffmpeg"
-SW_LINUX_9="sudo apt install -y ffmpeg"
-
-# Check commands
-SW_CHECK_MAC_0="ls /Applications/Google\\ Chrome.app 2>/dev/null"
-SW_CHECK_MAC_1="ls /Applications/Visual\\ Studio\\ Code.app 2>/dev/null"
-SW_CHECK_MAC_2="which git"
-SW_CHECK_MAC_3="which node"
-SW_CHECK_MAC_4="which python3"
-SW_CHECK_MAC_5="ls /Applications/Cursor.app 2>/dev/null"
-SW_CHECK_MAC_6="which ollama"
-SW_CHECK_MAC_7="ls /Applications/WPS\\ Office.app 2>/dev/null"
-SW_CHECK_MAC_8="ls /Applications/VLC.app 2>/dev/null"
-SW_CHECK_MAC_9="which ffmpeg"
-
-get_sw_index() {
-    local key=$1
-    for ((i=0; i<${#SW_KEYS[@]}; i++)); do
-        if [[ "${SW_KEYS[$i]}" == "$key" ]]; then
-            echo $i
-            return
-        fi
-    done
-    echo "-1"
-}
-
-get_sw_name() {
-    local idx=$1
-    eval "echo \$SW_NAME_$idx"
-}
-
-get_sw_desc() {
-    local idx=$1
-    eval "echo \$SW_DESC_$idx"
-}
-
-get_sw_cmd() {
-    local idx=$1
-    local os=$2
-    eval "echo \$SW_${os}_$idx"
-}
-
-get_sw_check() {
-    local idx=$1
-    local os=$2
-    eval "echo \$SW_CHECK_${os}_$idx"
-}
-
-is_installed() {
-    local key=$1
-    local os=$2
-    local idx=$(get_sw_index "$key")
-    [[ $idx -eq -1 ]] && return 1
-    
-    local check_cmd=$(get_sw_check $idx "$os")
-    [[ -z "$check_cmd" ]] && return 1
-    eval "$check_cmd" &>/dev/null
-}
-
-detect_os() {
-    case "$OSTYPE" in
-        msys*|mingw*|cygwin*|win*) echo "WIN" ;;
-        darwin*) echo "MAC" ;;
-        linux*) echo "LINUX" ;;
-        *) echo "MAC" ;;
-    esac
-}
+EMBEDDED_CONFIG='{
+  "profiles": {
+    "recommended": {
+      "name": "推荐套餐/Recommended",
+      "desc": "综合均衡/Balanced setup",
+      "icon": "⭐",
+      "includes": ["chrome", "vscode", "git", "nodejs", "python", "wps", "vlc"]
+    },
+    "ai": {
+      "name": "AI 赋能/AI Powered",
+      "desc": "AI 工具/AI tools",
+      "icon": "🤖",
+      "includes": ["cursor", "ollama"]
+    },
+    "developer": {
+      "name": "开发者/Developer",
+      "desc": "开发工具/Dev tools",
+      "icon": "💻",
+      "includes": ["vscode", "git", "nodejs", "python"]
+    }
+  },
+  "software": {
+    "chrome": {"name": "Chrome", "desc": "浏览器/Browser", "win": "winget install Google.Chrome", "mac": "brew install --cask google-chrome", "linux": "sudo apt install -y google-chrome-stable"},
+    "vscode": {"name": "VS Code", "desc": "代码编辑器/Code editor", "win": "winget install Microsoft.VisualStudioCode", "mac": "brew install --cask visual-studio-code", "linux": "sudo snap install --classic code"},
+    "git": {"name": "Git", "desc": "版本控制/Version control", "win": "winget install Git.Git", "mac": "brew install git", "linux": "sudo apt install -y git"},
+    "nodejs": {"name": "Node.js", "desc": "JavaScript 运行时/Runtime", "win": "winget install OpenJS.NodeJS.LTS", "mac": "brew install node", "linux": "curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt install -y nodejs"},
+    "python": {"name": "Python", "desc": "Python 编程语言/Programming language", "win": "winget install Python.Python.3.12", "mac": "brew install python@3.12", "linux": "sudo apt install -y python3 python3-pip"},
+    "cursor": {"name": "Cursor", "desc": "AI 代码编辑器/AI editor", "win": "winget install Cursor.Cursor", "mac": "brew install --cask cursor", "linux": "echo Download from https://cursor.sh"},
+    "ollama": {"name": "Ollama", "desc": "本地 LLM/Local LLM", "win": "winget install Ollama.Ollama", "mac": "brew install ollama", "linux": "curl -fsSL https://ollama.ai/install.sh | sh"},
+    "wps": {"name": "WPS Office", "desc": "办公套件/Office suite", "win": "winget install Kingsoft.WPSOffice", "mac": "brew install --cask wps-office", "linux": "sudo apt install -y wps-office"},
+    "obsidian": {"name": "Obsidian", "desc": "笔记工具/Notes", "win": "winget install Obsidian.Obsidian", "mac": "brew install --cask obsidian", "linux": "sudo snap install obsidian --classic"},
+    "vlc": {"name": "VLC", "desc": "媒体播放器/Media player", "win": "winget install VideoLAN.VLC", "mac": "brew install --cask vlc", "linux": "sudo apt install -y vlc"},
+    "ffmpeg": {"name": "FFmpeg", "desc": "音视频工具/Media tool", "win": "winget install FFmpeg", "mac": "brew install ffmpeg", "linux": "sudo apt install -y ffmpeg"}
+  }
+}'
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 ORANGE='\033[38;5;208m'
-GRAY='\033[0;90m'
 NC='\033[0m'
+BOLD='\033[1m'
 REVERSE='\033[7m'
 
-log_info() { echo -e "${CYAN}[INFO]${NC} $*"; }
+log_info() { echo -e "${BLUE}[INFO]${NC} $*"; }
 log_success() { echo -e "${GREEN}[✓]${NC} $*"; }
 log_warn() { echo -e "${YELLOW}[!]${NC} $*"; }
+log_error() { echo -e "${RED}[✗]${NC} $*"; }
 log_step() { echo -e "${CYAN}[→]${NC} $*"; }
-log_header() { echo ""; echo "========================================"; echo "  $*"; echo "========================================"; }
+log_header() { echo ""; echo -e "${BOLD}========================================${NC}"; echo -e "${BOLD}  $*${NC}"; echo -e "${BOLD}========================================${NC}"; }
 
-SELECTED_SW=()
+detect_os() {
+    case "$OSTYPE" in
+        msys*|mingw*|cygwin*|win*) echo "windows" ;;
+        darwin*) echo "macos" ;;
+        linux*) echo "linux" ;;
+        *) echo "unknown" ;;
+    esac
+}
+
+get_system_info() {
+    case $(detect_os) in
+        windows) echo "Windows" ;;
+        macos) echo "macOS $(sw_vers -productVersion 2>/dev/null || echo unknown)" ;;
+        linux) echo "Linux" ;;
+        *) echo "Unknown" ;;
+    esac
+}
+
+check_package_manager() {
+    case $1 in
+        windows) command -v winget &>/dev/null && echo "winget" || echo "none" ;;
+        macos) command -v brew &>/dev/null && echo "brew" || echo "none" ;;
+        linux) command -v apt &>/dev/null && echo "apt" || echo "none" ;;
+    esac
+}
+
+get_json_value() {
+    echo "$1" | grep -o "\"$2\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" | head -1 | sed 's/.*" *: *"//;s/"$//'
+}
+
+get_json_array() {
+    echo "$1" | grep -o "\"$2\"[[:space:]]*:[[:space:]]*\[[^\]]*\]" | sed 's/.*\[/[/;s/\]$//'
+}
+
+parse_profiles() {
+    local config="$1"
+    local platform="$2"
+    
+    PROFILE_KEYS=()
+    PROFILE_NAMES=()
+    PROFILE_ICONS=()
+    PROFILE_DESCS=()
+    
+    local profiles_json=$(echo "$config" | grep -o '"profiles"[[:space:]]*:[[:space:]]*{[^}]*}' | sed 's/"profiles"[[:space:]]*:[[:space:]]*{/{/')
+    
+    while IFS= read -r key; do
+        key=$(echo "$key" | tr -d '"' | tr -d ',' | tr -d ' ')
+        [[ -z "$key" ]] && continue
+        
+        PROFILE_KEYS+=("$key")
+        
+        local profile_json=$(echo "$config" | grep -o "\"$key\"[[:space:]]*:[[:space:]]*{[^}]*}")
+        PROFILE_NAMES+=("$(get_json_value "$profile_json" "name")")
+        PROFILE_ICONS+=("$(get_json_value "$profile_json" "icon")")
+        PROFILE_DESCS+=("$(get_json_value "$profile_json" "desc")")
+    done < <(echo "$profiles_json" | grep -o '"[a-z_]*"' | grep -v '"profiles"')
+}
+
+parse_software() {
+    local config="$1"
+    local platform="$2"
+    shift 2
+    local profiles=("$@")
+    
+    SW_KEYS=()
+    SW_NAMES=()
+    SW_DESCS=()
+    
+    local sw_keys_temp=()
+    
+    for profile in "${profiles[@]}"; do
+        local profile_json=$(echo "$config" | grep -o "\"$profile\"[[:space:]]*:[[:space:]]*{[^}]*}")
+        local includes=$(get_json_array "$profile_json" "includes")
+        
+        local temp=$(echo "$includes" | tr -d '[]"' | tr ',' '\n')
+        while IFS= read -r key; do
+            key=$(echo "$key" | tr -d ' ')
+            [[ -z "$key" ]] && continue
+            if [[ ! " ${sw_keys_temp[@]} " =~ " $key " ]]; then
+                sw_keys_temp+=("$key")
+            fi
+        done <<< "$temp"
+    done
+    
+    for key in "${sw_keys_temp[@]}"; do
+        SW_KEYS+=("$key")
+        local sw_json=$(echo "$config" | grep -o "\"$key\"[[:space:]]*:[[:space:]]*{[^}]*}")
+        SW_NAMES+=("$(get_json_value "$sw_json" "name")")
+        SW_DESCS+=("$(get_json_value "$sw_json" "desc")")
+    done
+}
+
+SELECTED_PROFILES=()
+SELECTED_SOFTWARE=()
 
 show_profile_menu() {
-    local num=${#PROFILE_KEYS[@]}
-    local -a names=()
+    parse_profiles "$CONFIG_FILE"
     
-    for ((i=0; i<num; i++)); do
-        local pname=$(eval "echo \$PROFILE_NAME_$i")
-        local pdesc=$(eval "echo \$PROFILE_DESC_$i")
-        names+=("$pname - $pdesc")
+    local num_profiles=${#PROFILE_KEYS[@]}
+    local -a menu_names
+    local cursor=0
+    
+    for ((i=0; i<num_profiles; i++)); do
+        menu_names+=("${PROFILE_ICONS[$i]} ${PROFILE_NAMES[$i]} - ${PROFILE_DESCS[$i]}")
     done
     
     tput civis 2>/dev/null || true
@@ -353,91 +397,67 @@ show_profile_menu() {
     echo -e "  ${CYAN}$LANG_NAVIGATE${NC}"
     echo ""
     
-    local cursor=0
-    local running=true
+    local start_line=$(tput lines 2>/dev/null || echo 24)
     
-    while [[ "$running" == "true" ]]; do
-        # 清屏重绘
-        tput sc 2>/dev/null || true
-        
-        for ((i=0; i<num; i++)); do
+    draw_menu() {
+        for ((i=0; i<num_profiles; i++)); do
+            printf "\033[2K"
             if [[ $i -eq $cursor ]]; then
-                echo -e "  ${REVERSE} ▶ ${names[$i]}${NC}"
+                echo -e "  ${REVERSE} ▶ ${menu_names[$i]}${NC}"
             else
-                echo -e "    ${names[$i]}"
+                echo -e "    ${menu_names[$i]}"
             fi
         done
+    }
+    
+    draw_menu
+    
+    while true; do
+        tput cuu $num_profiles 2>/dev/null || true
+        draw_menu
         
-        # 读取按键
-        local key=""
+        local key
         IFS= read -rsn1 key < /dev/tty
+        local key_code=$(printf '%d' "'$key" 2>/dev/null || echo 0)
         
-        case "$key" in
-            $'\x1b')
-                local key2=""
-                IFS= read -rsn1 key2 < /dev/tty
-                case "$key2" in
-                    '[')
-                        local key3=""
-                        IFS= read -rsn1 key3 < /dev/tty
-                        case "$key3" in
-                            'A') # 上箭头
-                                ((cursor--))
-                                [[ $cursor -lt 0 ]] && cursor=$((num - 1))
-                                ;;
-                            'B') # 下箭头
-                                ((cursor++))
-                                [[ $cursor -ge $num ]] && cursor=0
-                                ;;
-                        esac
-                        ;;
+        case $key_code in
+            27)
+                IFS= read -rsn2 key < /dev/tty
+                case "$key" in
+                    '[A') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_profiles - 1)) ;;
+                    '[B') ((cursor++)); [[ $cursor -ge $num_profiles ]] && cursor=0 ;;
                 esac
                 ;;
-            '') # 回车
-                running=false
-                ;;
+            10|13|0) break ;;
         esac
-        
-        # 恢复光标位置
-        tput rc 2>/dev/null || true
-        tput cuu $num 2>/dev/null || true
     done
     
     tput cnorm 2>/dev/null || true
     
-    echo "$cursor"
+    SELECTED_PROFILES=("${PROFILE_KEYS[$cursor]}")
 }
 
 show_software_menu() {
     local os=$1
-    local profile_idx=$2
+    shift
+    parse_software "$CONFIG_FILE" "$os" "$@"
     
-    local sw_list=$(eval "echo \$PROFILE_SW_$profile_idx")
-    local -a sw_keys=($sw_list)
-    local num_sw=${#sw_keys[@]}
+    local num_sw=${#SW_KEYS[@]}
+    local -a menu_keys menu_names
+    local -a checked
     
-    local -a names=()
-    local -a checked=()
-    
-    names=("${ORANGE}${LANG_SELECT_ALL}${NC}")
+    menu_keys=("select_all")
+    menu_names=("${ORANGE}$LANG_SELECT_ALL${NC}")
     checked=(0)
     
-    for key in "${sw_keys[@]}"; do
-        local idx=$(get_sw_index "$key")
-        local name=$(get_sw_name $idx)
-        local desc=$(get_sw_desc $idx)
-        
-        if is_installed "$key" "$os"; then
-            names+=("${GRAY}${name} - ${desc} ${LANG_INSTALLED}${NC}")
-        else
-            names+=("${name} - ${desc}")
-        fi
+    for ((i=0; i<num_sw; i++)); do
+        menu_keys+=("${SW_KEYS[$i]}")
+        menu_names+=("${SW_NAMES[$i]} - ${SW_DESCS[$i]}")
         checked+=(0)
     done
     
-    local num_items=${#names[@]}
+    local num_items=${#menu_keys[@]}
     local cursor=0
-    local running=true
     
     tput civis 2>/dev/null || true
     
@@ -447,52 +467,44 @@ show_software_menu() {
     echo -e "  ${CYAN}$LANG_NAVIGATE${NC}"
     echo ""
     
-    while [[ "$running" == "true" ]]; do
-        # 清屏重绘
-        tput sc 2>/dev/null || true
-        
+    draw_menu() {
         for ((i=0; i<num_items; i++)); do
+            printf "\033[2K"
             if [[ $i -eq $cursor ]]; then
                 if [[ ${checked[$i]} -eq 1 ]]; then
-                    echo -e "  ${REVERSE}${GREEN}${LANG_SELECTED}${NC}${REVERSE}${names[$i]}${NC}"
+                    echo -e "  ${REVERSE}${GREEN}${LANG_SELECTED}${NC}${REVERSE}${menu_names[$i]}${NC}"
                 else
-                    echo -e "  ${REVERSE}${LANG_NOT_SELECTED}${names[$i]}${NC}"
+                    echo -e "  ${REVERSE}${LANG_NOT_SELECTED}${menu_names[$i]}${NC}"
                 fi
             else
                 if [[ ${checked[$i]} -eq 1 ]]; then
-                    echo -e "  ${GREEN}${LANG_SELECTED}${NC}${names[$i]}"
+                    echo -e "  ${GREEN}${LANG_SELECTED}${NC}${menu_names[$i]}"
                 else
-                    echo -e "  ${LANG_NOT_SELECTED}${names[$i]}"
+                    echo -e "  ${LANG_NOT_SELECTED}${menu_names[$i]}"
                 fi
             fi
         done
+    }
+    
+    draw_menu
+    
+    while true; do
+        tput cuu $num_items 2>/dev/null || true
+        draw_menu
         
-        # 读取按键
-        local key=""
+        local key
         IFS= read -rsn1 key < /dev/tty
+        local key_code=$(printf '%d' "'$key" 2>/dev/null || echo 0)
         
-        case "$key" in
-            $'\x1b')
-                local key2=""
-                IFS= read -rsn1 key2 < /dev/tty
-                case "$key2" in
-                    '[')
-                        local key3=""
-                        IFS= read -rsn1 key3 < /dev/tty
-                        case "$key3" in
-                            'A')
-                                ((cursor--))
-                                [[ $cursor -lt 0 ]] && cursor=$((num_items - 1))
-                                ;;
-                            'B')
-                                ((cursor++))
-                                [[ $cursor -ge $num_items ]] && cursor=0
-                                ;;
-                        esac
-                        ;;
+        case $key_code in
+            27)
+                IFS= read -rsn2 key < /dev/tty
+                case "$key" in
+                    '[A') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
+                    '[B') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
                 esac
                 ;;
-            ' ')
+            32)
                 if [[ $cursor -eq 0 ]]; then
                     local new_state=$((1 - checked[0]))
                     for ((i=0; i<num_items; i++)); do
@@ -502,87 +514,159 @@ show_software_menu() {
                     checked[$cursor]=$((1 - checked[$cursor]))
                 fi
                 ;;
-            '')
-                running=false
-                ;;
+            10|13|0) break ;;
         esac
-        
-        # 恢复光标位置
-        tput rc 2>/dev/null || true
-        tput cuu $num_items 2>/dev/null || true
     done
     
     tput cnorm 2>/dev/null || true
     
-    SELECTED_SW=()
+    SELECTED_SOFTWARE=()
     for ((i=1; i<num_items; i++)); do
-        [[ ${checked[$i]} -eq 1 ]] && SELECTED_SW+=("${sw_keys[$((i-1))]}")
+        [[ ${checked[$i]} -eq 1 ]] && SELECTED_SOFTWARE+=("${menu_keys[$i]}")
     done
+}
+
+get_install_cmd() {
+    local config="$1"
+    local key="$2"
+    local platform="$3"
+    
+    local sw_json=$(echo "$config" | grep -o "\"$key\"[[:space:]]*:[[:space:]]*{[^}]*}")
+    get_json_value "$sw_json" "$platform"
+}
+
+install_software() {
+    local os=$1
+    local key=$2
+    local platform
+    
+    case "$os" in
+        windows) platform="win" ;;
+        macos) platform="mac" ;;
+        linux) platform="linux" ;;
+    esac
+    
+    local cmd=$(get_install_cmd "$CONFIG_FILE" "$key" "$platform")
+    
+    if [[ -z "$cmd" ]]; then
+        log_warn "$LANG_PLATFORM_NOT_SUPPORTED: $key"
+        return 1
+    fi
+    
+    if [[ "$FAKE_INSTALL" == "true" ]]; then
+        log_step "$LANG_FAKE_INSTALLING: $key"
+        echo -e "  ${CYAN}→ Command: $cmd${NC}"
+        sleep 1
+        log_success "$key $LANG_INSTALL_SUCCESS (simulated)"
+        return 0
+    fi
+    
+    log_step "$LANG_INSTALLING: $key"
+    if eval "$cmd" 2>/dev/null; then
+        log_success "$key $LANG_INSTALL_SUCCESS"
+    else
+        log_error "$key $LANG_INSTALL_FAILED"
+        return 1
+    fi
+}
+
+load_config() {
+    CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
+    
+    if [[ -n "$CFG_PATH" ]]; then
+        if [[ -f "$CFG_PATH" ]]; then
+            if grep -q '"profiles"' "$CFG_PATH" && grep -q '"software"' "$CFG_PATH"; then
+                log_info "$LANG_USING_CUSTOM_CONFIG: $CFG_PATH"
+                cp "$CFG_PATH" "$CONFIG_FILE"
+                return 0
+            else
+                log_error "$LANG_CONFIG_INVALID: $CFG_PATH"
+                exit 1
+            fi
+        else
+            log_error "$LANG_CONFIG_NOT_FOUND: $CFG_PATH"
+            exit 1
+        fi
+    fi
+    
+    if [[ -n "$CFG_URL" ]]; then
+        log_info "$LANG_USING_REMOTE_CONFIG: $CFG_URL"
+        if curl -fsSL --connect-timeout 10 --max-time 30 "$CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
+            if grep -q '"profiles"' "$CONFIG_FILE" && grep -q '"software"' "$CONFIG_FILE"; then
+                return 0
+            else
+                log_error "$LANG_CONFIG_INVALID: $CFG_URL"
+                exit 1
+            fi
+        else
+            log_error "$LANG_CONFIG_NOT_FOUND: $CFG_URL"
+            exit 1
+        fi
+    fi
+    
+    log_info "$LANG_USING_EMBEDDED_CONFIG"
+    echo "$EMBEDDED_CONFIG" > "$CONFIG_FILE"
+}
+
+show_banner() {
+    echo ""
+    echo -e "${CYAN}╔════════════════════════════════════════╗${NC}"
+    echo -e "${CYAN}║         ${BOLD}${LANG_BANNER_TITLE}${CYAN}             ║${NC}"
+    echo -e "${CYAN}║    ${LANG_BANNER_DESC}              ║${NC}"
+    echo -e "${CYAN}╚════════════════════════════════════════╝${NC}"
+    echo ""
 }
 
 main() {
-    echo ""
-    echo "╔════════════════════════════════════════╗"
-    echo "║         Quickstart-PC v0.12.0          ║"
-    echo "║    $LANG_BANNER"
-    echo "╚════════════════════════════════════════╝"
-    echo ""
+    show_banner
     
-    [[ "$DEV_MODE" == "true" ]] && echo -e "${YELLOW}[!] $LANG_DEV_MODE${NC}" && echo ""
-    [[ "$FAKE_INSTALL" == "true" ]] && echo -e "${YELLOW}[!] $LANG_FAKE_MODE${NC}" && echo ""
+    [[ "$DEV_MODE" == "true" ]] && log_warn "$LANG_DEV_MODE" && echo ""
+    [[ "$FAKE_INSTALL" == "true" ]] && log_warn "$LANG_FAKE_INSTALL_MODE" && echo ""
     
+    log_info "$LANG_DETECTING_SYSTEM"
     local os=$(detect_os)
-    log_info "OS: $os"
+    local system_info=$(get_system_info)
+    local pkg_manager=$(check_package_manager "$os")
     
-    local profile_idx=$(show_profile_menu)
+    log_info "$LANG_SYSTEM_INFO: $system_info"
+    log_info "$LANG_PACKAGE_MANAGER: $pkg_manager"
     
-    show_software_menu "$os" "$profile_idx"
+    [[ "$os" == "unknown" ]] && log_error "$LANG_UNSUPPORTED_OS" && exit 1
     
-    [[ ${#SELECTED_SW[@]} -eq 0 ]] && echo "No software selected" && exit 0
+    load_config
+    show_profile_menu
+    
+    [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
+    
+    show_software_menu "$os" "${SELECTED_PROFILES[@]}"
+    
+    [[ ${#SELECTED_SOFTWARE[@]} -eq 0 ]] && log_warn "$LANG_NO_SOFTWARE_SELECTED" && exit 0
     
     echo ""
-    log_info "Selected: ${SELECTED_SW[*]}"
+    log_info "Selected: ${SELECTED_SOFTWARE[*]}"
     echo ""
     
-    [[ "$DEV_MODE" == "true" ]] && exit 0
+    [[ "$DEV_MODE" == "true" ]] && log_info "Dev mode: Done" && exit 0
     
-    read -p "$LANG_CONFIRM " confirm < /dev/tty
-    [[ "$confirm" =~ ^[Nn] ]] && echo "$LANG_CANCELLED" && exit 0
+    read -p "$LANG_CONFIRM_INSTALL " confirm < /dev/tty
+    [[ "$confirm" =~ ^[Nn] ]] && log_info "$LANG_CANCELLED" && exit 0
     
-    log_header "$LANG_INSTALLING"
+    log_header "$LANG_START_INSTALLING"
     
-    local total=${#SELECTED_SW[@]}
+    local total=${#SELECTED_SOFTWARE[@]}
     local current=0
-    local skipped=0
+    local failed=0
     
-    for sw in "${SELECTED_SW[@]}"; do
+    for sw in "${SELECTED_SOFTWARE[@]}"; do
         ((current++))
-        local idx=$(get_sw_index "$sw")
-        local name=$(get_sw_name $idx)
-        
-        printf "\r[%3d%%] %s %s" "$((current * 100 / total))" "$LANG_INSTALLING" "$name"
-        
-        if is_installed "$sw" "$os"; then
-            ((skipped++))
-            continue
-        fi
-        
-        local cmd=$(get_sw_cmd $idx "$os")
-        
-        if [[ "$FAKE_INSTALL" == "true" ]]; then
-            echo ""
-            echo -e "  ${CYAN}→ $cmd${NC}"
-            sleep 1
-            echo -e "  ${GREEN}[✓] $name (simulated)${NC}"
-        else
-            eval "$cmd" &>/dev/null && echo -e "\n  ${GREEN}[✓] $name${NC}" || echo -e "\n  ${RED}[✗] $name failed${NC}"
-        fi
+        printf "\r${CYAN}[%3d%%]${NC} %s" "$((current * 100 / total))" "$LANG_INSTALLING $sw"
+        install_software "$os" "$sw" || ((failed++))
     done
-    
     echo ""
-    log_header "$LANG_DONE"
-    echo -e "${GREEN}[✓] Total: $total, Skipped: $skipped${NC}"
+    
+    log_header "$LANG_INSTALLATION_COMPLETE"
+    [[ $failed -eq 0 ]] && log_success "$LANG_TOTAL_INSTALLED $total" || log_warn "$LANG_TOTAL_INSTALLED $((total - failed)) / $total ($failed failed)"
 }
 
-trap 'tput cnorm 2>/dev/null || true' EXIT
+trap 'tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
 main "$@"
