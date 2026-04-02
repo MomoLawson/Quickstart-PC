@@ -87,6 +87,46 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# --list-profiles 在语言选择之前处理，默认英文输出
+if [[ "$LIST_PROFILES" == "true" ]]; then
+    # 检测 jq
+    if ! command -v jq &>/dev/null; then
+        if [[ "$(uname -s)" == "Darwin" ]]; then
+            brew install jq 2>/dev/null
+        else
+            sudo apt install -y jq 2>/dev/null
+        fi
+    fi
+    
+    CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
+    if [[ -n "$CFG_URL" ]]; then
+        curl -fsSL --connect-timeout 10 --max-time 30 "$CFG_URL" -o "$CONFIG_FILE" 2>/dev/null
+    elif [[ -n "$CFG_PATH" ]]; then
+        cp "$CFG_PATH" "$CONFIG_FILE" 2>/dev/null
+    else
+        curl -fsSL --connect-timeout 10 --max-time 30 "$DEFAULT_CFG_URL" -o "$CONFIG_FILE" 2>/dev/null
+    fi
+    
+    if [[ -f "$CONFIG_FILE" ]] && jq empty "$CONFIG_FILE" 2>/dev/null; then
+        echo ""
+        echo "Available profiles:"
+        echo ""
+        while IFS= read -r key; do
+            [[ -z "$key" ]] && continue
+            pname=$(jq -r ".profiles[\"$key\"].name // \"$key\"" "$CONFIG_FILE")
+            pdesc=$(jq -r ".profiles[\"$key\"].desc // \"\"" "$CONFIG_FILE")
+            picon=$(jq -r ".profiles[\"$key\"].icon // \"\"" "$CONFIG_FILE")
+            echo "  ${picon} ${key} - ${pname}: ${pdesc}"
+        done < <(jq -r '.profiles | keys[]' "$CONFIG_FILE")
+        echo ""
+    else
+        echo "[ERROR] Failed to load configuration"
+    fi
+    
+    rm -f "$CONFIG_FILE" 2>/dev/null
+    exit 0
+fi
+
 # 日志系统
 log_to_file() {
     [[ -n "$LOG_FILE" ]] && echo "$*" >> "$LOG_FILE"
@@ -666,26 +706,6 @@ show_banner() {
 }
 
 main() {
-    if [[ "$LIST_PROFILES" == "true" ]]; then
-        ensure_json_parser
-        load_config
-        
-        echo ""
-        echo "Available profiles:"
-        echo ""
-        while IFS= read -r key; do
-            [[ -z "$key" ]] && continue
-            pname=$(get_json_profile_field "$CONFIG_FILE" "$key" "name")
-            pdesc=$(get_json_profile_field "$CONFIG_FILE" "$key" "desc")
-            picon=$(get_json_profile_field "$CONFIG_FILE" "$key" "icon")
-            echo "  ${picon} ${key} - ${pname}: ${pdesc}"
-        done < <(get_json_profiles "$CONFIG_FILE")
-        echo ""
-        
-        rm -f "$CONFIG_FILE" 2>/dev/null
-        exit 0
-    fi
-    
     show_banner
     
     [[ "$DEV_MODE" == "true" ]] && log_warn "$LANG_DEV_MODE" && echo ""
