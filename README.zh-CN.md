@@ -121,6 +121,8 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | `--dev` | 开发模式：显示选择但不安装 |
 | `--dry-run` | 假装安装：展示过程但不实际安装 |
 | `--yes` / `-y` | 自动确认所有提示 |
+| `--verbose` / `-v` | 显示详细调试信息 |
+| `--log-file FILE` | 将日志写入文件（纯文本，无颜色） |
 | `--cfg-path PATH` | 使用本地 profiles.json |
 | `--cfg-url URL` | 使用远程 profiles.json URL |
 | `--help` | 显示帮助 |

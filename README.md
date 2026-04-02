@@ -121,6 +121,8 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | `--dev` | Dev mode: show selections without installing |
 | `--dry-run` | Fake install: show process without installing |
 | `--yes` / `-y` | Auto-confirm all prompts |
+| `--verbose` / `-v` | Show detailed debug info |
+| `--log-file FILE` | Write logs to file (plain text, no colors) |
 | `--cfg-path PATH` | Use local profiles.json |
 | `--cfg-url URL` | Use remote profiles.json URL |
 | `--help` | Show help |

@@ -60,6 +60,7 @@ DEV_MODE=false
 FAKE_INSTALL=false
 AUTO_YES=false
 VERBOSE=false
+LOG_FILE=""
 LANG_OVERRIDE=""
 CFG_PATH=""
 CFG_URL=""
@@ -71,6 +72,7 @@ while [[ $# -gt 0 ]]; do
         --fake-install) FAKE_INSTALL=true; log_warn "--fake-install is deprecated, use --dry-run instead" >&2; shift ;;
         --yes|-y) AUTO_YES=true; shift ;;
         --verbose|-v) VERBOSE=true; shift ;;
+        --log-file) LOG_FILE="$2"; shift 2 ;;
         --lang) LANG_OVERRIDE="$2"; shift 2 ;;
         --cfg-path) CFG_PATH="$2"; shift 2 ;;
         --cfg-url) CFG_URL="$2"; shift 2 ;;
@@ -78,6 +80,41 @@ while [[ $# -gt 0 ]]; do
         *) shift ;;
     esac
 done
+
+# 日志系统
+log_to_file() {
+    [[ -n "$LOG_FILE" ]] && echo "$*" >> "$LOG_FILE"
+}
+
+log_info() {
+    echo -e "${BLUE}[INFO]${NC} $*"
+    log_to_file "[INFO] $*"
+}
+log_success() {
+    echo -e "${GREEN}[✓]${NC} $*"
+    log_to_file "[SUCCESS] $*"
+}
+log_warn() {
+    echo -e "${YELLOW}[!]${NC} $*"
+    log_to_file "[WARN] $*"
+}
+log_error() {
+    echo -e "${RED}[✗]${NC} $*" >&2
+    log_to_file "[ERROR] $*"
+}
+log_step() {
+    echo -e "${CYAN}[→]${NC} $*"
+    log_to_file "[STEP] $*"
+}
+log_header() {
+    echo ""
+    echo -e "${BOLD}========================================${NC}"
+    echo -e "${BOLD}  $*${NC}"
+    echo -e "${BOLD}========================================${NC}"
+    log_to_file ""
+    log_to_file "===== $* ====="
+    log_to_file ""
+}
 
 # JSON 解析函数
 JSON_PARSER=""
@@ -331,13 +368,6 @@ ORANGE='\033[38;5;208m'
 NC='\033[0m'
 BOLD='\033[1m'
 REVERSE='\033[7m'
-
-log_info() { echo -e "${BLUE}[INFO]${NC} $*"; }
-log_success() { echo -e "${GREEN}[✓]${NC} $*"; }
-log_warn() { echo -e "${YELLOW}[!]${NC} $*"; }
-log_error() { echo -e "${RED}[✗]${NC} $*"; }
-log_step() { echo -e "${CYAN}[→]${NC} $*"; }
-log_header() { echo ""; echo -e "${BOLD}========================================${NC}"; echo -e "${BOLD}  $*${NC}"; echo -e "${BOLD}========================================${NC}"; }
 
 detect_os() {
     case "$OSTYPE" in
