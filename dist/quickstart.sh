@@ -69,44 +69,77 @@ while [[ $# -gt 0 ]]; do
 done
 
 # JSON 解析函数
-ensure_jq() {
-    if ! command -v jq &>/dev/null; then
-        log_info "未检测到 jq，安装中..."
-        case $(detect_os) in
-            macos) brew install jq ;;
-            linux) sudo apt install -y jq ;;
-            windows) echo "请手动安装 jq: https://stedolan.github.io/jq/download/" ;;
-        esac
-        if ! command -v jq &>/dev/null; then
-            log_error "jq 安装失败"
-            exit 1
-        fi
+JSON_PARSER=""
+
+ensure_json_parser() {
+    if command -v jq &>/dev/null; then
+        log_info "检测到 jq，使用 jq"
+        JSON_PARSER="jq"
+        return 0
     fi
+    
+    log_info "未检测到 jq，安装中..."
+    case $(detect_os) in
+        macos) brew install jq ;;
+        linux) sudo apt install -y jq ;;
+    esac
+    
+    if command -v jq &>/dev/null; then
+        log_info "jq 安装成功"
+        JSON_PARSER="jq"
+        return 0
+    fi
+    
+    log_warn "jq 安装失败，尝试使用备用解析方案..."
+    if command -v python3 &>/dev/null; then
+        log_info "使用 python3 作为备用解析器"
+        JSON_PARSER="python3"
+        return 0
+    fi
+    
+    log_error "无可用 JSON 解析器 (jq/python3)"
+    exit 1
 }
 
 get_json_profiles() {
     local json_file=$1
-    jq -r '.profiles | keys[]' "$json_file" 2>/dev/null
+    if [[ "$JSON_PARSER" == "jq" ]]; then
+        jq -r '.profiles | keys[]' "$json_file"
+    else
+        python3 -c "import json; [print(k) for k in json.load(open('$json_file'))['profiles'].keys()]"
+    fi
 }
 
 get_json_profile_field() {
     local json_file=$1
     local key=$2
     local field=$3
-    jq -r ".profiles[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null
+    if [[ "$JSON_PARSER" == "jq" ]]; then
+        jq -r ".profiles[\"$key\"].$field // \"\"" "$json_file"
+    else
+        python3 -c "import json; print(json.load(open('$json_file'))['profiles'].get('$key',{}).get('$field',''))"
+    fi
 }
 
 get_json_profile_includes() {
     local json_file=$1
     local key=$2
-    jq -r ".profiles[\"$key\"].includes[]? // empty" "$json_file" 2>/dev/null
+    if [[ "$JSON_PARSER" == "jq" ]]; then
+        jq -r ".profiles[\"$key\"].includes[]? // empty" "$json_file"
+    else
+        python3 -c "import json; [print(i) for i in json.load(open('$json_file'))['profiles'].get('$key',{}).get('includes',[])]"
+    fi
 }
 
 get_json_software_field() {
     local json_file=$1
     local key=$2
     local field=$3
-    jq -r ".software[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null
+    if [[ "$JSON_PARSER" == "jq" ]]; then
+        jq -r ".software[\"$key\"].$field // \"\"" "$json_file"
+    else
+        python3 -c "import json; print(json.load(open('$json_file'))['software'].get('$key',{}).get('$field',''))"
+    fi
 }
 
 # 语言选择
@@ -572,7 +605,7 @@ main() {
     
     [[ "$os" == "unknown" ]] && log_error "$LANG_UNSUPPORTED_OS" && exit 1
     
-    ensure_jq
+    ensure_json_parser
     load_config
     show_profile_menu "$CONFIG_FILE"
     
