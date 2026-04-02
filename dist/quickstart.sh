@@ -35,6 +35,7 @@ Quickstart-PC - 一键配置新电脑
   --verbose, -v      显示详细调试信息
   --log-file FILE    将日志写入文件
   --list-profiles    列出所有可用套餐
+  --show-profile KEY 显示指定套餐详情
   --help             显示此帮助信息
 HELPZH
     else
@@ -54,6 +55,7 @@ Options:
   --verbose, -v      Show detailed debug info
   --log-file FILE    Write logs to file
   --list-profiles    List all available profiles
+  --show-profile KEY Show profile details
   --help             Show this help message
 HELPEN
     fi
@@ -66,6 +68,7 @@ AUTO_YES=false
 VERBOSE=false
 LOG_FILE=""
 LIST_PROFILES=false
+SHOW_PROFILE=""
 LANG_OVERRIDE=""
 CFG_PATH=""
 CFG_URL=""
@@ -79,6 +82,7 @@ while [[ $# -gt 0 ]]; do
         --verbose|-v) VERBOSE=true; shift ;;
         --log-file) LOG_FILE="$2"; shift 2 ;;
         --list-profiles) LIST_PROFILES=true; shift ;;
+        --show-profile) SHOW_PROFILE="$2"; shift 2 ;;
         --lang) LANG_OVERRIDE="$2"; shift 2 ;;
         --cfg-path) CFG_PATH="$2"; shift 2 ;;
         --cfg-url) CFG_URL="$2"; shift 2 ;;
@@ -118,6 +122,78 @@ if [[ "$LIST_PROFILES" == "true" ]]; then
             picon=$(jq -r ".profiles[\"$key\"].icon // \"\"" "$CONFIG_FILE")
             echo "  ${picon} ${key} - ${pname}: ${pdesc}"
         done < <(jq -r '.profiles | keys[]' "$CONFIG_FILE")
+        echo ""
+    else
+        echo "[ERROR] Failed to load configuration"
+    fi
+    
+    rm -f "$CONFIG_FILE" 2>/dev/null
+    exit 0
+fi
+
+# --show-profile 在语言选择之前处理，默认英文输出
+if [[ -n "$SHOW_PROFILE" ]]; then
+    # 检测 jq
+    if ! command -v jq &>/dev/null; then
+        if [[ "$(uname -s)" == "Darwin" ]]; then
+            brew install jq 2>/dev/null
+        else
+            sudo apt install -y jq 2>/dev/null
+        fi
+    fi
+    
+    CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
+    if [[ -n "$CFG_URL" ]]; then
+        curl -fsSL --connect-timeout 10 --max-time 30 "$CFG_URL" -o "$CONFIG_FILE" 2>/dev/null
+    elif [[ -n "$CFG_PATH" ]]; then
+        cp "$CFG_PATH" "$CONFIG_FILE" 2>/dev/null
+    else
+        curl -fsSL --connect-timeout 10 --max-time 30 "$DEFAULT_CFG_URL" -o "$CONFIG_FILE" 2>/dev/null
+    fi
+    
+    if [[ -f "$CONFIG_FILE" ]] && jq empty "$CONFIG_FILE" 2>/dev/null; then
+        # 检测当前平台
+        current_os=""
+        case "$OSTYPE" in
+            msys*|mingw*|cygwin*|win*) current_os="win" ;;
+            darwin*) current_os="mac" ;;
+            linux*) current_os="linux" ;;
+        esac
+        
+        pname=$(jq -r ".profiles[\"$SHOW_PROFILE\"].name // \"\"" "$CONFIG_FILE")
+        pdesc=$(jq -r ".profiles[\"$SHOW_PROFILE\"].desc // \"\"" "$CONFIG_FILE")
+        picon=$(jq -r ".profiles[\"$SHOW_PROFILE\"].icon // \"\"" "$CONFIG_FILE")
+        
+        if [[ -z "$pname" ]]; then
+            echo "[ERROR] Profile '$SHOW_PROFILE' not found"
+            rm -f "$CONFIG_FILE" 2>/dev/null
+            exit 1
+        fi
+        
+        echo ""
+        echo "Profile: ${picon} ${pname}"
+        echo "Description: ${pdesc}"
+        echo ""
+        echo "Included software:"
+        
+        supported=0
+        unsupported=0
+        while IFS= read -r sw; do
+            [[ -z "$sw" ]] && continue
+            sw_name=$(jq -r ".software[\"$sw\"].name // \"$sw\"" "$CONFIG_FILE")
+            sw_cmd=$(jq -r ".software[\"$sw\"].$current_os // \"\"" "$CONFIG_FILE")
+            
+            if [[ -n "$sw_cmd" ]]; then
+                echo "  ✓ $sw_name"
+                ((supported++))
+            else
+                echo "  ✗ $sw_name (not supported on this platform)"
+                ((unsupported++))
+            fi
+        done < <(jq -r ".profiles[\"$SHOW_PROFILE\"].includes[]?" "$CONFIG_FILE")
+        
+        echo ""
+        echo "Summary: $supported supported, $unsupported unsupported on this platform"
         echo ""
     else
         echo "[ERROR] Failed to load configuration"
