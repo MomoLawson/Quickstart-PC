@@ -48,12 +48,29 @@ Invoke-WebRequest -Uri "https://github.com/MomoLawson/Quickstart-PC/releases/lat
 
 ```
 Quickstart-PC/
+├── src/
+│   └── quickstart.sh       # Source code (develop here)
 ├── dist/
-│   └── quickstart.sh       # Single-file version (recommended)
+│   └── quickstart.sh       # Built artifact (don't edit directly)
+├── scripts/
+│   └── build.sh            # Build script
 ├── config/
 │   └── profiles.json       # Software profiles config (JSON)
 ├── README.md               # English documentation
 └── README.zh-CN.md         # Chinese documentation
+```
+
+### Development Workflow
+
+```bash
+# Edit source
+nano src/quickstart.sh
+
+# Build to dist
+bash scripts/build.sh
+
+# Test locally
+bash dist/quickstart.sh --list-profiles
 ```
 
 ## Multi-language Support
