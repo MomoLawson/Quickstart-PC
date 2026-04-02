@@ -33,6 +33,8 @@ Quickstart-PC - 一键配置新电脑
   --fake-install     同 --dry-run（已弃用）
   --yes, -y          自动确认所有提示
   --verbose, -v      显示详细调试信息
+  --log-file FILE    将日志写入文件
+  --list-profiles    列出所有可用套餐
   --help             显示此帮助信息
 HELPZH
     else
@@ -50,6 +52,8 @@ Options:
   --fake-install     Alias for --dry-run (deprecated)
   --yes, -y          Auto-confirm all prompts
   --verbose, -v      Show detailed debug info
+  --log-file FILE    Write logs to file
+  --list-profiles    List all available profiles
   --help             Show this help message
 HELPEN
     fi
@@ -61,6 +65,7 @@ FAKE_INSTALL=false
 AUTO_YES=false
 VERBOSE=false
 LOG_FILE=""
+LIST_PROFILES=false
 LANG_OVERRIDE=""
 CFG_PATH=""
 CFG_URL=""
@@ -73,6 +78,7 @@ while [[ $# -gt 0 ]]; do
         --yes|-y) AUTO_YES=true; shift ;;
         --verbose|-v) VERBOSE=true; shift ;;
         --log-file) LOG_FILE="$2"; shift 2 ;;
+        --list-profiles) LIST_PROFILES=true; shift ;;
         --lang) LANG_OVERRIDE="$2"; shift 2 ;;
         --cfg-path) CFG_PATH="$2"; shift 2 ;;
         --cfg-url) CFG_URL="$2"; shift 2 ;;
@@ -660,6 +666,26 @@ show_banner() {
 }
 
 main() {
+    if [[ "$LIST_PROFILES" == "true" ]]; then
+        ensure_json_parser
+        load_config
+        
+        echo ""
+        echo "Available profiles:"
+        echo ""
+        while IFS= read -r key; do
+            [[ -z "$key" ]] && continue
+            pname=$(get_json_profile_field "$CONFIG_FILE" "$key" "name")
+            pdesc=$(get_json_profile_field "$CONFIG_FILE" "$key" "desc")
+            picon=$(get_json_profile_field "$CONFIG_FILE" "$key" "icon")
+            echo "  ${picon} ${key} - ${pname}: ${pdesc}"
+        done < <(get_json_profiles "$CONFIG_FILE")
+        echo ""
+        
+        rm -f "$CONFIG_FILE" 2>/dev/null
+        exit 0
+    fi
+    
     show_banner
     
     [[ "$DEV_MODE" == "true" ]] && log_warn "$LANG_DEV_MODE" && echo ""
