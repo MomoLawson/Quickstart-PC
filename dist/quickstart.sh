@@ -142,6 +142,17 @@ get_json_software_field() {
     fi
 }
 
+is_installed() {
+    local json_file=$1
+    local os=$2
+    local key=$3
+    local check_field="check_${os:0:3}"
+    
+    local check_cmd=$(get_json_software_field "$json_file" "$key" "$check_field")
+    [[ -z "$check_cmd" ]] && return 1
+    eval "$check_cmd" &>/dev/null
+}
+
 # 语言选择
 tui_interactive_select() {
     local -a items=("$@")
@@ -470,7 +481,11 @@ show_software_menu() {
         local name=$(get_json_software_field "$json_file" "$key" "name")
         local desc=$(get_json_software_field "$json_file" "$key" "desc")
         menu_keys+=("$key")
-        menu_names+=("$name - $desc")
+        if is_installed "$json_file" "$os" "$key"; then
+            menu_names+=("${GRAY}$name - $desc $LANG_INSTALLED${NC}")
+        else
+            menu_names+=("$name - $desc")
+        fi
         checked+=(0)
     done
     
