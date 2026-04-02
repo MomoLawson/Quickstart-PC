@@ -86,7 +86,7 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         --dev) DEV_MODE=true; shift ;;
         --dry-run) FAKE_INSTALL=true; shift ;;
-        --fake-install) FAKE_INSTALL=true; log_warn "--fake-install is deprecated, use --dry-run instead" >&2; shift ;;
+        --fake-install) FAKE_INSTALL=true; echo "[!] --fake-install is deprecated, use --dry-run instead" >&2; shift ;;
         --yes|-y) AUTO_YES=true; shift ;;
         --verbose|-v) VERBOSE=true; shift ;;
         --log-file) LOG_FILE="$2"; shift 2 ;;
