@@ -1,0 +1,53 @@
+{
+  "profiles": {
+    "recommended": {
+      "name": "推荐套餐",
+      "desc": "综合均衡，适合大多数用户",
+      "icon": "⭐",
+      "includes": ["chrome", "edge", "vscode", "git", "nodejs", "python", "wps", "vlc"]
+    },
+    "ai": {
+      "name": "AI 赋能",
+      "desc": "AI CLI 工具、智能 IDE、大模型客户端",
+      "icon": "🤖",
+      "includes": ["cursor", "ollama", "lmstudio"]
+    },
+    "office": {
+      "name": "办公套件",
+      "desc": "文档、表格、协作工具",
+      "icon": "📊",
+      "includes": ["wps", "obsidian", "notion"]
+    },
+    "developer": {
+      "name": "开发者套餐",
+      "desc": "IDE、版本控制、运行时环境",
+      "icon": "💻",
+      "includes": ["vscode", "intellij", "git", "nodejs", "python", "go", "docker"]
+    },
+    "media": {
+      "name": "媒体创作",
+      "desc": "音视频、图像处理工具",
+      "icon": "🎬",
+      "includes": ["vlc", "obs"]
+    }
+  },
+  "software": {
+    "chrome": {"name": "Chrome", "desc": "浏览器/Browser", "win": "winget install Google.Chrome", "mac": "brew install --cask google-chrome", "linux": "sudo apt install -y google-chrome-stable"},
+    "edge": {"name": "Edge", "desc": "微软浏览器/Microsoft browser", "win": "winget install Microsoft.Edge", "mac": "brew install --cask microsoft-edge", "linux": "curl -o /tmp/microsoft-edge.deb https://packages.microsoft.com/repos/edge && sudo dpkg -i /tmp/microsoft-edge.deb"},
+    "vscode": {"name": "VS Code", "desc": "代码编辑器/Code editor", "win": "winget install Microsoft.VisualStudioCode", "mac": "brew install --cask visual-studio-code", "linux": "sudo snap install --classic code"},
+    "intellij": {"name": "IntelliJ IDEA", "desc": "JetBrains IDE", "win": "winget install JetBrains.IntelliJIDEA.Community", "mac": "brew install --cask intellij-idea-ce", "linux": "curl -o /tmp/idea.tar.gz https://download.jetbrains.com/product?code=IIC&& sudo tar -xzf /tmp/idea.tar.gz -C /opt"},
+    "git": {"name": "Git", "desc": "版本控制/Version control", "win": "winget install Git.Git", "mac": "brew install git", "linux": "sudo apt install -y git"},
+    "nodejs": {"name": "Node.js", "desc": "JavaScript 运行时/Runtime", "win": "winget install OpenJS.NodeJS.LTS", "mac": "brew install node", "linux": "curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt install -y nodejs"},
+    "python": {"name": "Python", "desc": "Python 编程语言/Programming language", "win": "winget install Python.Python.3.11", "mac": "brew install python@3.11", "linux": "sudo apt install -y python3 python3-pip"},
+    "go": {"name": "Go", "desc": "Go 编程语言/Go language", "win": "winget install Golang.Go", "mac": "brew install go", "linux": "sudo apt install -y golang"},
+    "docker": {"name": "Docker", "desc": "容器化平台/Containerization", "win": "winget install Docker.DockerDesktop", "mac": "brew install --cask docker", "linux": "curl -fsSL https://get.docker.com | sh"},
+    "wps": {"name": "WPS Office", "desc": "办公套件/Office suite", "win": "winget install Kingsoft.WPSOffice", "mac": "brew install --cask wps-office", "linux": "sudo apt install -y wps-office"},
+    "obsidian": {"name": "Obsidian", "desc": "笔记工具/Notes", "win": "winget install Obsidian.Obsidian", "mac": "brew install --cask obsidian", "linux": "sudo snap install obsidian --classic"},
+    "notion": {"name": "Notion", "desc": "协作工具/Collaboration", "win": "winget install Notion.Notion", "mac": "brew install --cask notion", "linux": "sudo snap install notion-snap"},
+    "cursor": {"name": "Cursor", "desc": "AI 代码编辑器/AI editor", "win": "winget install Cursor.Cursor", "mac": "brew install --cask cursor", "linux": "curl -o /tmp/cursor.AppImage https://cursor.sh/linux/x64 && chmod +x /tmp/cursor.AppImage"},
+    "ollama": {"name": "Ollama", "desc": "本地 LLM/Local LLM", "win": "powershell -Command \"irm https://ollama.ai/install.ps1 | iex\"", "mac": "brew install ollama", "linux": "curl -fsSL https://ollama.ai/install.sh | sh"},
+    "lmstudio": {"name": "LM Studio", "desc": "本地 LLM 客户端/Local LLM client", "win": "winget install LMStudio.LMStudio", "mac": "brew install --cask lm-studio", "linux": "curl -o /tmp/lm-studio.AppImage https://releases.lmstudio.ai/linux/x64/latest"},
+    "vlc": {"name": "VLC", "desc": "媒体播放器/Media player", "win": "winget install VideoLAN.VLC", "mac": "brew install --cask vlc", "linux": "sudo apt install -y vlc"},
+    "obs": {"name": "OBS Studio", "desc": "直播录制/Streaming & recording", "win": "winget install OBSProject.OBSStudio", "mac": "brew install --cask obs", "linux": "sudo apt install -y obs-studio"}
+  }
+}

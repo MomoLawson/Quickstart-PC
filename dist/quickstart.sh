@@ -3,20 +3,10 @@
 clear
 tput civis 2>/dev/null || true
 
-error_handler() {
-    local line=$1
-    local command=$2
-    local code=$3
-    echo ""
-    echo -e "\033[0;31m[ERROR] Script failed at line $line\033[0m"
-    echo -e "\033[0;31m  Command: $command\033[0m"
-    echo -e "\033[0;31m  Exit code: $code\033[0m"
-    echo ""
-    tput cnorm 2>/dev/null || true
-    exit 1
-}
+trap 'echo ""; echo -e "\033[0;31m[ERROR] 脚本错误: 行 $LINENO\033[0m"; tput cnorm 2>/dev/null || true; exit 1' ERR
 
-trap 'error_handler ${LINENO} "$BASH_COMMAND" $?' ERR
+# 默认配置 URL（优先级最高）
+DEFAULT_CFG_URL="https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json"
 
 LANG_FOR_HELP="en"
 args=("$@")
@@ -41,11 +31,6 @@ Quickstart-PC - 一键配置新电脑
   --dev              开发模式：显示选择的软件但不安装
   --fake-install     假装安装：展示安装过程但不实际安装
   --help             显示此帮助信息
-
-示例:
-  quickstart.sh --lang zh
-  quickstart.sh --cfg-path /path/to/profiles.json
-  quickstart.sh --fake-install
 HELPZH
     else
         cat << 'HELPEN'
@@ -57,14 +42,9 @@ Options:
   --lang LANG        Set language (en, zh)
   --cfg-path PATH    Use local profiles.json file
   --cfg-url URL      Use remote profiles.json URL
-  --dev              Dev mode: show selected software without installing
-  --fake-install     Fake install: show installation process without actually installing
+  --dev              Dev mode
+  --fake-install     Fake install
   --help             Show this help message
-
-Examples:
-  quickstart.sh --lang en
-  quickstart.sh --cfg-path /path/to/profiles.json
-  quickstart.sh --fake-install
 HELPEN
     fi
     exit 0
@@ -84,35 +64,78 @@ while [[ $# -gt 0 ]]; do
         --cfg-path) CFG_PATH="$2"; shift 2 ;;
         --cfg-url) CFG_URL="$2"; shift 2 ;;
         --help|-h) show_help ;;
-        *) echo "Unknown option: $1"; exit 1 ;;
+        *) shift ;;
     esac
 done
 
-tui_draw_menu() {
-    local cursor=$1
-    shift
-    local -a items=("$@")
-    for ((i=0; i<${#items[@]}; i++)); do
-        printf "\033[2K"
-        if [[ $i -eq $cursor ]]; then
-            echo -e "  \033[7m ▶ ${items[$i]} \033[0m"
-        else
-            echo -e "    ${items[$i]}"
+# JSON 解析函数
+ensure_jq() {
+    if ! command -v jq &>/dev/null; then
+        log_info "未检测到 jq，安装中..."
+        case $(detect_os) in
+            macos) brew install jq ;;
+            linux) sudo apt install -y jq ;;
+            windows) echo "请手动安装 jq: https://stedolan.github.io/jq/download/" ;;
+        esac
+        if ! command -v jq &>/dev/null; then
+            log_error "jq 安装失败"
+            exit 1
         fi
-    done
+    fi
 }
 
+get_json_profiles() {
+    local json_file=$1
+    jq -r '.profiles | keys[]' "$json_file" 2>/dev/null
+}
+
+get_json_profile_field() {
+    local json_file=$1
+    local key=$2
+    local field=$3
+    jq -r ".profiles[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null
+}
+
+get_json_profile_includes() {
+    local json_file=$1
+    local key=$2
+    jq -r ".profiles[\"$key\"].includes[]? // empty" "$json_file" 2>/dev/null
+}
+
+get_json_software_field() {
+    local json_file=$1
+    local key=$2
+    local field=$3
+    jq -r ".software[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null
+}
+
+# 语言选择
 tui_interactive_select() {
     local -a items=("$@")
     local num_items=${#items[@]}
     local cursor=0
     
     tput civis 2>/dev/null || true
-    tui_draw_menu $cursor "${items[@]}"
+    
+    for ((i=0; i<num_items; i++)); do
+        if [[ $i -eq $cursor ]]; then
+            printf "  \033[7m ▶ %s\033[0m\n" "${items[$i]}"
+        else
+            printf "    %s\n" "${items[$i]}"
+        fi
+    done
     
     while true; do
         tput cuu $num_items 2>/dev/null || true
-        tui_draw_menu $cursor "${items[@]}"
+        
+        for ((i=0; i<num_items; i++)); do
+            printf "\033[2K"
+            if [[ $i -eq $cursor ]]; then
+                printf "  \033[7m ▶ %s\033[0m\n" "${items[$i]}"
+            else
+                printf "    %s\n" "${items[$i]}"
+            fi
+        done
         
         local key
         IFS= read -rsn1 key < /dev/tty
@@ -145,7 +168,7 @@ select_language() {
     
     echo ""
     echo -e "\033[0;36m╔════════════════════════════════════════╗\033[0m"
-    echo -e "\033[0;36m║         \033[1mQuickstart-PC v1.0.0\033[0m\033[0;36m             ║\033[0m"
+    echo -e "\033[0;36m║         \033[1mQuickstart-PC v0.10.0\033[0m\033[0;36m          ║\033[0m"
     echo -e "\033[0;36m╚════════════════════════════════════════╝\033[0m"
     echo ""
     echo "  Please select language / 请选择语言:"
@@ -165,15 +188,15 @@ select_language() {
 DETECTED_LANG=$(select_language)
 
 if [[ "$DETECTED_LANG" == "zh-CN" ]]; then
-    LANG_BANNER_TITLE="Quickstart-PC v1.0.0"
+    LANG_BANNER_TITLE="Quickstart-PC v0.10.0"
     LANG_BANNER_DESC="快速配置新电脑软件环境"
     LANG_DETECTING_SYSTEM="检测系统环境..."
     LANG_SYSTEM_INFO="系统"
     LANG_PACKAGE_MANAGER="包管理器"
     LANG_UNSUPPORTED_OS="不支持的操作系统"
-    LANG_USING_CUSTOM_CONFIG="使用自定义配置"
     LANG_USING_REMOTE_CONFIG="使用远程配置"
-    LANG_USING_EMBEDDED_CONFIG="使用内嵌配置"
+    LANG_USING_CUSTOM_CONFIG="使用本地配置"
+    LANG_USING_DEFAULT_CONFIG="使用默认配置"
     LANG_CONFIG_NOT_FOUND="配置文件不存在"
     LANG_CONFIG_INVALID="配置文件格式无效"
     LANG_SELECT_PROFILES="选择安装套餐"
@@ -197,15 +220,15 @@ if [[ "$DETECTED_LANG" == "zh-CN" ]]; then
     LANG_FAKE_INSTALL_MODE="假装安装模式：展示安装过程但不实际安装"
     LANG_FAKE_INSTALLING="模拟安装"
 else
-    LANG_BANNER_TITLE="Quickstart-PC v1.0.0"
+    LANG_BANNER_TITLE="Quickstart-PC v0.10.0"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
     LANG_PACKAGE_MANAGER="Package Manager"
     LANG_UNSUPPORTED_OS="Unsupported operating system"
-    LANG_USING_CUSTOM_CONFIG="Using custom configuration"
     LANG_USING_REMOTE_CONFIG="Using remote configuration"
-    LANG_USING_EMBEDDED_CONFIG="Using embedded configuration"
+    LANG_USING_CUSTOM_CONFIG="Using local configuration"
+    LANG_USING_DEFAULT_CONFIG="Using default configuration"
     LANG_CONFIG_NOT_FOUND="Configuration file not found"
     LANG_CONFIG_INVALID="Configuration file format invalid"
     LANG_SELECT_PROFILES="Select Installation Profiles"
@@ -229,90 +252,6 @@ else
     LANG_FAKE_INSTALL_MODE="Fake install mode: Show installation process without actually installing"
     LANG_FAKE_INSTALLING="Simulating install"
 fi
-
-# Profile data
-PROFILE_KEYS=(recommended ai office developer media)
-PROFILE_NAMES=("推荐套餐" "AI 赋能" "办公套件" "开发者套餐" "媒体创作")
-PROFILE_ICONS=("⭐" "🤖" "📊" "💻" "🎬")
-PROFILE_DESCS=("综合均衡，适合大多数用户" "AI CLI 工具、智能 IDE、大模型客户端" "文档、表格、协作工具" "IDE、版本控制、运行时环境" "音视频、图像处理工具")
-PROFILE_SW_0="chrome edge vscode git nodejs python wps vlc"
-PROFILE_SW_1="cursor ollama lmstudio"
-PROFILE_SW_2="wps obsidian notion"
-PROFILE_SW_3="vscode intellij git nodejs python go docker"
-PROFILE_SW_4="vlc obs"
-
-# Software data
-SW_KEYS_ALL=(chrome edge vscode intellij git nodejs python go docker wps obsidian notion cursor ollama lmstudio vlc obs)
-SW_NAME_0="Chrome" SW_DESC_0="浏览器/Browser"
-SW_NAME_1="Edge" SW_DESC_1="微软浏览器/Microsoft browser"
-SW_NAME_2="VS Code" SW_DESC_2="代码编辑器/Code editor"
-SW_NAME_3="IntelliJ IDEA" SW_DESC_3="JetBrains IDE"
-SW_NAME_4="Git" SW_DESC_4="版本控制/Version control"
-SW_NAME_5="Node.js" SW_DESC_5="JavaScript 运行时/Runtime"
-SW_NAME_6="Python" SW_DESC_6="Python 编程语言/Programming language"
-SW_NAME_7="Go" SW_DESC_7="Go 编程语言/Go language"
-SW_NAME_8="Docker" SW_DESC_8="容器化平台/Containerization"
-SW_NAME_9="WPS Office" SW_DESC_9="办公套件/Office suite"
-SW_NAME_10="Obsidian" SW_DESC_10="笔记工具/Notes"
-SW_NAME_11="Notion" SW_DESC_11="协作工具/Collaboration"
-SW_NAME_12="Cursor" SW_DESC_12="AI 代码编辑器/AI editor"
-SW_NAME_13="Ollama" SW_DESC_13="本地 LLM/Local LLM"
-SW_NAME_14="LM Studio" SW_DESC_14="本地 LLM 客户端/Local LLM client"
-SW_NAME_15="VLC" SW_DESC_15="媒体播放器/Media player"
-SW_NAME_16="OBS Studio" SW_DESC_16="直播录制/Streaming & recording"
-
-# Install commands
-SW_WIN_0="winget install Google.Chrome"
-SW_MAC_0="brew install --cask google-chrome"
-SW_LINUX_0="sudo apt install -y google-chrome-stable"
-SW_WIN_1="winget install Microsoft.Edge"
-SW_MAC_1="brew install --cask microsoft-edge"
-SW_LINUX_1="curl -o /tmp/microsoft-edge.deb https://packages.microsoft.com/repos/edge && sudo dpkg -i /tmp/microsoft-edge.deb"
-SW_WIN_2="winget install Microsoft.VisualStudioCode"
-SW_MAC_2="brew install --cask visual-studio-code"
-SW_LINUX_2="sudo snap install --classic code"
-SW_WIN_3="winget install JetBrains.IntelliJIDEA.Community"
-SW_MAC_3="brew install --cask intellij-idea-ce"
-SW_LINUX_3="curl -o /tmp/idea.tar.gz https://download.jetbrains.com/product?code=IIC&& sudo tar -xzf /tmp/idea.tar.gz -C /opt"
-SW_WIN_4="winget install Git.Git"
-SW_MAC_4="brew install git"
-SW_LINUX_4="sudo apt install -y git"
-SW_WIN_5="winget install OpenJS.NodeJS.LTS"
-SW_MAC_5="brew install node"
-SW_LINUX_5="curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt install -y nodejs"
-SW_WIN_6="winget install Python.Python.3.11"
-SW_MAC_6="brew install python@3.11"
-SW_LINUX_6="sudo apt install -y python3 python3-pip"
-SW_WIN_7="winget install Golang.Go"
-SW_MAC_7="brew install go"
-SW_LINUX_7="sudo apt install -y golang"
-SW_WIN_8="winget install Docker.DockerDesktop"
-SW_MAC_8="brew install --cask docker"
-SW_LINUX_8="curl -fsSL https://get.docker.com | sh"
-SW_WIN_9="winget install Kingsoft.WPSOffice"
-SW_MAC_9="brew install --cask wps-office"
-SW_LINUX_9="sudo apt install -y wps-office"
-SW_WIN_10="winget install Obsidian.Obsidian"
-SW_MAC_10="brew install --cask obsidian"
-SW_LINUX_10="sudo snap install obsidian --classic"
-SW_WIN_11="winget install Notion.Notion"
-SW_MAC_11="brew install --cask notion"
-SW_LINUX_11="sudo snap install notion-snap"
-SW_WIN_12="winget install Cursor.Cursor"
-SW_MAC_12="brew install --cask cursor"
-SW_LINUX_12="curl -o /tmp/cursor.AppImage https://cursor.sh/linux/x64 && chmod +x /tmp/cursor.AppImage"
-SW_WIN_13="powershell -Command \"irm https://ollama.ai/install.ps1 | iex\""
-SW_MAC_13="brew install ollama"
-SW_LINUX_13="curl -fsSL https://ollama.ai/install.sh | sh"
-SW_WIN_14="winget install LMStudio.LMStudio"
-SW_MAC_14="brew install --cask lm-studio"
-SW_LINUX_14="curl -o /tmp/lm-studio.AppImage https://releases.lmstudio.ai/linux/x64/latest"
-SW_WIN_15="winget install VideoLAN.VLC"
-SW_MAC_15="brew install --cask vlc"
-SW_LINUX_15="sudo apt install -y vlc"
-SW_WIN_16="winget install OBSProject.OBSStudio"
-SW_MAC_16="brew install --cask obs"
-SW_LINUX_16="sudo apt install -y obs-studio"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -357,43 +296,76 @@ check_package_manager() {
     esac
 }
 
-get_sw_index() {
-    local key=$1
-    for ((i=0; i<${#SW_KEYS_ALL[@]}; i++)); do
-        if [[ "${SW_KEYS_ALL[$i]}" == "$key" ]]; then
-            echo $i
-            return
+load_config() {
+    CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
+    
+    if [[ -n "$CFG_URL" ]]; then
+        log_info "$LANG_USING_REMOTE_CONFIG: $CFG_URL"
+        if curl -fsSL --connect-timeout 10 --max-time 30 "$CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
+            if jq empty "$CONFIG_FILE" 2>/dev/null; then
+                return 0
+            else
+                log_error "$LANG_CONFIG_INVALID: $CFG_URL"
+                exit 1
+            fi
+        else
+            log_error "$LANG_CONFIG_NOT_FOUND: $CFG_URL"
+            exit 1
         fi
-    done
-    echo "-1"
-}
-
-get_sw_name() {
-    local idx=$1
-    eval "echo \$SW_NAME_$idx"
-}
-
-get_sw_desc() {
-    local idx=$1
-    eval "echo \$SW_DESC_$idx"
-}
-
-get_sw_cmd() {
-    local idx=$1
-    local os=$2
-    eval "echo \$SW_${os}_$idx"
+    fi
+    
+    if [[ -n "$CFG_PATH" ]]; then
+        if [[ -f "$CFG_PATH" ]]; then
+            if jq empty "$CFG_PATH" 2>/dev/null; then
+                log_info "$LANG_USING_CUSTOM_CONFIG: $CFG_PATH"
+                cp "$CFG_PATH" "$CONFIG_FILE"
+                return 0
+            else
+                log_error "$LANG_CONFIG_INVALID: $CFG_PATH"
+                exit 1
+            fi
+        else
+            log_error "$LANG_CONFIG_NOT_FOUND: $CFG_PATH"
+            exit 1
+        fi
+    fi
+    
+    log_info "$LANG_USING_DEFAULT_CONFIG"
+    if curl -fsSL --connect-timeout 10 --max-time 30 "$DEFAULT_CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
+        if jq empty "$CONFIG_FILE" 2>/dev/null; then
+            return 0
+        fi
+    fi
+    
+    log_error "$LANG_CONFIG_NOT_FOUND"
+    exit 1
 }
 
 SELECTED_PROFILES=()
 SELECTED_SOFTWARE=()
 
 show_profile_menu() {
-    local num_profiles=${#PROFILE_KEYS[@]}
+    local json_file=$1
+    
+    local -a profile_keys=()
+    local -a profile_names=()
+    local -a profile_icons=()
+    local -a profile_descs=()
+    
+    while IFS= read -r key; do
+        [[ -z "$key" ]] && continue
+        profile_keys+=("$key")
+        profile_names+=("$(get_json_profile_field "$json_file" "$key" "name")")
+        profile_icons+=("$(get_json_profile_field "$json_file" "$key" "icon")")
+        profile_descs+=("$(get_json_profile_field "$json_file" "$key" "desc")")
+    done < <(get_json_profiles "$json_file")
+    
+    local num_profiles=${#profile_keys[@]}
     local -a menu_names
     local cursor=0
     
     for ((i=0; i<num_profiles; i++)); do
-        menu_names+=("${PROFILE_ICONS[$i]} ${PROFILE_NAMES[$i]} - ${PROFILE_DESCS[$i]}")
+        menu_names+=("${profile_icons[$i]} ${profile_names[$i]} - ${profile_descs[$i]}")
     done
     
     tput civis 2>/dev/null || true
@@ -439,28 +411,21 @@ show_profile_menu() {
     
     tput cnorm 2>/dev/null || true
     
-    SELECTED_PROFILES=("${PROFILE_KEYS[$cursor]}")
+    SELECTED_PROFILES=("${profile_keys[$cursor]}")
 }
 
 show_software_menu() {
-    local os=$1
-    local profile_key=$2
+    local json_file=$1
+    local os=$2
+    local profile_key=$3
     
-    # 查找 profile 索引
-    local profile_idx=-1
-    for ((i=0; i<${#PROFILE_KEYS[@]}; i++)); do
-        if [[ "${PROFILE_KEYS[$i]}" == "$profile_key" ]]; then
-            profile_idx=$i
-            break
-        fi
-    done
+    local -a sw_keys=()
+    while IFS= read -r key; do
+        [[ -z "$key" ]] && continue
+        sw_keys+=("$key")
+    done < <(get_json_profile_includes "$json_file" "$profile_key")
     
-    [[ $profile_idx -eq -1 ]] && return 1
-    
-    local sw_list=$(eval "echo \$PROFILE_SW_$profile_idx")
-    local -a sw_keys=($sw_list)
     local num_sw=${#sw_keys[@]}
-    
     local -a menu_keys menu_names
     local -a checked
     
@@ -469,9 +434,10 @@ show_software_menu() {
     checked=(0)
     
     for key in "${sw_keys[@]}"; do
-        local idx=$(get_sw_index "$key")
+        local name=$(get_json_software_field "$json_file" "$key" "name")
+        local desc=$(get_json_software_field "$json_file" "$key" "desc")
         menu_keys+=("$key")
-        menu_names+=("$(get_sw_name $idx) - $(get_sw_desc $idx)")
+        menu_names+=("$name - $desc")
         checked+=(0)
     done
     
@@ -546,23 +512,18 @@ show_software_menu() {
 }
 
 install_software() {
+    local json_file=$1
     local os=$1
     local key=$2
     local platform
-    local idx=$(get_sw_index "$key")
     
     case "$os" in
-        windows) platform="WIN" ;;
-        macos) platform="MAC" ;;
-        linux) platform="LINUX" ;;
+        windows) platform="win" ;;
+        macos) platform="mac" ;;
+        linux) platform="linux" ;;
     esac
     
-    if [[ $idx -eq -1 ]]; then
-        log_warn "$LANG_PLATFORM_NOT_SUPPORTED: $key"
-        return 1
-    fi
-    
-    local cmd=$(get_sw_cmd $idx "$platform")
+    local cmd=$(get_json_software_field "$json_file" "$key" "$platform")
     
     if [[ -z "$cmd" ]]; then
         log_warn "$LANG_PLATFORM_NOT_SUPPORTED: $key"
@@ -611,11 +572,13 @@ main() {
     
     [[ "$os" == "unknown" ]] && log_error "$LANG_UNSUPPORTED_OS" && exit 1
     
-    show_profile_menu
+    ensure_jq
+    load_config
+    show_profile_menu "$CONFIG_FILE"
     
     [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
     
-    show_software_menu "$os" "${SELECTED_PROFILES[@]}"
+    show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
     
     [[ ${#SELECTED_SOFTWARE[@]} -eq 0 ]] && log_warn "$LANG_NO_SOFTWARE_SELECTED" && exit 0
     
@@ -637,7 +600,7 @@ main() {
     for sw in "${SELECTED_SOFTWARE[@]}"; do
         ((current++))
         printf "\r${CYAN}[%3d%%]${NC} %s" "$((current * 100 / total))" "$LANG_INSTALLING $sw"
-        install_software "$os" "$sw" || ((failed++))
+        install_software "$CONFIG_FILE" "$os" "$sw" || ((failed++))
     done
     echo ""
     
@@ -645,5 +608,5 @@ main() {
     [[ $failed -eq 0 ]] && log_success "$LANG_TOTAL_INSTALLED $total" || log_warn "$LANG_TOTAL_INSTALLED $((total - failed)) / $total ($failed failed)"
 }
 
-trap 'tput cnorm 2>/dev/null || true' EXIT
+trap 'tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
 main "$@"
