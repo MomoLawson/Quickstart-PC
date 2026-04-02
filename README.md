@@ -14,7 +14,7 @@
 - 🌐 **Cross-platform** - Supports Windows / macOS / Linux
 - ☁️ **Remote config** - Fetch latest config from the cloud
 - 📦 **Package manager** - Auto-detect and install package managers
-- 🌍 **Multi-language** - Auto-detect system language, supports English/Chinese
+- 🌍 **Multi-language** - Manual language selection, supports English/Chinese
 
 ## Quick Start
 
@@ -48,92 +48,90 @@ Invoke-WebRequest -Uri "https://github.com/MomoLawson/Quickstart-PC/releases/lat
 
 ```
 Quickstart-PC/
-├── quickstart.sh           # Linux/macOS entry
-├── quickstart.ps1          # Windows entry
-├── build.sh                # Build single file version
+├── dist/
+│   └── quickstart.sh       # Single-file version (recommended)
 ├── config/
-│   └── profiles.yaml       # Software profiles config
-├── languages/
-│   ├── loader.sh           # Language loader
-│   ├── en-US.sh            # English language pack
-│   └── zh-CN.sh            # Chinese language pack
-├── scripts/
-│   ├── detect.sh/ps1       # System detection
-│   ├── menu.sh/ps1         # Interactive menu
-│   └── install.sh/ps1      # Installation logic
-└── utils/
-    └── log.sh/ps1          # Log utilities
+│   └── profiles.json       # Software profiles config (JSON)
+├── README.md               # English documentation
+└── README.zh-CN.md         # Chinese documentation
 ```
 
 ## Multi-language Support
 
-The script automatically detects your system language and displays the interface in the appropriate language:
+Manual language selection with arrow key navigation:
 
 - 🇺🇸 English (en-US)
 - 🇨🇳 简体中文 (zh-CN)
 
-### Adding a New Language
-
-1. Create a language file in `languages/` directory, e.g., `ja-JP.sh`
-2. Copy the content from `en-US.sh` and translate
-3. Add language detection logic in `languages/loader.sh`
+Use `--lang zh` or `--lang en` to skip the language selection menu.
 
 ## Custom Configuration
 
-### Remote Configuration
+### Remote Configuration (Default)
 
-Modify the `CONFIG_URL` variable in the first 10 lines of the script:
+The script automatically fetches config from:
+```
+https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json
+```
+
+### Custom Remote URL
 
 ```bash
-# quickstart.sh (line 6)
-CONFIG_URL="https://raw.githubusercontent.com/your-repo/config/profiles.yaml"
-
-# quickstart.ps1 (line 14)
-$CONFIG_URL = "https://raw.githubusercontent.com/your-repo/config/profiles.yaml"
+quickstart.sh --cfg-url https://your-server.com/profiles.json
 ```
 
 ### Local Configuration
 
-Edit `config/profiles.yaml` to add new software or profiles:
-
-```yaml
-profiles:
-  my_custom:
-    name: "My Profile"
-    desc: "Custom software combination"
-    icon: "🎮"
-    includes:
-      - browser.chrome
-      - devtools.vscode
-
-software:
-  browser.chrome:
-    name: "Chrome"
-    win: "winget install Google.Chrome"
-    mac: "brew install --cask google-chrome"
-    linux: "sudo apt install -y google-chrome-stable"
-```
-
-### Build Single File Version
-
 ```bash
-chmod +x build.sh
-./build.sh
+quickstart.sh --cfg-path /path/to/profiles.json
 ```
 
-The generated single file is at `dist/quickstart.sh`, which can be used for curl pipe installation.
+### JSON Config Format
+
+```json
+{
+  "profiles": {
+    "my_custom": {
+      "name": "My Profile",
+      "desc": "Custom software combination",
+      "icon": "🎮",
+      "includes": ["chrome", "vscode"]
+    }
+  },
+  "software": {
+    "chrome": {
+      "name": "Chrome",
+      "desc": "Browser",
+      "win": "winget install Google.Chrome",
+      "mac": "brew install --cask google-chrome",
+      "linux": "sudo apt install -y google-chrome-stable",
+      "check_win": "winget list Google.Chrome",
+      "check_mac": "ls /Applications/Google\\ Chrome.app 2>/dev/null",
+      "check_linux": "which google-chrome-stable 2>/dev/null"
+    }
+  }
+}
+```
+
+## Command Line Options
+
+| Option | Description |
+|--------|-------------|
+| `--lang LANG` | Set language (en, zh) |
+| `--dev` | Dev mode: show selections without installing |
+| `--fake-install` / `--dry-run` | Fake install: show process without installing |
+| `--yes` / `-y` | Auto-confirm all prompts |
+| `--cfg-path PATH` | Use local profiles.json |
+| `--cfg-url URL` | Use remote profiles.json URL |
+| `--help` | Show help |
 
 ## Supported Package Managers
 
 | Platform | Package Manager | Installation |
 |----------|-----------------|--------------|
 | Windows | winget | Built-in (requires App Installer) |
-| Windows | scoop | Auto-install |
-| Windows | chocolatey | Auto-install |
 | macOS | Homebrew | Auto-install |
 | Linux | apt | Built-in |
-| Linux | yum/dnf | Built-in |
-| Linux | pacman | Built-in |
 
 ## Contributing
 
@@ -141,15 +139,15 @@ Issues and Pull Requests are welcome!
 
 ### Adding New Software
 
-1. Edit `config/profiles.yaml`
-2. Add software config in `software:` section
-3. Add software name to the profile's `includes:` list
+1. Edit `config/profiles.json`
+2. Add software entry in `"software"` section
+3. Add software key to the profile's `"includes"` array
 4. Submit PR
 
 ### Adding New Profiles
 
-1. Edit `config/profiles.yaml`
-2. Add new profile in `profiles:` section
+1. Edit `config/profiles.json`
+2. Add new profile in `"profiles"` section
 3. Submit PR
 
 ## License

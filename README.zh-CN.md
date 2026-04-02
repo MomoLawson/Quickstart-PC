@@ -14,7 +14,7 @@
 - 🌐 **全平台支持** - Windows / macOS / Linux 全覆盖
 - ☁️ **云端配置** - 支持从云端获取最新软件配置
 - 📦 **包管理器** - 自动检测并安装包管理器
-- 🌍 **多语言** - 自动检测系统语言，支持中文/英文
+- 🌍 **多语言** - 手动选择语言，支持中文/英文
 
 ## 快速开始
 
@@ -48,89 +48,90 @@ Invoke-WebRequest -Uri "https://github.com/MomoLawson/Quickstart-PC/releases/lat
 
 ```
 Quickstart-PC/
-├── quickstart.sh           # Linux/macOS 入口
-├── quickstart.ps1          # Windows 入口
-├── build.sh                # 构建单文件版本
+├── dist/
+│   └── quickstart.sh       # 单文件版本（推荐）
 ├── config/
-│   └── profiles.yaml       # 软件套餐配置
-├── languages/
-│   ├── loader.sh           # 语言加载器
-│   ├── en-US.sh            # 英文语言包
-│   └── zh-CN.sh            # 中文语言包
-├── scripts/
-│   ├── detect.sh/ps1       # 系统检测
-│   ├── menu.sh/ps1         # 交互菜单
-│   └── install.sh/ps1      # 安装逻辑
-└── utils/
-    └── log.sh/ps1          # 日志工具
+│   └── profiles.json       # 软件套餐配置（JSON）
+├── README.md               # 英文文档
+└── README.zh-CN.md         # 中文文档
 ```
 
 ## 多语言支持
 
-脚本会自动检测系统语言并使用对应的语言界面：
+手动选择语言，方向键导航：
 
 - 🇺🇸 English (en-US)
 - 🇨🇳 简体中文 (zh-CN)
 
-### 添加新语言
-
-1. 在 `languages/` 目录创建语言文件，如 `ja-JP.sh`
-2. 复制 `en-US.sh` 的内容并翻译
-3. 在 `languages/loader.sh` 中添加语言检测逻辑
+使用 `--lang zh` 或 `--lang en` 跳过语言选择菜单。
 
 ## 自定义配置
 
-### 云端配置
+### 云端配置（默认）
 
-修改脚本前 10 行的 `CONFIG_URL` 变量：
+脚本自动从以下地址获取配置：
+```
+https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json
+```
+
+### 自定义远程 URL
 
 ```bash
-# quickstart.sh (第 6 行)
-CONFIG_URL="https://raw.githubusercontent.com/your-repo/config/profiles.yaml"
+quickstart.sh --cfg-url https://your-server.com/profiles.json
 ```
 
 ### 本地配置
 
-编辑 `config/profiles.yaml` 添加新软件或套餐：
-
-```yaml
-profiles:
-  my_custom:
-    name: "我的套餐"
-    desc: "自定义软件组合"
-    icon: "🎮"
-    includes:
-      - browser.chrome
-      - devtools.vscode
-
-software:
-  browser.chrome:
-    name: "Chrome"
-    win: "winget install Google.Chrome"
-    mac: "brew install --cask google-chrome"
-    linux: "sudo apt install -y google-chrome-stable"
-```
-
-### 构建单文件版本
-
 ```bash
-chmod +x build.sh
-./build.sh
+quickstart.sh --cfg-path /path/to/profiles.json
 ```
 
-生成的单文件版本在 `dist/quickstart.sh`，可以用于 curl 管道安装。
+### JSON 配置格式
+
+```json
+{
+  "profiles": {
+    "my_custom": {
+      "name": "我的套餐",
+      "desc": "自定义软件组合",
+      "icon": "🎮",
+      "includes": ["chrome", "vscode"]
+    }
+  },
+  "software": {
+    "chrome": {
+      "name": "Chrome",
+      "desc": "浏览器",
+      "win": "winget install Google.Chrome",
+      "mac": "brew install --cask google-chrome",
+      "linux": "sudo apt install -y google-chrome-stable",
+      "check_win": "winget list Google.Chrome",
+      "check_mac": "ls /Applications/Google\\ Chrome.app 2>/dev/null",
+      "check_linux": "which google-chrome-stable 2>/dev/null"
+    }
+  }
+}
+```
+
+## 命令行参数
+
+| 参数 | 说明 |
+|------|------|
+| `--lang LANG` | 设置语言 (en, zh) |
+| `--dev` | 开发模式：显示选择但不安装 |
+| `--fake-install` / `--dry-run` | 假装安装：展示过程但不实际安装 |
+| `--yes` / `-y` | 自动确认所有提示 |
+| `--cfg-path PATH` | 使用本地 profiles.json |
+| `--cfg-url URL` | 使用远程 profiles.json URL |
+| `--help` | 显示帮助 |
 
 ## 支持的包管理器
 
 | 平台 | 包管理器 | 安装方式 |
 |------|----------|----------|
 | Windows | winget | 系统自带（需安装 App Installer） |
-| Windows | scoop | 自动安装 |
-| Windows | chocolatey | 自动安装 |
 | macOS | Homebrew | 自动安装 |
 | Linux | apt | 系统自带 |
-| Linux | yum/dnf | 系统自带 |
-| Linux | pacman | 系统自带 |
 
 ## 贡献
 
@@ -138,15 +139,15 @@ chmod +x build.sh
 
 ### 添加新软件
 
-1. 编辑 `config/profiles.yaml`
-2. 在 `software:` 部分添加软件配置
-3. 在对应套餐的 `includes:` 中添加软件名
+1. 编辑 `config/profiles.json`
+2. 在 `"software"` 部分添加软件配置
+3. 在对应套餐的 `"includes"` 数组中添加软件 key
 4. 提交 PR
 
 ### 添加新套餐
 
-1. 编辑 `config/profiles.yaml`
-2. 在 `profiles:` 部分添加新套餐
+1. 编辑 `config/profiles.json`
+2. 在 `"profiles"` 部分添加新套餐
 3. 提交 PR
 
 ## 许可证
