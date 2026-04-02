@@ -32,6 +32,7 @@ Quickstart-PC - 一键配置新电脑
   --dry-run          假装安装：展示安装过程但不实际安装
   --fake-install     同 --dry-run（已弃用）
   --yes, -y          自动确认所有提示
+  --verbose, -v      显示详细调试信息
   --help             显示此帮助信息
 HELPZH
     else
@@ -48,6 +49,7 @@ Options:
   --dry-run          Fake install: show process without installing
   --fake-install     Alias for --dry-run (deprecated)
   --yes, -y          Auto-confirm all prompts
+  --verbose, -v      Show detailed debug info
   --help             Show this help message
 HELPEN
     fi
@@ -57,6 +59,7 @@ HELPEN
 DEV_MODE=false
 FAKE_INSTALL=false
 AUTO_YES=false
+VERBOSE=false
 LANG_OVERRIDE=""
 CFG_PATH=""
 CFG_URL=""
@@ -67,6 +70,7 @@ while [[ $# -gt 0 ]]; do
         --dry-run) FAKE_INSTALL=true; shift ;;
         --fake-install) FAKE_INSTALL=true; log_warn "--fake-install is deprecated, use --dry-run instead" >&2; shift ;;
         --yes|-y) AUTO_YES=true; shift ;;
+        --verbose|-v) VERBOSE=true; shift ;;
         --lang) LANG_OVERRIDE="$2"; shift 2 ;;
         --cfg-path) CFG_PATH="$2"; shift 2 ;;
         --cfg-url) CFG_URL="$2"; shift 2 ;;
@@ -733,6 +737,40 @@ main() {
     
     echo ""
     log_success "$LANG_TOTAL_INSTALLED ${#installed_list[@]} / $total"
+    
+    # Verbose output
+    if [[ "$VERBOSE" == "true" ]]; then
+        echo ""
+        echo "===== Verbose Debug Info ====="
+        echo "[PLATFORM] $(detect_os) - $(get_system_info)"
+        echo "[PKG_MANAGER] $(check_package_manager "$os")"
+        echo "[CONFIG] $CONFIG_FILE"
+        echo "[PROFILE] ${SELECTED_PROFILES[*]}"
+        echo ""
+        for sw in "${SELECTED_SOFTWARE[@]}"; do
+            local sw_name=$(get_json_software_field "$CONFIG_FILE" "$sw" "name")
+            local check_field
+            case "$os" in
+                macos) check_field="check_mac" ;;
+                windows) check_field="check_win" ;;
+                linux) check_field="check_linux" ;;
+            esac
+            local check_cmd=$(get_json_software_field "$CONFIG_FILE" "$sw" "$check_field")
+            local install_cmd=$(get_json_software_field "$CONFIG_FILE" "$sw" "${os:0:3}")
+            
+            if [[ " ${skipped_list[*]} " =~ " $sw_name " ]]; then
+                echo "[CHECK] $sw_name -> installed"
+            elif [[ " ${failed_list[*]} " =~ " $sw_name " ]]; then
+                echo "[CHECK] $sw_name -> not installed"
+                echo "[PLAN] $sw_name -> $install_cmd"
+                echo "[FAIL] $sw_name -> installation failed"
+            else
+                echo "[CHECK] $sw_name -> not installed"
+                echo "[PLAN] $sw_name -> $install_cmd"
+            fi
+        done
+        echo "===== End Verbose ====="
+    fi
 }
 
 trap 'tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
