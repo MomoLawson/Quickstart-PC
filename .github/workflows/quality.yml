@@ -30,26 +30,26 @@ jobs:
         run: bash dist/quickstart.sh --help 2>&1 | grep -q "Quickstart-PC"
       - name: Test --list-profiles
         run: |
-          output=$(bash dist/quickstart.sh --list-profiles 2>&1)
+          output=$(bash dist/quickstart.sh --list-profiles --cfg-path config/profiles.json 2>&1)
           echo "$output"
           echo "$output" | grep -q "Available profiles"
       - name: Test --show-profile
         run: |
-          output=$(bash dist/quickstart.sh --show-profile developer 2>&1)
+          output=$(bash dist/quickstart.sh --show-profile developer --cfg-path config/profiles.json 2>&1)
           echo "$output"
           echo "$output" | grep -q "Profile:"
       - name: Test --profile --dry-run --yes
         run: |
-          output=$(bash dist/quickstart.sh --profile developer --dry-run --yes --lang en --non-interactive 2>&1)
+          output=$(bash dist/quickstart.sh --profile developer --dry-run --yes --lang en --non-interactive --cfg-path config/profiles.json 2>&1)
           echo "$output"
           echo "$output" | grep -q "Selected:"
       - name: Test --profile --only --dry-run --yes
         run: |
-          output=$(bash dist/quickstart.sh --profile developer --only git --dry-run --yes --lang en --non-interactive 2>&1)
+          output=$(bash dist/quickstart.sh --profile developer --only git --dry-run --yes --lang en --non-interactive --cfg-path config/profiles.json 2>&1)
           echo "$output"
           echo "$output" | grep -q "Selected: git"
       - name: Test --profile --skip --dry-run --yes
         run: |
-          output=$(bash dist/quickstart.sh --profile developer --skip docker --dry-run --yes --lang en --non-interactive 2>&1)
+          output=$(bash dist/quickstart.sh --profile developer --skip docker --dry-run --yes --lang en --non-interactive --cfg-path config/profiles.json 2>&1)
           echo "$output"
           echo "$output" | grep -q "Selected:"
