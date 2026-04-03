@@ -946,21 +946,6 @@ main() {
         [[ "$confirm" =~ ^[Nn] ]] && log_info "$LANG_CANCELLED" && exit 0
     fi
     
-    [[ ${#SELECTED_SOFTWARE[@]} -eq 0 ]] && log_warn "$LANG_NO_SOFTWARE_SELECTED" && exit 0
-    
-    echo ""
-    log_info "Selected: ${SELECTED_SOFTWARE[*]}"
-    echo ""
-    
-    [[ "$DEV_MODE" == "true" ]] && log_info "Dev mode: Done" && exit 0
-    
-    if [[ "$AUTO_YES" == "true" ]] || [[ "$NON_INTERACTIVE" == "true" ]]; then
-        echo ""
-    else
-        read -p "$LANG_CONFIRM_INSTALL " confirm < /dev/tty
-        [[ "$confirm" =~ ^[Nn] ]] && log_info "$LANG_CANCELLED" && exit 0
-    fi
-    
     log_header "$LANG_START_INSTALLING"
     
     local total=${#SELECTED_SOFTWARE[@]}
