@@ -85,6 +85,7 @@ ONLY_SW=()
 FAIL_FAST=false
 PROFILE_KEY=""
 NON_INTERACTIVE=false
+DEBUG=false
 LANG_OVERRIDE=""
 CFG_PATH=""
 CFG_URL=""
@@ -104,6 +105,7 @@ while [[ $# -gt 0 ]]; do
         --fail-fast) FAIL_FAST=true; shift ;;
         --profile) PROFILE_KEY="$2"; shift 2 ;;
         --non-interactive) NON_INTERACTIVE=true; shift ;;
+        --debug) DEBUG=true; shift ;;
         --lang) LANG_OVERRIDE="$2"; shift 2 ;;
         --cfg-path) CFG_PATH="$2"; shift 2 ;;
         --cfg-url) CFG_URL="$2"; shift 2 ;;
@@ -227,6 +229,10 @@ fi
 # 日志系统
 log_to_file() {
     [[ -n "$LOG_FILE" ]] && echo "$*" >> "$LOG_FILE"
+}
+
+debug_log() {
+    [[ "$DEBUG" == "true" ]] && echo -e "\033[0;90m[DEBUG] $*\033[0m" >&2
 }
 
 log_info() {
@@ -370,26 +376,22 @@ json_get_profile_field() {
     local json_file=$1
     local key=$2
     local field=$3
-    local raw
     if [[ "$JSON_PARSER" == "jq" ]]; then
-        raw=$(jq -r ".profiles[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null)
+        jq -r ".profiles[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null
     else
-        raw=$(python3 -c "import json; print(json.load(open('$json_file'))['profiles'].get('$key',{}).get('$field',''))" 2>/dev/null)
+        python3 -c "import json; print(json.load(open('$json_file'))['profiles'].get('$key',{}).get('$field',''))" 2>/dev/null
     fi
-    lang_text "$raw"
 }
 
 json_get_software_field() {
     local json_file=$1
     local key=$2
     local field=$3
-    local raw
     if [[ "$JSON_PARSER" == "jq" ]]; then
-        raw=$(jq -r ".software[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null)
+        jq -r ".software[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null
     else
-        raw=$(python3 -c "import json; print(json.load(open('$json_file'))['software'].get('$key',{}).get('$field',''))" 2>/dev/null)
+        python3 -c "import json; print(json.load(open('$json_file'))['software'].get('$key',{}).get('$field',''))" 2>/dev/null
     fi
-    lang_text "$raw"
 }
 
 is_installed() {
@@ -407,10 +409,14 @@ is_installed() {
     
     local check_cmd
     check_cmd=$(json_get_software_field "$json_file" "$key" "$check_field")
+    
+    debug_log "is_installed: key=$key os=$os check_field=$check_field cmd=[$check_cmd]"
+    
     [[ -z "$check_cmd" ]] && return 1
     
     local result=0
     eval "$check_cmd" &>/dev/null || result=$?
+    debug_log "is_installed: key=$key result=$result"
     return $result
 }
 
@@ -540,6 +546,8 @@ if [[ "$DETECTED_LANG" == "zh-CN" ]]; then
     LANG_USING_PYTHON3="使用 python3 作为备用解析器"
     LANG_NO_JSON_PARSER="无可用 JSON 解析器 (jq/python3)"
     LANG_CHECKING_INSTALLATION="正在检测安装情况..."
+    LANG_SKIPPING_INSTALLED="已安装，跳过"
+    LANG_ALL_INSTALLED="所有软件均已安装，无需操作"
 else
     LANG_BANNER_TITLE="Quickstart-PC v0.10.0"
     LANG_BANNER_DESC="Quick setup for new computers"
@@ -579,6 +587,8 @@ else
     LANG_USING_PYTHON3="Using python3 as fallback parser"
     LANG_NO_JSON_PARSER="No JSON parser available (jq/python3)"
     LANG_CHECKING_INSTALLATION="Checking installation status..."
+    LANG_SKIPPING_INSTALLED="Already installed, skipping"
+    LANG_ALL_INSTALLED="All software already installed, nothing to do"
 fi
 
 RED='\033[0;31m'
@@ -974,12 +984,10 @@ main() {
         fi
         
         SELECTED_PROFILES=("$PROFILE_KEY")
-        log_info "$LANG_CHECKING_INSTALLATION"
         show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
     else
         show_profile_menu "$CONFIG_FILE"
         [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
-        log_info "$LANG_CHECKING_INSTALLATION"
         show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
     fi
     
@@ -998,36 +1006,61 @@ main() {
         [[ "$confirm" =~ ^[Nn] ]] && log_info "$LANG_CANCELLED" && exit 0
     fi
     
+    log_info "$LANG_CHECKING_INSTALLATION"
+    
+    local -a to_install=()
+    local -a already_installed=()
+    
+    debug_log "DEBUG: os=[$os] CONFIG_FILE=[$CONFIG_FILE]"
+    debug_log "DEBUG: SELECTED_SOFTWARE=(${SELECTED_SOFTWARE[*]})"
+    
+    for sw in "${SELECTED_SOFTWARE[@]}"; do
+        local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
+        debug_log "DEBUG: checking sw=[$sw] name=[$sw_name]"
+        if is_installed "$CONFIG_FILE" "$os" "$sw"; then
+            echo -e "  ${GREEN}[✓]${NC} $sw_name - $LANG_SKIPPING_INSTALLED"
+            already_installed+=("$sw_name")
+        else
+            echo -e "  ${CYAN}[→]${NC} $sw_name - $LANG_INSTALLING"
+            to_install+=("$sw")
+        fi
+    done
+    echo ""
+    
+    if [[ ${#to_install[@]} -eq 0 ]]; then
+        log_info "$LANG_ALL_INSTALLED"
+        exit 0
+    fi
+    
     log_header "$LANG_START_INSTALLING"
     
-    local total=${#SELECTED_SOFTWARE[@]}
+    local total=${#to_install[@]}
     local current=0
     local -a installed_list=()
     local -a skipped_list=()
     local -a failed_list=()
     local -a warning_list=()
     
-    for sw in "${SELECTED_SOFTWARE[@]}"; do
+    for sw in "${to_install[@]}"; do
         ((current++))
         local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
         printf "\r${CYAN}[%3d%%]${NC} %s" "$((current * 100 / total))" "$LANG_INSTALLING $sw_name"
         
-        if is_installed "$CONFIG_FILE" "$os" "$sw"; then
-            skipped_list+=("$sw_name")
+        if install_software "$CONFIG_FILE" "$os" "$sw"; then
+            installed_list+=("$sw_name")
         else
-            if install_software "$CONFIG_FILE" "$os" "$sw"; then
-                installed_list+=("$sw_name")
-            else
-                failed_list+=("$sw_name")
-                if [[ "$FAIL_FAST" == "true" ]]; then
-                    echo ""
-                    log_error "Fail-fast: stopping at $sw_name"
-                    break
-                fi
+            failed_list+=("$sw_name")
+            if [[ "$FAIL_FAST" == "true" ]]; then
+                echo ""
+                log_error "Fail-fast: stopping at $sw_name"
+                break
             fi
         fi
     done
     echo ""
+    
+    # 合并已跳过的软件（检测阶段 + 安装阶段）
+    skipped_list+=("${already_installed[@]}")
     
     log_header "$LANG_INSTALLATION_COMPLETE"
     echo ""
