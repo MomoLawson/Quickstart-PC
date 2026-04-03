@@ -27,14 +27,14 @@ jobs:
       - name: Build
         run: bash scripts/build.sh
       - name: Test --help
-        run: bash dist/quickstart.sh --help
+        run: bash dist/quickstart.sh --help 2>&1 | grep -q "Quickstart-PC"
       - name: Test --list-profiles
-        run: bash dist/quickstart.sh --list-profiles
+        run: bash dist/quickstart.sh --list-profiles 2>&1 | grep -q "Available profiles"
       - name: Test --show-profile
-        run: bash dist/quickstart.sh --show-profile developer
+        run: bash dist/quickstart.sh --show-profile developer 2>&1 | grep -q "Profile:"
       - name: Test --profile --dry-run --yes
-        run: bash dist/quickstart.sh --profile developer --dry-run --yes --lang en
+        run: bash dist/quickstart.sh --profile developer --dry-run --yes --lang en 2>&1 | grep -q "Selected:"
       - name: Test --profile --only --dry-run --yes
-        run: bash dist/quickstart.sh --profile developer --only git --dry-run --yes --lang en
+        run: bash dist/quickstart.sh --profile developer --only git --dry-run --yes --lang en 2>&1 | grep -q "Selected: git"
       - name: Test --profile --skip --dry-run --yes
-        run: bash dist/quickstart.sh --profile developer --skip docker --dry-run --yes --lang en
+        run: bash dist/quickstart.sh --profile developer --skip docker --dry-run --yes --lang en 2>&1 | grep -q "Selected:"
