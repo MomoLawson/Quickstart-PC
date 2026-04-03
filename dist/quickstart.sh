@@ -39,6 +39,8 @@ Quickstart-PC - 一键配置新电脑
   --skip SW          跳过指定软件（可多次使用）
   --only SW          只安装指定软件（可多次使用）
   --fail-fast        遇到错误时立即停止
+  --profile NAME     直接指定安装套餐（跳过选择菜单）
+  --non-interactive  非交互模式（禁止所有 TUI/prompt）
   --help             显示此帮助信息
 HELPZH
     else
@@ -62,6 +64,8 @@ Options:
   --skip SW          Skip specified software (repeatable)
   --only SW          Only install specified software (repeatable)
   --fail-fast        Stop on first error
+  --profile NAME     Select profile directly (skip menu)
+  --non-interactive  Non-interactive mode (no TUI/prompts)
   --help             Show this help message
 HELPEN
     fi
@@ -78,6 +82,8 @@ SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
 FAIL_FAST=false
+PROFILE_KEY=""
+NON_INTERACTIVE=false
 LANG_OVERRIDE=""
 CFG_PATH=""
 CFG_URL=""
@@ -95,6 +101,8 @@ while [[ $# -gt 0 ]]; do
         --skip) SKIP_SW+=("$2"); shift 2 ;;
         --only) ONLY_SW+=("$2"); shift 2 ;;
         --fail-fast) FAIL_FAST=true; shift ;;
+        --profile) PROFILE_KEY="$2"; shift 2 ;;
+        --non-interactive) NON_INTERACTIVE=true; shift ;;
         --lang) LANG_OVERRIDE="$2"; shift 2 ;;
         --cfg-path) CFG_PATH="$2"; shift 2 ;;
         --cfg-url) CFG_URL="$2"; shift 2 ;;
@@ -250,7 +258,7 @@ log_header() {
     log_to_file ""
 }
 
-# JSON 解析函数
+# JSON 解析抽象层
 JSON_PARSER=""
 
 ensure_json_parser() {
@@ -283,44 +291,79 @@ ensure_json_parser() {
     exit 1
 }
 
-get_json_profiles() {
+# 统一 JSON 校验函数
+validate_json() {
     local json_file=$1
     if [[ "$JSON_PARSER" == "jq" ]]; then
-        jq -r '.profiles | keys[]' "$json_file"
+        jq empty "$json_file" 2>/dev/null
     else
-        python3 -c "import json; [print(k) for k in json.load(open('$json_file'))['profiles'].keys()]"
+        python3 -c "import json; json.load(open('$json_file'))" 2>/dev/null
     fi
 }
 
-get_json_profile_field() {
+# 统一 JSON 读取函数
+json_get() {
+    local json_file=$1
+    local query=$2
+    if [[ "$JSON_PARSER" == "jq" ]]; then
+        jq -r "$query" "$json_file" 2>/dev/null
+    else
+        python3 -c "
+import json, sys
+data = json.load(open('$json_file'))
+keys = '$query'.strip('.').split('.')
+result = data
+for k in keys:
+    if k.startswith('[') and k.endswith(']'):
+        k = k[1:-1]
+        result = result[k] if isinstance(result, dict) else result[int(k)]
+    elif isinstance(result, dict):
+        result = result.get(k, '')
+    else:
+        result = ''
+print(result if result else '')
+" 2>/dev/null
+    fi
+}
+
+json_list_profiles() {
+    local json_file=$1
+    if [[ "$JSON_PARSER" == "jq" ]]; then
+        jq -r '.profiles | keys[]' "$json_file" 2>/dev/null
+    else
+        python3 -c "import json; [print(k) for k in json.load(open('$json_file'))['profiles'].keys()]" 2>/dev/null
+    fi
+}
+
+json_get_profile_includes() {
+    local json_file=$1
+    local key=$2
+    if [[ "$JSON_PARSER" == "jq" ]]; then
+        jq -r ".profiles[\"$key\"].includes[]? // empty" "$json_file" 2>/dev/null
+    else
+        python3 -c "import json; [print(i) for i in json.load(open('$json_file'))['profiles'].get('$key',{}).get('includes',[])]" 2>/dev/null
+    fi
+}
+
+json_get_profile_field() {
     local json_file=$1
     local key=$2
     local field=$3
     if [[ "$JSON_PARSER" == "jq" ]]; then
-        jq -r ".profiles[\"$key\"].$field // \"\"" "$json_file"
+        jq -r ".profiles[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null
     else
-        python3 -c "import json; print(json.load(open('$json_file'))['profiles'].get('$key',{}).get('$field',''))"
+        python3 -c "import json; print(json.load(open('$json_file'))['profiles'].get('$key',{}).get('$field',''))" 2>/dev/null
     fi
 }
 
-get_json_profile_includes() {
-    local json_file=$1
-    local key=$2
-    if [[ "$JSON_PARSER" == "jq" ]]; then
-        jq -r ".profiles[\"$key\"].includes[]? // empty" "$json_file"
-    else
-        python3 -c "import json; [print(i) for i in json.load(open('$json_file'))['profiles'].get('$key',{}).get('includes',[])]"
-    fi
-}
-
-get_json_software_field() {
+json_get_software_field() {
     local json_file=$1
     local key=$2
     local field=$3
     if [[ "$JSON_PARSER" == "jq" ]]; then
-        jq -r ".software[\"$key\"].$field // \"\"" "$json_file"
+        jq -r ".software[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null
     else
-        python3 -c "import json; print(json.load(open('$json_file'))['software'].get('$key',{}).get('$field',''))"
+        python3 -c "import json; print(json.load(open('$json_file'))['software'].get('$key',{}).get('$field',''))" 2>/dev/null
     fi
 }
 
@@ -338,7 +381,7 @@ is_installed() {
     esac
     
     local check_cmd
-    check_cmd=$(get_json_software_field "$json_file" "$key" "$check_field")
+    check_cmd=$(json_get_software_field "$json_file" "$key" "$check_field")
     [[ -z "$check_cmd" ]] && return 1
     
     local result=0
@@ -535,7 +578,7 @@ load_config() {
     if [[ -n "$CFG_URL" ]]; then
         log_info "$LANG_USING_REMOTE_CONFIG: $CFG_URL"
         if curl -fsSL --connect-timeout 10 --max-time 30 "$CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
-            if jq empty "$CONFIG_FILE" 2>/dev/null; then
+            if validate_json "$CONFIG_FILE"; then
                 return 0
             else
                 log_error "$LANG_CONFIG_INVALID: $CFG_URL"
@@ -549,7 +592,7 @@ load_config() {
     
     if [[ -n "$CFG_PATH" ]]; then
         if [[ -f "$CFG_PATH" ]]; then
-            if jq empty "$CFG_PATH" 2>/dev/null; then
+            if validate_json "$CFG_PATH"; then
                 log_info "$LANG_USING_CUSTOM_CONFIG: $CFG_PATH"
                 cp "$CFG_PATH" "$CONFIG_FILE"
                 return 0
@@ -565,7 +608,7 @@ load_config() {
     
     log_info "$LANG_USING_DEFAULT_CONFIG"
     if curl -fsSL --connect-timeout 10 --max-time 30 "$DEFAULT_CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
-        if jq empty "$CONFIG_FILE" 2>/dev/null; then
+        if validate_json "$CONFIG_FILE"; then
             return 0
         fi
     fi
@@ -588,10 +631,10 @@ show_profile_menu() {
     while IFS= read -r key; do
         [[ -z "$key" ]] && continue
         profile_keys+=("$key")
-        profile_names+=("$(get_json_profile_field "$json_file" "$key" "name")")
-        profile_icons+=("$(get_json_profile_field "$json_file" "$key" "icon")")
-        profile_descs+=("$(get_json_profile_field "$json_file" "$key" "desc")")
-    done < <(get_json_profiles "$json_file")
+        profile_names+=("$(json_get_profile_field "$json_file" "$key" "name")")
+        profile_icons+=("$(json_get_profile_field "$json_file" "$key" "icon")")
+        profile_descs+=("$(json_get_profile_field "$json_file" "$key" "desc")")
+    done < <(json_list_profiles "$json_file")
     
     local num_profiles=${#profile_keys[@]}
     local -a menu_names
@@ -667,7 +710,7 @@ show_software_menu() {
         fi
         
         sw_keys+=("$key")
-    done < <(get_json_profile_includes "$json_file" "$profile_key")
+    done < <(json_get_profile_includes "$json_file" "$profile_key")
     
     local num_sw=${#sw_keys[@]}
     local -a menu_keys menu_names
@@ -678,8 +721,8 @@ show_software_menu() {
     checked=(0)
     
     for key in "${sw_keys[@]}"; do
-        local name=$(get_json_software_field "$json_file" "$key" "name")
-        local desc=$(get_json_software_field "$json_file" "$key" "desc")
+        local name=$(json_get_software_field "$json_file" "$key" "name")
+        local desc=$(json_get_software_field "$json_file" "$key" "desc")
         menu_keys+=("$key")
         if is_installed "$json_file" "$os" "$key"; then
             menu_names+=("${GRAY}$name - $desc $LANG_INSTALLED${NC}")
@@ -771,7 +814,7 @@ install_software() {
         linux) platform="linux" ;;
     esac
     
-    local cmd=$(get_json_software_field "$json_file" "$key" "$platform")
+    local cmd=$(json_get_software_field "$json_file" "$key" "$platform")
     
     if [[ -z "$cmd" ]]; then
         log_warn "$LANG_PLATFORM_NOT_SUPPORTED: $key"
@@ -822,11 +865,71 @@ main() {
     
     ensure_json_parser
     load_config
-    show_profile_menu "$CONFIG_FILE"
     
-    [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
-    
-    show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+    # --non-interactive 模式处理
+    if [[ "$NON_INTERACTIVE" == "true" ]]; then
+        if [[ -z "$PROFILE_KEY" ]]; then
+            log_error "非交互模式需要 --profile 参数"
+            exit 1
+        fi
+        
+        # 验证 profile 是否存在
+        local profile_exists=false
+        while IFS= read -r key; do
+            if [[ "$key" == "$PROFILE_KEY" ]]; then
+                profile_exists=true
+                break
+            fi
+        done < <(json_list_profiles "$CONFIG_FILE")
+        
+        if [[ "$profile_exists" != "true" ]]; then
+            log_error "Profile '$PROFILE_KEY' 不存在"
+            exit 1
+        fi
+        
+        SELECTED_PROFILES=("$PROFILE_KEY")
+        
+        # 非交互模式：自动选择所有软件
+        local -a sw_keys=()
+        while IFS= read -r key; do
+            [[ -z "$key" ]] && continue
+            
+            # --only 过滤
+            if [[ ${#ONLY_SW[@]} -gt 0 ]] && [[ ! " ${ONLY_SW[*]} " =~ " $key " ]]; then
+                continue
+            fi
+            
+            # --skip 过滤
+            if [[ ${#SKIP_SW[@]} -gt 0 ]] && [[ " ${SKIP_SW[*]} " =~ " $key " ]]; then
+                continue
+            fi
+            
+            sw_keys+=("$key")
+        done < <(json_get_profile_includes "$CONFIG_FILE" "$PROFILE_KEY")
+        
+        SELECTED_SOFTWARE=("${sw_keys[@]}")
+    elif [[ -n "$PROFILE_KEY" ]]; then
+        # --profile 参数：跳过菜单，直接选择
+        local profile_exists=false
+        while IFS= read -r key; do
+            if [[ "$key" == "$PROFILE_KEY" ]]; then
+                profile_exists=true
+                break
+            fi
+        done < <(json_list_profiles "$CONFIG_FILE")
+        
+        if [[ "$profile_exists" != "true" ]]; then
+            log_error "Profile '$PROFILE_KEY' 不存在"
+            exit 1
+        fi
+        
+        SELECTED_PROFILES=("$PROFILE_KEY")
+        show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+    else
+        show_profile_menu "$CONFIG_FILE"
+        [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
+        show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+    fi
     
     [[ ${#SELECTED_SOFTWARE[@]} -eq 0 ]] && log_warn "$LANG_NO_SOFTWARE_SELECTED" && exit 0
     
@@ -836,7 +939,22 @@ main() {
     
     [[ "$DEV_MODE" == "true" ]] && log_info "Dev mode: Done" && exit 0
     
-    if [[ "$AUTO_YES" == "true" ]]; then
+    if [[ "$AUTO_YES" == "true" ]] || [[ "$NON_INTERACTIVE" == "true" ]]; then
+        echo ""
+    else
+        read -p "$LANG_CONFIRM_INSTALL " confirm < /dev/tty
+        [[ "$confirm" =~ ^[Nn] ]] && log_info "$LANG_CANCELLED" && exit 0
+    fi
+    
+    [[ ${#SELECTED_SOFTWARE[@]} -eq 0 ]] && log_warn "$LANG_NO_SOFTWARE_SELECTED" && exit 0
+    
+    echo ""
+    log_info "Selected: ${SELECTED_SOFTWARE[*]}"
+    echo ""
+    
+    [[ "$DEV_MODE" == "true" ]] && log_info "Dev mode: Done" && exit 0
+    
+    if [[ "$AUTO_YES" == "true" ]] || [[ "$NON_INTERACTIVE" == "true" ]]; then
         echo ""
     else
         read -p "$LANG_CONFIRM_INSTALL " confirm < /dev/tty
@@ -854,7 +972,7 @@ main() {
     
     for sw in "${SELECTED_SOFTWARE[@]}"; do
         ((current++))
-        local sw_name=$(get_json_software_field "$CONFIG_FILE" "$sw" "name")
+        local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
         printf "\r${CYAN}[%3d%%]${NC} %s" "$((current * 100 / total))" "$LANG_INSTALLING $sw_name"
         
         if is_installed "$CONFIG_FILE" "$os" "$sw"; then
@@ -950,15 +1068,15 @@ main() {
         echo ""
         log_to_file ""
         for sw in "${SELECTED_SOFTWARE[@]}"; do
-            local sw_name=$(get_json_software_field "$CONFIG_FILE" "$sw" "name")
+            local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
             local check_field
             case "$os" in
                 macos) check_field="check_mac" ;;
                 windows) check_field="check_win" ;;
                 linux) check_field="check_linux" ;;
             esac
-            local check_cmd=$(get_json_software_field "$CONFIG_FILE" "$sw" "$check_field")
-            local install_cmd=$(get_json_software_field "$CONFIG_FILE" "$sw" "${os:0:3}")
+            local check_cmd=$(json_get_software_field "$CONFIG_FILE" "$sw" "$check_field")
+            local install_cmd=$(json_get_software_field "$CONFIG_FILE" "$sw" "${os:0:3}")
             
             if [[ " ${skipped_list[*]} " =~ " $sw_name " ]]; then
                 echo "[CHECK] $sw_name -> installed"
