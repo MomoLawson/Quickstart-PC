@@ -284,31 +284,31 @@ JSON_PARSER=""
 
 ensure_json_parser() {
     if command -v jq &>/dev/null; then
-        log_info "检测到 jq，使用 jq"
+        log_info "$LANG_JQ_DETECTED"
         JSON_PARSER="jq"
         return 0
     fi
     
-    log_info "未检测到 jq，安装中..."
+    log_info "$LANG_JQ_NOT_FOUND"
     case $(detect_os) in
         macos) brew install jq ;;
         linux) sudo apt install -y jq ;;
     esac
     
     if command -v jq &>/dev/null; then
-        log_info "jq 安装成功"
+        log_info "$LANG_JQ_INSTALLED"
         JSON_PARSER="jq"
         return 0
     fi
     
-    log_warn "jq 安装失败，尝试使用备用解析方案..."
+    log_warn "$LANG_JQ_INSTALL_FAILED"
     if command -v python3 &>/dev/null; then
-        log_info "使用 python3 作为备用解析器"
+        log_info "$LANG_USING_PYTHON3"
         JSON_PARSER="python3"
         return 0
     fi
     
-    log_error "无可用 JSON 解析器 (jq/python3)"
+    log_error "$LANG_NO_JSON_PARSER"
     exit 1
 }
 
@@ -533,6 +533,13 @@ if [[ "$DETECTED_LANG" == "zh-CN" ]]; then
     LANG_DEV_MODE="开发者模式：仅显示选择的软件，不实际安装"
     LANG_FAKE_INSTALL_MODE="假装安装模式：展示安装过程但不实际安装"
     LANG_FAKE_INSTALLING="模拟安装"
+    LANG_JQ_DETECTED="检测到 jq，使用 jq"
+    LANG_JQ_NOT_FOUND="未检测到 jq，安装中..."
+    LANG_JQ_INSTALLED="jq 安装成功"
+    LANG_JQ_INSTALL_FAILED="jq 安装失败，尝试使用备用解析方案..."
+    LANG_USING_PYTHON3="使用 python3 作为备用解析器"
+    LANG_NO_JSON_PARSER="无可用 JSON 解析器 (jq/python3)"
+    LANG_CHECKING_INSTALLATION="正在检测安装情况..."
 else
     LANG_BANNER_TITLE="Quickstart-PC v0.10.0"
     LANG_BANNER_DESC="Quick setup for new computers"
@@ -565,6 +572,13 @@ else
     LANG_DEV_MODE="Dev mode: Show selected software without installing"
     LANG_FAKE_INSTALL_MODE="Fake install mode: Show installation process without actually installing"
     LANG_FAKE_INSTALLING="Simulating install"
+    LANG_JQ_DETECTED="jq detected, using jq"
+    LANG_JQ_NOT_FOUND="jq not found, installing..."
+    LANG_JQ_INSTALLED="jq installed successfully"
+    LANG_JQ_INSTALL_FAILED="jq installation failed, trying fallback parser..."
+    LANG_USING_PYTHON3="Using python3 as fallback parser"
+    LANG_NO_JSON_PARSER="No JSON parser available (jq/python3)"
+    LANG_CHECKING_INSTALLATION="Checking installation status..."
 fi
 
 RED='\033[0;31m'
@@ -960,10 +974,12 @@ main() {
         fi
         
         SELECTED_PROFILES=("$PROFILE_KEY")
+        log_info "$LANG_CHECKING_INSTALLATION"
         show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
     else
         show_profile_menu "$CONFIG_FILE"
         [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
+        log_info "$LANG_CHECKING_INSTALLATION"
         show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
     fi
     
