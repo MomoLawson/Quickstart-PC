@@ -275,16 +275,6 @@ lang_text() {
     fi
 }
 
-# 语言分割函数：返回对应语言的部分
-lang_text() {
-    local text="$1"
-    if [[ "$DETECTED_LANG" == "zh-CN" ]]; then
-        echo "${text%%/*}"
-    else
-        echo "${text##*/}"
-    fi
-}
-
 # JSON 解析抽象层
 JSON_PARSER=""
 
@@ -376,22 +366,26 @@ json_get_profile_field() {
     local json_file=$1
     local key=$2
     local field=$3
+    local raw
     if [[ "$JSON_PARSER" == "jq" ]]; then
-        jq -r ".profiles[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null
+        raw=$(jq -r ".profiles[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null)
     else
-        python3 -c "import json; print(json.load(open('$json_file'))['profiles'].get('$key',{}).get('$field',''))" 2>/dev/null
+        raw=$(python3 -c "import json; print(json.load(open('$json_file'))['profiles'].get('$key',{}).get('$field',''))" 2>/dev/null)
     fi
+    lang_text "$raw"
 }
 
 json_get_software_field() {
     local json_file=$1
     local key=$2
     local field=$3
+    local raw
     if [[ "$JSON_PARSER" == "jq" ]]; then
-        jq -r ".software[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null
+        raw=$(jq -r ".software[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null)
     else
-        python3 -c "import json; print(json.load(open('$json_file'))['software'].get('$key',{}).get('$field',''))" 2>/dev/null
+        raw=$(python3 -c "import json; print(json.load(open('$json_file'))['software'].get('$key',{}).get('$field',''))" 2>/dev/null)
     fi
+    lang_text "$raw"
 }
 
 is_installed() {
@@ -521,7 +515,8 @@ if [[ "$DETECTED_LANG" == "zh-CN" ]]; then
     LANG_CONFIG_INVALID="配置文件格式无效"
     LANG_SELECT_PROFILES="选择安装套餐"
     LANG_SELECT_SOFTWARE="选择要安装的软件"
-    LANG_NAVIGATE="↑↓ 移动 | 空格 选择 | 回车 确认"
+    LANG_NAVIGATE="↑↓ 移动 | 回车 确认"
+    LANG_NAVIGATE_MULTI="↑↓ 移动 | 空格 选择 | 回车 确认"
     LANG_SELECTED="[✓] "
     LANG_NOT_SELECTED="[  ] "
     LANG_SELECT_ALL="全选"
@@ -548,6 +543,9 @@ if [[ "$DETECTED_LANG" == "zh-CN" ]]; then
     LANG_CHECKING_INSTALLATION="正在检测安装情况..."
     LANG_SKIPPING_INSTALLED="已安装，跳过"
     LANG_ALL_INSTALLED="所有软件均已安装，无需操作"
+    LANG_ASK_CONTINUE="安装完成，是否继续安装其他套餐？"
+    LANG_CONTINUE="继续安装"
+    LANG_EXIT="退出"
 else
     LANG_BANNER_TITLE="Quickstart-PC v0.10.0"
     LANG_BANNER_DESC="Quick setup for new computers"
@@ -562,7 +560,8 @@ else
     LANG_CONFIG_INVALID="Configuration file format invalid"
     LANG_SELECT_PROFILES="Select Installation Profiles"
     LANG_SELECT_SOFTWARE="Select Software to Install"
-    LANG_NAVIGATE="↑↓ Move | SPACE Select | ENTER Confirm"
+    LANG_NAVIGATE="↑↓ Move | ENTER Confirm"
+    LANG_NAVIGATE_MULTI="↑↓ Move | SPACE Select | ENTER Confirm"
     LANG_SELECTED="[✓] "
     LANG_NOT_SELECTED="[  ] "
     LANG_SELECT_ALL="Select All"
@@ -589,6 +588,9 @@ else
     LANG_CHECKING_INSTALLATION="Checking installation status..."
     LANG_SKIPPING_INSTALLED="Already installed, skipping"
     LANG_ALL_INSTALLED="All software already installed, nothing to do"
+    LANG_ASK_CONTINUE="Installation complete. Continue installing other profiles?"
+    LANG_CONTINUE="Continue"
+    LANG_EXIT="Exit"
 fi
 
 RED='\033[0;31m'
@@ -628,7 +630,8 @@ check_package_manager() {
 }
 
 load_config() {
-    CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
+    CONFIG_FILE="/tmp/quickstart-config-$$.json"
+    rm -f "$CONFIG_FILE" 2>/dev/null
     
     if [[ -n "$CFG_URL" ]]; then
         log_info "$LANG_USING_REMOTE_CONFIG: $CFG_URL"
@@ -795,7 +798,7 @@ show_software_menu() {
     echo ""
     log_header "$LANG_SELECT_SOFTWARE"
     echo ""
-    echo -e "  ${CYAN}$LANG_NAVIGATE${NC}"
+    echo -e "  ${CYAN}$LANG_NAVIGATE_MULTI${NC}"
     echo ""
     
     draw_menu() {
@@ -908,23 +911,28 @@ show_banner() {
 }
 
 main() {
-    show_banner
-    
-    [[ "$DEV_MODE" == "true" ]] && log_warn "$LANG_DEV_MODE" && echo ""
-    [[ "$FAKE_INSTALL" == "true" ]] && log_warn "$LANG_FAKE_INSTALL_MODE" && echo ""
-    
-    log_info "$LANG_DETECTING_SYSTEM"
-    local os=$(detect_os)
-    local system_info=$(get_system_info)
-    local pkg_manager=$(check_package_manager "$os")
-    
-    log_info "$LANG_SYSTEM_INFO: $system_info"
-    log_info "$LANG_PACKAGE_MANAGER: $pkg_manager"
-    
-    [[ "$os" == "unknown" ]] && log_error "$LANG_UNSUPPORTED_OS" && exit 1
-    
-    ensure_json_parser
-    load_config
+    while true; do
+        # 清理旧配置
+        rm -f "$CONFIG_FILE" 2>/dev/null
+        CONFIG_FILE=""
+        
+        show_banner
+        
+        [[ "$DEV_MODE" == "true" ]] && log_warn "$LANG_DEV_MODE" && echo ""
+        [[ "$FAKE_INSTALL" == "true" ]] && log_warn "$LANG_FAKE_INSTALL_MODE" && echo ""
+        
+        log_info "$LANG_DETECTING_SYSTEM"
+        local os=$(detect_os)
+        local system_info=$(get_system_info)
+        local pkg_manager=$(check_package_manager "$os")
+        
+        log_info "$LANG_SYSTEM_INFO: $system_info"
+        log_info "$LANG_PACKAGE_MANAGER: $pkg_manager"
+        
+        [[ "$os" == "unknown" ]] && log_error "$LANG_UNSUPPORTED_OS" && exit 1
+        
+        ensure_json_parser
+        load_config
     
     # --non-interactive 模式处理
     if [[ "$NON_INTERACTIVE" == "true" ]]; then
@@ -1121,53 +1129,64 @@ main() {
     echo ""
     log_success "$LANG_TOTAL_INSTALLED ${#installed_list[@]} / $total"
     
-    # Verbose output
-    if [[ "$VERBOSE" == "true" ]]; then
-        echo ""
-        echo "===== Verbose Debug Info ====="
-        log_to_file ""
-        log_to_file "===== Verbose Debug Info ====="
-        echo "[PLATFORM] $(detect_os) - $(get_system_info)"
-        log_to_file "[PLATFORM] $(detect_os) - $(get_system_info)"
-        echo "[PKG_MANAGER] $(check_package_manager "$os")"
-        log_to_file "[PKG_MANAGER] $(check_package_manager "$os")"
-        echo "[CONFIG] $CONFIG_FILE"
-        log_to_file "[CONFIG] $CONFIG_FILE"
-        echo "[PROFILE] ${SELECTED_PROFILES[*]}"
-        log_to_file "[PROFILE] ${SELECTED_PROFILES[*]}"
-        echo ""
-        log_to_file ""
-        for sw in "${SELECTED_SOFTWARE[@]}"; do
-            local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
-            local check_field
-            case "$os" in
-                macos) check_field="check_mac" ;;
-                windows) check_field="check_win" ;;
-                linux) check_field="check_linux" ;;
-            esac
-            local check_cmd=$(json_get_software_field "$CONFIG_FILE" "$sw" "$check_field")
-            local install_cmd=$(json_get_software_field "$CONFIG_FILE" "$sw" "${os:0:3}")
-            
-            if [[ " ${skipped_list[*]} " =~ " $sw_name " ]]; then
-                echo "[CHECK] $sw_name -> installed"
-                log_to_file "[CHECK] $sw_name -> installed"
-            elif [[ " ${failed_list[*]} " =~ " $sw_name " ]]; then
-                echo "[CHECK] $sw_name -> not installed"
-                log_to_file "[CHECK] $sw_name -> not installed"
-                echo "[PLAN] $sw_name -> $install_cmd"
-                log_to_file "[PLAN] $sw_name -> $install_cmd"
-                echo "[FAIL] $sw_name -> installation failed"
-                log_to_file "[FAIL] $sw_name -> installation failed"
-            else
-                echo "[CHECK] $sw_name -> not installed"
-                log_to_file "[CHECK] $sw_name -> not installed"
-                echo "[PLAN] $sw_name -> $install_cmd"
-                log_to_file "[PLAN] $sw_name -> $install_cmd"
-            fi
-        done
-        echo "===== End Verbose ====="
-        log_to_file "===== End Verbose ====="
-    fi
+    # 安装完成后询问是否继续
+    echo ""
+    log_info "$LANG_ASK_CONTINUE"
+    
+    local continue_cursor=0
+    local continue_running=true
+    
+    tput civis 2>/dev/null || true
+    
+    while [[ "$continue_running" == "true" ]]; do
+        printf "\r\033[2K"
+        if [[ $continue_cursor -eq 0 ]]; then
+            printf "  \033[7m ▶ %s \033[0m    %s" "$LANG_CONTINUE" "$LANG_EXIT"
+        else
+            printf "    %s    \033[7m ▶ %s \033[0m" "$LANG_CONTINUE" "$LANG_EXIT"
+        fi
+        
+        local key=""
+        IFS= read -rsn1 key < /dev/tty
+        local key_code=$(printf '%d' "'$key" 2>/dev/null || echo 0)
+        
+        debug_log "continue: key_code=$key_code key=$(printf '%q' "$key")"
+        
+        case $key_code in
+            27)
+                local key2=""
+                IFS= read -rsn1 key2 < /dev/tty
+                case "$key2" in
+                    '[')
+                        local key3=""
+                        IFS= read -rsn1 key3 < /dev/tty
+                        case "$key3" in
+                            'C') # 右箭头
+                                continue_cursor=1
+                                ;;
+                            'D') # 左箭头
+                                continue_cursor=0
+                                ;;
+                        esac
+                        ;;
+                esac
+                ;;
+            0|10|13) # 回车
+                if [[ $continue_cursor -eq 0 ]]; then
+                    continue_running=false
+                else
+                    continue_running=false
+                    tput cnorm 2>/dev/null || true
+                    echo ""
+                    exit 0
+                fi
+                ;;
+        esac
+    done
+    
+    tput cnorm 2>/dev/null || true
+    echo ""
+    done
 }
 
 trap 'tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
