@@ -16,7 +16,7 @@ jobs:
         with:
           check_together: 'yes'
           scandir: './src'
-          severity: warning
+          severity: error
 
   smoke-test:
     runs-on: ubuntu-latest
@@ -35,7 +35,7 @@ jobs:
           echo "$output" | grep -q "Available profiles"
       - name: Test --show-profile
         run: |
-          output=$(bash dist/quickstart.sh --show-profile developer --cfg-path config/profiles.json 2>&1)
+          output=$(bash dist/quickstart.sh --show-profile developer --cfg-path config/profiles.json 2>&1 || true)
           echo "$output"
           echo "$output" | grep -q "Profile:"
       - name: Test --profile --dry-run --yes

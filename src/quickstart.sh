@@ -6,8 +6,6 @@ if [[ -t 1 ]]; then
     tput civis 2>/dev/null || true
 fi
 
-trap 'echo ""; echo -e "\033[0;31m[ERROR] 脚本错误: 行 $LINENO\033[0m"; tput cnorm 2>/dev/null || true; exit 1' ERR
-
 # 默认配置 URL（优先级最高）
 DEFAULT_CFG_URL="https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json"
 
