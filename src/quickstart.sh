@@ -423,6 +423,7 @@ tui_interactive_select() {
     local cursor=0
     
     tput civis 2>/dev/null || true
+    stty -echo 2>/dev/null
     
     for ((i=0; i<num_items; i++)); do
         if [[ $i -eq $cursor ]]; then
@@ -461,7 +462,8 @@ tui_interactive_select() {
     done
     
     tput cnorm 2>/dev/null || true
-    TUI_RESULT=$cursor
+    stty echo 2>/dev/null
+    return $cursor
 }
 
 select_language() {
@@ -703,6 +705,7 @@ show_profile_menu() {
     done
     
     tput civis 2>/dev/null || true
+    stty -echo 2>/dev/null
     
     echo ""
     log_header "$LANG_SELECT_PROFILES"
@@ -744,6 +747,7 @@ show_profile_menu() {
     done
     
     tput cnorm 2>/dev/null || true
+    stty echo 2>/dev/null
     
     SELECTED_PROFILES=("${profile_keys[$cursor]}")
 }
@@ -794,6 +798,9 @@ show_software_menu() {
     local cursor=0
     
     tput civis 2>/dev/null || true
+    
+    # 禁用终端回显，防止按住按键时字符溢出
+    stty -echo 2>/dev/null
     
     echo ""
     log_header "$LANG_SELECT_SOFTWARE"
@@ -858,6 +865,9 @@ show_software_menu() {
     for ((i=1; i<num_items; i++)); do
         [[ ${checked[$i]} -eq 1 ]] && SELECTED_SOFTWARE+=("${menu_keys[$i]}")
     done
+    
+    # 恢复终端回显
+    stty echo 2>/dev/null
 }
 
 install_software() {
@@ -911,10 +921,18 @@ show_banner() {
 }
 
 main() {
+    trap 'stty echo 2>/dev/null; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
+    
     while true; do
-        # 清理旧配置
+        clear
+        tput civis 2>/dev/null || true
+        stty -echo 2>/dev/null
+        
+        # 清理旧配置和选择
         rm -f "$CONFIG_FILE" 2>/dev/null
         CONFIG_FILE=""
+        SELECTED_PROFILES=()
+        SELECTED_SOFTWARE=()
         
         show_banner
         
@@ -999,7 +1017,51 @@ main() {
         show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
     fi
     
-    [[ ${#SELECTED_SOFTWARE[@]} -eq 0 ]] && log_warn "$LANG_NO_SOFTWARE_SELECTED" && exit 0
+    if [[ ${#SELECTED_SOFTWARE[@]} -eq 0 ]]; then
+        log_warn "$LANG_NO_SOFTWARE_SELECTED"
+        echo ""
+        log_info "$LANG_ASK_CONTINUE"
+        
+        local continue_cursor=0
+        local continue_running=true
+        
+        tput civis 2>/dev/null || true
+        stty sane 2>/dev/null
+        
+        while [[ "$continue_running" == "true" ]]; do
+            printf "\r\033[2K"
+            if [[ $continue_cursor -eq 0 ]]; then
+                printf "  \033[7m ▶ %s \033[0m    %s" "$LANG_CONTINUE" "$LANG_EXIT"
+            else
+                printf "    %s    \033[7m ▶ %s \033[0m" "$LANG_CONTINUE" "$LANG_EXIT"
+            fi
+            
+            local key=""
+            IFS= read -rsn1 key < /dev/tty
+            
+            # 空字符串 = 回车
+            if [[ -z "$key" ]]; then
+                tput cnorm 2>/dev/null || true
+                echo ""
+                if [[ $continue_cursor -eq 0 ]]; then
+                    continue_running=false
+                else
+                    exit 0
+                fi
+            # ESC 开头 = 方向键
+            elif [[ "$key" == $'\x1b' ]]; then
+                local seq=""
+                IFS= read -rsn2 seq < /dev/tty
+                if [[ "$seq" == "[C" ]]; then
+                    continue_cursor=1
+                elif [[ "$seq" == "[D" ]]; then
+                    continue_cursor=0
+                fi
+            fi
+        done
+        
+        continue
+    fi
     
     echo ""
     log_info "Selected: ${SELECTED_SOFTWARE[*]}"
@@ -1010,8 +1072,52 @@ main() {
     if [[ "$AUTO_YES" == "true" ]] || [[ "$NON_INTERACTIVE" == "true" ]]; then
         echo ""
     else
-        read -p "$LANG_CONFIRM_INSTALL " confirm < /dev/tty
-        [[ "$confirm" =~ ^[Nn] ]] && log_info "$LANG_CANCELLED" && exit 0
+        printf "%s " "$LANG_CONFIRM_INSTALL"
+        local confirm=""
+        IFS= read -rsn1 confirm < /dev/tty
+        echo ""
+        if [[ "$confirm" =~ ^[Nn] ]]; then
+            log_info "$LANG_CANCELLED"
+            echo ""
+            log_info "$LANG_ASK_CONTINUE"
+            
+            local cancel_cursor=0
+            local cancel_running=true
+            
+            while [[ "$cancel_running" == "true" ]]; do
+                printf "\r\033[2K"
+                if [[ $cancel_cursor -eq 0 ]]; then
+                    printf "  \033[7m ▶ %s \033[0m    %s" "$LANG_CONTINUE" "$LANG_EXIT"
+                else
+                    printf "    %s    \033[7m ▶ %s \033[0m" "$LANG_CONTINUE" "$LANG_EXIT"
+                fi
+                
+                local key=""
+                IFS= read -rsn1 key < /dev/tty
+                
+                # 空字符串 = 回车
+                if [[ -z "$key" ]]; then
+                    tput cnorm 2>/dev/null || true
+                    echo ""
+                    if [[ $cancel_cursor -eq 0 ]]; then
+                        cancel_running=false
+                    else
+                        exit 0
+                    fi
+                # ESC 开头 = 方向键
+                elif [[ "$key" == $'\x1b' ]]; then
+                    local seq=""
+                    IFS= read -rsn2 seq < /dev/tty
+                    if [[ "$seq" == "[C" ]]; then
+                        cancel_cursor=1
+                    elif [[ "$seq" == "[D" ]]; then
+                        cancel_cursor=0
+                    fi
+                fi
+            done
+            
+            continue
+        fi
     fi
     
     log_info "$LANG_CHECKING_INSTALLATION"
@@ -1037,7 +1143,48 @@ main() {
     
     if [[ ${#to_install[@]} -eq 0 ]]; then
         log_info "$LANG_ALL_INSTALLED"
-        exit 0
+        echo ""
+        log_info "$LANG_ASK_CONTINUE"
+        
+        local continue_cursor=0
+        local continue_running=true
+        
+        tput civis 2>/dev/null || true
+        stty sane 2>/dev/null
+        
+        while [[ "$continue_running" == "true" ]]; do
+            printf "\r\033[2K"
+            if [[ $continue_cursor -eq 0 ]]; then
+                printf "  \033[7m ▶ %s \033[0m    %s" "$LANG_CONTINUE" "$LANG_EXIT"
+            else
+                printf "    %s    \033[7m ▶ %s \033[0m" "$LANG_CONTINUE" "$LANG_EXIT"
+            fi
+            
+            local key=""
+            IFS= read -rsn1 key < /dev/tty
+            
+            # 空字符串 = 回车
+            if [[ -z "$key" ]]; then
+                tput cnorm 2>/dev/null || true
+                echo ""
+                if [[ $continue_cursor -eq 0 ]]; then
+                    continue_running=false
+                else
+                    exit 0
+                fi
+            # ESC 开头 = 方向键
+            elif [[ "$key" == $'\x1b' ]]; then
+                local seq=""
+                IFS= read -rsn2 seq < /dev/tty
+                if [[ "$seq" == "[C" ]]; then
+                    continue_cursor=1
+                elif [[ "$seq" == "[D" ]]; then
+                    continue_cursor=0
+                fi
+            fi
+        done
+        
+        continue
     fi
     
     log_header "$LANG_START_INSTALLING"
@@ -1138,7 +1285,10 @@ main() {
     
     tput civis 2>/dev/null || true
     
-    while [[ "$continue_running" == "true" ]]; do
+    # 禁用回显，防止按住按键时字符溢出
+    stty -echo 2>/dev/null
+    
+    while [[ "$running" == "true" ]]; do
         printf "\r\033[2K"
         if [[ $continue_cursor -eq 0 ]]; then
             printf "  \033[7m ▶ %s \033[0m    %s" "$LANG_CONTINUE" "$LANG_EXIT"
@@ -1148,9 +1298,8 @@ main() {
         
         local key=""
         IFS= read -rsn1 key < /dev/tty
+        [[ -z "$key" ]] && continue
         local key_code=$(printf '%d' "'$key" 2>/dev/null || echo 0)
-        
-        debug_log "continue: key_code=$key_code key=$(printf '%q' "$key")"
         
         case $key_code in
             27)
@@ -1176,6 +1325,7 @@ main() {
                     continue_running=false
                 else
                     continue_running=false
+                    stty echo 2>/dev/null
                     tput cnorm 2>/dev/null || true
                     echo ""
                     exit 0
@@ -1184,10 +1334,10 @@ main() {
         esac
     done
     
-    tput cnorm 2>/dev/null || true
-    echo ""
+    # 恢复回显
+    stty echo 2>/dev/null
     done
 }
 
-trap 'tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
+trap 'stty echo 2>/dev/null; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
 main "$@"
