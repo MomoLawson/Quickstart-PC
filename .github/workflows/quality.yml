@@ -1,0 +1,40 @@
+name: Quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          check_together: 'yes'
+          scandir: './src'
+          severity: warning
+
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+      - name: Build
+        run: bash scripts/build.sh
+      - name: Test --help
+        run: bash dist/quickstart.sh --help
+      - name: Test --list-profiles
+        run: bash dist/quickstart.sh --list-profiles
+      - name: Test --show-profile
+        run: bash dist/quickstart.sh --show-profile developer
+      - name: Test --profile --dry-run --yes
+        run: bash dist/quickstart.sh --profile developer --dry-run --yes --lang en
+      - name: Test --profile --only --dry-run --yes
+        run: bash dist/quickstart.sh --profile developer --only git --dry-run --yes --lang en
+      - name: Test --profile --skip --dry-run --yes
+        run: bash dist/quickstart.sh --profile developer --skip docker --dry-run --yes --lang en
