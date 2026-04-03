@@ -1,53 +1,53 @@
 {
   "profiles": {
     "recommended": {
-      "name": "Recommended",
-      "desc": "Balanced setup for most users",
+      "name": "推荐套餐/Recommended",
+      "desc": "综合均衡，适合大多数用户/Balanced setup for most users",
       "icon": "⭐",
       "includes": ["chrome", "edge", "vscode", "git", "nodejs", "python", "wps", "vlc"]
     },
     "ai": {
-      "name": "AI Powered",
-      "desc": "AI CLI tools, smart IDEs, LLM clients",
+      "name": "AI 赋能/AI Powered",
+      "desc": "AI CLI 工具、智能 IDE、大模型客户端/AI CLI tools, smart IDEs, LLM clients",
       "icon": "🤖",
       "includes": ["cursor", "ollama", "lmstudio"]
     },
     "office": {
-      "name": "Office Suite",
-      "desc": "Documents, spreadsheets, collaboration",
+      "name": "办公套件/Office Suite",
+      "desc": "文档、表格、协作工具/Documents, spreadsheets, collaboration",
       "icon": "📊",
       "includes": ["wps", "obsidian", "notion"]
     },
     "developer": {
-      "name": "Developer",
-      "desc": "IDEs, version control, runtimes",
+      "name": "开发者套餐/Developer",
+      "desc": "IDE、版本控制、运行时环境/IDEs, version control, runtimes",
       "icon": "💻",
       "includes": ["vscode", "intellij", "git", "nodejs", "python", "go", "docker"]
     },
     "media": {
-      "name": "Media Creation",
-      "desc": "Audio/video/image processing tools",
+      "name": "媒体创作/Media Creation",
+      "desc": "音视频、图像处理工具/Audio/video/image processing tools",
       "icon": "🎬",
       "includes": ["vlc", "obs"]
     }
   },
   "software": {
-    "chrome": {"name": "Chrome", "desc": "Web browser", "win": "winget install Google.Chrome", "mac": "brew install --cask google-chrome", "linux": "sudo apt install -y google-chrome-stable", "check_win": "winget list Google.Chrome", "check_mac": "ls /Applications/Google\\ Chrome.app 2>/dev/null", "check_linux": "which google-chrome-stable 2>/dev/null"},
-    "edge": {"name": "Edge", "desc": "Microsoft browser", "win": "winget install Microsoft.Edge", "mac": "brew install --cask microsoft-edge", "linux": "curl -o /tmp/microsoft-edge.deb https://packages.microsoft.com/repos/edge && sudo dpkg -i /tmp/microsoft-edge.deb", "check_win": "winget list Microsoft.Edge", "check_mac": "ls /Applications/Microsoft\\ Edge.app 2>/dev/null", "check_linux": "which microsoft-edge 2>/dev/null"},
-    "vscode": {"name": "VS Code", "desc": "Code editor", "win": "winget install Microsoft.VisualStudioCode", "mac": "brew install --cask visual-studio-code", "linux": "sudo snap install --classic code", "check_win": "winget list Microsoft.VisualStudioCode", "check_mac": "ls /Applications/Visual\\ Studio\\ Code.app 2>/dev/null", "check_linux": "which code 2>/dev/null"},
-    "intellij": {"name": "IntelliJ IDEA", "desc": "JetBrains IDE", "win": "winget install JetBrains.IntelliJIDEA.Community", "mac": "brew install --cask intellij-idea-ce", "linux": "curl -o /tmp/idea.tar.gz https://download.jetbrains.com/product?code=IIC&& sudo tar -xzf /tmp/idea.tar.gz -C /opt", "check_win": "winget list JetBrains.IntelliJIDEA.Community", "check_mac": "ls /Applications/IntelliJ\\ IDEA\\ CE.app 2>/dev/null", "check_linux": "which idea 2>/dev/null"},
-    "git": {"name": "Git", "desc": "Version control", "win": "winget install Git.Git", "mac": "brew install git", "linux": "sudo apt install -y git", "check_win": "winget list Git.Git", "check_mac": "which git 2>/dev/null", "check_linux": "which git 2>/dev/null"},
-    "nodejs": {"name": "Node.js", "desc": "JavaScript runtime", "win": "winget install OpenJS.NodeJS.LTS", "mac": "brew install node", "linux": "curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt install -y nodejs", "check_win": "winget list OpenJS.NodeJS", "check_mac": "which node 2>/dev/null", "check_linux": "which node 2>/dev/null"},
-    "python": {"name": "Python", "desc": "Programming language", "win": "winget install Python.Python.3.11", "mac": "brew install python@3.11", "linux": "sudo apt install -y python3 python3-pip", "check_win": "winget list Python.Python", "check_mac": "which python3 2>/dev/null", "check_linux": "which python3 2>/dev/null"},
-    "go": {"name": "Go", "desc": "Go programming language", "win": "winget install Golang.Go", "mac": "brew install go", "linux": "sudo apt install -y golang", "check_win": "winget list Golang.Go", "check_mac": "which go 2>/dev/null", "check_linux": "which go 2>/dev/null"},
-    "docker": {"name": "Docker", "desc": "Containerization platform", "win": "winget install Docker.DockerDesktop", "mac": "brew install --cask docker", "linux": "curl -fsSL https://get.docker.com | sh", "check_win": "winget list Docker.DockerDesktop", "check_mac": "which docker 2>/dev/null", "check_linux": "which docker 2>/dev/null"},
-    "wps": {"name": "WPS Office", "desc": "Office suite", "win": "winget install Kingsoft.WPSOffice", "mac": "brew install --cask wps-office", "linux": "sudo apt install -y wps-office", "check_win": "winget list Kingsoft.WPSOffice", "check_mac": "ls /Applications/WPS\\ Office.app 2>/dev/null", "check_linux": "which wps 2>/dev/null"},
-    "obsidian": {"name": "Obsidian", "desc": "Note-taking tool", "win": "winget install Obsidian.Obsidian", "mac": "brew install --cask obsidian", "linux": "sudo snap install obsidian --classic", "check_win": "winget list Obsidian.Obsidian", "check_mac": "ls /Applications/Obsidian.app 2>/dev/null", "check_linux": "which obsidian 2>/dev/null"},
-    "notion": {"name": "Notion", "desc": "Collaboration tool", "win": "winget install Notion.Notion", "mac": "brew install --cask notion", "linux": "sudo snap install notion-snap", "check_win": "winget list Notion.Notion", "check_mac": "ls /Applications/Notion.app 2>/dev/null", "check_linux": "which notion 2>/dev/null"},
-    "cursor": {"name": "Cursor", "desc": "AI code editor", "win": "winget install Cursor.Cursor", "mac": "brew install --cask cursor", "linux": "curl -o /tmp/cursor.AppImage https://cursor.sh/linux/x64 && chmod +x /tmp/cursor.AppImage", "check_win": "winget list Cursor.Cursor", "check_mac": "ls /Applications/Cursor.app 2>/dev/null", "check_linux": "which cursor 2>/dev/null"},
-    "ollama": {"name": "Ollama", "desc": "Local LLM runner", "win": "powershell -Command \"irm https://ollama.ai/install.ps1 | iex\"", "mac": "brew install ollama", "linux": "curl -fsSL https://ollama.ai/install.sh | sh", "check_win": "where ollama 2>nul", "check_mac": "which ollama 2>/dev/null", "check_linux": "which ollama 2>/dev/null"},
-    "lmstudio": {"name": "LM Studio", "desc": "Local LLM client", "win": "winget install LMStudio.LMStudio", "mac": "brew install --cask lm-studio", "linux": "curl -o /tmp/lm-studio.AppImage https://releases.lmstudio.ai/linux/x64/latest", "check_win": "winget list LMStudio.LMStudio", "check_mac": "ls /Applications/LM\\ Studio.app 2>/dev/null", "check_linux": "which lm-studio 2>/dev/null"},
-    "vlc": {"name": "VLC", "desc": "Media player", "win": "winget install VideoLAN.VLC", "mac": "brew install --cask vlc", "linux": "sudo apt install -y vlc", "check_win": "winget list VideoLAN.VLC", "check_mac": "ls /Applications/VLC.app 2>/dev/null", "check_linux": "which vlc 2>/dev/null"},
-    "obs": {"name": "OBS Studio", "desc": "Streaming & recording", "win": "winget install OBSProject.OBSStudio", "mac": "brew install --cask obs", "linux": "sudo apt install -y obs-studio", "check_win": "winget list OBSProject.OBSStudio", "check_mac": "ls /Applications/OBS.app 2>/dev/null", "check_linux": "which obs 2>/dev/null"}
+    "chrome": {"name": "Chrome", "desc": "浏览器/Web browser", "win": "winget install Google.Chrome", "mac": "brew install --cask google-chrome", "linux": "sudo apt install -y google-chrome-stable", "check_win": "winget list Google.Chrome", "check_mac": "ls /Applications/Google\\ Chrome.app 2>/dev/null", "check_linux": "which google-chrome-stable 2>/dev/null"},
+    "edge": {"name": "Edge", "desc": "微软浏览器/Microsoft browser", "win": "winget install Microsoft.Edge", "mac": "brew install --cask microsoft-edge", "linux": "curl -o /tmp/microsoft-edge.deb https://packages.microsoft.com/repos/edge && sudo dpkg -i /tmp/microsoft-edge.deb", "check_win": "winget list Microsoft.Edge", "check_mac": "ls /Applications/Microsoft\\ Edge.app 2>/dev/null", "check_linux": "which microsoft-edge 2>/dev/null"},
+    "vscode": {"name": "VS Code", "desc": "代码编辑器/Code editor", "win": "winget install Microsoft.VisualStudioCode", "mac": "brew install --cask visual-studio-code", "linux": "sudo snap install --classic code", "check_win": "winget list Microsoft.VisualStudioCode", "check_mac": "ls /Applications/Visual\\ Studio\\ Code.app 2>/dev/null", "check_linux": "which code 2>/dev/null"},
+    "intellij": {"name": "IntelliJ IDEA", "desc": "JetBrains IDE/JetBrains IDE", "win": "winget install JetBrains.IntelliJIDEA.Community", "mac": "brew install --cask intellij-idea-ce", "linux": "curl -o /tmp/idea.tar.gz https://download.jetbrains.com/product?code=IIC&& sudo tar -xzf /tmp/idea.tar.gz -C /opt", "check_win": "winget list JetBrains.IntelliJIDEA.Community", "check_mac": "ls /Applications/IntelliJ\\ IDEA\\ CE.app 2>/dev/null", "check_linux": "which idea 2>/dev/null"},
+    "git": {"name": "Git", "desc": "版本控制/Version control", "win": "winget install Git.Git", "mac": "brew install git", "linux": "sudo apt install -y git", "check_win": "winget list Git.Git", "check_mac": "which git 2>/dev/null", "check_linux": "which git 2>/dev/null"},
+    "nodejs": {"name": "Node.js", "desc": "JavaScript 运行时/JavaScript runtime", "win": "winget install OpenJS.NodeJS.LTS", "mac": "brew install node", "linux": "curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt install -y nodejs", "check_win": "winget list OpenJS.NodeJS", "check_mac": "which node 2>/dev/null", "check_linux": "which node 2>/dev/null"},
+    "python": {"name": "Python", "desc": "Python 编程语言/Python programming language", "win": "winget install Python.Python.3.11", "mac": "brew install python@3.11", "linux": "sudo apt install -y python3 python3-pip", "check_win": "winget list Python.Python", "check_mac": "which python3 2>/dev/null", "check_linux": "which python3 2>/dev/null"},
+    "go": {"name": "Go", "desc": "Go 编程语言/Go programming language", "win": "winget install Golang.Go", "mac": "brew install go", "linux": "sudo apt install -y golang", "check_win": "winget list Golang.Go", "check_mac": "which go 2>/dev/null", "check_linux": "which go 2>/dev/null"},
+    "docker": {"name": "Docker", "desc": "容器化平台/Containerization platform", "win": "winget install Docker.DockerDesktop", "mac": "brew install --cask docker", "linux": "curl -fsSL https://get.docker.com | sh", "check_win": "winget list Docker.DockerDesktop", "check_mac": "which docker 2>/dev/null", "check_linux": "which docker 2>/dev/null"},
+    "wps": {"name": "WPS Office", "desc": "办公套件/Office suite", "win": "winget install Kingsoft.WPSOffice", "mac": "brew install --cask wps-office", "linux": "sudo apt install -y wps-office", "check_win": "winget list Kingsoft.WPSOffice", "check_mac": "ls /Applications/WPS\\ Office.app 2>/dev/null", "check_linux": "which wps 2>/dev/null"},
+    "obsidian": {"name": "Obsidian", "desc": "笔记工具/Note-taking tool", "win": "winget install Obsidian.Obsidian", "mac": "brew install --cask obsidian", "linux": "sudo snap install obsidian --classic", "check_win": "winget list Obsidian.Obsidian", "check_mac": "ls /Applications/Obsidian.app 2>/dev/null", "check_linux": "which obsidian 2>/dev/null"},
+    "notion": {"name": "Notion", "desc": "协作工具/Collaboration tool", "win": "winget install Notion.Notion", "mac": "brew install --cask notion", "linux": "sudo snap install notion-snap", "check_win": "winget list Notion.Notion", "check_mac": "ls /Applications/Notion.app 2>/dev/null", "check_linux": "which notion 2>/dev/null"},
+    "cursor": {"name": "Cursor", "desc": "AI 代码编辑器/AI code editor", "win": "winget install Cursor.Cursor", "mac": "brew install --cask cursor", "linux": "curl -o /tmp/cursor.AppImage https://cursor.sh/linux/x64 && chmod +x /tmp/cursor.AppImage", "check_win": "winget list Cursor.Cursor", "check_mac": "ls /Applications/Cursor.app 2>/dev/null", "check_linux": "which cursor 2>/dev/null"},
+    "ollama": {"name": "Ollama", "desc": "本地 LLM/Local LLM runner", "win": "powershell -Command \"irm https://ollama.ai/install.ps1 | iex\"", "mac": "brew install ollama", "linux": "curl -fsSL https://ollama.ai/install.sh | sh", "check_win": "where ollama 2>nul", "check_mac": "which ollama 2>/dev/null", "check_linux": "which ollama 2>/dev/null"},
+    "lmstudio": {"name": "LM Studio", "desc": "本地 LLM 客户端/Local LLM client", "win": "winget install LMStudio.LMStudio", "mac": "brew install --cask lm-studio", "linux": "curl -o /tmp/lm-studio.AppImage https://releases.lmstudio.ai/linux/x64/latest", "check_win": "winget list LMStudio.LMStudio", "check_mac": "ls /Applications/LM\\ Studio.app 2>/dev/null", "check_linux": "which lm-studio 2>/dev/null"},
+    "vlc": {"name": "VLC", "desc": "媒体播放器/Media player", "win": "winget install VideoLAN.VLC", "mac": "brew install --cask vlc", "linux": "sudo apt install -y vlc", "check_win": "winget list VideoLAN.VLC", "check_mac": "ls /Applications/VLC.app 2>/dev/null", "check_linux": "which vlc 2>/dev/null"},
+    "obs": {"name": "OBS Studio", "desc": "直播录制/Streaming & recording", "win": "winget install OBSProject.OBSStudio", "mac": "brew install --cask obs", "linux": "sudo apt install -y obs-studio", "check_win": "winget list OBSProject.OBSStudio", "check_mac": "ls /Applications/OBS.app 2>/dev/null", "check_linux": "which obs 2>/dev/null"}
   }
 }

@@ -259,6 +259,26 @@ log_header() {
     log_to_file ""
 }
 
+# 语言分割函数：返回对应语言的部分
+lang_text() {
+    local text="$1"
+    if [[ "$DETECTED_LANG" == "zh-CN" ]]; then
+        echo "${text%%/*}"
+    else
+        echo "${text##*/}"
+    fi
+}
+
+# 语言分割函数：返回对应语言的部分
+lang_text() {
+    local text="$1"
+    if [[ "$DETECTED_LANG" == "zh-CN" ]]; then
+        echo "${text%%/*}"
+    else
+        echo "${text##*/}"
+    fi
+}
+
 # JSON 解析抽象层
 JSON_PARSER=""
 
@@ -350,22 +370,26 @@ json_get_profile_field() {
     local json_file=$1
     local key=$2
     local field=$3
+    local raw
     if [[ "$JSON_PARSER" == "jq" ]]; then
-        jq -r ".profiles[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null
+        raw=$(jq -r ".profiles[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null)
     else
-        python3 -c "import json; print(json.load(open('$json_file'))['profiles'].get('$key',{}).get('$field',''))" 2>/dev/null
+        raw=$(python3 -c "import json; print(json.load(open('$json_file'))['profiles'].get('$key',{}).get('$field',''))" 2>/dev/null)
     fi
+    lang_text "$raw"
 }
 
 json_get_software_field() {
     local json_file=$1
     local key=$2
     local field=$3
+    local raw
     if [[ "$JSON_PARSER" == "jq" ]]; then
-        jq -r ".software[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null
+        raw=$(jq -r ".software[\"$key\"].$field // \"\"" "$json_file" 2>/dev/null)
     else
-        python3 -c "import json; print(json.load(open('$json_file'))['software'].get('$key',{}).get('$field',''))" 2>/dev/null
+        raw=$(python3 -c "import json; print(json.load(open('$json_file'))['software'].get('$key',{}).get('$field',''))" 2>/dev/null)
     fi
+    lang_text "$raw"
 }
 
 is_installed() {
