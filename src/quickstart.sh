@@ -1024,6 +1024,10 @@ main() {
     
     if [[ ${#SELECTED_SOFTWARE[@]} -eq 0 ]]; then
         log_warn "$LANG_NO_SOFTWARE_SELECTED"
+        # 非交互模式直接退出
+        if [[ "$NON_INTERACTIVE" == "true" ]]; then
+            exit 0
+        fi
         echo ""
         log_info "$LANG_ASK_CONTINUE"
         
