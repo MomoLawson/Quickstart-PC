@@ -277,6 +277,11 @@ log_header() {
     log_to_file ""
 }
 
+# 设置终端窗口标题
+set_title() {
+    printf '\033]0;%s\007' "$1"
+}
+
 # 语言分割函数：返回对应语言的部分
 lang_text() {
     local text="$1"
@@ -568,6 +573,10 @@ if [[ "$DETECTED_LANG" == "zh-CN" ]]; then
     LANG_ASK_CONTINUE="安装完成，是否继续安装其他套餐？"
     LANG_CONTINUE="继续安装"
     LANG_EXIT="退出"
+    LANG_TITLE_SELECT_PROFILE="选择套餐"
+    LANG_TITLE_SELECT_SOFTWARE="选择软件"
+    LANG_TITLE_INSTALLING="安装中"
+    LANG_TITLE_ASK_CONTINUE="是否继续安装"
 else
     LANG_BANNER_TITLE="Quickstart-PC v0.30.0"
     LANG_BANNER_DESC="Quick setup for new computers"
@@ -613,6 +622,10 @@ else
     LANG_ASK_CONTINUE="Installation complete. Continue installing other profiles?"
     LANG_CONTINUE="Continue"
     LANG_EXIT="Exit"
+    LANG_TITLE_SELECT_PROFILE="Select Profile"
+    LANG_TITLE_SELECT_SOFTWARE="Select Software"
+    LANG_TITLE_INSTALLING="Installing"
+    LANG_TITLE_ASK_CONTINUE="Continue Installing?"
 fi
 
 RED='\033[0;31m'
@@ -1156,14 +1169,19 @@ main() {
         fi
         
         SELECTED_PROFILES=("$PROFILE_KEY")
+        local profile_name=$(json_get_profile_field "$CONFIG_FILE" "$PROFILE_KEY" "name")
+        set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
         if [[ "$CUSTOM_MODE" == "true" ]]; then
             custom_select_software "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
         else
             show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
         fi
     else
+        set_title "QSPC | $LANG_TITLE_SELECT_PROFILE"
         show_profile_menu "$CONFIG_FILE"
         [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
+        local profile_name=$(json_get_profile_field "$CONFIG_FILE" "${SELECTED_PROFILES[@]}" "name")
+        set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
         if [[ "$CUSTOM_MODE" == "true" ]]; then
             custom_select_software "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
         else
@@ -1394,6 +1412,7 @@ main() {
         continue
     fi
     
+    set_title "QSPC | $LANG_TITLE_INSTALLING"
     log_header "$LANG_START_INSTALLING"
     
     local total=${#to_install[@]}
@@ -1550,10 +1569,12 @@ main() {
     
     # 非交互模式直接退出
     if [[ "$NON_INTERACTIVE" == "true" ]]; then
+        set_title "QSPC"
         exit 0
     fi
     
     # 安装完成后询问是否继续
+    set_title "QSPC | $LANG_TITLE_ASK_CONTINUE"
     echo ""
     log_info "$LANG_ASK_CONTINUE"
     

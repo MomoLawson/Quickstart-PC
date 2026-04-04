@@ -54,6 +54,11 @@ function Get-CursorVisible {
     try { return [Console]::CursorVisible } catch { return $true }
 }
 
+function Set-WindowTitle {
+    param([string]$Title)
+    try { $Host.UI.RawUI.WindowTitle = $Title } catch {}
+}
+
 # ============================================
 # Language strings (zh-CN / en-US)
 # ============================================
@@ -116,6 +121,12 @@ function Initialize-LanguageStrings {
         "ask_continue" = if ($Lang -eq "zh-CN") { "安装完成，是否继续安装其他套餐？" } else { "Installation complete. Continue installing other profiles?" }
         "continue_btn" = if ($Lang -eq "zh-CN") { "继续安装" } else { "Continue" }
         "exit_btn" = if ($Lang -eq "zh-CN") { "退出" } else { "Exit" }
+        
+        # Window titles
+        "title_select_profile" = if ($Lang -eq "zh-CN") { "选择套餐" } else { "Select Profile" }
+        "title_select_software" = if ($Lang -eq "zh-CN") { "选择软件" } else { "Select Software" }
+        "title_installing" = if ($Lang -eq "zh-CN") { "安装中" } else { "Installing" }
+        "title_ask_continue" = if ($Lang -eq "zh-CN") { "是否继续安装" } else { "Continue Installing?" }
         
         # Help
         "help_usage" = if ($Lang -eq "zh-CN") { "用法: quickstart.ps1 [选项]" } else { "Usage: quickstart.ps1 [OPTIONS]" }
@@ -1064,10 +1075,13 @@ function Main {
             }
             
             $script:SELECTED_PROFILES = @($profile)
+            $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $profile -Field "name"
+            Set-WindowTitle -Title "QSPC | $profileName | $($script:LANG["title_select_software"])"
             $script:SELECTED_SOFTWARE = Show-SoftwareMenu -Path $script:CONFIG_FILE -OS $os -ProfileKey $profile
         }
         # Interactive mode - show profile menu
         else {
+            Set-WindowTitle -Title "QSPC | $($script:LANG["title_select_profile"])"
             $script:SELECTED_PROFILES = @(Show-ProfileMenu -Path $script:CONFIG_FILE)
             
             if ($script:SELECTED_PROFILES.Count -eq 0) {
@@ -1075,6 +1089,8 @@ function Main {
                 exit 0
             }
             
+            $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $script:SELECTED_PROFILES[0] -Field "name"
+            Set-WindowTitle -Title "QSPC | $profileName | $($script:LANG["title_select_software"])"
             if ($custom) {
                 $script:SELECTED_SOFTWARE = Show-CustomMenu -Path $script:CONFIG_FILE -OS $os -ProfileKey $script:SELECTED_PROFILES[0]
             } else {
@@ -1202,6 +1218,7 @@ function Main {
             continue
         }
         
+        Set-WindowTitle -Title "QSPC | $($script:LANG["title_installing"])"
         Write-Header $script:LANG["start_installing"]
         
         $total = $toInstall.Count
@@ -1351,10 +1368,12 @@ function Main {
         
         # Non-interactive mode exit
         if ($nonInteractive) {
+            Set-WindowTitle -Title "QSPC"
             exit 0
         }
         
         # Ask to continue
+        Set-WindowTitle -Title "QSPC | $($script:LANG["title_ask_continue"])"
         Write-Host ""
         Write-Log $script:LANG["ask_continue"] "INFO"
         $continue = Select-Continue -ContinueText $script:LANG["continue_btn"] -ExitText $script:LANG["exit_btn"]
