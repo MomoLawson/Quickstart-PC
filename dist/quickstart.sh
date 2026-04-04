@@ -1281,6 +1281,11 @@ main() {
     echo ""
     log_success "$LANG_TOTAL_INSTALLED ${#installed_list[@]} / $total"
     
+    # 非交互模式直接退出
+    if [[ "$NON_INTERACTIVE" == "true" ]]; then
+        exit 0
+    fi
+    
     # 安装完成后询问是否继续
     echo ""
     log_info "$LANG_ASK_CONTINUE"
