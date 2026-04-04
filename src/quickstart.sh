@@ -35,6 +35,7 @@ Quickstart-PC - 一键配置新电脑
   --yes, -y          自动确认所有提示
   --verbose, -v      显示详细调试信息
   --log-file FILE    将日志写入文件
+  --export-plan FILE 导出安装计划到文件
   --list-profiles    列出所有可用套餐
   --show-profile KEY 显示指定套餐详情
   --skip SW          跳过指定软件（可多次使用）
@@ -60,6 +61,7 @@ Options:
   --yes, -y          Auto-confirm all prompts
   --verbose, -v      Show detailed debug info
   --log-file FILE    Write logs to file
+  --export-plan FILE Export installation plan to file
   --list-profiles    List all available profiles
   --show-profile KEY Show profile details
   --skip SW          Skip specified software (repeatable)
@@ -78,6 +80,7 @@ FAKE_INSTALL=false
 AUTO_YES=false
 VERBOSE=false
 LOG_FILE=""
+EXPORT_PLAN=""
 LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
@@ -98,6 +101,7 @@ while [[ $# -gt 0 ]]; do
         --yes|-y) AUTO_YES=true; shift ;;
         --verbose|-v) VERBOSE=true; shift ;;
         --log-file) LOG_FILE="$2"; shift 2 ;;
+        --export-plan) EXPORT_PLAN="$2"; shift 2 ;;
         --list-profiles) LIST_PROFILES=true; shift ;;
         --show-profile) SHOW_PROFILE="$2"; shift 2 ;;
         --skip) SKIP_SW+=("$2"); shift 2 ;;
@@ -1075,6 +1079,51 @@ main() {
     echo ""
     log_info "Selected: ${SELECTED_SOFTWARE[*]}"
     echo ""
+    
+    # 导出安装计划
+    if [[ -n "$EXPORT_PLAN" ]]; then
+        {
+            echo "# Quickstart-PC Installation Plan"
+            echo ""
+            echo "**Platform:** $os ($(get_system_info))"
+            echo "**Profile:** ${SELECTED_PROFILES[*]}"
+            echo "**Date:** $(date '+%Y-%m-%d %H:%M:%S')"
+            echo ""
+            echo "## Software to Install (${#SELECTED_SOFTWARE[@]} total)"
+            echo ""
+            for sw in "${SELECTED_SOFTWARE[@]}"; do
+                local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
+                local sw_desc=$(json_get_software_field "$CONFIG_FILE" "$sw" "desc")
+                local cmd=$(json_get_software_field "$CONFIG_FILE" "$sw" "${os:0:3}")
+                if is_installed "$CONFIG_FILE" "$os" "$sw"; then
+                    echo "- ~~$sw_name~~ ($sw_desc) - Already installed"
+                else
+                    echo "- **$sw_name** ($sw_desc)"
+                    if [[ -n "$cmd" ]]; then
+                        echo "  \`\`\`bash"
+                        echo "  $cmd"
+                        echo "  \`\`\`"
+                    fi
+                fi
+            done
+            echo ""
+            echo "## Summary"
+            echo "- Total selected: ${#SELECTED_SOFTWARE[@]}"
+            local installed_count=0
+            local to_install_count=0
+            for sw in "${SELECTED_SOFTWARE[@]}"; do
+                if is_installed "$CONFIG_FILE" "$os" "$sw"; then
+                    ((installed_count++))
+                else
+                    ((to_install_count++))
+                fi
+            done
+            echo "- Already installed: $installed_count"
+            echo "- To install: $to_install_count"
+        } > "$EXPORT_PLAN"
+        log_info "Installation plan exported to $EXPORT_PLAN"
+        [[ "$NON_INTERACTIVE" == "true" ]] && exit 0
+    fi
     
     [[ "$DEV_MODE" == "true" ]] && log_info "Dev mode: Done" && exit 0
     

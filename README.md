@@ -146,6 +146,7 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | `--yes` / `-y` | Auto-confirm all prompts |
 | `--verbose` / `-v` | Show detailed debug info |
 | `--log-file FILE` | Write logs to file |
+| `--export-plan FILE` | Export installation plan to file |
 | `--list-profiles` | List all available profiles |
 | `--show-profile KEY` | Show profile details |
 | `--skip SW` | Skip specified software (repeatable) |

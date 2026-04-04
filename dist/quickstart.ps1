@@ -13,6 +13,7 @@ param(
     [switch]$yes,
     [switch]$verbose,
     [string]$logFile,
+    [string]$exportPlan,
     [switch]$listProfiles,
     [string]$showProfile,
     [string[]]$skip,
@@ -1014,6 +1015,54 @@ function Main {
         Write-Host ""
         Write-Log "Selected: $($script:SELECTED_SOFTWARE -join ', ')" "INFO"
         Write-Host ""
+        
+        # Export installation plan
+        if ($exportPlan) {
+            $planContent = @"
+# Quickstart-PC Installation Plan
+
+**Platform:** $os ($(Get-SystemInfo))
+**Profile:** $($script:SELECTED_PROFILES -join ', ')
+**Date:** $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+
+## Software to Install ($($script:SELECTED_SOFTWARE.Count) total)
+
+"@
+            foreach ($sw in $script:SELECTED_SOFTWARE) {
+                $swName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "name"
+                $swDesc = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "desc"
+                $cmd = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "win"
+                $isInstalled = Test-IsInstalled -Path $script:CONFIG_FILE -Key $sw
+                if ($isInstalled) {
+                    $planContent += "- ~~$swName~~ ($swDesc) - Already installed`n"
+                } else {
+                    $planContent += "- **$swName** ($swDesc)`n"
+                    if ($cmd) {
+                        $planContent += "  ``````powershell`n  $cmd`n  ```````n"
+                    }
+                }
+            }
+            $planContent += @"
+
+## Summary
+- Total selected: $($script:SELECTED_SOFTWARE.Count)
+"@
+            $installedCount = 0
+            $toInstallCount = 0
+            foreach ($sw in $script:SELECTED_SOFTWARE) {
+                if (Test-IsInstalled -Path $script:CONFIG_FILE -Key $sw) {
+                    $installedCount++
+                } else {
+                    $toInstallCount++
+                }
+            }
+            $planContent += "- Already installed: $installedCount`n"
+            $planContent += "- To install: $toInstallCount`n"
+            
+            Set-Content -Path $exportPlan -Value $planContent -Encoding UTF8
+            Write-Log "Installation plan exported to $exportPlan" "INFO"
+            if ($nonInteractive) { exit 0 }
+        }
         
         if ($dev) {
             Write-Log "Dev mode: Done" "INFO"
