@@ -87,6 +87,8 @@ LOG_FILE=""
 EXPORT_PLAN=""
 CUSTOM_MODE=false
 RETRY_FAILED=false
+LIST_SOFTWARE=false
+SHOW_SOFTWARE=""
 LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
@@ -110,6 +112,8 @@ while [[ $# -gt 0 ]]; do
         --export-plan) EXPORT_PLAN="$2"; shift 2 ;;
         --custom) CUSTOM_MODE=true; shift ;;
         --retry-failed) RETRY_FAILED=true; shift ;;
+        --list-software) LIST_SOFTWARE=true; shift ;;
+        --show-software) SHOW_SOFTWARE="$2"; shift 2 ;;
         --list-profiles) LIST_PROFILES=true; shift ;;
         --show-profile) SHOW_PROFILE="$2"; shift 2 ;;
         --skip) SKIP_SW+=("$2"); shift 2 ;;
@@ -229,6 +233,77 @@ if [[ -n "$SHOW_PROFILE" ]]; then
         
         echo ""
         echo "Summary: $supported supported, $unsupported unsupported on this platform"
+        echo ""
+    else
+        echo "[ERROR] Failed to load configuration"
+    fi
+    
+    rm -f "$CONFIG_FILE" 2>/dev/null
+    exit 0
+fi
+
+# --list-software 在语言选择之前处理
+if [[ "$LIST_SOFTWARE" == "true" ]]; then
+    if ! command -v jq &>/dev/null; then
+        if [[ "$(uname -s)" == "Darwin" ]]; then
+            brew install jq 2>/dev/null
+        else
+            sudo apt install -y jq 2>/dev/null
+        fi
+    fi
+    
+    CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
+    if curl -fsSL --connect-timeout 10 --max-time 30 "$DEFAULT_CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
+        echo "Available software:"
+        echo ""
+        while IFS= read -r key; do
+            [[ -z "$key" ]] && continue
+            sw_name=$(jq -r ".software[\"$key\"].name // \"$key\"" "$CONFIG_FILE")
+            sw_desc=$(jq -r ".software[\"$key\"].desc // \"\"" "$CONFIG_FILE")
+            echo "  $key - $sw_name: $sw_desc"
+        done < <(jq -r '.software | keys[]' "$CONFIG_FILE")
+        echo ""
+    else
+        echo "[ERROR] Failed to load configuration"
+    fi
+    
+    rm -f "$CONFIG_FILE" 2>/dev/null
+    exit 0
+fi
+
+# --show-software 在语言选择之前处理
+if [[ -n "$SHOW_SOFTWARE" ]]; then
+    if ! command -v jq &>/dev/null; then
+        if [[ "$(uname -s)" == "Darwin" ]]; then
+            brew install jq 2>/dev/null
+        else
+            sudo apt install -y jq 2>/dev/null
+        fi
+    fi
+    
+    CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
+    if curl -fsSL --connect-timeout 10 --max-time 30 "$DEFAULT_CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
+        sw_name=$(jq -r ".software[\"$SHOW_SOFTWARE\"].name // \"\"" "$CONFIG_FILE")
+        sw_desc=$(jq -r ".software[\"$SHOW_SOFTWARE\"].desc // \"\"" "$CONFIG_FILE")
+        
+        if [[ -z "$sw_name" ]]; then
+            echo "[ERROR] Software '$SHOW_SOFTWARE' not found"
+            rm -f "$CONFIG_FILE" 2>/dev/null
+            exit 1
+        fi
+        
+        echo ""
+        echo "Software: $sw_name"
+        echo "Description: $sw_desc"
+        echo ""
+        echo "Install commands:"
+        
+        for os_field in win mac linux linux_dnf linux_pacman; do
+            cmd=$(jq -r ".software[\"$SHOW_SOFTWARE\"].$os_field // \"\"" "$CONFIG_FILE")
+            if [[ -n "$cmd" ]]; then
+                echo "  $os_field: $cmd"
+            fi
+        done
         echo ""
     else
         echo "[ERROR] Failed to load configuration"
