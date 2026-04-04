@@ -385,7 +385,12 @@ json_get_software_field() {
     else
         raw=$(python3 -c "import json; print(json.load(open('$json_file'))['software'].get('$key',{}).get('$field',''))" 2>/dev/null)
     fi
-    lang_text "$raw"
+    # 只对 name/desc 等需要语言分割的字段使用 lang_text
+    # check_mac/check_win/check_linux/mac/win/linux 等命令字段直接返回
+    case "$field" in
+        name|desc) lang_text "$raw" ;;
+        *) echo "$raw" ;;
+    esac
 }
 
 is_installed() {
@@ -1285,10 +1290,7 @@ main() {
     
     tput civis 2>/dev/null || true
     
-    # 禁用回显，防止按住按键时字符溢出
-    stty -echo 2>/dev/null
-    
-    while [[ "$running" == "true" ]]; do
+    while [[ "$continue_running" == "true" ]]; do
         printf "\r\033[2K"
         if [[ $continue_cursor -eq 0 ]]; then
             printf "  \033[7m ▶ %s \033[0m    %s" "$LANG_CONTINUE" "$LANG_EXIT"
@@ -1298,44 +1300,29 @@ main() {
         
         local key=""
         IFS= read -rsn1 key < /dev/tty
-        [[ -z "$key" ]] && continue
-        local key_code=$(printf '%d' "'$key" 2>/dev/null || echo 0)
         
-        case $key_code in
-            27)
-                local key2=""
-                IFS= read -rsn1 key2 < /dev/tty
-                case "$key2" in
-                    '[')
-                        local key3=""
-                        IFS= read -rsn1 key3 < /dev/tty
-                        case "$key3" in
-                            'C') # 右箭头
-                                continue_cursor=1
-                                ;;
-                            'D') # 左箭头
-                                continue_cursor=0
-                                ;;
-                        esac
-                        ;;
-                esac
-                ;;
-            0|10|13) # 回车
-                if [[ $continue_cursor -eq 0 ]]; then
-                    continue_running=false
-                else
-                    continue_running=false
-                    stty echo 2>/dev/null
-                    tput cnorm 2>/dev/null || true
-                    echo ""
-                    exit 0
-                fi
-                ;;
-        esac
+        # 空字符串 = 回车
+        if [[ -z "$key" ]]; then
+            tput cnorm 2>/dev/null || true
+            echo ""
+            if [[ $continue_cursor -eq 0 ]]; then
+                continue_running=false
+            else
+                exit 0
+            fi
+        # ESC 开头 = 方向键
+        elif [[ "$key" == $'\x1b' ]]; then
+            local seq=""
+            IFS= read -rsn2 seq < /dev/tty
+            if [[ "$seq" == "[C" ]]; then
+                continue_cursor=1
+            elif [[ "$seq" == "[D" ]]; then
+                continue_cursor=0
+            fi
+        fi
     done
     
-    # 恢复回显
-    stty echo 2>/dev/null
+    continue
     done
 }
 
