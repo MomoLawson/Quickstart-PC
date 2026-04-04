@@ -128,6 +128,8 @@ quickstart.sh --cfg-path /path/to/profiles.json
       "win": "winget install Google.Chrome",
       "mac": "brew install --cask google-chrome",
       "linux": "sudo apt install -y google-chrome-stable",
+      "linux_dnf": "sudo dnf install -y https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm",
+      "linux_pacman": "yay -S google-chrome",
       "check_win": "winget list Google.Chrome",
       "check_mac": "ls /Applications/Google\\ Chrome.app 2>/dev/null",
       "check_linux": "which google-chrome-stable 2>/dev/null"
@@ -166,7 +168,9 @@ quickstart.sh --cfg-path /path/to/profiles.json
 |----------|-----------------|--------------|
 | Windows | winget | Built-in (requires App Installer) |
 | macOS | Homebrew | Auto-install |
-| Linux | apt | Built-in |
+| Linux | apt | Built-in (Ubuntu/Debian) |
+| Linux | dnf | Built-in (Fedora/RHEL) |
+| Linux | pacman | Built-in (Arch/Manjaro) |
 
 ## Troubleshooting
 
@@ -197,8 +201,8 @@ powershell -ExecutionPolicy Bypass -File quickstart.ps1
 ### Linux
 
 **"apt not found":**
-- This script supports apt-based distros (Ubuntu/Debian)
-- For other distros, use `--cfg-path` with custom commands
+- The script auto-detects `apt`, `dnf`, or `pacman`
+- For unsupported distros, use `--cfg-path` with custom commands
 
 ## Contributing
 

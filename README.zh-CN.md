@@ -153,7 +153,9 @@ quickstart.sh --cfg-path /path/to/profiles.json
 |------|----------|----------|
 | Windows | winget | 系统自带（需安装 App Installer） |
 | macOS | Homebrew | 自动安装 |
-| Linux | apt | 系统自带 |
+| Linux | apt | 系统自带（Ubuntu/Debian） |
+| Linux | dnf | 系统自带（Fedora/RHEL） |
+| Linux | pacman | 系统自带（Arch/Manjaro） |
 
 ## 故障排除
 
