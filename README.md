@@ -148,6 +148,7 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | `--log-file FILE` | Write logs to file |
 | `--export-plan FILE` | Export installation plan to file |
 | `--custom` | Custom software selection mode (manual selection) |
+| `--retry-failed` | Retry previously failed packages |
 | `--list-profiles` | List all available profiles |
 | `--show-profile KEY` | Show profile details |
 | `--skip SW` | Skip specified software (repeatable) |

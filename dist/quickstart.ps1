@@ -15,6 +15,7 @@ param(
     [string]$logFile,
     [string]$exportPlan,
     [switch]$custom,
+    [switch]$retryFailed,
     [switch]$listProfiles,
     [string]$showProfile,
     [string[]]$skip,
@@ -1259,6 +1260,68 @@ function Main {
         
         Write-Host ""
         Write-Log "$($script:LANG["total_installed"]) $($installedList.Count) / $total" "SUCCESS"
+        
+        # Retry failed packages
+        if ($failedList.Count -gt 0) {
+            if ($retryFailed -or $yes) {
+                Write-Host ""
+                Write-Log "Retrying $($failedList.Count) failed package(s)..." "INFO"
+            } else {
+                Write-Host ""
+                $retry = Read-Host "Retry failed packages? [Y/n]"
+                if ($retry -match "^[Nn]") {
+                    Write-Log "Skipping retry" "INFO"
+                } else {
+                    $retryFailed = $true
+                }
+            }
+            
+            if ($retryFailed) {
+                $retryInstalled = @()
+                $retryFailedList = @()
+                $retryTotal = $failedList.Count
+                $retryCurrent = 0
+                
+                foreach ($item in $failedList) {
+                    $retryCurrent++
+                    # Find the software key by name
+                    $swKey = ""
+                    foreach ($sw in $script:SELECTED_SOFTWARE) {
+                        $swName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "name"
+                        if ($swName -eq $item) {
+                            $swKey = $sw
+                            break
+                        }
+                    }
+                    if (-not $swKey) { continue }
+                    
+                    Write-Host "`r[Retry $($retryCurrent * 100 / $retryTotal)%] Installing $item" -NoNewline
+                    
+                    if (Install-Software -Path $script:CONFIG_FILE -OS $os -Key $swKey) {
+                        $retryInstalled += $item
+                    } else {
+                        $retryFailedList += $item
+                    }
+                }
+                Write-Host ""
+                
+                if ($retryInstalled.Count -gt 0) {
+                    Write-Host "Retry succeeded:" -ForegroundColor Green
+                    foreach ($item in $retryInstalled) {
+                        Write-Host "  - $item" -ForegroundColor Green
+                    }
+                }
+                if ($retryFailedList.Count -gt 0) {
+                    Write-Host "Retry still failed:" -ForegroundColor Red
+                    foreach ($item in $retryFailedList) {
+                        Write-Host "  - $item" -ForegroundColor Red
+                    }
+                    $failedList = $retryFailedList
+                } else {
+                    $failedList = @()
+                }
+            }
+        }
         
         # Non-interactive mode exit
         if ($nonInteractive) {

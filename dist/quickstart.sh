@@ -37,6 +37,7 @@ Quickstart-PC - 一键配置新电脑
   --log-file FILE    将日志写入文件
   --export-plan FILE 导出安装计划到文件
   --custom           自定义软件选择模式
+  --retry-failed     重试之前失败的软件
   --list-profiles    列出所有可用套餐
   --show-profile KEY 显示指定套餐详情
   --skip SW          跳过指定软件（可多次使用）
@@ -64,6 +65,7 @@ Options:
   --log-file FILE    Write logs to file
   --export-plan FILE Export installation plan to file
   --custom           Custom software selection mode
+  --retry-failed     Retry previously failed packages
   --list-profiles    List all available profiles
   --show-profile KEY Show profile details
   --skip SW          Skip specified software (repeatable)
@@ -84,6 +86,7 @@ VERBOSE=false
 LOG_FILE=""
 EXPORT_PLAN=""
 CUSTOM_MODE=false
+RETRY_FAILED=false
 LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
@@ -106,6 +109,7 @@ while [[ $# -gt 0 ]]; do
         --log-file) LOG_FILE="$2"; shift 2 ;;
         --export-plan) EXPORT_PLAN="$2"; shift 2 ;;
         --custom) CUSTOM_MODE=true; shift ;;
+        --retry-failed) RETRY_FAILED=true; shift ;;
         --list-profiles) LIST_PROFILES=true; shift ;;
         --show-profile) SHOW_PROFILE="$2"; shift 2 ;;
         --skip) SKIP_SW+=("$2"); shift 2 ;;
@@ -1458,6 +1462,71 @@ main() {
     
     echo ""
     log_success "$LANG_TOTAL_INSTALLED ${#installed_list[@]} / $total"
+    
+    # 重试失败的软件
+    if [[ ${#failed_list[@]} -gt 0 ]]; then
+        if [[ "$RETRY_FAILED" == "true" ]] || [[ "$AUTO_YES" == "true" ]]; then
+            echo ""
+            log_info "Retrying ${#failed_list[@]} failed package(s)..."
+        else
+            echo ""
+            printf "Retry failed packages? [Y/n] "
+            local retry_confirm=""
+            IFS= read -rsn1 retry_confirm < /dev/tty
+            echo ""
+            if [[ "$retry_confirm" =~ ^[Nn] ]]; then
+                log_info "Skipping retry"
+            else
+                RETRY_FAILED=true
+            fi
+        fi
+        
+        if [[ "$RETRY_FAILED" == "true" ]]; then
+            local -a retry_installed=()
+            local -a retry_failed=()
+            local retry_total=${#failed_list[@]}
+            local retry_current=0
+            
+            for item in "${failed_list[@]}"; do
+                ((retry_current++))
+                # Find the software key by name
+                local sw_key=""
+                for sw in "${SELECTED_SOFTWARE[@]}"; do
+                    local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
+                    if [[ "$sw_name" == "$item" ]]; then
+                        sw_key="$sw"
+                        break
+                    fi
+                done
+                [[ -z "$sw_key" ]] && continue
+                
+                printf "\r${CYAN}[Retry %3d%%]${NC} %s" "$((retry_current * 100 / retry_total))" "$LANG_INSTALLING $item"
+                
+                if install_software "$CONFIG_FILE" "$os" "$sw_key"; then
+                    retry_installed+=("$item")
+                else
+                    retry_failed+=("$item")
+                fi
+            done
+            echo ""
+            
+            if [[ ${#retry_installed[@]} -gt 0 ]]; then
+                echo -e "${GREEN}Retry succeeded:${NC}"
+                for item in "${retry_installed[@]}"; do
+                    echo -e "  ${GREEN}- $item${NC}"
+                done
+            fi
+            if [[ ${#retry_failed[@]} -gt 0 ]]; then
+                echo -e "${RED}Retry still failed:${NC}"
+                for item in "${retry_failed[@]}"; do
+                    echo -e "  ${RED}- $item${NC}"
+                done
+                failed_list=("${retry_failed[@]}")
+            else
+                failed_list=()
+            fi
+        fi
+    fi
     
     # 非交互模式直接退出
     if [[ "$NON_INTERACTIVE" == "true" ]]; then
