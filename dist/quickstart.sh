@@ -509,7 +509,7 @@ select_language() {
 DETECTED_LANG=$(select_language)
 
 if [[ "$DETECTED_LANG" == "zh-CN" ]]; then
-    LANG_BANNER_TITLE="Quickstart-PC v0.10.0"
+    LANG_BANNER_TITLE="Quickstart-PC v0.30.0"
     LANG_BANNER_DESC="快速配置新电脑软件环境"
     LANG_DETECTING_SYSTEM="检测系统环境..."
     LANG_SYSTEM_INFO="系统"
@@ -554,7 +554,7 @@ if [[ "$DETECTED_LANG" == "zh-CN" ]]; then
     LANG_CONTINUE="继续安装"
     LANG_EXIT="退出"
 else
-    LANG_BANNER_TITLE="Quickstart-PC v0.10.0"
+    LANG_BANNER_TITLE="Quickstart-PC v0.30.0"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"

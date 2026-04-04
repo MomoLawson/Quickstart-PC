@@ -49,7 +49,7 @@ function Initialize-LanguageStrings {
     
     $script:LANG = @{
         # Banner
-        "banner_title" = "Quickstart-PC v0.30.0"
+        "banner_title" = "Quickstart-PC v__VERSION__"
         "banner_desc" = if ($Lang -eq "zh-CN") { "快速配置新电脑软件环境" } else { "Quick setup for new computers" }
         
         # System

@@ -18,6 +18,51 @@ jobs:
           scandir: './src'
           severity: error
 
+  pwsh-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PowerShell
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget apt-transport-https software-properties-common
+          wget -q https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb
+          sudo dpkg -i packages-microsoft-prod.deb
+          sudo apt-get update
+          sudo apt-get install -y powershell
+      - name: Check PowerShell syntax
+        run: pwsh -NoProfile -Command "
+          \$errors = @()
+          \$tokens = @()
+          [System.Management.Automation.Language.Parser]::ParseFile('src/quickstart.ps1', [ref]\$tokens, [ref]\$errors)
+          if (\$errors.Count -gt 0) {
+            \$errors | ForEach-Object { Write-Error \$_.ToString() }
+            exit 1
+          }
+          Write-Host '✓ PowerShell syntax OK'
+        "
+
+  json-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate profiles.json
+        run: |
+          python3 -c "import json; json.load(open('config/profiles.json'))"
+          echo "✓ profiles.json is valid JSON"
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build dist
+        run: bash scripts/build.sh
+      - name: Verify dist files exist
+        run: |
+          test -f dist/quickstart.sh
+          test -f dist/quickstart.ps1
+          echo "✓ Both dist files built successfully"
+
   smoke-test:
     runs-on: ubuntu-latest
     steps:

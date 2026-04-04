@@ -18,7 +18,7 @@
 
 ## Quick Start
 
-### One-liner (Recommended)
+### macOS / Linux (Recommended)
 
 ```bash
 bash <(curl -fsSL https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.sh)
@@ -27,11 +27,12 @@ bash <(curl -fsSL https://github.com/MomoLawson/Quickstart-PC/releases/latest/do
 ### Windows
 
 ```powershell
-# Download script
+# Method 1: Download and run
 Invoke-WebRequest -Uri "https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.ps1" -OutFile "quickstart.ps1"
+powershell -ExecutionPolicy Bypass -File quickstart.ps1
 
-# Run (requires admin privileges)
-.\quickstart.ps1
+# Method 2: One-liner
+powershell -ExecutionPolicy Bypass -Command "iwr https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.ps1 | iex"
 ```
 
 ## Profiles
@@ -46,6 +47,35 @@ Invoke-WebRequest -Uri "https://github.com/MomoLawson/Quickstart-PC/releases/lat
 
 ## Project Structure
 
+```
+Quickstart-PC/
+├── src/
+│   ├── quickstart.sh       # Bash source code (develop here)
+│   └── quickstart.ps1      # PowerShell source code (develop here)
+├── dist/
+│   ├── quickstart.sh       # Built Bash artifact (don't edit directly)
+│   └── quickstart.ps1      # Built PowerShell artifact (don't edit directly)
+├── scripts/
+│   └── build.sh            # Build script (injects version)
+├── config/
+│   └── profiles.json       # Software profiles config (JSON)
+├── VERSION                 # Single source of truth for version
+├── README.md               # English documentation
+└── README.zh-CN.md         # Chinese documentation
+```
+
+### Development Workflow
+
+```bash
+# Edit source files
+nano src/quickstart.sh
+nano src/quickstart.ps1
+
+# Build both dist files
+bash scripts/build.sh
+
+# Test locally
+bash dist/quickstart.sh --list-profiles
 ```
 Quickstart-PC/
 ├── src/
@@ -139,7 +169,14 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | `--dry-run` | Fake install: show process without installing |
 | `--yes` / `-y` | Auto-confirm all prompts |
 | `--verbose` / `-v` | Show detailed debug info |
-| `--log-file FILE` | Write logs to file (plain text, no colors) |
+| `--log-file FILE` | Write logs to file |
+| `--list-profiles` | List all available profiles |
+| `--show-profile KEY` | Show profile details |
+| `--skip SW` | Skip specified software (repeatable) |
+| `--only SW` | Only install specified software (repeatable) |
+| `--fail-fast` | Stop on first error |
+| `--profile NAME` | Select profile directly (skip menu) |
+| `--non-interactive` | Non-interactive mode (no TUI/prompts) |
 | `--cfg-path PATH` | Use local profiles.json |
 | `--cfg-url URL` | Use remote profiles.json URL |
 | `--help` | Show help |
@@ -151,6 +188,38 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | Windows | winget | Built-in (requires App Installer) |
 | macOS | Homebrew | Auto-install |
 | Linux | apt | Built-in |
+
+## Troubleshooting
+
+### Windows
+
+**"Execution Policy" error:**
+```powershell
+powershell -ExecutionPolicy Bypass -File quickstart.ps1
+```
+
+**"winget not found":**
+- Install App Installer from Microsoft Store
+- Or run `winget` in a new terminal after installation
+
+**"PowerShell 5.1 required":**
+- Windows 10+ includes PowerShell 5.1 by default
+- Check version: `$PSVersionTable.PSVersion`
+
+### macOS
+
+**"brew not found":**
+- The script will auto-install Homebrew
+- Or manually: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+
+**"Permission denied":**
+- Run with `bash` prefix: `bash quickstart.sh`
+
+### Linux
+
+**"apt not found":**
+- This script supports apt-based distros (Ubuntu/Debian)
+- For other distros, use `--cfg-path` with custom commands
 
 ## Contributing
 
