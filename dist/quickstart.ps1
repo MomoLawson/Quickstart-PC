@@ -43,6 +43,18 @@ $script:SELECTED_SOFTWARE = @()
 $script:DETECTED_LANG = "en-US"
 
 # ============================================
+# Console helpers (cross-platform safe)
+# ============================================
+function Set-CursorVisible {
+    param([bool]$Visible)
+    try { [Console]::CursorVisible = $Visible } catch {}
+}
+
+function Get-CursorVisible {
+    try { return [Console]::CursorVisible } catch { return $true }
+}
+
+# ============================================
 # Language strings (zh-CN / en-US)
 # ============================================
 $script:LANG = @{}
@@ -201,7 +213,12 @@ function Get-SystemInfo {
             return "Windows $($ver.Major).$($ver.Minor)" 
         }
         "macos" { 
-            return "macOS" 
+            try {
+                $ver = sw_vers -productVersion 2>$null
+                return "macOS $ver"
+            } catch {
+                return "macOS"
+            }
         }
         "linux" { 
             return "Linux" 
@@ -215,6 +232,18 @@ function Get-PackageManager {
     if ($OS -eq "windows") {
         $winget = Get-Command winget -ErrorAction SilentlyContinue
         if ($winget) { return "winget" }
+        return "none"
+    } elseif ($OS -eq "macos") {
+        $brew = Get-Command brew -ErrorAction SilentlyContinue
+        if ($brew) { return "brew" }
+        return "none"
+    } elseif ($OS -eq "linux") {
+        $apt = Get-Command apt -ErrorAction SilentlyContinue
+        if ($apt) { return "apt" }
+        $dnf = Get-Command dnf -ErrorAction SilentlyContinue
+        if ($dnf) { return "dnf" }
+        $pacman = Get-Command pacman -ErrorAction SilentlyContinue
+        if ($pacman) { return "pacman" }
         return "none"
     }
     return "none"
@@ -306,7 +335,14 @@ function Test-SoftwareInstalled {
     $checkField = "check_$OS"
     if ($OS -eq "windows") { $checkField = "check_win" }
     elseif ($OS -eq "macos") { $checkField = "check_mac" }
-    elseif ($OS -eq "linux") { $checkField = "check_linux" }
+    elseif ($OS -eq "linux") {
+        $pkgMgr = Get-PackageManager -OS "linux"
+        switch ($pkgMgr) {
+            "dnf" { $checkField = "check_linux_dnf" }
+            "pacman" { $checkField = "check_linux_pacman" }
+            default { $checkField = "check_linux" }
+        }
+    }
     
     $checkCmd = Get-SoftwareField -Path $Path -Key $Key -Field $checkField
     
@@ -317,15 +353,9 @@ function Test-SoftwareInstalled {
     if (-not $checkCmd) { return $false }
     
     try {
-        if ($OS -eq "windows") {
-            $result = Invoke-Expression "$checkCmd 2>&1"
-            if ($LASTEXITCODE -eq 0) { return $true }
-            return $false
-        } else {
-            $result = Invoke-Expression "$checkCmd 2>`$null" 2>&1
-            if ($LASTEXITCODE -eq 0) { return $true }
-            return $false
-        }
+        $result = Invoke-Expression "$checkCmd 2>`$null" 2>&1
+        if ($LASTEXITCODE -eq 0) { return $true }
+        return $false
     } catch {
         return $false
     }
@@ -381,8 +411,8 @@ function Select-Language {
     $cursor = 0
     
     # Save cursor position
-    $oldVisible = [Console]::CursorVisible
-    [Console]::CursorVisible = $false
+    $oldVisible = Get-CursorVisible
+    Set-CursorVisible -Visible $false
     
     try {
         while ($true) {
@@ -409,7 +439,7 @@ function Select-Language {
             }
         }
     } finally {
-        [Console]::CursorVisible = $oldVisible
+        Set-CursorVisible -Visible $oldVisible
     }
     
     Write-Host ""
@@ -448,8 +478,8 @@ function Show-ProfileMenu {
     Write-Host ""
     
     $cursor = 0
-    $oldVisible = [Console]::CursorVisible
-    [Console]::CursorVisible = $false
+    $oldVisible = Get-CursorVisible
+    Set-CursorVisible -Visible $false
     
     try {
         while ($true) {
@@ -483,7 +513,7 @@ function Show-ProfileMenu {
             }
         }
     } finally {
-        [Console]::CursorVisible = $oldVisible
+        Set-CursorVisible -Visible $oldVisible
     }
     
     Write-Host ""
@@ -592,8 +622,8 @@ function Show-SoftwareMenu {
     Write-Host ""
     
     $cursor = 0
-    $oldVisible = [Console]::CursorVisible
-    [Console]::CursorVisible = $false
+    $oldVisible = Get-CursorVisible
+    Set-CursorVisible -Visible $false
     
     try {
         while ($true) {
@@ -652,7 +682,7 @@ function Show-SoftwareMenu {
             }
         }
     } finally {
-        [Console]::CursorVisible = $oldVisible
+        Set-CursorVisible -Visible $oldVisible
     }
     
     Write-Host ""
@@ -672,8 +702,8 @@ function Select-Continue {
     param([string]$ContinueText, [string]$ExitText)
     
     $cursor = 0
-    $oldVisible = [Console]::CursorVisible
-    [Console]::CursorVisible = $false
+    $oldVisible = Get-CursorVisible
+    Set-CursorVisible -Visible $false
     
     try {
         while ($true) {
@@ -690,14 +720,14 @@ function Select-Continue {
                 "LeftArrow" { $cursor = 0 }
                 "RightArrow" { $cursor = 1 }
                 "Enter" { 
-                    [Console]::CursorVisible = $oldVisible
+                    Set-CursorVisible -Visible $oldVisible
                     Write-Host ""
                     return $cursor 
                 }
             }
         }
     } finally {
-        [Console]::CursorVisible = $oldVisible
+        Set-CursorVisible -Visible $oldVisible
     }
 }
 
@@ -710,7 +740,14 @@ function Install-Software {
     $platform = switch ($OS) {
         "windows" { "win" }
         "macos" { "mac" }
-        "linux" { "linux" }
+        "linux" { 
+            $pkgMgr = Get-PackageManager -OS "linux"
+            switch ($pkgMgr) {
+                "dnf" { "linux_dnf" }
+                "pacman" { "linux_pacman" }
+                default { "linux" }
+            }
+        }
         default { "" }
     }
     
@@ -732,24 +769,13 @@ function Install-Software {
     Write-Log "$($script:LANG["installing"]): $Key" "STEP"
     
     try {
-        if ($OS -eq "windows") {
-            Invoke-Expression $cmd 2>&1 | Out-Null
-            if ($LASTEXITCODE -eq 0) {
-                Write-Log "$Key $($script:LANG["install_success"])" "SUCCESS"
-                return $true
-            } else {
-                Write-Log "$Key $($script:LANG["install_failed"])" "ERROR"
-                return $false
-            }
+        Invoke-Expression $cmd 2>&1 | Out-Null
+        if ($LASTEXITCODE -eq 0) {
+            Write-Log "$Key $($script:LANG["install_success"])" "SUCCESS"
+            return $true
         } else {
-            Invoke-Expression $cmd 2>&1 | Out-Null
-            if ($LASTEXITCODE -eq 0) {
-                Write-Log "$Key $($script:LANG["install_success"])" "SUCCESS"
-                return $true
-            } else {
-                Write-Log "$Key $($script:LANG["install_failed"])" "ERROR"
-                return $false
-            }
+            Write-Log "$Key $($script:LANG["install_failed"])" "ERROR"
+            return $false
         }
     } catch {
         Write-Log "$Key $($script:LANG["install_failed"]): $_" "ERROR"
@@ -976,13 +1002,13 @@ function Main {
         if ($script:CONFIG_FILE -and (Test-Path $script:CONFIG_FILE)) {
             Remove-Item $script:CONFIG_FILE -Force -ErrorAction SilentlyContinue
         }
-        [Console]::CursorVisible = $true
+        try { Set-CursorVisible -Visible $true } catch {}
     }
     
     # Main loop
     while ($true) {
         Clear-Host
-        [Console]::CursorVisible = $false
+        try { Set-CursorVisible -Visible $false } catch {}
         
         Show-Banner -Lang $script:DETECTED_LANG
         
