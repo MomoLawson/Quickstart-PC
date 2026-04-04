@@ -16,7 +16,7 @@
       "name": "办公套件/Office Suite",
       "desc": "文档、表格、协作工具/Documents, spreadsheets, collaboration",
       "icon": "📊",
-      "includes": ["wps", "obsidian", "notion", "zoom", "slack", "1password", "dingtalk", "feishu", "tencent-meeting"]
+      "includes": ["wps", "libreoffice", "obsidian", "notion", "zoom", "slack", "1password", "dingtalk", "feishu", "tencent-meeting", "thunderbird"]
     },
     "developer": {
       "name": "开发者套餐/Developer",
@@ -28,19 +28,19 @@
       "name": "媒体创作/Media Creation",
       "desc": "音视频、图像处理工具/Audio/video/image processing tools",
       "icon": "🎬",
-      "includes": ["vlc", "obs", "spotify", "figma", "adobe-cc", "blender", "gimp", "netease-music", "jianying", "bilibili-bijian", "potplayer"]
+      "includes": ["vlc", "obs", "spotify", "figma", "adobe-cc", "blender", "gimp", "netease-music", "jianying", "bilibili-bijian", "potplayer", "inkscape", "krita"]
     },
     "communication": {
       "name": "通讯社交/Communication",
       "desc": "即时通讯、视频会议、社交/IM, video calls, social",
       "icon": "💬",
-      "includes": ["telegram", "discord", "zoom", "slack", "wechat", "qq", "dingtalk", "feishu", "tencent-meeting"]
+      "includes": ["telegram", "discord", "zoom", "slack", "wechat", "qq", "dingtalk", "feishu", "tencent-meeting", "signal", "thunderbird"]
     },
     "security": {
       "name": "安全工具/Security",
       "desc": "密码管理、隐私保护/Password managers, privacy",
       "icon": "🔒",
-      "includes": ["keepassxc", "1password", "huorong"]
+      "includes": ["keepassxc", "1password", "huorong", "signal"]
     },
     "macos-tools": {
       "name": "macOS 效率/macOS Productivity",
@@ -165,6 +165,11 @@
     "jianying": {"name": "剪映", "desc": "视频剪辑/Video editor", "win": "winget install ByteDance.JianYing", "mac": "brew install --cask jianyingpro", "linux": "echo 剪映 not available on Linux", "linux_dnf": "echo 剪映 not available on Linux", "linux_pacman": "echo 剪映 not available on Linux", "check_win": "winget list ByteDance.JianYing", "check_mac": "ls /Applications/剪映专业版.app 2>/dev/null", "check_linux": "echo not_available", "check_linux_dnf": "echo not_available", "check_linux_pacman": "echo not_available"},
     "bilibili-bijian": {"name": "Bilibili 必剪", "desc": "视频剪辑/Video editor", "win": "winget install Bilibili.BiJian", "mac": "brew install --cask bijian", "linux": "echo 必剪 not available on Linux", "linux_dnf": "echo 必剪 not available on Linux", "linux_pacman": "echo 必剪 not available on Linux", "check_win": "winget list Bilibili.BiJian", "check_mac": "ls /Applications/必剪.app 2>/dev/null", "check_linux": "echo not_available", "check_linux_dnf": "echo not_available", "check_linux_pacman": "echo not_available"},
     "potplayer": {"name": "PotPlayer", "desc": "视频播放器/Video player", "win": "winget install Daum.PotPlayer", "mac": "echo PotPlayer not available on macOS", "linux": "echo PotPlayer not available on Linux", "linux_dnf": "echo PotPlayer not available on Linux", "linux_pacman": "echo PotPlayer not available on Linux", "check_win": "winget list Daum.PotPlayer", "check_mac": "echo not_available", "check_linux": "echo not_available", "check_linux_dnf": "echo not_available", "check_linux_pacman": "echo not_available"},
-    "huorong": {"name": "火绒安全", "desc": "安全软件/Security software", "win": "winget install Huorong.HuorongSecurity", "mac": "echo 火绒 not available on macOS", "linux": "echo 火绒 not available on Linux", "linux_dnf": "echo 火绒 not available on Linux", "linux_pacman": "echo 火绒 not available on Linux", "check_win": "winget list Huorong.HuorongSecurity", "check_mac": "echo not_available", "check_linux": "echo not_available", "check_linux_dnf": "echo not_available", "check_linux_pacman": "echo not_available"}
+    "huorong": {"name": "火绒安全", "desc": "安全软件/Security software", "win": "winget install Huorong.HuorongSecurity", "mac": "echo 火绒 not available on macOS", "linux": "echo 火绒 not available on Linux", "linux_dnf": "echo 火绒 not available on Linux", "linux_pacman": "echo 火绒 not available on Linux", "check_win": "winget list Huorong.HuorongSecurity", "check_mac": "echo not_available", "check_linux": "echo not_available", "check_linux_dnf": "echo not_available", "check_linux_pacman": "echo not_available"},
+    "libreoffice": {"name": "LibreOffice", "desc": "办公套件/Office suite", "win": "winget install TheDocumentFoundation.LibreOffice", "mac": "brew install --cask libreoffice", "linux": "sudo apt install -y libreoffice", "linux_dnf": "sudo dnf install -y libreoffice", "linux_pacman": "sudo pacman -S libreoffice-fresh", "check_win": "winget list TheDocumentFoundation.LibreOffice", "check_mac": "ls /Applications/LibreOffice.app 2>/dev/null", "check_linux": "which libreoffice 2>/dev/null", "check_linux_dnf": "which libreoffice 2>/dev/null", "check_linux_pacman": "which libreoffice 2>/dev/null"},
+    "inkscape": {"name": "Inkscape", "desc": "矢量图形编辑器/Vector graphics editor", "win": "winget install Inkscape.Inkscape", "mac": "brew install --cask inkscape", "linux": "sudo apt install -y inkscape", "linux_dnf": "sudo dnf install -y inkscape", "linux_pacman": "sudo pacman -S inkscape", "check_win": "winget list Inkscape.Inkscape", "check_mac": "ls /Applications/Inkscape.app 2>/dev/null", "check_linux": "which inkscape 2>/dev/null", "check_linux_dnf": "which inkscape 2>/dev/null", "check_linux_pacman": "which inkscape 2>/dev/null"},
+    "krita": {"name": "Krita", "desc": "数字绘画/Digital painting", "win": "winget install KDE.Krita", "mac": "brew install --cask krita", "linux": "sudo apt install -y krita", "linux_dnf": "sudo dnf install -y krita", "linux_pacman": "sudo pacman -S krita", "check_win": "winget list KDE.Krita", "check_mac": "ls /Applications/Krita.app 2>/dev/null", "check_linux": "which krita 2>/dev/null", "check_linux_dnf": "which krita 2>/dev/null", "check_linux_pacman": "which krita 2>/dev/null"},
+    "signal": {"name": "Signal", "desc": "加密通讯/Encrypted messaging", "win": "winget install OpenWhisperSystems.Signal", "mac": "brew install --cask signal", "linux": "sudo apt install -y signal-desktop", "linux_dnf": "sudo dnf install -y signal-desktop", "linux_pacman": "sudo pacman -S signal-desktop", "check_win": "winget list OpenWhisperSystems.Signal", "check_mac": "ls /Applications/Signal.app 2>/dev/null", "check_linux": "which signal-desktop 2>/dev/null", "check_linux_dnf": "which signal-desktop 2>/dev/null", "check_linux_pacman": "which signal-desktop 2>/dev/null"},
+    "thunderbird": {"name": "Thunderbird", "desc": "邮件客户端/Email client", "win": "winget install Mozilla.Thunderbird", "mac": "brew install --cask thunderbird", "linux": "sudo apt install -y thunderbird", "linux_dnf": "sudo dnf install -y thunderbird", "linux_pacman": "sudo pacman -S thunderbird", "check_win": "winget list Mozilla.Thunderbird", "check_mac": "ls /Applications/Thunderbird.app 2>/dev/null", "check_linux": "which thunderbird 2>/dev/null", "check_linux_dnf": "which thunderbird 2>/dev/null", "check_linux_pacman": "which thunderbird 2>/dev/null"}
   }
 }
