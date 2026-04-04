@@ -414,7 +414,10 @@ is_installed() {
     case "$os" in
         macos) check_field="check_mac" ;;
         windows) check_field="check_win" ;;
-        linux) check_field="check_linux" ;;
+        linux)
+            local linux_field=$(get_linux_field "$PKG_MANAGER")
+            check_field="check_${linux_field}"
+            ;;
         *) return 1 ;;
     esac
     
@@ -644,7 +647,24 @@ check_package_manager() {
     case $1 in
         windows) command -v winget &>/dev/null && echo "winget" || echo "none" ;;
         macos) command -v brew &>/dev/null && echo "brew" || echo "none" ;;
-        linux) command -v apt &>/dev/null && echo "apt" || echo "none" ;;
+        linux)
+            if command -v apt &>/dev/null; then echo "apt"
+            elif command -v dnf &>/dev/null; then echo "dnf"
+            elif command -v pacman &>/dev/null; then echo "pacman"
+            else echo "none"
+            fi
+            ;;
+    esac
+}
+
+# 获取 Linux 安装命令字段名
+get_linux_field() {
+    local pkg_mgr=$1
+    case "$pkg_mgr" in
+        apt) echo "linux" ;;
+        dnf) echo "linux_dnf" ;;
+        pacman) echo "linux_pacman" ;;
+        *) echo "linux" ;;
     esac
 }
 
@@ -896,7 +916,7 @@ install_software() {
     case "$os" in
         windows) platform="win" ;;
         macos) platform="mac" ;;
-        linux) platform="linux" ;;
+        linux) platform=$(get_linux_field "$PKG_MANAGER") ;;
     esac
     
     local cmd=$(json_get_software_field "$json_file" "$key" "$platform")
@@ -1068,10 +1088,10 @@ main() {
         log_info "$LANG_DETECTING_SYSTEM"
         local os=$(detect_os)
         local system_info=$(get_system_info)
-        local pkg_manager=$(check_package_manager "$os")
+        PKG_MANAGER=$(check_package_manager "$os")
         
         log_info "$LANG_SYSTEM_INFO: $system_info"
-        log_info "$LANG_PACKAGE_MANAGER: $pkg_manager"
+        log_info "$LANG_PACKAGE_MANAGER: $PKG_MANAGER"
         
         [[ "$os" == "unknown" ]] && log_error "$LANG_UNSUPPORTED_OS" && exit 1
         
