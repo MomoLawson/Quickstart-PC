@@ -4,7 +4,7 @@
       "name": "推荐套餐/Recommended",
       "desc": "综合均衡，适合大多数用户/Balanced setup for most users",
       "icon": "⭐",
-      "includes": ["firefox", "telegram", "discord", "zoom", "slack", "vscode", "git", "docker", "vlc", "arc"]
+      "includes": ["firefox", "telegram", "discord", "zoom", "slack", "vscode", "git", "docker", "vlc", "arc", "wechat", "qq"]
     },
     "ai": {
       "name": "AI 赋能/AI Powered",
@@ -16,7 +16,7 @@
       "name": "办公套件/Office Suite",
       "desc": "文档、表格、协作工具/Documents, spreadsheets, collaboration",
       "icon": "📊",
-      "includes": ["wps", "obsidian", "notion", "zoom", "slack", "1password"]
+      "includes": ["wps", "obsidian", "notion", "zoom", "slack", "1password", "dingtalk", "feishu", "tencent-meeting"]
     },
     "developer": {
       "name": "开发者套餐/Developer",
@@ -28,31 +28,31 @@
       "name": "媒体创作/Media Creation",
       "desc": "音视频、图像处理工具/Audio/video/image processing tools",
       "icon": "🎬",
-      "includes": ["vlc", "obs", "spotify", "figma", "adobe-cc", "blender", "gimp"]
+      "includes": ["vlc", "obs", "spotify", "figma", "adobe-cc", "blender", "gimp", "netease-music", "jianying", "bilibili-bijian", "potplayer"]
     },
     "communication": {
       "name": "通讯社交/Communication",
       "desc": "即时通讯、视频会议、社交/IM, video calls, social",
       "icon": "💬",
-      "includes": ["telegram", "discord", "zoom", "slack"]
+      "includes": ["telegram", "discord", "zoom", "slack", "wechat", "qq", "dingtalk", "feishu", "tencent-meeting"]
     },
     "security": {
       "name": "安全工具/Security",
       "desc": "密码管理、隐私保护/Password managers, privacy",
       "icon": "🔒",
-      "includes": ["keepassxc", "1password"]
+      "includes": ["keepassxc", "1password", "huorong"]
     },
     "macos-tools": {
       "name": "macOS 效率/macOS Productivity",
       "desc": "macOS 专属效率工具/macOS-exclusive productivity tools",
       "icon": "🍎",
-      "includes": ["raycast", "alfred", "rectangle", "the-unarchiver", "stats", "iina", "keka", "appcleaner", "monitorcontrol", "karabiner-elements", "hammerspoon", "daisydisk", "cleanmymac", "iterm2"]
+      "includes": ["raycast", "alfred", "rectangle", "the-unarchiver", "stats", "iina", "keka", "appcleaner", "monitorcontrol", "karabiner-elements", "hammerspoon", "daisydisk", "cleanmymac", "iterm2", "wechat-keyboard"]
     },
     "utilities": {
       "name": "实用工具/Utilities",
       "desc": "系统工具、下载、镜像烧录/System tools, downloads, imaging",
       "icon": "🔧",
-      "includes": ["balenaetcher", "transmission", "qbittorrent", "handbrake", "audacity", "termius", "7zip", "winrar"]
+      "includes": ["balenaetcher", "transmission", "qbittorrent", "handbrake", "audacity", "termius", "7zip", "winrar", "baidu-netdisk", "xunlei", "wechat-keyboard"]
     },
     "database": {
       "name": "数据库/Database",
