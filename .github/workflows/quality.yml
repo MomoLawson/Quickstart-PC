@@ -31,16 +31,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y powershell
       - name: Check PowerShell syntax
-        run: pwsh -NoProfile -Command "
-          \$errors = @()
-          \$tokens = @()
-          [System.Management.Automation.Language.Parser]::ParseFile('src/quickstart.ps1', [ref]\$tokens, [ref]\$errors)
-          if (\$errors.Count -gt 0) {
-            \$errors | ForEach-Object { Write-Error \$_.ToString() }
-            exit 1
-          }
-          Write-Host '✓ PowerShell syntax OK'
-        "
+        run: |
+          pwsh -NoProfile -Command '
+            $errors = @()
+            $tokens = @()
+            [System.Management.Automation.Language.Parser]::ParseFile("src/quickstart.ps1", [ref]$tokens, [ref]$errors)
+            if ($errors.Count -gt 0) {
+              $errors | ForEach-Object { Write-Error $_.ToString() }
+              exit 1
+            }
+            Write-Host "PowerShell syntax OK"
+          '
 
   json-validate:
     runs-on: ubuntu-latest
