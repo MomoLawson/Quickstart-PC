@@ -1152,6 +1152,10 @@ main() {
     
     if [[ ${#to_install[@]} -eq 0 ]]; then
         log_info "$LANG_ALL_INSTALLED"
+        # 非交互模式直接退出
+        if [[ "$NON_INTERACTIVE" == "true" ]]; then
+            exit 0
+        fi
         echo ""
         log_info "$LANG_ASK_CONTINUE"
         
