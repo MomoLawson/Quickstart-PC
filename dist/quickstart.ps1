@@ -352,7 +352,9 @@ function Show-Banner {
 function Select-Language {
     if ($lang) {
         switch ($lang) {
-            "zh" -or "zh-CN" -or "zh_CN" { return "zh-CN" }
+            "zh" { return "zh-CN" }
+            "zh-CN" { return "zh-CN" }
+            "zh_CN" { return "zh-CN" }
             default { return "en-US" }
         }
     }
@@ -894,7 +896,7 @@ function Main {
     # Handle --help first
     if ($help) {
         $helpLang = if ($lang) { 
-            switch ($lang) { "zh" -or "zh-CN" -or "zh_CN" { "zh-CN" } default { "en-US" } }
+            switch ($lang) { "zh" { "zh-CN" } "zh-CN" { "zh-CN" } "zh_CN" { "zh-CN" } default { "en-US" } }
         } else { "en-US" }
         Initialize-LanguageStrings -Lang $helpLang
         Show-Help -Lang $helpLang
