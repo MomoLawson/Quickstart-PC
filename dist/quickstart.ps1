@@ -1013,6 +1013,7 @@ function Main {
         if ($script:CONFIG_FILE -and (Test-Path $script:CONFIG_FILE)) {
             Remove-Item $script:CONFIG_FILE -Force -ErrorAction SilentlyContinue
         }
+        Set-WindowTitle -Title ""
         try { Set-CursorVisible -Visible $true } catch {}
     }
     
