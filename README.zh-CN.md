@@ -152,6 +152,49 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | macOS | Homebrew | 自动安装 |
 | Linux | apt | 系统自带 |
 
+## 故障排除
+
+### Windows
+
+**"执行策略" 错误：**
+```powershell
+powershell -ExecutionPolicy Bypass -File quickstart.ps1
+```
+
+或者临时绕过：
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+```
+
+**"winget 未找到"：**
+- 从 Microsoft Store 安装 App Installer
+- 安装后需打开新终端才能使用 `winget`
+- 检查版本：`winget --version`
+
+**"PowerShell 版本过低"：**
+- Windows 10+ 默认包含 PowerShell 5.1
+- 检查版本：`$PSVersionTable.PSVersion`
+- 如需升级：安装 [PowerShell 7+](https://github.com/PowerShell/PowerShell)
+
+**中文终端乱码：**
+- 确保 PowerShell 使用 UTF-8 编码
+- 运行：`[Console]::OutputEncoding = [System.Text.Encoding]::UTF8`
+
+### macOS
+
+**"brew 未找到"：**
+- 脚本会自动安装 Homebrew
+- 或手动安装：`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+
+**"Permission denied"：**
+- 使用 `bash` 前缀运行：`bash quickstart.sh`
+
+### Linux
+
+**"apt 未找到"：**
+- 本脚本支持基于 apt 的发行版（Ubuntu/Debian）
+- 其他发行版可使用 `--cfg-path` 自定义命令
+
 ## 贡献
 
 欢迎提交 Issue 和 Pull Request！
