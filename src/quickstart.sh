@@ -241,6 +241,7 @@ fi
 # 日志系统
 log_to_file() {
     [[ -n "$LOG_FILE" ]] && echo "$*" >> "$LOG_FILE"
+    return 0
 }
 
 debug_log() {
