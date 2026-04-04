@@ -36,6 +36,7 @@ Quickstart-PC - 一键配置新电脑
   --verbose, -v      显示详细调试信息
   --log-file FILE    将日志写入文件
   --export-plan FILE 导出安装计划到文件
+  --custom           自定义软件选择模式
   --list-profiles    列出所有可用套餐
   --show-profile KEY 显示指定套餐详情
   --skip SW          跳过指定软件（可多次使用）
@@ -62,6 +63,7 @@ Options:
   --verbose, -v      Show detailed debug info
   --log-file FILE    Write logs to file
   --export-plan FILE Export installation plan to file
+  --custom           Custom software selection mode
   --list-profiles    List all available profiles
   --show-profile KEY Show profile details
   --skip SW          Skip specified software (repeatable)
@@ -81,6 +83,7 @@ AUTO_YES=false
 VERBOSE=false
 LOG_FILE=""
 EXPORT_PLAN=""
+CUSTOM_MODE=false
 LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
@@ -102,6 +105,7 @@ while [[ $# -gt 0 ]]; do
         --verbose|-v) VERBOSE=true; shift ;;
         --log-file) LOG_FILE="$2"; shift 2 ;;
         --export-plan) EXPORT_PLAN="$2"; shift 2 ;;
+        --custom) CUSTOM_MODE=true; shift ;;
         --list-profiles) LIST_PROFILES=true; shift ;;
         --show-profile) SHOW_PROFILE="$2"; shift 2 ;;
         --skip) SKIP_SW+=("$2"); shift 2 ;;
@@ -915,6 +919,115 @@ install_software() {
     fi
 }
 
+# 自定义软件选择模式
+custom_select_software() {
+    local json_file=$1
+    local os=$2
+    local profile_key=$3
+    
+    # 获取套餐包含的软件
+    local -a sw_keys=()
+    while IFS= read -r key; do
+        [[ -z "$key" ]] && continue
+        sw_keys+=("$key")
+    done < <(json_get_profile_includes "$json_file" "$profile_key")
+    
+    local num_sw=${#sw_keys[@]}
+    
+    echo ""
+    log_header "$LANG_SELECT_SOFTWARE"
+    echo ""
+    echo -e "  ${CYAN}$LANG_NAVIGATE_MULTI${NC}"
+    echo ""
+    
+    # 构建菜单项
+    local -a menu_names=()
+    local -a checked=()
+    
+    # 全选
+    menu_names+=("${ORANGE}$LANG_SELECT_ALL${NC}")
+    checked+=(0)
+    
+    for key in "${sw_keys[@]}"; do
+        local name=$(json_get_software_field "$json_file" "$key" "name")
+        local desc=$(json_get_software_field "$json_file" "$key" "desc")
+        
+        if is_installed "$json_file" "$os" "$key"; then
+            menu_names+=("${GRAY}$name - $desc $LANG_INSTALLED${NC}")
+        else
+            menu_names+=("$name - $desc")
+        fi
+        checked+=(0)
+    done
+    
+    local num_items=${#menu_names[@]}
+    local cursor=0
+    local running=true
+    
+    tput civis 2>/dev/null || true
+    stty -echo 2>/dev/null
+    
+    while [[ "$running" == "true" ]]; do
+        printf "\r\033[2K"
+        for ((i=0; i<num_items; i++)); do
+            if [[ $i -eq $cursor ]]; then
+                if [[ ${checked[$i]} -eq 1 ]]; then
+                    echo -e "  ${REVERSE}${GREEN}${LANG_SELECTED}${NC}${REVERSE}${menu_names[$i]}${NC}"
+                else
+                    echo -e "  ${REVERSE}${LANG_NOT_SELECTED}${menu_names[$i]}${NC}"
+                fi
+            else
+                if [[ ${checked[$i]} -eq 1 ]]; then
+                    echo -e "  ${GREEN}${LANG_SELECTED}${NC}${menu_names[$i]}"
+                else
+                    echo -e "  ${LANG_NOT_SELECTED}${menu_names[$i]}"
+                fi
+            fi
+        done
+        
+        local key=""
+        IFS= read -rsn1 key < /dev/tty
+        
+        # 空字符串 = 回车
+        if [[ -z "$key" ]]; then
+            running=false
+        # ESC 开头 = 方向键
+        elif [[ "$key" == $'\x1b' ]]; then
+            local seq=""
+            IFS= read -rsn2 seq < /dev/tty
+            if [[ "$seq" == "[A" ]]; then
+                ((cursor--))
+                [[ $cursor -lt 0 ]] && cursor=$((num_items - 1))
+            elif [[ "$seq" == "[B" ]]; then
+                ((cursor++))
+                [[ $cursor -ge $num_items ]] && cursor=0
+            fi
+        # 空格 = 切换选择
+        elif [[ "$key" == " " ]]; then
+            if [[ $cursor -eq 0 ]]; then
+                local new_state=$((1 - checked[0]))
+                for ((i=0; i<num_items; i++)); do
+                    checked[$i]=$new_state
+                done
+            else
+                checked[$cursor]=$((1 - checked[$cursor]))
+            fi
+        fi
+        
+        # 上移光标重绘
+        printf '\033[%dA' "$num_items"
+    done
+    
+    tput cnorm 2>/dev/null || true
+    stty echo 2>/dev/null
+    echo ""
+    
+    SELECTED_SOFTWARE=()
+    for ((i=1; i<num_items; i++)); do
+        [[ ${checked[$i]} -eq 1 ]] && SELECTED_SOFTWARE+=("${sw_keys[$((i-1))]}")
+    done
+}
+
 show_banner() {
     echo ""
     printf "\033[0;34m╔══════════════════════════════════════╗\n"
@@ -1019,11 +1132,19 @@ main() {
         fi
         
         SELECTED_PROFILES=("$PROFILE_KEY")
-        show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+        if [[ "$CUSTOM_MODE" == "true" ]]; then
+            custom_select_software "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+        else
+            show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+        fi
     else
         show_profile_menu "$CONFIG_FILE"
         [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
-        show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+        if [[ "$CUSTOM_MODE" == "true" ]]; then
+            custom_select_software "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+        else
+            show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+        fi
     fi
     
     if [[ ${#SELECTED_SOFTWARE[@]} -eq 0 ]]; then

@@ -141,6 +141,7 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | `--verbose` / `-v` | 显示详细调试信息 |
 | `--log-file FILE` | 将日志写入文件 |
 | `--export-plan FILE` | 导出安装计划到文件 |
+| `--custom` | 自定义软件选择模式（手动选择） |
 | `--list-profiles` | 列出所有可用套餐 |
 | `--cfg-url URL` | 使用远程 profiles.json URL |
 | `--help` | 显示帮助 |

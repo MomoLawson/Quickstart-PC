@@ -14,6 +14,7 @@ param(
     [switch]$verbose,
     [string]$logFile,
     [string]$exportPlan,
+    [switch]$custom,
     [switch]$listProfiles,
     [string]$showProfile,
     [string[]]$skip,
@@ -486,6 +487,58 @@ function Show-ProfileMenu {
     
     Write-Host ""
     return $profileData[$cursor].Key
+}
+
+function Show-CustomMenu {
+    param([string]$Path, [string]$OS, [string]$ProfileKey)
+    
+    $includes = Get-ProfileIncludes -Path $Path -Key $ProfileKey
+    if ($includes.Count -eq 0) {
+        Write-Log "No software in profile" "WARN"
+        return @()
+    }
+    
+    Write-Host ""
+    Write-Header ($script:LANG["select_software"])
+    Write-Host ""
+    Write-Host "  $($script:LANG["enter_numbers"])" -ForegroundColor Cyan
+    Write-Host "  0 = $($script:LANG["select_all"])" -ForegroundColor Cyan
+    Write-Host ""
+    
+    # Display numbered list
+    $swData = @()
+    for ($i = 0; $i -lt $includes.Count; $i++) {
+        $sw = $includes[$i]
+        $name = Get-SoftwareField -Path $Path -Key $sw -Field "name"
+        $desc = Get-SoftwareField -Path $Path -Key $sw -Field "desc"
+        $installed = Test-SoftwareInstalled -Path $Path -Key $sw -OS $OS
+        
+        $num = $i + 1
+        $status = if ($installed) { " [$($script:LANG["skipping_installed"])]" } else { "" }
+        Write-Host "  $num. $name - $desc$status"
+        
+        $swData += @{ Key = $sw; Name = $name; Installed = $installed }
+    }
+    Write-Host ""
+    
+    # Prompt for selection
+    $input = Read-Host "Enter numbers (comma-separated)"
+    $selected = @()
+    
+    if ($input -match "^[\d, ]+$") {
+        $numbers = $input -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ -match "^\d+$" } | ForEach-Object { [int]$_ }
+        foreach ($num in $numbers) {
+            if ($num -eq 0) {
+                # Select all
+                $selected = @($includes)
+                break
+            } elseif ($num -ge 1 -and $num -le $swData.Count) {
+                $selected += $swData[$num - 1].Key
+            }
+        }
+    }
+    
+    return $selected
 }
 
 function Show-SoftwareMenu {
@@ -995,7 +1048,11 @@ function Main {
                 exit 0
             }
             
-            $script:SELECTED_SOFTWARE = Show-SoftwareMenu -Path $script:CONFIG_FILE -OS $os -ProfileKey $script:SELECTED_PROFILES[0]
+            if ($custom) {
+                $script:SELECTED_SOFTWARE = Show-CustomMenu -Path $script:CONFIG_FILE -OS $os -ProfileKey $script:SELECTED_PROFILES[0]
+            } else {
+                $script:SELECTED_SOFTWARE = Show-SoftwareMenu -Path $script:CONFIG_FILE -OS $os -ProfileKey $script:SELECTED_PROFILES[0]
+            }
         }
         
         if ($script:SELECTED_SOFTWARE.Count -eq 0) {
