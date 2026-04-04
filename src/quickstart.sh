@@ -1105,7 +1105,36 @@ main() {
         PKG_MANAGER=$(check_package_manager "$os")
         
         log_info "$LANG_SYSTEM_INFO: $system_info"
-        log_info "$LANG_PACKAGE_MANAGER: $PKG_MANAGER"
+        
+        # 检查并安装 npm
+        local display_pm="$PKG_MANAGER"
+        if ! command -v npm &>/dev/null; then
+            log_info "npm 未安装，正在安装..."
+            case "$os" in
+                macos) brew install node ;;
+                linux)
+                    case "$PKG_MANAGER" in
+                        apt) sudo apt install -y npm ;;
+                        dnf) sudo dnf install -y npm ;;
+                        pacman) sudo pacman -S npm --noconfirm ;;
+                    esac
+                    ;;
+                windows)
+                    if command -v winget &>/dev/null; then
+                        winget install OpenJS.NodeJS --accept-package-agreements --accept-source-agreements
+                    else
+                        log_warn "winget 未找到，无法自动安装 npm"
+                    fi
+                    ;;
+            esac
+            hash -r 2>/dev/null
+            export PATH="$PATH:/usr/local/bin"
+        fi
+        if command -v npm &>/dev/null; then
+            display_pm="$display_pm, npm"
+        fi
+        
+        log_info "$LANG_PACKAGE_MANAGER: $display_pm"
         
         [[ "$os" == "unknown" ]] && log_error "$LANG_UNSUPPORTED_OS" && exit 1
         
