@@ -4,6 +4,7 @@ set -e
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 SRC_DIR="$PROJECT_DIR/src"
 DIST_DIR="$PROJECT_DIR/dist"
+CONFIG_DIR="$PROJECT_DIR/config"
 VERSION_FILE="$PROJECT_DIR/VERSION"
 
 if [[ -f "$VERSION_FILE" ]]; then
@@ -13,6 +14,28 @@ else
 fi
 
 mkdir -p "$DIST_DIR"
+
+# Merge config/software/*.json into config/profiles.json for distribution
+if [[ -d "$CONFIG_DIR/software" ]]; then
+    echo "[→] Merging software config files..."
+    python3 -c "
+import json, os, glob
+
+with open('$CONFIG_DIR/profiles.json', 'r', encoding='utf-8') as f:
+    data = json.load(f)
+
+data['software'] = {}
+for f in sorted(glob.glob('$CONFIG_DIR/software/*.json')):
+    with open(f, 'r', encoding='utf-8') as sf:
+        cat_data = json.load(sf)
+        data['software'].update(cat_data)
+
+with open('$CONFIG_DIR/profiles.json', 'w', encoding='utf-8') as f:
+    json.dump(data, f, indent=2, ensure_ascii=False)
+
+print(f'✓ Merged {len(data[\"software\"])} software entries into profiles.json')
+"
+fi
 
 SRC_FILE="$SRC_DIR/quickstart.sh"
 DIST_FILE="$DIST_DIR/quickstart.sh"

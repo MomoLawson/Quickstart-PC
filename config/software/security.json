@@ -1,0 +1,47 @@
+{
+  "keepassxc": {
+    "name": "KeePassXC",
+    "desc": "密码管理器/Password manager",
+    "win": "winget install KeePassXCTeam.KeePassXC",
+    "mac": "brew install --cask keepassxc",
+    "linux": "sudo apt install -y keepassxc",
+    "linux_dnf": "sudo dnf install -y keepassxc",
+    "linux_pacman": "sudo pacman -S keepassxc",
+    "check_win": "winget list KeePassXCTeam.KeePassXC",
+    "check_mac": "ls /Applications/KeePassXC.app 2>/dev/null",
+    "check_linux": "which keepassxc 2>/dev/null",
+    "check_linux_dnf": "which keepassxc 2>/dev/null",
+    "check_linux_pacman": "which keepassxc 2>/dev/null",
+    "tier": "stable"
+  },
+  "1password": {
+    "name": "1Password",
+    "desc": "密码管理器/Password manager",
+    "win": "winget install AgileBits.1Password",
+    "mac": "brew install --cask 1password",
+    "linux": "curl -fsSL https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg && echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' | sudo tee /etc/apt/sources.list.d/1password.list && sudo apt update && sudo apt install -y 1password-cli",
+    "linux_dnf": "sudo dnf install -y 1password-cli",
+    "linux_pacman": "yay -S 1password",
+    "check_win": "winget list AgileBits.1Password",
+    "check_mac": "ls /Applications/1Password.app 2>/dev/null",
+    "check_linux": "which 1password 2>/dev/null",
+    "check_linux_dnf": "which 1password 2>/dev/null",
+    "check_linux_pacman": "which 1password 2>/dev/null",
+    "tier": "stable"
+  },
+  "huorong": {
+    "name": "火绒安全",
+    "desc": "安全软件/Security software",
+    "win": "winget install Huorong.HuorongSecurity",
+    "mac": null,
+    "linux": null,
+    "linux_dnf": null,
+    "linux_pacman": null,
+    "check_win": "winget list Huorong.HuorongSecurity",
+    "check_mac": null,
+    "check_linux": null,
+    "check_linux_dnf": null,
+    "check_linux_pacman": null,
+    "tier": "partial"
+  }
+}

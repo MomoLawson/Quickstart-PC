@@ -1,0 +1,47 @@
+{
+  "kitty": {
+    "name": "Kitty",
+    "desc": "终端模拟器/Terminal emulator",
+    "win": "winget install Kovidgoyal.kitty",
+    "mac": "brew install --cask kitty",
+    "linux": "sudo apt install -y kitty",
+    "linux_dnf": "sudo dnf install -y kitty",
+    "linux_pacman": "sudo pacman -S kitty",
+    "check_win": "winget list Kovidgoyal.kitty",
+    "check_mac": "ls /Applications/kitty.app 2>/dev/null",
+    "check_linux": "which kitty 2>/dev/null",
+    "check_linux_dnf": "which kitty 2>/dev/null",
+    "check_linux_pacman": "which kitty 2>/dev/null",
+    "tier": "stable"
+  },
+  "warp": {
+    "name": "Warp",
+    "desc": "Rust 终端/Rust terminal",
+    "win": null,
+    "mac": "brew install --cask warp",
+    "linux": null,
+    "linux_dnf": null,
+    "linux_pacman": null,
+    "check_win": null,
+    "check_mac": "ls /Applications/Warp.app 2>/dev/null",
+    "check_linux": null,
+    "check_linux_dnf": null,
+    "check_linux_pacman": null,
+    "tier": "partial"
+  },
+  "iterm2": {
+    "name": "iTerm2",
+    "desc": "macOS 终端/macOS terminal",
+    "win": null,
+    "mac": "brew install --cask iterm2",
+    "linux": null,
+    "linux_dnf": null,
+    "linux_pacman": null,
+    "check_win": null,
+    "check_mac": "ls /Applications/iTerm.app 2>/dev/null",
+    "check_linux": null,
+    "check_linux_dnf": null,
+    "check_linux_pacman": null,
+    "tier": "stable"
+  }
+}

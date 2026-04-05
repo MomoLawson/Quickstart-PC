@@ -1,0 +1,62 @@
+{
+  "dbeaver": {
+    "name": "DBeaver",
+    "desc": "数据库管理工具/Database management tool",
+    "win": "winget install DBeaver.DBeaver",
+    "mac": "brew install --cask dbeaver-community",
+    "linux": "sudo apt install -y dbeaver-ce",
+    "linux_dnf": "sudo dnf install -y dbeaver",
+    "linux_pacman": "yay -S dbeaver",
+    "check_win": "winget list DBeaver.DBeaver",
+    "check_mac": "ls /Applications/DBeaver.app 2>/dev/null",
+    "check_linux": "which dbeaver 2>/dev/null",
+    "check_linux_dnf": "which dbeaver 2>/dev/null",
+    "check_linux_pacman": "which dbeaver 2>/dev/null",
+    "tier": "stable"
+  },
+  "tableplus": {
+    "name": "TablePlus",
+    "desc": "数据库管理工具/Database management tool",
+    "win": "winget install TablePlus.TablePlus",
+    "mac": "brew install --cask tableplus",
+    "linux": "curl -o /tmp/tableplus.deb https://deb.tableplus.com/tableplus_latest_amd64.deb && sudo dpkg -i /tmp/tableplus.deb",
+    "linux_dnf": null,
+    "linux_pacman": "yay -S tableplus",
+    "check_win": "winget list TablePlus.TablePlus",
+    "check_mac": "ls /Applications/TablePlus.app 2>/dev/null",
+    "check_linux": "which tableplus 2>/dev/null",
+    "check_linux_dnf": null,
+    "check_linux_pacman": "which tableplus 2>/dev/null",
+    "tier": "partial"
+  },
+  "mongodb-compass": {
+    "name": "MongoDB Compass",
+    "desc": "MongoDB GUI/MongoDB GUI",
+    "win": "winget install MongoDB.Compass",
+    "mac": "brew install --cask mongodb-compass",
+    "linux": "curl -o /tmp/mongodb-compass.deb https://downloads.mongodb.com/compass/mongodb-compass_latest_amd64.deb && sudo dpkg -i /tmp/mongodb-compass.deb",
+    "linux_dnf": null,
+    "linux_pacman": "yay -S mongodb-compass",
+    "check_win": "winget list MongoDB.Compass",
+    "check_mac": "ls /Applications/MongoDB\\ Compass.app 2>/dev/null",
+    "check_linux": "which mongodb-compass 2>/dev/null",
+    "check_linux_dnf": null,
+    "check_linux_pacman": "which mongodb-compass 2>/dev/null",
+    "tier": "partial"
+  },
+  "redis-insight": {
+    "name": "Redis Insight",
+    "desc": "Redis GUI/Redis GUI",
+    "win": "winget install Redis.RedisInsight",
+    "mac": "brew install --cask redis-insight",
+    "linux": "curl -o /tmp/redis-insight.AppImage https://github.com/RedisInsight/RedisInsight/releases/latest/download/Redis-Insight-x86_64.AppImage && chmod +x /tmp/redis-insight.AppImage",
+    "linux_dnf": "curl -o /tmp/redis-insight.AppImage https://github.com/RedisInsight/RedisInsight/releases/latest/download/Redis-Insight-x86_64.AppImage && chmod +x /tmp/redis-insight.AppImage",
+    "linux_pacman": "yay -S redis-insight",
+    "check_win": "winget list Redis.RedisInsight",
+    "check_mac": "ls /Applications/Redis\\ Insight.app 2>/dev/null",
+    "check_linux": "which redis-insight 2>/dev/null",
+    "check_linux_dnf": "which redis-insight 2>/dev/null",
+    "check_linux_pacman": "which redis-insight 2>/dev/null",
+    "tier": "partial"
+  }
+}
