@@ -73,7 +73,7 @@ load_language_strings() {
 OPTIONS_EOF
 )
             
-            LANG_BANNER_TITLE="Quickstart-PC v0.60.0"
+            LANG_BANNER_TITLE="Quickstart-PC v0.60.1"
             LANG_BANNER_DESC="快速配置新电脑软件环境"
             LANG_DETECTING_SYSTEM="检测系统环境..."
             LANG_SYSTEM_INFO="系统"
@@ -168,7 +168,7 @@ OPTIONS_EOF
 OPTIONS_EOF
 )
             
-            LANG_BANNER_TITLE="Quickstart-PC v0.60.0"
+            LANG_BANNER_TITLE="Quickstart-PC v0.60.1"
             LANG_BANNER_DESC="新PCのソフトウェア環境を素早く設定"
             LANG_DETECTING_SYSTEM="システム環境を検出中..."
             LANG_SYSTEM_INFO="システム"
@@ -263,7 +263,7 @@ OPTIONS_EOF
 OPTIONS_EOF
 )
             
-            LANG_BANNER_TITLE="Quickstart-PC v0.60.0"
+            LANG_BANNER_TITLE="Quickstart-PC v0.60.1"
             LANG_BANNER_DESC="새 PC 소프트웨어 환경을 빠르게 설정"
             LANG_DETECTING_SYSTEM="시스템 환경 감지 중..."
             LANG_SYSTEM_INFO="시스템"
@@ -358,7 +358,7 @@ Options:
 OPTIONS_EOF
 )
             
-            LANG_BANNER_TITLE="Quickstart-PC v0.60.0"
+            LANG_BANNER_TITLE="Quickstart-PC v0.60.1"
             LANG_BANNER_DESC="Quick setup for new computers"
             LANG_DETECTING_SYSTEM="Detecting system environment..."
             LANG_SYSTEM_INFO="System"
@@ -1087,13 +1087,12 @@ tui_interactive_select() {
     local -a items=("$@")
     local num_items=${#items[@]}
     local cursor=0
+    local debug_log="/tmp/quickstart-tui-debug.log"
+    
+    echo "=== TUI Start: num_items=$num_items ===" > "$debug_log"
     
     tput civis 2>/dev/null || true
-    
-    # Save and restore terminal settings
-    local old_stty
-    old_stty=$(stty -g 2>/dev/null)
-    stty raw -echo 2>/dev/null
+    stty -echo 2>/dev/null
     
     for ((i=0; i<num_items; i++)); do
         if [[ $i -eq $cursor ]]; then
@@ -1117,28 +1116,26 @@ tui_interactive_select() {
         
         local key=""
         IFS= read -rsn1 key < /dev/tty
+        local key_code=$(printf '%d' "'$key" 2>/dev/null || echo 0)
         
-        case "$key" in
-            $'\x1b')
-                local seq=""
-                IFS= read -rsn1 key < /dev/tty
-                if [[ "$key" == "[" ]]; then
-                    IFS= read -rsn1 key < /dev/tty
-                    case "$key" in
-                        A) ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
-                        B) ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
-                    esac
-                fi
+        echo "DEBUG: key='$key' key_code=$key_code" >> "$debug_log"
+        
+        case $key_code in
+            27)
+                IFS= read -rsn2 key < /dev/tty
+                case "$key" in
+                    '[A'|'OA') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
+                    '[B'|'OB') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
+                esac
                 ;;
-            ''|$'\n'|$'\r') break ;;
+            10|13|0) break ;;
         esac
     done
     
-    # Restore terminal settings
-    if [[ -n "$old_stty" ]]; then
-        stty "$old_stty" 2>/dev/null
-    fi
+    echo "DEBUG: final cursor=$cursor" >> "$debug_log"
     tput cnorm 2>/dev/null || true
+    stty echo 2>/dev/null
+    TUI_RESULT=$cursor
     return $cursor
 }
 
@@ -1373,8 +1370,8 @@ show_profile_menu() {
             27)
                 IFS= read -rsn2 key < /dev/tty
                 case "$key" in
-                    '[A') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_profiles - 1)) ;;
-                    '[B') ((cursor++)); [[ $cursor -ge $num_profiles ]] && cursor=0 ;;
+                    '[A'|'OA') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_profiles - 1)) ;;
+                    '[B'|'OB') ((cursor++)); [[ $cursor -ge $num_profiles ]] && cursor=0 ;;
                 esac
                 ;;
             10|13|0) break ;;
@@ -1476,8 +1473,8 @@ show_software_menu() {
             27)
                 IFS= read -rsn2 key < /dev/tty
                 case "$key" in
-                    '[A') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
-                    '[B') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
+                        '[A'|'OA') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
+                        '[B'|'OB') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
                 esac
                 ;;
             32)

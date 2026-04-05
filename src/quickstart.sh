@@ -1087,17 +1087,26 @@ tui_interactive_select() {
     local -a items=("$@")
     local num_items=${#items[@]}
     local cursor=0
+    local debug_log="/tmp/quickstart-tui-debug.log"
+    
+    echo "=== TUI Start: num_items=$num_items ===" > "$debug_log"
     
     tput civis 2>/dev/null || true
+    stty -echo 2>/dev/null
     
-    # Save terminal settings
-    local old_stty
-    old_stty=$(stty -g 2>/dev/null)
-    stty -icanon min 1 time 0 2>/dev/null
+    for ((i=0; i<num_items; i++)); do
+        if [[ $i -eq $cursor ]]; then
+            printf "  \033[7m ▶ %s\033[0m\n" "${items[$i]}"
+        else
+            printf "    %s\n" "${items[$i]}"
+        fi
+    done
     
     while true; do
-        clear
+        tput cuu $num_items 2>/dev/null || true
+        
         for ((i=0; i<num_items; i++)); do
+            printf "\033[2K"
             if [[ $i -eq $cursor ]]; then
                 printf "  \033[7m ▶ %s\033[0m\n" "${items[$i]}"
             else
@@ -1106,19 +1115,27 @@ tui_interactive_select() {
         done
         
         local key=""
-        IFS= read -rsn3 key < /dev/tty
+        IFS= read -rsn1 key < /dev/tty
+        local key_code=$(printf '%d' "'$key" 2>/dev/null || echo 0)
         
-        case "$key" in
-            $'\x1b[A') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
-            $'\x1b[B') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
-            ''|$'\n'|$'\r') break ;;
+        echo "DEBUG: key='$key' key_code=$key_code" >> "$debug_log"
+        
+        case $key_code in
+            27)
+                IFS= read -rsn2 key < /dev/tty
+                case "$key" in
+                    '[A'|'OA') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
+                    '[B'|'OB') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
+                esac
+                ;;
+            10|13|0) break ;;
         esac
     done
     
-    if [[ -n "$old_stty" ]]; then
-        stty "$old_stty" 2>/dev/null
-    fi
+    echo "DEBUG: final cursor=$cursor" >> "$debug_log"
     tput cnorm 2>/dev/null || true
+    stty echo 2>/dev/null
+    TUI_RESULT=$cursor
     return $cursor
 }
 
@@ -1353,8 +1370,8 @@ show_profile_menu() {
             27)
                 IFS= read -rsn2 key < /dev/tty
                 case "$key" in
-                    '[A') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_profiles - 1)) ;;
-                    '[B') ((cursor++)); [[ $cursor -ge $num_profiles ]] && cursor=0 ;;
+                    '[A'|'OA') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_profiles - 1)) ;;
+                    '[B'|'OB') ((cursor++)); [[ $cursor -ge $num_profiles ]] && cursor=0 ;;
                 esac
                 ;;
             10|13|0) break ;;
@@ -1456,8 +1473,8 @@ show_software_menu() {
             27)
                 IFS= read -rsn2 key < /dev/tty
                 case "$key" in
-                    '[A') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
-                    '[B') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
+                        '[A'|'OA') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
+                        '[B'|'OB') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
                 esac
                 ;;
             32)
