@@ -1090,10 +1090,10 @@ tui_interactive_select() {
     
     tput civis 2>/dev/null || true
     
-    # Save and restore terminal settings
+    # Save terminal settings and switch to raw mode
     local old_stty
     old_stty=$(stty -g 2>/dev/null)
-    stty raw -echo 2>/dev/null
+    stty -icanon -echo min 1 time 0 2>/dev/null
     
     # Draw initial menu
     for ((i=0; i<num_items; i++)); do
@@ -1104,11 +1104,14 @@ tui_interactive_select() {
         fi
     done
     
+    local esc_seq=""
     while true; do
-        # Move cursor up and redraw
+        # Move cursor up to start of menu
         printf "\033[${num_items}A"
+        
+        # Redraw menu
         for ((i=0; i<num_items; i++)); do
-            printf "\033[2K"
+            printf "\033[2K\r"
             if [[ $i -eq $cursor ]]; then
                 printf "  \033[7m ▶ %s\033[0m\n" "${items[$i]}"
             else
@@ -1116,23 +1119,27 @@ tui_interactive_select() {
             fi
         done
         
+        # Read one character
         local key=""
         IFS= read -rsn1 key < /dev/tty
         
-        case "$key" in
-            $'\x1b')
-                local seq=""
-                IFS= read -rsn1 key < /dev/tty
-                if [[ "$key" == "[" ]]; then
-                    IFS= read -rsn1 key < /dev/tty
-                    case "$key" in
-                        A) ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
-                        B) ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
-                    esac
-                fi
-                ;;
-            ''|$'\n'|$'\r') break ;;
-        esac
+        if [[ "$key" == $'\x1b' ]]; then
+            # Read escape sequence
+            local c1="" c2=""
+            IFS= read -rsn1 c1 < /dev/tty
+            IFS= read -rsn1 c2 < /dev/tty
+            esc_seq="${c1}${c2}"
+            
+            if [[ "$esc_seq" == "[A" ]]; then
+                ((cursor--))
+                [[ $cursor -lt 0 ]] && cursor=$((num_items - 1))
+            elif [[ "$esc_seq" == "[B" ]]; then
+                ((cursor++))
+                [[ $cursor -ge $num_items ]] && cursor=0
+            fi
+        elif [[ -z "$key" || "$key" == $'\n' || "$key" == $'\r' ]]; then
+            break
+        fi
     done
     
     # Restore terminal settings
