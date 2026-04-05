@@ -450,15 +450,15 @@
       "desc": "VS Code AI 插件/VS Code AI extension",
       "win": "winget install Continue.Continue",
       "mac": "brew install --cask continue",
-      "linux": "curl -o /tmp/continue.vsix https://github.com/continuedev/continue/releases/latest/download/continue.vsix && code --install-extension /tmp/continue.vsix",
-      "linux_dnf": "curl -o /tmp/continue.vsix https://github.com/continuedev/continue/releases/latest/download/continue.vsix && code --install-extension /tmp/continue.vsix",
+      "linux": "code --install-extension Continue.continue",
+      "linux_dnf": "code --install-extension Continue.continue",
       "linux_pacman": "yay -S continue",
       "check_win": "winget list Continue.Continue",
       "check_mac": "ls /Applications/Continue.app 2>/dev/null",
-      "check_linux": "which continue 2>/dev/null",
-      "check_linux_dnf": "which continue 2>/dev/null",
+      "check_linux": "code --list-extensions | grep -i continue",
+      "check_linux_dnf": "code --list-extensions | grep -i continue",
       "check_linux_pacman": "which continue 2>/dev/null",
-      "tier": "partial"
+      "tier": "stable"
     },
     "comfyui": {
       "name": "ComfyUI",
@@ -563,7 +563,7 @@
       "check_linux": null,
       "check_linux_dnf": null,
       "check_linux_pacman": null,
-      "tier": "stable"
+      "tier": "partial"
     },
     "telegram": {
       "name": "Telegram",
@@ -660,13 +660,13 @@
       "desc": "企业办公/Enterprise office",
       "win": "winget install Alibaba.DingTalk",
       "mac": "brew install --cask dingtalk",
-      "linux": "curl -o /tmp/dingtalk.deb https://dtapp-pub.dingtalk.com/dingtalk-desktop/linux/x86_64/latest/com.alibabainc.dingtalk_latest_amd64.deb && sudo dpkg -i /tmp/dingtalk.deb",
-      "linux_dnf": null,
+      "linux": "curl -L \"https://dtapp-pub.dingtalk.com/dingtalk-desktop/linux/x86_64/latest/com.alibabainc.dingtalk_latest_amd64.deb\" -o /tmp/dingtalk.deb && sudo dpkg -i /tmp/dingtalk.deb",
+      "linux_dnf": "curl -L \"https://dtapp-pub.dingtalk.com/dingtalk-desktop/linux/x86_64/latest/com.alibabainc.dingtalk_latest_amd64.rpm\" -o /tmp/dingtalk.rpm && sudo dnf install -y /tmp/dingtalk.rpm",
       "linux_pacman": "yay -S dingtalk",
       "check_win": "winget list Alibaba.DingTalk",
       "check_mac": "ls /Applications/DingTalk.app 2>/dev/null",
       "check_linux": "which dingtalk 2>/dev/null",
-      "check_linux_dnf": null,
+      "check_linux_dnf": "which dingtalk 2>/dev/null",
       "check_linux_pacman": "which dingtalk 2>/dev/null",
       "tier": "partial"
     },
@@ -676,7 +676,7 @@
       "win": "winget install ByteDance.Feishu",
       "mac": "brew install --cask feishu",
       "linux": "curl -o /tmp/feishu.deb https://sf3-cn.feishucdn.com/obj/ee-appcenter/ffe5507e/Feishu-linux_x86_64.deb && sudo dpkg -i /tmp/feishu.deb",
-      "linux_dnf": null,
+      "linux_dnf": "curl -L \"https://sf3-cn.feishucdn.com/obj/ee-appcenter/ffe5507e/Feishu-linux_x86_64.rpm\" -o /tmp/feishu.rpm && sudo dnf install -y /tmp/feishu.rpm",
       "linux_pacman": "yay -S feishu",
       "check_win": "winget list ByteDance.Feishu",
       "check_mac": "ls /Applications/Feishu.app 2>/dev/null",
@@ -691,7 +691,7 @@
       "win": "winget install Tencent.TencentMeeting",
       "mac": "brew install --cask tencent-meeting",
       "linux": "curl -o /tmp/tencent-meeting.deb https://updatecdn.meeting.qq.com/TencentMeeting_0300000000_3.28.2.503.publish.64.release.linux.20240520102935.deb && sudo dpkg -i /tmp/tencent-meeting.deb",
-      "linux_dnf": null,
+      "linux_dnf": "curl -L \"https://updatecdn.meeting.qq.com/TencentMeeting_0300000000_3.28.2.503.publish.64.release.linux.20240520102935.rpm\" -o /tmp/tencent-meeting.rpm && sudo dnf install -y /tmp/tencent-meeting.rpm",
       "linux_pacman": "yay -S tencent-meeting",
       "check_win": "winget list Tencent.TencentMeeting",
       "check_mac": "ls /Applications/TencentMeeting.app 2>/dev/null",
@@ -735,13 +735,13 @@
       "desc": "数据库管理工具/Database management tool",
       "win": "winget install TablePlus.TablePlus",
       "mac": "brew install --cask tableplus",
-      "linux": "curl -o /tmp/tableplus.deb https://deb.tableplus.com/tableplus_latest_amd64.deb && sudo dpkg -i /tmp/tableplus.deb",
-      "linux_dnf": null,
+      "linux": "curl -L \"https://deb.tableplus.com/tableplus_latest_amd64.deb\" -o /tmp/tableplus.deb && sudo dpkg -i /tmp/tableplus.deb",
+      "linux_dnf": "curl -L \"https://deb.tableplus.com/tableplus_latest_amd64.deb\" -o /tmp/tableplus.deb && sudo dpkg -i /tmp/tableplus.deb",
       "linux_pacman": "yay -S tableplus",
       "check_win": "winget list TablePlus.TablePlus",
       "check_mac": "ls /Applications/TablePlus.app 2>/dev/null",
       "check_linux": "which tableplus 2>/dev/null",
-      "check_linux_dnf": null,
+      "check_linux_dnf": "which tableplus 2>/dev/null",
       "check_linux_pacman": "which tableplus 2>/dev/null",
       "tier": "partial"
     },
@@ -750,13 +750,13 @@
       "desc": "MongoDB GUI/MongoDB GUI",
       "win": "winget install MongoDB.Compass",
       "mac": "brew install --cask mongodb-compass",
-      "linux": "curl -o /tmp/mongodb-compass.deb https://downloads.mongodb.com/compass/mongodb-compass_latest_amd64.deb && sudo dpkg -i /tmp/mongodb-compass.deb",
-      "linux_dnf": null,
+      "linux": "curl -L \"https://downloads.mongodb.com/compass/mongodb-compass_latest_amd64.deb\" -o /tmp/mongodb-compass.deb && sudo dpkg -i /tmp/mongodb-compass.deb",
+      "linux_dnf": "curl -L \"https://downloads.mongodb.com/compass/mongodb-compass_latest_amd64.deb\" -o /tmp/mongodb-compass.deb && sudo dpkg -i /tmp/mongodb-compass.deb",
       "linux_pacman": "yay -S mongodb-compass",
       "check_win": "winget list MongoDB.Compass",
       "check_mac": "ls /Applications/MongoDB\\ Compass.app 2>/dev/null",
       "check_linux": "which mongodb-compass 2>/dev/null",
-      "check_linux_dnf": null,
+      "check_linux_dnf": "which mongodb-compass 2>/dev/null",
       "check_linux_pacman": "which mongodb-compass 2>/dev/null",
       "tier": "partial"
     },
@@ -765,8 +765,8 @@
       "desc": "Redis GUI/Redis GUI",
       "win": "winget install Redis.RedisInsight",
       "mac": "brew install --cask redis-insight",
-      "linux": "curl -o /tmp/redis-insight.AppImage https://github.com/RedisInsight/RedisInsight/releases/latest/download/Redis-Insight-x86_64.AppImage && chmod +x /tmp/redis-insight.AppImage",
-      "linux_dnf": "curl -o /tmp/redis-insight.AppImage https://github.com/RedisInsight/RedisInsight/releases/latest/download/Redis-Insight-x86_64.AppImage && chmod +x /tmp/redis-insight.AppImage",
+      "linux": "curl -L \"https://github.com/RedisInsight/RedisInsight/releases/latest/download/Redis-Insight-x86_64.AppImage\" -o /tmp/redis-insight.AppImage && chmod +x /tmp/redis-insight.AppImage",
+      "linux_dnf": "curl -L \"https://github.com/RedisInsight/RedisInsight/releases/latest/download/Redis-Insight-x86_64.AppImage\" -o /tmp/redis-insight.AppImage && chmod +x /tmp/redis-insight.AppImage",
       "linux_pacman": "yay -S redis-insight",
       "check_win": "winget list Redis.RedisInsight",
       "check_mac": "ls /Applications/Redis\\ Insight.app 2>/dev/null",
@@ -975,8 +975,8 @@
       "desc": "GitHub GUI 客户端/GitHub GUI client",
       "win": "winget install GitHub.GitHubDesktop",
       "mac": "brew install --cask github",
-      "linux": "curl -o /tmp/github-desktop.deb https://github.com/shiftkey/desktop/releases/latest/download/GitHubDesktop-linux-amd64.deb && sudo dpkg -i /tmp/github-desktop.deb",
-      "linux_dnf": "curl -o /tmp/github-desktop.rpm https://github.com/shiftkey/desktop/releases/latest/download/GitHubDesktop-linux-x86_64.rpm && sudo dnf install -y /tmp/github-desktop.rpm",
+      "linux": "curl -L \"https://github.com/shiftkey/desktop/releases/latest/download/GitHubDesktop-linux-amd64.deb\" -o /tmp/github-desktop.deb && sudo dpkg -i /tmp/github-desktop.deb",
+      "linux_dnf": "curl -L \"https://github.com/shiftkey/desktop/releases/latest/download/GitHubDesktop-linux-x86_64.rpm\" -o /tmp/github-desktop.rpm && sudo dnf install -y /tmp/github-desktop.rpm",
       "linux_pacman": "yay -S github-desktop-bin",
       "check_win": "winget list GitHub.GitHubDesktop",
       "check_mac": "ls /Applications/GitHub\\ Desktop.app 2>/dev/null",
@@ -1028,7 +1028,7 @@
       "check_linux": null,
       "check_linux_dnf": null,
       "check_linux_pacman": null,
-      "tier": "stable"
+      "tier": "partial"
     },
     "anaconda": {
       "name": "Anaconda",
@@ -1118,7 +1118,7 @@
       "check_linux": null,
       "check_linux_dnf": null,
       "check_linux_pacman": null,
-      "tier": "stable"
+      "tier": "partial"
     },
     "alfred": {
       "name": "Alfred",
@@ -1133,7 +1133,7 @@
       "check_linux": null,
       "check_linux_dnf": null,
       "check_linux_pacman": null,
-      "tier": "stable"
+      "tier": "partial"
     },
     "rectangle": {
       "name": "Rectangle",
@@ -1148,7 +1148,7 @@
       "check_linux": null,
       "check_linux_dnf": null,
       "check_linux_pacman": null,
-      "tier": "stable"
+      "tier": "partial"
     },
     "the-unarchiver": {
       "name": "The Unarchiver",
@@ -1396,7 +1396,7 @@
       "win": "winget install NetEase.CloudMusic",
       "mac": "brew install --cask neteasemusic",
       "linux": "curl -o /tmp/netease.deb https://d1.music.126.net/dmusic/netease-cloud-music_1.2.1_amd64_ubuntu.deb && sudo dpkg -i /tmp/netease.deb",
-      "linux_dnf": null,
+      "linux_dnf": "curl -L \"https://d1.music.126.net/dmusic/netease-cloud-music_1.2.1_x86_64.rpm\" -o /tmp/netease.rpm && sudo dnf install -y /tmp/netease.rpm",
       "linux_pacman": "yay -S netease-cloud-music",
       "check_win": "winget list NetEase.CloudMusic",
       "check_mac": "ls /Applications/NeteaseMusic.app 2>/dev/null",
@@ -1568,7 +1568,7 @@
       "check_linux": null,
       "check_linux_dnf": null,
       "check_linux_pacman": null,
-      "tier": "experimental"
+      "tier": "partial"
     },
     "wps": {
       "name": "WPS Office",
@@ -1748,7 +1748,7 @@
       "check_linux": null,
       "check_linux_dnf": null,
       "check_linux_pacman": null,
-      "tier": "stable"
+      "tier": "partial"
     },
     "balenaetcher": {
       "name": "BalenaEtcher",
@@ -1846,7 +1846,7 @@
       "win": "winget install Baidu.BaiduNetdisk",
       "mac": "brew install --cask baidunetdisk",
       "linux": "curl -o /tmp/baidu-netdisk.deb https://issuepcdn.baidupcs.com/issue/netdisk/LinuxGuanjia/baidu-netdisk_4.17.3_amd64.deb && sudo dpkg -i /tmp/baidu-netdisk.deb",
-      "linux_dnf": null,
+      "linux_dnf": "curl -L \"https://issuepcdn.baidupcs.com/issue/netdisk/LinuxGuanjia/baidu-netdisk_4.17.3_x86_64.rpm\" -o /tmp/baidu-netdisk.rpm && sudo dnf install -y /tmp/baidu-netdisk.rpm",
       "linux_pacman": "yay -S baidunetdisk-bin",
       "check_win": "winget list Baidu.BaiduNetdisk",
       "check_mac": "ls /Applications/BaiduNetdisk.app 2>/dev/null",
@@ -1861,7 +1861,7 @@
       "win": "winget install Xunlei.Xunlei",
       "mac": "brew install --cask xunlei",
       "linux": "curl -o /tmp/xunlei.deb https://cdn-package-store6.deepin.com/appstore/pool/appstore/c/com.xunlei.download/com.xunlei.download_1.0.0.2_amd64.deb && sudo dpkg -i /tmp/xunlei.deb",
-      "linux_dnf": null,
+      "linux_dnf": "curl -L \"https://cdn-package-store6.deepin.com/appstore/pool/appstore/c/com.xunlei.download/com.xunlei.download_1.0.0.2_x86_64.rpm\" -o /tmp/xunlei.rpm && sudo dnf install -y /tmp/xunlei.rpm",
       "linux_pacman": "yay -S xunlei-bin",
       "check_win": "winget list Xunlei.Xunlei",
       "check_mac": "ls /Applications/Xunlei.app 2>/dev/null",
@@ -1921,12 +1921,12 @@
       "win": "winget install IDRIX.VeraCrypt",
       "mac": "brew install --cask veracrypt",
       "linux": "curl -o /tmp/veracrypt.deb https://launchpad.net/veracrypt/trunk/1.26.7/+download/veracrypt-1.26.7-Ubuntu-22.04-amd64.deb && sudo dpkg -i /tmp/veracrypt.deb",
-      "linux_dnf": null,
+      "linux_dnf": "curl -L \"https://launchpad.net/veracrypt/trunk/1.26.7/+download/veracrypt-1.26.7-Ubuntu-22.04-amd64.deb\" -o /tmp/veracrypt.deb && sudo dpkg -i /tmp/veracrypt.deb",
       "linux_pacman": "sudo pacman -S veracrypt",
       "check_win": "winget list IDRIX.VeraCrypt",
       "check_mac": "ls /Applications/VeraCrypt.app 2>/dev/null",
       "check_linux": "which veracrypt 2>/dev/null",
-      "check_linux_dnf": null,
+      "check_linux_dnf": "which veracrypt 2>/dev/null",
       "check_linux_pacman": "which veracrypt 2>/dev/null",
       "tier": "stable"
     },
@@ -1935,8 +1935,8 @@
       "desc": "终端模拟器/Terminal emulator",
       "win": "winget install Eugeny.Tabby",
       "mac": "brew install --cask tabby",
-      "linux": "curl -o /tmp/tabby.deb https://github.com/Eugeny/tabby/releases/latest/download/tabby-1.0.218-linux-x64.deb && sudo dpkg -i /tmp/tabby.deb",
-      "linux_dnf": "curl -o /tmp/tabby.rpm https://github.com/Eugeny/tabby/releases/latest/download/tabby-1.0.218-linux-x64.rpm && sudo dnf install -y /tmp/tabby.rpm",
+      "linux": "curl -L \"https://github.com/Eugeny/tabby/releases/latest/download/tabby-1.0.218-linux-x64.deb\" -o /tmp/tabby.deb && sudo dpkg -i /tmp/tabby.deb",
+      "linux_dnf": "curl -L \"https://github.com/Eugeny/tabby/releases/latest/download/tabby-1.0.218-linux-x64.rpm\" -o /tmp/tabby.rpm && sudo dnf install -y /tmp/tabby.rpm",
       "linux_pacman": "yay -S tabby",
       "check_win": "winget list Eugeny.Tabby",
       "check_mac": "ls /Applications/Tabby.app 2>/dev/null",

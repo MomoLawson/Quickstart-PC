@@ -110,7 +110,7 @@
     "win": "winget install NetEase.CloudMusic",
     "mac": "brew install --cask neteasemusic",
     "linux": "curl -o /tmp/netease.deb https://d1.music.126.net/dmusic/netease-cloud-music_1.2.1_amd64_ubuntu.deb && sudo dpkg -i /tmp/netease.deb",
-    "linux_dnf": null,
+    "linux_dnf": "curl -L \"https://d1.music.126.net/dmusic/netease-cloud-music_1.2.1_x86_64.rpm\" -o /tmp/netease.rpm && sudo dnf install -y /tmp/netease.rpm",
     "linux_pacman": "yay -S netease-cloud-music",
     "check_win": "winget list NetEase.CloudMusic",
     "check_mac": "ls /Applications/NeteaseMusic.app 2>/dev/null",
@@ -282,6 +282,6 @@
     "check_linux": null,
     "check_linux_dnf": null,
     "check_linux_pacman": null,
-    "tier": "experimental"
+    "tier": "partial"
   }
 }

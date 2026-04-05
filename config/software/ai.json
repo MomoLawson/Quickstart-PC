@@ -229,15 +229,15 @@
     "desc": "VS Code AI 插件/VS Code AI extension",
     "win": "winget install Continue.Continue",
     "mac": "brew install --cask continue",
-    "linux": "curl -o /tmp/continue.vsix https://github.com/continuedev/continue/releases/latest/download/continue.vsix && code --install-extension /tmp/continue.vsix",
-    "linux_dnf": "curl -o /tmp/continue.vsix https://github.com/continuedev/continue/releases/latest/download/continue.vsix && code --install-extension /tmp/continue.vsix",
+    "linux": "code --install-extension Continue.continue",
+    "linux_dnf": "code --install-extension Continue.continue",
     "linux_pacman": "yay -S continue",
     "check_win": "winget list Continue.Continue",
     "check_mac": "ls /Applications/Continue.app 2>/dev/null",
-    "check_linux": "which continue 2>/dev/null",
-    "check_linux_dnf": "which continue 2>/dev/null",
+    "check_linux": "code --list-extensions | grep -i continue",
+    "check_linux_dnf": "code --list-extensions | grep -i continue",
     "check_linux_pacman": "which continue 2>/dev/null",
-    "tier": "partial"
+    "tier": "stable"
   },
   "comfyui": {
     "name": "ComfyUI",

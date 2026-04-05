@@ -12,7 +12,7 @@
     "check_linux": null,
     "check_linux_dnf": null,
     "check_linux_pacman": null,
-    "tier": "stable"
+    "tier": "partial"
   },
   "alfred": {
     "name": "Alfred",
@@ -27,7 +27,7 @@
     "check_linux": null,
     "check_linux_dnf": null,
     "check_linux_pacman": null,
-    "tier": "stable"
+    "tier": "partial"
   },
   "rectangle": {
     "name": "Rectangle",
@@ -42,7 +42,7 @@
     "check_linux": null,
     "check_linux_dnf": null,
     "check_linux_pacman": null,
-    "tier": "stable"
+    "tier": "partial"
   },
   "the-unarchiver": {
     "name": "The Unarchiver",

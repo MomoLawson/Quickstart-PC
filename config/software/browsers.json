@@ -72,6 +72,6 @@
     "check_linux": null,
     "check_linux_dnf": null,
     "check_linux_pacman": null,
-    "tier": "stable"
+    "tier": "partial"
   }
 }

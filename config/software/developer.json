@@ -199,8 +199,8 @@
     "desc": "GitHub GUI 客户端/GitHub GUI client",
     "win": "winget install GitHub.GitHubDesktop",
     "mac": "brew install --cask github",
-    "linux": "curl -o /tmp/github-desktop.deb https://github.com/shiftkey/desktop/releases/latest/download/GitHubDesktop-linux-amd64.deb && sudo dpkg -i /tmp/github-desktop.deb",
-    "linux_dnf": "curl -o /tmp/github-desktop.rpm https://github.com/shiftkey/desktop/releases/latest/download/GitHubDesktop-linux-x86_64.rpm && sudo dnf install -y /tmp/github-desktop.rpm",
+    "linux": "curl -L \"https://github.com/shiftkey/desktop/releases/latest/download/GitHubDesktop-linux-amd64.deb\" -o /tmp/github-desktop.deb && sudo dpkg -i /tmp/github-desktop.deb",
+    "linux_dnf": "curl -L \"https://github.com/shiftkey/desktop/releases/latest/download/GitHubDesktop-linux-x86_64.rpm\" -o /tmp/github-desktop.rpm && sudo dnf install -y /tmp/github-desktop.rpm",
     "linux_pacman": "yay -S github-desktop-bin",
     "check_win": "winget list GitHub.GitHubDesktop",
     "check_mac": "ls /Applications/GitHub\\ Desktop.app 2>/dev/null",
@@ -252,7 +252,7 @@
     "check_linux": null,
     "check_linux_dnf": null,
     "check_linux_pacman": null,
-    "tier": "stable"
+    "tier": "partial"
   },
   "anaconda": {
     "name": "Anaconda",
