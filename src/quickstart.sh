@@ -1389,24 +1389,27 @@ show_software_menu() {
     local os=$2
     local profile_key=$3
     
+    # 一次性加载所有软件数据到内存，避免重复调用 jq
+    local sw_data=""
+    if [[ "$JSON_PARSER" == "jq" ]]; then
+        sw_data=$(jq -r '.software | to_entries[] | "\(.key)\t\(.value.name)\t\(.value.desc)\t\(.value.check_mac)\t\(.value.check_win)\t\(.value.check_linux)"' "$json_file" 2>/dev/null)
+    else
+        sw_data=$(python3 -c "
+import json
+data = json.load(open('$json_file'))
+for k, v in data['software'].items():
+    print(f'{k}\t{v.get(\"name\",\"\")}\t{v.get(\"desc\",\"\")}\t{v.get(\"check_mac\",\"\")}\t{v.get(\"check_win\",\"\")}\t{v.get(\"check_linux\",\"\")}')
+" 2>/dev/null)
+    fi
+    
     local -a sw_keys=()
     while IFS= read -r key; do
         [[ -z "$key" ]] && continue
-        
-        # --only 过滤
-        if [[ ${#ONLY_SW[@]} -gt 0 ]] && [[ ! " ${ONLY_SW[*]} " =~ " $key " ]]; then
-            continue
-        fi
-        
-        # --skip 过滤
-        if [[ ${#SKIP_SW[@]} -gt 0 ]] && [[ " ${SKIP_SW[*]} " =~ " $key " ]]; then
-            continue
-        fi
-        
+        if [[ ${#ONLY_SW[@]} -gt 0 ]] && [[ ! " ${ONLY_SW[*]} " =~ " $key " ]]; then continue; fi
+        if [[ ${#SKIP_SW[@]} -gt 0 ]] && [[ " ${SKIP_SW[*]} " =~ " $key " ]]; then continue; fi
         sw_keys+=("$key")
     done < <(json_get_profile_includes "$json_file" "$profile_key")
     
-    local num_sw=${#sw_keys[@]}
     local -a menu_keys menu_names
     local -a checked
     
@@ -1415,14 +1418,19 @@ show_software_menu() {
     checked=(0)
     
     for key in "${sw_keys[@]}"; do
-        local name=$(json_get_software_field "$json_file" "$key" "name")
-        local desc=$(json_get_software_field "$json_file" "$key" "desc")
+        local line=$(echo "$sw_data" | grep "^${key}	" | head -1)
+        local name=$(echo "$line" | cut -f2)
+        local desc=$(echo "$line" | cut -f3)
+        
+        local check_cmd=""
+        case "$os" in
+            macos) check_cmd=$(echo "$line" | cut -f4) ;;
+            windows) check_cmd=$(echo "$line" | cut -f5) ;;
+            linux) check_cmd=$(echo "$line" | cut -f6) ;;
+        esac
+        
         menu_keys+=("$key")
-        if is_installed "$json_file" "$os" "$key"; then
-            menu_names+=("${GRAY}$name - $desc $LANG_INSTALLED${NC}")
-        else
-            menu_names+=("$name - $desc")
-        fi
+        menu_names+=("$name - $desc")
         checked+=(0)
     done
     
@@ -1430,8 +1438,6 @@ show_software_menu() {
     local cursor=0
     
     tput civis 2>/dev/null || true
-    
-    # 禁用终端回显，防止按住按键时字符溢出
     stty -echo 2>/dev/null
     
     echo ""
@@ -1473,8 +1479,8 @@ show_software_menu() {
             27)
                 IFS= read -rsn2 key < /dev/tty
                 case "$key" in
-                        '[A'|'OA') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
-                        '[B'|'OB') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
+                    '[A'|'OA') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
+                    '[B'|'OB') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
                 esac
                 ;;
             32)
@@ -1492,14 +1498,12 @@ show_software_menu() {
     done
     
     tput cnorm 2>/dev/null || true
+    stty echo 2>/dev/null
     
     SELECTED_SOFTWARE=()
     for ((i=1; i<num_items; i++)); do
         [[ ${checked[$i]} -eq 1 ]] && SELECTED_SOFTWARE+=("${menu_keys[$i]}")
     done
-    
-    # 恢复终端回显
-    stty echo 2>/dev/null
 }
 
 install_software() {
@@ -1570,7 +1574,7 @@ custom_select_software() {
     for key in "${sw_keys[@]}"; do
         local name=$(json_get_software_field "$json_file" "$key" "name")
         local desc=$(json_get_software_field "$json_file" "$key" "desc")
-        
+        menu_keys+=("$key")
         if is_installed "$json_file" "$os" "$key"; then
             menu_names+=("${GRAY}$name - $desc $LANG_INSTALLED${NC}")
         else
