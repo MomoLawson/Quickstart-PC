@@ -1105,18 +1105,12 @@ tui_interactive_select() {
             fi
         done
         
-        local key
-        IFS= read -rsn1 key < /dev/tty
+        local key=""
+        IFS= read -rsn3 key < /dev/tty
         
         case "$key" in
-            $'\x1b')
-                local seq=""
-                IFS= read -rsn2 seq < /dev/tty
-                case "$seq" in
-                    '[A') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
-                    '[B') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
-                esac
-                ;;
+            $'\x1b[A'|$'\e[A') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
+            $'\x1b[B'|$'\e[B') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
             ''|$'\n'|$'\r') break ;;
         esac
     done
