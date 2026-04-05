@@ -49,21 +49,21 @@
     "desc": "UI/UX 设计工具/UI/UX design tool",
     "win": "winget install Figma.Figma",
     "mac": "brew install --cask figma",
-    "linux": null,
-    "linux_dnf": null,
-    "linux_pacman": null,
+    "linux": "curl -L \"https://desktop.figma.com/linux/Figma-linux.AppImage\" -o /tmp/figma.AppImage && chmod +x /tmp/figma.AppImage && mv /tmp/figma.AppImage ~/figma.AppImage",
+    "linux_dnf": "curl -L \"https://desktop.figma.com/linux/Figma-linux.AppImage\" -o /tmp/figma.AppImage && chmod +x /tmp/figma.AppImage && mv /tmp/figma.AppImage ~/figma.AppImage",
+    "linux_pacman": "curl -L \"https://desktop.figma.com/linux/Figma-linux.AppImage\" -o /tmp/figma.AppImage && chmod +x /tmp/figma.AppImage && mv /tmp/figma.AppImage ~/figma.AppImage",
     "check_win": "winget list Figma.Figma",
     "check_mac": "ls /Applications/Figma.app 2>/dev/null",
-    "check_linux": null,
-    "check_linux_dnf": null,
-    "check_linux_pacman": null,
+    "check_linux": "test -f ~/figma.AppImage && echo installed",
+    "check_linux_dnf": "test -f ~/figma.AppImage && echo installed",
+    "check_linux_pacman": "test -f ~/figma.AppImage && echo installed",
     "tier": "partial"
   },
   "adobe-cc": {
     "name": "Adobe Creative Cloud",
     "desc": "Adobe 创意套件/Adobe creative suite",
     "win": "winget install Adobe.CreativeCloud",
-    "mac": "brew install --cask adobe-creative-cloud",
+    "mac": "curl -L \"https://creativecloud.adobe.com/apps/download/creative-cloud\" -o /tmp/CreativeCloud.dmg && hdiutil attach /tmp/CreativeCloud.dmg && cp -R /Volumes/Adobe\\ Creative\\ Cloud/Install\\ Adobe\\ Creative\\ Cloud.app /Applications/ && hdiutil detach /Volumes/Adobe\\ Creative\\ Cloud",
     "linux": null,
     "linux_dnf": null,
     "linux_pacman": null,
@@ -72,7 +72,7 @@
     "check_linux": "which adobe-cc 2>/dev/null",
     "check_linux_dnf": "which adobe-cc 2>/dev/null",
     "check_linux_pacman": "which adobe-cc 2>/dev/null",
-    "tier": "experimental"
+    "tier": "partial"
   },
   "blender": {
     "name": "Blender",
