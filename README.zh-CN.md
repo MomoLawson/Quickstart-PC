@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
 
-**其他语言**: [English](README.md) | 简体中文
+**其他语言**: [English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
 
 ## 特性
 
@@ -79,8 +79,10 @@ bash dist/quickstart.sh --list-profiles
 
 - 🇺🇸 English (en-US)
 - 🇨🇳 简体中文 (zh-CN)
+- 🇯🇵 日本語 (ja)
+- 🇰🇷 한국어 (ko)
 
-使用 `--lang zh` 或 `--lang en` 跳过语言选择菜单。
+使用 `--lang zh`、`--lang ja`、`--lang ko` 或 `--lang en` 跳过语言选择菜单。
 
 ## 自定义配置
 

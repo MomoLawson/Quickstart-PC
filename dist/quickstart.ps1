@@ -36,6 +36,22 @@ param(
 $VERSION = "1.0.0"
 $DEFAULT_CFG_URL = "https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json"
 
+# Supported languages configuration
+$script:SUPPORTED_LANGUAGES = @{
+    "en-US" = "English"
+    "zh-CN" = "简体中文"
+    "ja" = "日本語"
+    "ko" = "한국어"
+}
+
+# Language code mappings
+$script:LANGUAGE_MAPPINGS = @{
+    "en" = "en-US"; "en-US" = "en-US"; "en_GB" = "en-US"
+    "zh" = "zh-CN"; "zh-CN" = "zh-CN"; "zh_CN" = "zh-CN"; "zh-TW" = "zh-CN"
+    "ja" = "ja"; "ja-JP" = "ja"; "ja_JP" = "ja"
+    "ko" = "ko"; "ko-KR" = "ko"; "ko_KR" = "ko"
+}
+
 # Handle deprecated --fake-install
 if ($fakeInstall) {
     $dryRun = $true
@@ -68,220 +84,462 @@ function Set-WindowTitle {
 }
 
 # ============================================
-# Language strings (zh-CN / en-US)
+# Language Detection Functions
+# ============================================
+function Detect-SystemLanguage {
+    # 1. Check LANG_OVERRIDE from command line
+    if ($script:LANG_OVERRIDE) {
+        $mapped = $script:LANGUAGE_MAPPINGS[$script:LANG_OVERRIDE]
+        if ($mapped) { return $mapped }
+    }
+    
+    # 2. Check LC_ALL, LC_MESSAGES, LANG environment variables
+    $lang = $null
+    foreach ($var in @("LC_ALL", "LC_MESSAGES", "LANG")) {
+        if ($env:$var) {
+            $lang = $env:$var
+            break
+        }
+    }
+    
+    if ($lang) {
+        $langCode = $lang.Split('.')[0]
+        $langCode = $langCode.Split('@')[0]
+        $mapped = $script:LANGUAGE_MAPPINGS[$langCode]
+        if ($mapped) { return $mapped }
+    }
+    
+    # 3. Check LANGUAGE environment variable
+    if ($env:LANGUAGE) {
+        $firstLang = $env:LANGUAGE.Split(':')[0]
+        $mapped = $script:LANGUAGE_MAPPINGS[$firstLang]
+        if ($mapped) { return $mapped }
+    }
+    
+    # 4. Default to English
+    return "en-US"
+}
+
+# ============================================
+# Language strings (zh-CN / en-US / ja / ko)
 # ============================================
 $script:LANG = @{}
 
 function Initialize-LanguageStrings {
     param([string]$Lang)
     
-    if ($Lang -eq "zh-CN") {
-        $script:LANG = @{
-            # Banner
-            "banner_title" = "Quickstart-PC v$VERSION"
-            "banner_desc" = "快速配置新电脑软件环境"
-            
-            # System
-            "detecting_system" = "检测系统环境..."
-            "system_info" = "系统"
-            "package_manager" = "包管理器"
-            "unsupported_os" = "不支持的操作系统"
-            
-            # Config
-            "using_remote_config" = "使用远程配置"
-            "using_custom_config" = "使用本地配置"
-            "using_default_config" = "使用默认配置"
-            "config_not_found" = "配置文件不存在"
-            "config_invalid" = "配置文件格式无效"
-            
-            # Menu
-            "select_profiles" = "选择安装套餐"
-            "select_software" = "选择要安装的软件"
-            "navigate" = "↑↓ 移动 | 回车 确认"
-            "navigate_multi" = "↑↓ 移动 | 空格 选择 | 回车 确认"
-            "selected" = "[✓] "
-            "not_selected" = "[  ] "
-            "select_all" = "全选"
-            "installed" = "已安装"
-            
-            # Messages
-            "no_profile_selected" = "未选择任何套餐"
-            "no_software_selected" = "未选择任何软件"
-            "confirm_install" = "确认安装？[Y/n]"
-            "cancelled" = "已取消"
-            "start_installing" = "开始安装软件"
-            "installing" = "安装"
-            "install_success" = "安装完成"
-            "install_failed" = "安装失败"
-            "platform_not_supported" = "不支持的平台"
-            "installation_complete" = "安装完成"
-            "total_installed" = "共安装"
-            
-            # Modes
-            "dev_mode" = "开发者模式：仅显示选择的软件，不实际安装"
-            "fake_install_mode" = "假装安装模式：展示安装过程但不实际安装"
-            "fake_installing" = "模拟安装"
-            
-            # Installation check
-            "checking_installation" = "正在检测安装情况..."
-            "skipping_installed" = "已安装，跳过"
-            "all_installed" = "所有软件均已安装，无需操作"
-            
-            # Continue/Exit
-            "ask_continue" = "安装完成，是否继续安装其他套餐？"
-            "continue_btn" = "继续安装"
-            "exit_btn" = "退出"
-            
-            # Window titles
-            "title_select_profile" = "选择套餐"
-            "title_select_software" = "选择软件"
-            "title_installing" = "安装中"
-            "title_ask_continue" = "是否继续安装"
-            
-            # Help
-            "help_usage" = "用法: quickstart.ps1 [选项]"
-            "help_lang" = "设置语言 (en, zh)"
-            "help_cfg_path" = "使用本地 profiles.json 文件"
-            "help_cfg_url" = "使用远程 profiles.json URL"
-            "help_dev" = "开发模式：显示选择的软件但不安装"
-            "help_dry_run" = "假装安装：展示安装过程但不实际安装"
-            "help_fake_install" = "同 --dry-run（已弃用）"
-            "help_yes" = "自动确认所有提示"
-            "help_verbose" = "显示详细调试信息"
-            "help_log_file" = "将日志写入文件"
-            "help_export_plan" = "导出安装计划到文件"
-            "help_custom" = "自定义软件选择模式"
-            "help_retry_failed" = "重试之前失败的软件"
-            "help_list_software" = "列出所有可用软件"
-            "help_show_software" = "显示指定软件详情"
-            "help_search" = "搜索软件"
-            "help_validate" = "校验配置文件"
-            "help_report_json" = "导出 JSON 格式安装报告"
-            "help_report_txt" = "导出 TXT 格式安装报告"
-            "help_list_profiles" = "列出所有可用套餐"
-            "help_show_profile" = "显示指定套餐详情"
-            "help_skip" = "跳过指定软件（可多次使用）"
-            "help_only" = "只安装指定软件（可多次使用）"
-            "help_fail_fast" = "遇到错误时立即停止"
-            "help_profile" = "直接指定安装套餐（跳过选择菜单）"
-            "help_non_interactive" = "非交互模式（禁止所有 TUI/prompt）"
-            "help_help" = "显示此帮助信息"
-            
-            # Validation
-            "validating_config" = "正在校验配置文件..."
-            "json_valid" = "JSON 语法有效"
-            "json_invalid" = "JSON 语法无效"
-            "profiles_count" = "配置文件"
-            "software_count" = "软件条目"
-            "validation_passed" = "校验通过"
-            "validation_failed" = "校验失败"
-            
-            # Search
-            "search_results" = "搜索结果"
+    switch ($Lang) {
+        # ============================================
+        # Chinese (Simplified) - zh-CN
+        # ============================================
+        "zh-CN" {
+            $script:LANG = @{
+                "banner_title" = "Quickstart-PC v$VERSION"
+                "banner_desc" = "快速配置新电脑软件环境"
+                
+                "detecting_system" = "检测系统环境..."
+                "system_info" = "系统"
+                "package_manager" = "包管理器"
+                "unsupported_os" = "不支持的操作系统"
+                
+                "using_remote_config" = "使用远程配置"
+                "using_custom_config" = "使用本地配置"
+                "using_default_config" = "使用默认配置"
+                "config_not_found" = "配置文件不存在"
+                "config_invalid" = "配置文件格式无效"
+                
+                "select_profiles" = "选择安装套餐"
+                "select_software" = "选择要安装的软件"
+                "navigate" = "↑↓ 移动 | 回车 确认"
+                "navigate_multi" = "↑↓ 移动 | 空格 选择 | 回车 确认"
+                "selected" = "[✓] "
+                "not_selected" = "[  ] "
+                "select_all" = "全选"
+                "installed" = "已安装"
+                
+                "no_profile_selected" = "未选择任何套餐"
+                "no_software_selected" = "未选择任何软件"
+                "confirm_install" = "确认安装？[Y/n]"
+                "cancelled" = "已取消"
+                "start_installing" = "开始安装软件"
+                "installing" = "安装"
+                "install_success" = "安装完成"
+                "install_failed" = "安装失败"
+                "platform_not_supported" = "不支持的平台"
+                "installation_complete" = "安装完成"
+                "total_installed" = "共安装"
+                
+                "dev_mode" = "开发者模式：仅显示选择的软件，不实际安装"
+                "fake_install_mode" = "假装安装模式：展示安装过程但不实际安装"
+                "fake_installing" = "模拟安装"
+                
+                "checking_installation" = "正在检测安装情况..."
+                "skipping_installed" = "已安装，跳过"
+                "all_installed" = "所有软件均已安装，无需操作"
+                
+                "ask_continue" = "安装完成，是否继续安装其他套餐？"
+                "continue_btn" = "继续安装"
+                "exit_btn" = "退出"
+                
+                "title_select_profile" = "选择套餐"
+                "title_select_software" = "选择软件"
+                "title_installing" = "安装中"
+                "title_ask_continue" = "是否继续安装"
+                
+                "lang_prompt" = "请选择语言"
+                "help_lang" = "设置语言 (en, zh, ja, ko)"
+                "noninteractive_error" = "非交互模式需要 --profile 参数"
+                "profile_not_found" = "Profile 不存在"
+                "npm_not_found" = "npm 未安装，正在安装..."
+                "winget_not_found" = "winget 未找到，无法自动安装 npm"
+                
+                "help_usage" = "用法: quickstart.ps1 [选项]"
+                "help_cfg_path" = "使用本地 profiles.json 文件"
+                "help_cfg_url" = "使用远程 profiles.json URL"
+                "help_dev" = "开发模式：显示选择的软件但不安装"
+                "help_dry_run" = "假装安装：展示安装过程但不实际安装"
+                "help_fake_install" = "同 --dry-run（已弃用）"
+                "help_yes" = "自动确认所有提示"
+                "help_verbose" = "显示详细调试信息"
+                "help_log_file" = "将日志写入文件"
+                "help_export_plan" = "导出安装计划到文件"
+                "help_custom" = "自定义软件选择模式"
+                "help_retry_failed" = "重试之前失败的软件"
+                "help_list_software" = "列出所有可用软件"
+                "help_show_software" = "显示指定软件详情"
+                "help_search" = "搜索软件"
+                "help_validate" = "校验配置文件"
+                "help_report_json" = "导出 JSON 格式安装报告"
+                "help_report_txt" = "导出 TXT 格式安装报告"
+                "help_list_profiles" = "列出所有可用套餐"
+                "help_show_profile" = "显示指定套餐详情"
+                "help_skip" = "跳过指定软件（可多次使用）"
+                "help_only" = "只安装指定软件（可多次使用）"
+                "help_fail_fast" = "遇到错误时立即停止"
+                "help_profile" = "直接指定安装套餐（跳过选择菜单）"
+                "help_non_interactive" = "非交互模式（禁止所有 TUI/prompt）"
+                "help_help" = "显示此帮助信息"
+                
+                "validating_config" = "正在校验配置文件..."
+                "json_valid" = "JSON 语法有效"
+                "json_invalid" = "JSON 语法无效"
+                "profiles_count" = "配置文件"
+                "software_count" = "软件条目"
+                "validation_passed" = "校验通过"
+                "validation_failed" = "校验失败"
+                
+                "search_results" = "搜索结果"
+            }
         }
-    } else {
-        $script:LANG = @{
-            # Banner
-            "banner_title" = "Quickstart-PC v$VERSION"
-            "banner_desc" = "Quick setup for new computers"
-            
-            # System
-            "detecting_system" = "Detecting system environment..."
-            "system_info" = "System"
-            "package_manager" = "Package Manager"
-            "unsupported_os" = "Unsupported operating system"
-            
-            # Config
-            "using_remote_config" = "Using remote configuration"
-            "using_custom_config" = "Using local configuration"
-            "using_default_config" = "Using default configuration"
-            "config_not_found" = "Configuration file not found"
-            "config_invalid" = "Configuration file format invalid"
-            
-            # Menu
-            "select_profiles" = "Select Installation Profiles"
-            "select_software" = "Select Software to Install"
-            "navigate" = "↑↓ Move | ENTER Confirm"
-            "navigate_multi" = "↑↓ Move | SPACE Select | ENTER Confirm"
-            "selected" = "[✓] "
-            "not_selected" = "[  ] "
-            "select_all" = "Select All"
-            "installed" = "installed"
-            
-            # Messages
-            "no_profile_selected" = "No profile selected"
-            "no_software_selected" = "No software selected"
-            "confirm_install" = "Confirm installation? [Y/n]"
-            "cancelled" = "Cancelled"
-            "start_installing" = "Starting software installation"
-            "installing" = "Installing"
-            "install_success" = "installed successfully"
-            "install_failed" = "installation failed"
-            "platform_not_supported" = "Platform not supported"
-            "installation_complete" = "Installation Complete"
-            "total_installed" = "Total installed"
-            
-            # Modes
-            "dev_mode" = "Dev mode: Show selected software without installing"
-            "fake_install_mode" = "Fake install mode: Show installation process without actually installing"
-            "fake_installing" = "Simulating install"
-            
-            # Installation check
-            "checking_installation" = "Checking installation status..."
-            "skipping_installed" = "Already installed, skipping"
-            "all_installed" = "All software already installed, nothing to do"
-            
-            # Continue/Exit
-            "ask_continue" = "Installation complete. Continue installing other profiles?"
-            "continue_btn" = "Continue"
-            "exit_btn" = "Exit"
-            
-            # Window titles
-            "title_select_profile" = "Select Profile"
-            "title_select_software" = "Select Software"
-            "title_installing" = "Installing"
-            "title_ask_continue" = "Continue Installing?"
-            
-            # Help
-            "help_usage" = "Usage: quickstart.ps1 [OPTIONS]"
-            "help_lang" = "Set language (en, zh)"
-            "help_cfg_path" = "Use local profiles.json file"
-            "help_cfg_url" = "Use remote profiles.json URL"
-            "help_dev" = "Dev mode"
-            "help_dry_run" = "Fake install: show process without installing"
-            "help_fake_install" = "Alias for --dry-run (deprecated)"
-            "help_yes" = "Auto-confirm all prompts"
-            "help_verbose" = "Show detailed debug info"
-            "help_log_file" = "Write logs to file"
-            "help_export_plan" = "Export installation plan to file"
-            "help_custom" = "Custom software selection mode"
-            "help_retry_failed" = "Retry previously failed packages"
-            "help_list_software" = "List all available software"
-            "help_show_software" = "Show software details"
-            "help_search" = "Search software"
-            "help_validate" = "Validate configuration file"
-            "help_report_json" = "Export JSON installation report"
-            "help_report_txt" = "Export TXT installation report"
-            "help_list_profiles" = "List all available profiles"
-            "help_show_profile" = "Show profile details"
-            "help_skip" = "Skip specified software (repeatable)"
-            "help_only" = "Only install specified software (repeatable)"
-            "help_fail_fast" = "Stop on first error"
-            "help_profile" = "Select profile directly (skip menu)"
-            "help_non_interactive" = "Non-interactive mode (no TUI/prompts)"
-            "help_help" = "Show this help message"
-            
-            # Validation
-            "validating_config" = "Validating configuration..."
-            "json_valid" = "JSON syntax valid"
-            "json_invalid" = "JSON syntax invalid"
-            "profiles_count" = "Profiles"
-            "software_count" = "Software entries"
-            "validation_passed" = "Validation passed"
-            "validation_failed" = "Validation failed"
-            
-            # Search
-            "search_results" = "Search results"
+        
+        # ============================================
+        # Japanese - ja
+        # ============================================
+        "ja" {
+            $script:LANG = @{
+                "banner_title" = "Quickstart-PC v$VERSION"
+                "banner_desc" = "新PCのソフトウェア環境を素早く設定"
+                
+                "detecting_system" = "システム環境を検出中..."
+                "system_info" = "システム"
+                "package_manager" = "パッケージマネージャー"
+                "unsupported_os" = "サポートされていないOS"
+                
+                "using_remote_config" = "リモート設定を使用"
+                "using_custom_config" = "ローカル設定を使用"
+                "using_default_config" = "デフォルト設定を使用"
+                "config_not_found" = "設定ファイルが見つかりません"
+                "config_invalid" = "設定ファイルの形式が無効です"
+                
+                "select_profiles" = "インストールプロファイルを選択"
+                "select_software" = "インストールするソフトウェアを選択"
+                "navigate" = "↑↓ 移動 | Enter 確定"
+                "navigate_multi" = "↑↓ 移動 | スペース 選択 | Enter 確定"
+                "selected" = "[✓] "
+                "not_selected" = "[  ] "
+                "select_all" = "全て選択"
+                "installed" = "インストール済み"
+                
+                "no_profile_selected" = "プロファイルが選択されていません"
+                "no_software_selected" = "ソフトウェアが選択されていません"
+                "confirm_install" = "インストールを確定しますか？[Y/n]"
+                "cancelled" = "キャンセルされました"
+                "start_installing" = "ソフトウェアのインストールを開始"
+                "installing" = "インストール中"
+                "install_success" = "インストール完了"
+                "install_failed" = "インストール失敗"
+                "platform_not_supported" = "サポートされていないプラットフォーム"
+                "installation_complete" = "インストール完了"
+                "total_installed" = "合計インストール"
+                
+                "dev_mode" = "開発モード：選択したソフトウェアを表示但不インストール"
+                "fake_install_mode" = "假装インストールモード：インストール过程を表示但不实际インストール"
+                "fake_installing" = "インストールをシミュレート"
+                
+                "checking_installation" = "インストール狀態を確認中..."
+                "skipping_installed" = "インストール済み、スキップ"
+                "all_installed" = "全てのソフトウェアがインストール済み、操作不要"
+                
+                "ask_continue" = "インストール完了。其他プロファイルをインストールしますか？"
+                "continue_btn" = "続ける"
+                "exit_btn" = "終了"
+                
+                "title_select_profile" = "プロファイル選択"
+                "title_select_software" = "ソフトウェア選択"
+                "title_installing" = "インストール中"
+                "title_ask_continue" = "インストールを続けますか？"
+                
+                "lang_prompt" = "言語を選択してください"
+                "help_lang" = "言語を設定 (en, zh, ja, ko)"
+                "noninteractive_error" = "非インタラクティブモードでは --profile パラメータが必要です"
+                "profile_not_found" = "プロファイルが見つかりません"
+                "npm_not_found" = "npm がありません、インストール中..."
+                "winget_not_found" = "winget が見つかりません、npmを自動インストールできません"
+                
+                "help_usage" = "使用方法: quickstart.ps1 [オプション]"
+                "help_cfg_path" = "ローカルの profiles.json を使用"
+                "help_cfg_url" = "リモート profiles.json URL を使用"
+                "help_dev" = "開発モード：選択したソフトを表示但不インストール"
+                "help_dry_run" = "假装インストール：过程を表示但不实际インストール"
+                "help_fake_install" = "--dry-run のエイリアス（廃止）"
+                "help_yes" = "全てのプロンプトに自動同意"
+                "help_verbose" = "詳細なデバッグ情報を表示"
+                "help_log_file" = "ログをファイルに書き込む"
+                "help_export_plan" = "インストール計画をエクスポート"
+                "help_custom" = "カスタムソフトウェア選択モード"
+                "help_retry_failed" = "以前に失敗したパッケージを再試行"
+                "help_list_software" = "全ての利用可能なソフトウェアをリスト表示"
+                "help_show_software" = "指定したソフトウェアの詳細を表示"
+                "help_search" = "ソフトウェアを検索"
+                "help_validate" = "設定ファイルを検証"
+                "help_report_json" = "JSON 形式をインストールレポートをエクスポート"
+                "help_report_txt" = "TXT 形式をインストールレポートをエクスポート"
+                "help_list_profiles" = "全ての利用可能なプロファイルをリスト表示"
+                "help_show_profile" = "指定したプロファイルの詳細を表示"
+                "help_skip" = "指定したソフトウェアをスキップ（重复可能）"
+                "help_only" = "指定したソフトウェアのみインストール（重复可能）"
+                "help_fail_fast" = "最初のエラーで停止"
+                "help_profile" = "プロファイルを直接指定（スキップメニュー）"
+                "help_non_interactive" = "非インタラクティブモード（TUI/プロンプト全て無効）"
+                "help_help" = "このヘルプを表示"
+                
+                "validating_config" = "設定ファイルを検証中..."
+                "json_valid" = "JSON 構文有効"
+                "json_invalid" = "JSON 構文無効"
+                "profiles_count" = "プロファイル"
+                "software_count" = "ソフトウェアエントリ"
+                "validation_passed" = "検証成功"
+                "validation_failed" = "検証失敗"
+                
+                "search_results" = "検索結果"
+            }
+        }
+        
+        # ============================================
+        # Korean - ko
+        # ============================================
+        "ko" {
+            $script:LANG = @{
+                "banner_title" = "Quickstart-PC v$VERSION"
+                "banner_desc" = "새 PC 소프트웨어 환경을 빠르게 설정"
+                
+                "detecting_system" = "시스템 환경 감지 중..."
+                "system_info" = "시스템"
+                "package_manager" = "패키지 관리자"
+                "unsupported_os" = "지원되지 않는 OS"
+                
+                "using_remote_config" = "원격 구성 사용"
+                "using_custom_config" = "로컬 구성 사용"
+                "using_default_config" = "기본 구성 사용"
+                "config_not_found" = "구성 파일을 찾을 수 없습니다"
+                "config_invalid" = "구성 파일 형식이 유효하지 않습니다"
+                
+                "select_profiles" = "설치 프로필 선택"
+                "select_software" = "설치할 소프트웨어 선택"
+                "navigate" = "↑↓ 이동 | Enter 확인"
+                "navigate_multi" = "↑↓ 이동 | 스페이스 선택 | Enter 확인"
+                "selected" = "[✓] "
+                "not_selected" = "[  ] "
+                "select_all" = "모두 선택"
+                "installed" = "설치됨"
+                
+                "no_profile_selected" = "프로필이 선택되지 않았습니다"
+                "no_software_selected" = "소프트웨어가 선택되지 않았습니다"
+                "confirm_install" = "설치를 확인하시겠습니까? [Y/n]"
+                "cancelled" = "취소됨"
+                "start_installing" = "소프트웨어 설치 시작"
+                "installing" = "설치 중"
+                "install_success" = "설치 완료"
+                "install_failed" = "설치 실패"
+                "platform_not_supported" = "지원되지 않는 플랫폼"
+                "installation_complete" = "설치 완료"
+                "total_installed" = "총 설치"
+                
+                "dev_mode" = "개발 모드: 선택한 소프트웨어 표시但不설치"
+                "fake_install_mode" = "흉내 설치 모드: 설치 과정 표시，但不실제 설치"
+                "fake_installing" = "설치 시뮬레이션"
+                
+                "checking_installation" = "설치 상태 확인 중..."
+                "skipping_installed" = "이미 설치됨, 건너뛰기"
+                "all_installed" = "모든 소프트웨어가 이미 설치됨, 작업 없음"
+                
+                "ask_continue" = "설치 완료. 다른 프로필을 계속 설치하시겠습니까?"
+                "continue_btn" = "계속"
+                "exit_btn" = "종료"
+                
+                "title_select_profile" = "프로필 선택"
+                "title_select_software" = "소프트웨어 선택"
+                "title_installing" = "설치 중"
+                "title_ask_continue" = "설치를 계속하시겠습니까?"
+                
+                "lang_prompt" = "언어를 선택해 주세요"
+                "help_lang" = "언어 설정 (en, zh, ja, ko)"
+                "noninteractive_error" = "비대화형 모드에서는 --profile 매개변수가 필요합니다"
+                "profile_not_found" = "프로필을 찾을 수 없습니다"
+                "npm_not_found" = "npm을 찾을 수 없습니다, 설치 중..."
+                "winget_not_found" = "winget을 찾을 수 없습니다, npm을 자동 설치할 수 없습니다"
+                
+                "help_usage" = "사용법: quickstart.ps1 [옵션]"
+                "help_cfg_path" = "로컬 profiles.json 사용"
+                "help_cfg_url" = "원격 profiles.json URL 사용"
+                "help_dev" = "개발 모드: 선택한 소프트웨어 표시他不설치"
+                "help_dry_run" = "흉내 설치: 과정 표시，但不실제 설치"
+                "help_fake_install" = "--dry-run의 별칭 (사용되지 않음)"
+                "help_yes" = "모든 프롬프트에 자동 동의"
+                "help_verbose" = "詳細な 디버그 정보 표시"
+                "help_log_file" = "로그를 파일에 쓰기"
+                "help_export_plan" = "설치 계획 내보내기"
+                "help_custom" = "사용자 정의 소프트웨어 선택 모드"
+                "help_retry_failed" = "이전에 실패한 패키지 재시도"
+                "help_list_software" = "사용 가능한 모든 소프트웨어 나열"
+                "help_show_software" = "지정된 소프트웨어 상세 정보 표시"
+                "help_search" = "소프트웨어 검색"
+                "help_validate" = "구성 파일 검증"
+                "help_report_json" = "JSON 형식으로 설치 보고서 내보내기"
+                "help_report_txt" = "TXT 형식으로 설치 보고서 내보내기"
+                "help_list_profiles" = "사용 가능한 모든 프로필 나열"
+                "help_show_profile" = "지정된 프로필 상세 정보 표시"
+                "help_skip" = "지정된 소프트웨어 건너뛰기 (반복 가능)"
+                "help_only" = "지정된 소프트웨어만 설치 (반복 가능)"
+                "help_fail_fast" = "첫 번째 오류에서 중지"
+                "help_profile" = "프로필 직접 선택 (메뉴 건너뛰기)"
+                "help_non_interactive" = "비대화형 모드 (TUI/프롬프트 모두 비활성화)"
+                "help_help" = "이 도움말 표시"
+                
+                "validating_config" = "구성 파일 검증 중..."
+                "json_valid" = "JSON 구문 유효"
+                "json_invalid" = "JSON 구문 유효하지 않음"
+                "profiles_count" = "프로필"
+                "software_count" = "소프트웨어 항목"
+                "validation_passed" = "검증 통과"
+                "validation_failed" = "검증 실패"
+                
+                "search_results" = "검색 결과"
+            }
+        }
+        
+        # ============================================
+        # English (default) - en-US
+        # ============================================
+        default {
+            $script:LANG = @{
+                "banner_title" = "Quickstart-PC v$VERSION"
+                "banner_desc" = "Quick setup for new computers"
+                
+                "detecting_system" = "Detecting system environment..."
+                "system_info" = "System"
+                "package_manager" = "Package Manager"
+                "unsupported_os" = "Unsupported operating system"
+                
+                "using_remote_config" = "Using remote configuration"
+                "using_custom_config" = "Using local configuration"
+                "using_default_config" = "Using default configuration"
+                "config_not_found" = "Configuration file not found"
+                "config_invalid" = "Configuration file format invalid"
+                
+                "select_profiles" = "Select Installation Profiles"
+                "select_software" = "Select Software to Install"
+                "navigate" = "↑↓ Move | ENTER Confirm"
+                "navigate_multi" = "↑↓ Move | SPACE Select | ENTER Confirm"
+                "selected" = "[✓] "
+                "not_selected" = "[  ] "
+                "select_all" = "Select All"
+                "installed" = "installed"
+                
+                "no_profile_selected" = "No profile selected"
+                "no_software_selected" = "No software selected"
+                "confirm_install" = "Confirm installation? [Y/n]"
+                "cancelled" = "Cancelled"
+                "start_installing" = "Starting software installation"
+                "installing" = "Installing"
+                "install_success" = "installed successfully"
+                "install_failed" = "installation failed"
+                "platform_not_supported" = "Platform not supported"
+                "installation_complete" = "Installation Complete"
+                "total_installed" = "Total installed"
+                
+                "dev_mode" = "Dev mode: Show selected software without installing"
+                "fake_install_mode" = "Fake install mode: Show installation process without actually installing"
+                "fake_installing" = "Simulating install"
+                
+                "checking_installation" = "Checking installation status..."
+                "skipping_installed" = "Already installed, skipping"
+                "all_installed" = "All software already installed, nothing to do"
+                
+                "ask_continue" = "Installation complete. Continue installing other profiles?"
+                "continue_btn" = "Continue"
+                "exit_btn" = "Exit"
+                
+                "title_select_profile" = "Select Profile"
+                "title_select_software" = "Select Software"
+                "title_installing" = "Installing"
+                "title_ask_continue" = "Continue Installing?"
+                
+                "lang_prompt" = "Please select language"
+                "help_lang" = "Set language (en, zh, ja, ko)"
+                "noninteractive_error" = "Non-interactive mode requires --profile parameter"
+                "profile_not_found" = "Profile not found"
+                "npm_not_found" = "npm not found, installing..."
+                "winget_not_found" = "winget not found, cannot auto-install npm"
+                
+                "help_usage" = "Usage: quickstart.ps1 [OPTIONS]"
+                "help_lang" = "Set language (en, zh, ja, ko)"
+                "help_cfg_path" = "Use local profiles.json file"
+                "help_cfg_url" = "Use remote profiles.json URL"
+                "help_dev" = "Dev mode"
+                "help_dry_run" = "Fake install: show process without installing"
+                "help_fake_install" = "Alias for --dry-run (deprecated)"
+                "help_yes" = "Auto-confirm all prompts"
+                "help_verbose" = "Show detailed debug info"
+                "help_log_file" = "Write logs to file"
+                "help_export_plan" = "Export installation plan to file"
+                "help_custom" = "Custom software selection mode"
+                "help_retry_failed" = "Retry previously failed packages"
+                "help_list_software" = "List all available software"
+                "help_show_software" = "Show software details"
+                "help_search" = "Search software"
+                "help_validate" = "Validate configuration file"
+                "help_report_json" = "Export JSON installation report"
+                "help_report_txt" = "Export TXT installation report"
+                "help_list_profiles" = "List all available profiles"
+                "help_show_profile" = "Show profile details"
+                "help_skip" = "Skip specified software (repeatable)"
+                "help_only" = "Only install specified software (repeatable)"
+                "help_fail_fast" = "Stop on first error"
+                "help_profile" = "Select profile directly (skip menu)"
+                "help_non_interactive" = "Non-interactive mode (no TUI/prompts)"
+                "help_help" = "Show this help message"
+                
+                "validating_config" = "Validating configuration..."
+                "json_valid" = "JSON syntax valid"
+                "json_invalid" = "JSON syntax invalid"
+                "profiles_count" = "Profiles"
+                "software_count" = "Software entries"
+                "validation_passed" = "Validation passed"
+                "validation_failed" = "Validation failed"
+                
+                "search_results" = "Search results"
+            }
         }
     }
 }
@@ -536,7 +794,7 @@ function Test-SoftwareInstalled {
 function Show-Banner {
     param([string]$Lang)
     
-    $title = if ($Lang -eq "zh-CN") { "快速配置新电脑软件环境" } else { "Quick setup for new computers" }
+    $title = if ($Lang -eq "zh-CN") { "快速配置新电脑软件环境" } elseif ($Lang -eq "ja") { "新PCのソフトウェア環境を素早く設定" } elseif ($Lang -eq "ko") { "새 PC 소프트웨어 환경을 빠르게 설정" } else { "Quick setup for new computers" }
     
     Write-Host ""
     Write-Host "╔══════════════════════════════════════╗" -ForegroundColor Cyan
@@ -553,12 +811,10 @@ function Show-Banner {
 
 function Select-Language {
     if ($lang) {
-        switch ($lang) {
-            "zh" { return "zh-CN" }
-            "zh-CN" { return "zh-CN" }
-            "zh_CN" { return "zh-CN" }
-            default { return "en-US" }
-        }
+        $mapped = $script:LANGUAGE_MAPPINGS[$lang]
+        if ($mapped) { return $mapped }
+        if ($script:SUPPORTED_LANGUAGES[$lang]) { return $lang }
+        return "en-US"
     }
     
     Write-Host ""
@@ -572,10 +828,19 @@ function Select-Language {
     Write-Host "║          Quickstart-PC              ║" -ForegroundColor Cyan
     Write-Host "╚══════════════════════════════════════╝" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "Please select language / 请选择语言:" -ForegroundColor White
+    Write-Host "$($script:LANG["lang_prompt"]):" -ForegroundColor White
     Write-Host ""
     
-    $items = @("English", "简体中文")
+    $items = @()
+    $langCodes = @()
+    
+    foreach ($code in @("en-US", "zh-CN", "ja", "ko")) {
+        if ($script:SUPPORTED_LANGUAGES[$code]) {
+            $langCodes += $code
+            $items += $script:SUPPORTED_LANGUAGES[$code]
+        }
+    }
+    
     $cursor = 0
     
     $oldVisible = Get-CursorVisible
@@ -611,11 +876,7 @@ function Select-Language {
     
     Write-Host ""
     
-    switch ($cursor) {
-        0 { return "en-US" }
-        1 { return "zh-CN" }
-        default { return "en-US" }
-    }
+    return $langCodes[$cursor]
 }
 
 function Show-ProfileMenu {
@@ -900,7 +1161,7 @@ function Ensure-NpmInstalled {
     $npmCmd = Get-Command npm -ErrorAction SilentlyContinue
     if ($npmCmd) { return $true }
     
-    Write-Log "npm not found, installing..." "INFO"
+    Write-Log $script:LANG["npm_not_found"] "INFO"
     
     switch ($OS) {
         "macos" {
@@ -930,7 +1191,7 @@ function Ensure-NpmInstalled {
                 Write-Log "Installing Node.js via winget..." "INFO"
                 winget install OpenJS.NodeJS --accept-package-agreements --accept-source-agreements 2>&1 | Out-Null
             } else {
-                Write-Log "winget not found, cannot auto-install npm" "WARN"
+                Write-Log $script:LANG["winget_not_found"] "WARN"
             }
         }
     }
@@ -946,79 +1207,48 @@ function Ensure-NpmInstalled {
 function Show-Help {
     param([string]$Lang)
     
-    if ($Lang -eq "zh-CN") {
-        Write-Host @"
-
-Quickstart-PC - 一键配置新电脑
-
-用法: quickstart.ps1 [选项]
-
-选项:
-  --lang LANG        $($script:LANG["help_lang"])
-  --cfg-path PATH    $($script:LANG["help_cfg_path"])
-  --cfg-url URL      $($script:LANG["help_cfg_url"])
-  --dev              $($script:LANG["help_dev"])
-  --dry-run          $($script:LANG["help_dry_run"])
-  --fake-install     $($script:LANG["help_fake_install"])
-  --yes, -y         $($script:LANG["help_yes"])
-  --verbose, -v      $($script:LANG["help_verbose"])
-  --log-file FILE    $($script:LANG["help_log_file"])
-  --export-plan FILE $($script:LANG["help_export_plan"])
-  --custom           $($script:LANG["help_custom"])
-  --retry-failed     $($script:LANG["help_retry_failed"])
-  --list-software    $($script:LANG["help_list_software"])
-  --show-software ID $($script:LANG["help_show_software"])
-  --search KEYWORD   $($script:LANG["help_search"])
-  --validate         $($script:LANG["help_validate"])
-  --report-json FILE $($script:LANG["help_report_json"])
-  --report-txt FILE  $($script:LANG["help_report_txt"])
-  --list-profiles    $($script:LANG["help_list_profiles"])
-  --show-profile KEY $($script:LANG["help_show_profile"])
-  --skip SW          $($script:LANG["help_skip"])
-  --only SW          $($script:LANG["help_only"])
-  --fail-fast        $($script:LANG["help_fail_fast"])
-  --profile NAME     $($script:LANG["help_profile"])
-  --non-interactive  $($script:LANG["help_non_interactive"])
-  --help             $($script:LANG["help_help"])
-
-"@ -ForegroundColor White
-    } else {
-        Write-Host @"
+    $helpLang = $Lang
+    if ($Lang -eq "en-US" -or $Lang -eq "default") { $helpLang = "en" }
+    elseif ($Lang -eq "zh-CN") { $helpLang = "zh" }
+    
+    Initialize-LanguageStrings -Lang $Lang
+    
+    $h = $script:LANG
+    
+    Write-Host @"
 
 Quickstart-PC - One-click computer setup
 
-Usage: quickstart.ps1 [OPTIONS]
+$($h["help_usage"])
 
-Options:
-  --lang LANG        $($script:LANG["help_lang"])
-  --cfg-path PATH    $($script:LANG["help_cfg_path"])
-  --cfg-url URL      $($script:LANG["help_cfg_url"])
-  --dev              $($script:LANG["help_dev"])
-  --dry-run          $($script:LANG["help_dry_run"])
-  --fake-install     $($script:LANG["help_fake_install"])
-  --yes, -y         $($script:LANG["help_yes"])
-  --verbose, -v      $($script:LANG["help_verbose"])
-  --log-file FILE    $($script:LANG["help_log_file"])
-  --export-plan FILE $($script:LANG["help_export_plan"])
-  --custom           $($script:LANG["help_custom"])
-  --retry-failed     $($script:LANG["help_retry_failed"])
-  --list-software    $($script:LANG["help_list_software"])
-  --show-software ID $($script:LANG["help_show_software"])
-  --search KEYWORD   $($script:LANG["help_search"])
-  --validate         $($script:LANG["help_validate"])
-  --report-json FILE $($script:LANG["help_report_json"])
-  --report-txt FILE  $($script:LANG["help_report_txt"])
-  --list-profiles    $($script:LANG["help_list_profiles"])
-  --show-profile KEY $($script:LANG["help_show_profile"])
-  --skip SW          $($script:LANG["help_skip"])
-  --only SW          $($script:LANG["help_only"])
-  --fail-fast        $($script:LANG["help_fail_fast"])
-  --profile NAME     $($script:LANG["help_profile"])
-  --non-interactive  $($script:LANG["help_non_interactive"])
-  --help             $($script:LANG["help_help"])
+$($h["help_lang"])
+  --cfg-path PATH    $($h["help_cfg_path"])
+  --cfg-url URL      $($h["help_cfg_url"])
+  --dev              $($h["help_dev"])
+  --dry-run          $($h["help_dry_run"])
+  --fake-install     $($h["help_fake_install"])
+  --yes, -y         $($h["help_yes"])
+  --verbose, -v      $($h["help_verbose"])
+  --log-file FILE    $($h["help_log_file"])
+  --export-plan FILE $($h["help_export_plan"])
+  --custom           $($h["help_custom"])
+  --retry-failed     $($h["help_retry_failed"])
+  --list-software    $($h["help_list_software"])
+  --show-software ID $($h["help_show_software"])
+  --search KEYWORD   $($h["help_search"])
+  --validate         $($h["help_validate"])
+  --report-json FILE $($h["help_report_json"])
+  --report-txt FILE  $($h["help_report_txt"])
+  --list-profiles    $($h["help_list_profiles"])
+  --show-profile KEY $($h["help_show_profile"])
+  --skip SW          $($h["help_skip"])
+  --only SW          $($h["help_only"])
+  --fail-fast        $($h["help_fail_fast"])
+  --profile NAME     $($h["help_profile"])
+  --non-interactive  $($h["help_non_interactive"])
+  --help             $($h["help_help"])
 
 "@ -ForegroundColor White
-    }
     
     exit 0
 }
@@ -1030,18 +1260,18 @@ function Get-ConfigFile {
     $tempFile = [System.IO.Path]::GetTempFileName() + ".json"
     
     if ($cfgUrl) {
-        Write-Log "$($script:LANG["using_remote_config"]): $cfgUrl" "INFO"
+        Write-Log "$($h["using_remote_config"]): $cfgUrl" "INFO"
         try {
             Invoke-WebRequest -Uri $cfgUrl -OutFile $tempFile -TimeoutSec 30 -ErrorAction Stop
             if (Test-JsonValid -Path $tempFile) {
                 return $tempFile
             } else {
-                Write-Log "$($script:LANG["config_invalid"]): $cfgUrl" "ERROR"
+                Write-Log "$($h["config_invalid"]): $cfgUrl" "ERROR"
                 Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
                 exit 1
             }
         } catch {
-            Write-Log "$($script:LANG["config_not_found"]): $cfgUrl" "ERROR"
+            Write-Log "$($h["config_not_found"]): $cfgUrl" "ERROR"
             Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
             exit 1
         }
@@ -1050,32 +1280,32 @@ function Get-ConfigFile {
     if ($cfgPath) {
         if (Test-Path $cfgPath) {
             if (Test-JsonValid -Path $cfgPath) {
-                Write-Log "$($script:LANG["using_custom_config"]): $cfgPath" "INFO"
+                Write-Log "$($h["using_custom_config"]): $cfgPath" "INFO"
                 Copy-Item $cfgPath $tempFile -Force
                 return $tempFile
             } else {
-                Write-Log "$($script:LANG["config_invalid"]): $cfgPath" "ERROR"
+                Write-Log "$($h["config_invalid"]): $cfgPath" "ERROR"
                 exit 1
             }
         } else {
-            Write-Log "$($script:LANG["config_not_found"]): $cfgPath" "ERROR"
+            Write-Log "$($h["config_not_found"]): $cfgPath" "ERROR"
             exit 1
         }
     }
     
-    Write-Log "$($script:LANG["using_default_config"])" "INFO"
+    Write-Log "$($h["using_default_config"])" "INFO"
     try {
         Invoke-WebRequest -Uri $DEFAULT_CFG_URL -OutFile $tempFile -TimeoutSec 30 -ErrorAction Stop
         if (Test-JsonValid -Path $tempFile) {
             return $tempFile
         }
     } catch {
-        Write-Log "$($script:LANG["config_not_found"])" "ERROR"
+        Write-Log "$($h["config_not_found"])" "ERROR"
         Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
         exit 1
     }
     
-    Write-Log "$($script:LANG["config_not_found"])" "ERROR"
+    Write-Log "$($h["config_not_found"])" "ERROR"
     Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
     exit 1
 }
@@ -1375,50 +1605,46 @@ Installed ($($Installed.Count)):
 # Main execution
 # ============================================
 function Main {
-    # Handle --help first
+    $script:LANG_OVERRIDE = $lang
+    
     if ($help) {
         $helpLang = if ($lang) { 
-            switch ($lang) { "zh" { "zh-CN" } "zh-CN" { "zh-CN" } "zh_CN" { "zh-CN" } default { "en-US" } }
+            $mapped = $script:LANGUAGE_MAPPINGS[$lang]
+            if ($mapped) { $mapped } else { "en-US" }
         } else { "en-US" }
         Initialize-LanguageStrings -Lang $helpLang
         Show-Help -Lang $helpLang
     }
     
-    # --list-profiles before language selection (English output)
     if ($listProfiles) {
         Show-ListProfiles
     }
     
-    # --show-profile before language selection (English output)
     if ($showProfile) {
         Show-ShowProfile -Key $showProfile
     }
     
-    # --list-software before language selection
     if ($listSoftware) {
         Show-ListSoftware
     }
     
-    # --show-software before language selection
     if ($showSoftware) {
         Show-ShowSoftware -Key $showSoftware
     }
     
-    # --search before language selection
     if ($search) {
         Show-Search -Keyword $search
     }
     
-    # --validate before language selection
     if ($validate) {
         Show-Validate
     }
     
-    # Detect language
     $script:DETECTED_LANG = Select-Language
     Initialize-LanguageStrings -Lang $script:DETECTED_LANG
     
-    # Setup cleanup trap
+    $h = $script:LANG
+    
     trap {
         if ($script:CONFIG_FILE -and (Test-Path $script:CONFIG_FILE)) {
             Remove-Item $script:CONFIG_FILE -Force -ErrorAction SilentlyContinue
@@ -1427,48 +1653,45 @@ function Main {
         try { Set-CursorVisible -Visible $true } catch {}
     }
     
-    # Main loop
     while ($true) {
         Clear-Host
         try { Set-CursorVisible -Visible $false } catch {}
         
         Show-Banner -Lang $script:DETECTED_LANG
         
-        if ($dev) { Write-Log $script:LANG["dev_mode"] "WARN"; Write-Host "" }
-        if ($dryRun) { Write-Log $script:LANG["fake_install_mode"] "WARN"; Write-Host "" }
+        if ($dev) { Write-Log $h["dev_mode"] "WARN"; Write-Host "" }
+        if ($dryRun) { Write-Log $h["fake_install_mode"] "WARN"; Write-Host "" }
         
-        Write-Log $script:LANG["detecting_system"] "INFO"
+        Write-Log $h["detecting_system"] "INFO"
         $os = Get-CurrentOS
         $systemInfo = Get-SystemInfo
         $script:PKG_MANAGER = Get-PackageManager -OS $os
         
-        Write-Log "$($script:LANG["system_info"]): $systemInfo" "INFO"
+        Write-Log "$($h["system_info"]): $systemInfo" "INFO"
         
-        # npm auto-detection and installation
         $displayPm = $script:PKG_MANAGER
         if (Ensure-NpmInstalled -OS $os) {
             $displayPm += ", npm"
         }
-        Write-Log "$($script:LANG["package_manager"]): $displayPm" "INFO"
+        
+        Write-Log "$($h["package_manager"]): $displayPm" "INFO"
         
         if ($os -eq "unknown") {
-            Write-Log $script:LANG["unsupported_os"] "ERROR"
+            Write-Log $h["unsupported_os"] "ERROR"
             exit 1
         }
         
-        # Load config
         $script:CONFIG_FILE = Get-ConfigFile
         
-        # --non-interactive mode
         if ($nonInteractive) {
             if (-not $profile) {
-                Write-Log "非交互模式需要 --profile 参数" "ERROR"
+                Write-Log $h["noninteractive_error"] "ERROR"
                 exit 1
             }
             
             $profileKeys = Get-ProfileKeys -Path $script:CONFIG_FILE
             if ($profileKeys -notcontains $profile) {
-                Write-Log "Profile '$profile' 不存在" "ERROR"
+                Write-Log "$($h["profile_not_found"]): $profile" "ERROR"
                 exit 1
             }
             
@@ -1485,39 +1708,39 @@ function Main {
         elseif ($profile) {
             $profileKeys = Get-ProfileKeys -Path $script:CONFIG_FILE
             if ($profileKeys -notcontains $profile) {
-                Write-Log "Profile '$profile' 不存在" "ERROR"
+                Write-Log "$($h["profile_not_found"]): $profile" "ERROR"
                 exit 1
             }
             
             $script:SELECTED_PROFILES = @($profile)
             $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $profile -Field "name"
-            Set-WindowTitle -Title "QSPC | $profileName | $($script:LANG["title_select_software"])"
+            Set-WindowTitle -Title "QSPC | $profileName | $($h["title_select_software"])"
             $script:SELECTED_SOFTWARE = Show-SoftwareMenu -Path $script:CONFIG_FILE -OS $os -ProfileKey $profile
         }
         else {
-            Set-WindowTitle -Title "QSPC | $($script:LANG["title_select_profile"])"
+            Set-WindowTitle -Title "QSPC | $($h["title_select_profile"])"
             $script:SELECTED_PROFILES = @(Show-ProfileMenu -Path $script:CONFIG_FILE)
             
             if ($script:SELECTED_PROFILES.Count -eq 0) {
-                Write-Log $script:LANG["no_profile_selected"] "WARN"
+                Write-Log $h["no_profile_selected"] "WARN"
                 exit 0
             }
             
             $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $script:SELECTED_PROFILES[0] -Field "name"
-            Set-WindowTitle -Title "QSPC | $profileName | $($script:LANG["title_select_software"])"
+            Set-WindowTitle -Title "QSPC | $profileName | $($h["title_select_software"])"
             $script:SELECTED_SOFTWARE = Show-SoftwareMenu -Path $script:CONFIG_FILE -OS $os -ProfileKey $script:SELECTED_PROFILES[0]
         }
         
         if ($script:SELECTED_SOFTWARE.Count -eq 0) {
-            Write-Log $script:LANG["no_software_selected"] "WARN"
+            Write-Log $h["no_software_selected"] "WARN"
             
             if ($nonInteractive) {
                 exit 0
             }
             
             Write-Host ""
-            Write-Log $script:LANG["ask_continue"] "INFO"
-            $continue = Select-Continue -ContinueText $script:LANG["continue_btn"] -ExitText $script:LANG["exit_btn"]
+            Write-Log $h["ask_continue"] "INFO"
+            $continue = Select-Continue -ContinueText $h["continue_btn"] -ExitText $h["exit_btn"]
             if ($continue -eq 1) { exit 0 }
             continue
         }
@@ -1526,7 +1749,6 @@ function Main {
         Write-Log "Selected: $($script:SELECTED_SOFTWARE -join ', ')" "INFO"
         Write-Host ""
         
-        # Export installation plan
         if ($exportPlan) {
             $planContent = @"
 # Quickstart-PC Installation Plan
@@ -1579,23 +1801,22 @@ function Main {
             exit 0
         }
         
-        # Confirm installation
         if (-not $yes -and -not $nonInteractive) {
-            Write-Host -NoNewline "$($script:LANG["confirm_install"]) "
+            Write-Host -NoNewline "$($h["confirm_install"]) "
             $confirm = [Console]::ReadKey($true)
             Write-Host ""
             
             if ($confirm.Key -eq "N" -or $confirm.Key -eq "n") {
-                Write-Log $script:LANG["cancelled"] "INFO"
+                Write-Log $h["cancelled"] "INFO"
                 Write-Host ""
-                Write-Log $script:LANG["ask_continue"] "INFO"
-                $continue = Select-Continue -ContinueText $script:LANG["continue_btn"] -ExitText $script:LANG["exit_btn"]
+                Write-Log $h["ask_continue"] "INFO"
+                $continue = Select-Continue -ContinueText $h["continue_btn"] -ExitText $h["exit_btn"]
                 if ($continue -eq 1) { exit 0 }
                 continue
             }
         }
         
-        Write-Log $script:LANG["checking_installation"] "INFO"
+        Write-Log $h["checking_installation"] "INFO"
         
         $toInstall = @()
         $alreadyInstalled = @()
@@ -1604,31 +1825,31 @@ function Main {
             $swName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "name"
             
             if (Test-SoftwareInstalled -Path $script:CONFIG_FILE -OS $os -Key $sw) {
-                Write-Host "  $($script:LANG["selected"])$swName - $($script:LANG["skipping_installed"])" -ForegroundColor Green
+                Write-Host "  $($h["selected"])$swName - $($h["skipping_installed"])" -ForegroundColor Green
                 $alreadyInstalled += $swName
             } else {
-                Write-Host "  [→] $swName - $($script:LANG["installing"])" -ForegroundColor Cyan
+                Write-Host "  [→] $swName - $($h["installing"])" -ForegroundColor Cyan
                 $toInstall += $sw
             }
         }
         Write-Host ""
         
         if ($toInstall.Count -eq 0) {
-            Write-Log $script:LANG["all_installed"] "INFO"
+            Write-Log $h["all_installed"] "INFO"
             
             if ($nonInteractive) {
                 exit 0
             }
             
             Write-Host ""
-            Write-Log $script:LANG["ask_continue"] "INFO"
-            $continue = Select-Continue -ContinueText $script:LANG["continue_btn"] -ExitText $script:LANG["exit_btn"]
+            Write-Log $h["ask_continue"] "INFO"
+            $continue = Select-Continue -ContinueText $h["continue_btn"] -ExitText $h["exit_btn"]
             if ($continue -eq 1) { exit 0 }
             continue
         }
         
-        Set-WindowTitle -Title "QSPC | $($script:LANG["title_installing"])"
-        Write-Header $script:LANG["start_installing"]
+        Set-WindowTitle -Title "QSPC | $($h["title_installing"])"
+        Write-Header $h["start_installing"]
         
         $total = $toInstall.Count
         $current = 0
@@ -1639,7 +1860,7 @@ function Main {
             $current++
             $percent = [math]::Round(($current * 100) / $total)
             $swName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "name"
-            Write-Host "`r$($script:LANG["installing"]) [$($percent.ToString("D3"))%] $swName" -NoNewline -ForegroundColor Cyan
+            Write-Host "`r$($h["installing"]) [$($percent.ToString("D3"))%] $swName" -NoNewline -ForegroundColor Cyan
             
             $result = Install-Software -Path $script:CONFIG_FILE -OS $os -Key $sw
             
@@ -1658,7 +1879,7 @@ function Main {
         
         $skippedList = $alreadyInstalled
         
-        Write-Header $script:LANG["installation_complete"]
+        Write-Header $h["installation_complete"]
         Write-Host ""
         
         Write-Host "Installed:" -ForegroundColor Green
@@ -1709,9 +1930,8 @@ function Main {
         Write-Log "  (none)" "INFO"
         
         Write-Host ""
-        Write-Log "$($script:LANG["total_installed"]) $($installedList.Count) / $total" "SUCCESS"
+        Write-Log "$($h["total_installed"]) $($installedList.Count) / $total" "SUCCESS"
         
-        # Retry failed packages
         if ($failedList.Count -gt 0) {
             if ($retryFailed -or $yes) {
                 Write-Host ""
@@ -1774,7 +1994,6 @@ function Main {
             }
         }
         
-        # Export reports
         if ($reportJson -or $reportTxt) {
             Export-Report -JsonPath $reportJson -TxtPath $reportTxt -Installed $installedList -Skipped $skippedList -Failed $failedList
         }
@@ -1784,15 +2003,14 @@ function Main {
             exit 0
         }
         
-        Set-WindowTitle -Title "QSPC | $($script:LANG["title_ask_continue"])"
+        Set-WindowTitle -Title "QSPC | $($h["title_ask_continue"])"
         Write-Host ""
-        Write-Log $script:LANG["ask_continue"] "INFO"
-        $continue = Select-Continue -ContinueText $script:LANG["continue_btn"] -ExitText $script:LANG["exit_btn"]
+        Write-Log $h["ask_continue"] "INFO"
+        $continue = Select-Continue -ContinueText $h["continue_btn"] -ExitText $h["exit_btn"]
         if ($continue -eq 1) { exit 0 }
         
         continue
     }
 }
 
-# Start main function
 Main

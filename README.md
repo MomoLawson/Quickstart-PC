@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
 
-**Other Languages**: English | [简体中文](README.zh-CN.md)
+**Other Languages**: [English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
 
 ## Features
 
@@ -85,8 +85,10 @@ Manual language selection with arrow key navigation:
 
 - 🇺🇸 English (en-US)
 - 🇨🇳 简体中文 (zh-CN)
+- 🇯🇵 日本語 (ja)
+- 🇰🇷 한국어 (ko)
 
-Use `--lang zh` or `--lang en` to skip the language selection menu.
+Use `--lang zh`, `--lang ja`, `--lang ko` or `--lang en` to skip the language selection menu.
 
 ## Custom Configuration
 
