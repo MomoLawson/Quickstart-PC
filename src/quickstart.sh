@@ -1108,17 +1108,17 @@ tui_interactive_select() {
         
         local key
         IFS= read -rsn1 key < /dev/tty
-        local key_code=$(printf '%d' "'$key" 2>/dev/null || echo 0)
         
-        case $key_code in
-            27)
-                IFS= read -rsn2 key < /dev/tty
-                case "$key" in
+        case "$key" in
+            $'\x1b')
+                local seq=""
+                IFS= read -rsn2 seq < /dev/tty
+                case "$seq" in
                     '[A') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
                     '[B') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
                 esac
                 ;;
-            10|13|0) break ;;
+            ''|$'\n'|$'\r') break ;;
         esac
     done
     
@@ -1173,7 +1173,7 @@ select_language() {
     done
     
     tui_interactive_select "${lang_items[@]}" >&2
-    local choice=$TUI_RESULT
+    local choice=$?
     
     # Map choice index to language code
     echo "${lang_codes[$choice]}"
