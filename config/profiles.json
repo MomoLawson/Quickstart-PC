@@ -418,17 +418,17 @@
     "openclaw": {
       "name": "OpenClaw",
       "desc": "开源 AI 工具/Open source AI tool",
-      "win": null,
-      "mac": null,
-      "linux": null,
-      "linux_dnf": null,
-      "linux_pacman": null,
-      "check_win": null,
-      "check_mac": null,
-      "check_linux": null,
-      "check_linux_dnf": null,
-      "check_linux_pacman": null,
-      "tier": "deprecated"
+      "win": "npm install -g openclaw@latest",
+      "mac": "npm install -g openclaw@latest",
+      "linux": "npm install -g openclaw@latest",
+      "linux_dnf": "npm install -g openclaw@latest",
+      "linux_pacman": "npm install -g openclaw@latest",
+      "check_win": "openclaw --version",
+      "check_mac": "openclaw --version",
+      "check_linux": "openclaw --version",
+      "check_linux_dnf": "openclaw --version",
+      "check_linux_pacman": "openclaw --version",
+      "tier": "stable"
     },
     "aider": {
       "name": "Aider",
