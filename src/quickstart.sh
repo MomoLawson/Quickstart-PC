@@ -1085,6 +1085,11 @@ tui_interactive_select() {
     
     tput civis 2>/dev/null || true
     
+    # Save and restore terminal settings
+    local old_stty
+    old_stty=$(stty -g 2>/dev/null)
+    stty raw -echo 2>/dev/null
+    
     for ((i=0; i<num_items; i++)); do
         if [[ $i -eq $cursor ]]; then
             printf "  \033[7m ▶ %s\033[0m\n" "${items[$i]}"
@@ -1106,15 +1111,28 @@ tui_interactive_select() {
         done
         
         local key=""
-        IFS= read -rsn3 key < /dev/tty
+        IFS= read -rsn1 key < /dev/tty
         
         case "$key" in
-            $'\x1b[A'|$'\e[A') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
-            $'\x1b[B'|$'\e[B') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
+            $'\x1b')
+                local seq=""
+                IFS= read -rsn1 key < /dev/tty
+                if [[ "$key" == "[" ]]; then
+                    IFS= read -rsn1 key < /dev/tty
+                    case "$key" in
+                        A) ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
+                        B) ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
+                    esac
+                fi
+                ;;
             ''|$'\n'|$'\r') break ;;
         esac
     done
     
+    # Restore terminal settings
+    if [[ -n "$old_stty" ]]; then
+        stty "$old_stty" 2>/dev/null
+    fi
     tput cnorm 2>/dev/null || true
     return $cursor
 }
