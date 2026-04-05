@@ -38,6 +38,10 @@ Quickstart-PC - 一键配置新电脑
   --export-plan FILE 导出安装计划到文件
   --custom           自定义软件选择模式
   --retry-failed     重试之前失败的软件
+  --list-software    列出所有可用软件
+  --show-software ID 显示指定软件详情
+  --search KEYWORD   搜索软件
+  --validate         校验配置文件
   --list-profiles    列出所有可用套餐
   --show-profile KEY 显示指定套餐详情
   --skip SW          跳过指定软件（可多次使用）
@@ -66,6 +70,10 @@ Options:
   --export-plan FILE Export installation plan to file
   --custom           Custom software selection mode
   --retry-failed     Retry previously failed packages
+  --list-software    List all available software
+  --show-software ID Show software details
+  --search KEYWORD   Search software
+  --validate         Validate configuration file
   --list-profiles    List all available profiles
   --show-profile KEY Show profile details
   --skip SW          Skip specified software (repeatable)
@@ -89,6 +97,8 @@ CUSTOM_MODE=false
 RETRY_FAILED=false
 LIST_SOFTWARE=false
 SHOW_SOFTWARE=""
+SEARCH_KEYWORD=""
+VALIDATE=false
 LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
@@ -114,6 +124,8 @@ while [[ $# -gt 0 ]]; do
         --retry-failed) RETRY_FAILED=true; shift ;;
         --list-software) LIST_SOFTWARE=true; shift ;;
         --show-software) SHOW_SOFTWARE="$2"; shift 2 ;;
+        --search) SEARCH_KEYWORD="$2"; shift 2 ;;
+        --validate) VALIDATE=true; shift ;;
         --list-profiles) LIST_PROFILES=true; shift ;;
         --show-profile) SHOW_PROFILE="$2"; shift 2 ;;
         --skip) SKIP_SW+=("$2"); shift 2 ;;
@@ -305,6 +317,114 @@ if [[ -n "$SHOW_SOFTWARE" ]]; then
             fi
         done
         echo ""
+    else
+        echo "[ERROR] Failed to load configuration"
+    fi
+    
+    rm -f "$CONFIG_FILE" 2>/dev/null
+    exit 0
+fi
+
+# --search 在语言选择之前处理
+if [[ -n "$SEARCH_KEYWORD" ]]; then
+    if ! command -v jq &>/dev/null; then
+        if [[ "$(uname -s)" == "Darwin" ]]; then
+            brew install jq 2>/dev/null
+        else
+            sudo apt install -y jq 2>/dev/null
+        fi
+    fi
+    
+    CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
+    if curl -fsSL --connect-timeout 10 --max-time 30 "$DEFAULT_CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
+        echo "Search results for '$SEARCH_KEYWORD':"
+        echo ""
+        while IFS= read -r key; do
+            [[ -z "$key" ]] && continue
+            sw_name=$(jq -r ".software[\"$key\"].name // \"$key\"" "$CONFIG_FILE")
+            sw_desc=$(jq -r ".software[\"$key\"].desc // \"\"" "$CONFIG_FILE")
+            if echo "$key $sw_name $sw_desc" | grep -qi "$SEARCH_KEYWORD"; then
+                echo "  $key - $sw_name: $sw_desc"
+            fi
+        done < <(jq -r '.software | keys[]' "$CONFIG_FILE")
+        echo ""
+    else
+        echo "[ERROR] Failed to load configuration"
+    fi
+    
+    rm -f "$CONFIG_FILE" 2>/dev/null
+    exit 0
+fi
+
+# --validate 在语言选择之前处理
+if [[ "$VALIDATE" == "true" ]]; then
+    if ! command -v jq &>/dev/null; then
+        if [[ "$(uname -s)" == "Darwin" ]]; then
+            brew install jq 2>/dev/null
+        else
+            sudo apt install -y jq 2>/dev/null
+        fi
+    fi
+    
+    CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
+    if curl -fsSL --connect-timeout 10 --max-time 30 "$DEFAULT_CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
+        errors=0
+        warnings=0
+        
+        echo "Validating configuration..."
+        echo ""
+        
+        # Check JSON validity
+        if jq empty "$CONFIG_FILE" 2>/dev/null; then
+            echo "[✓] JSON syntax valid"
+        else
+            echo "[✗] JSON syntax invalid"
+            ((errors++))
+        fi
+        
+        # Check profiles structure
+        profile_count=$(jq '.profiles | length' "$CONFIG_FILE")
+        echo "[✓] Profiles: $profile_count"
+        
+        # Check software structure
+        sw_count=$(jq '.software | length' "$CONFIG_FILE")
+        echo "[✓] Software entries: $sw_count"
+        
+        # Check profile references
+        while IFS= read -r pkey; do
+            [[ -z "$pkey" ]] && continue
+            while IFS= read -r sw; do
+                [[ -z "$sw" ]] && continue
+                if ! jq -e ".software[\"$sw\"]" "$CONFIG_FILE" &>/dev/null; then
+                    echo "[✗] Profile '$pkey' references unknown software '$sw'"
+                    ((errors++))
+                fi
+            done < <(jq -r ".profiles[\"$pkey\"].includes[]?" "$CONFIG_FILE")
+        done < <(jq -r '.profiles | keys[]' "$CONFIG_FILE")
+        
+        # Check software fields
+        while IFS= read -r sw; do
+            [[ -z "$sw" ]] && continue
+            has_platform=false
+            for platform in win mac linux linux_dnf linux_pacman; do
+                cmd=$(jq -r ".software[\"$sw\"].$platform // \"\"" "$CONFIG_FILE")
+                if [[ -n "$cmd" && "$cmd" != "null" ]]; then
+                    has_platform=true
+                    break
+                fi
+            done
+            if [[ "$has_platform" == "false" ]]; then
+                echo "[✗] Software '$sw' has no platform install commands"
+                ((errors++))
+            fi
+        done < <(jq -r '.software | keys[]' "$CONFIG_FILE")
+        
+        echo ""
+        if [[ $errors -eq 0 ]]; then
+            echo "✓ Validation passed ($sw_count software, $profile_count profiles)"
+        else
+            echo "✗ Validation failed: $errors error(s), $warnings warning(s)"
+        fi
     else
         echo "[ERROR] Failed to load configuration"
     fi
