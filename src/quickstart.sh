@@ -1084,7 +1084,6 @@ tui_interactive_select() {
     local cursor=0
     
     tput civis 2>/dev/null || true
-    stty -echo 2>/dev/null
     
     for ((i=0; i<num_items; i++)); do
         if [[ $i -eq $cursor ]]; then
@@ -1123,7 +1122,6 @@ tui_interactive_select() {
     done
     
     tput cnorm 2>/dev/null || true
-    stty echo 2>/dev/null
     return $cursor
 }
 
