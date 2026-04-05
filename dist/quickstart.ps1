@@ -54,7 +54,7 @@ $script:SUPPORTED_LANGUAGES = @{
 $script:LANGUAGE_MAPPINGS = @{
     "en" = "en-US"; "en-US" = "en-US"; "en_GB" = "en-US"
     "zh" = "zh-CN"; "zh-CN" = "zh-CN"; "zh_CN" = "zh-CN"; "zh-TW" = "zh-CN"
-    "zh-Hant" = "zh-Hant"; "zh-HK" = "zh-Hant"; "zh-TW" = "zh-Hant"
+    "zh-Hant" = "zh-Hant"; "zh-HK" = "zh-Hant"
     "ja" = "ja"; "ja-JP" = "ja"; "ja_JP" = "ja"
     "ko" = "ko"; "ko-KR" = "ko"; "ko_KR" = "ko"
     "de" = "de"; "de-DE" = "de"; "de_AT" = "de"; "de_CH" = "de"
@@ -108,8 +108,9 @@ function Detect-SystemLanguage {
     # 2. Check LC_ALL, LC_MESSAGES, LANG environment variables
     $lang = $null
     foreach ($var in @("LC_ALL", "LC_MESSAGES", "LANG")) {
-        if ($env:$var) {
-            $lang = $env:$var
+        $val = [System.Environment]::GetEnvironmentVariable($var)
+        if ($val) {
+            $lang = $val
             break
         }
     }
@@ -1133,7 +1134,6 @@ function Initialize-LanguageStrings {
                 "winget_not_found" = "winget not found, cannot auto-install npm"
                 
                 "help_usage" = "Usage: quickstart.ps1 [OPTIONS]"
-                "help_lang" = "Set language (en, zh, ja, ko)"
                 "help_cfg_path" = "Use local profiles.json file"
                 "help_cfg_url" = "Use remote profiles.json URL"
                 "help_dev" = "Dev mode"

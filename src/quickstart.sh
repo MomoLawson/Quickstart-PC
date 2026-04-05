@@ -31,159 +31,7 @@ lang_name() {
     done
 }
 
-LANG_FOR_HELP="en"
-args=("$@")
-for i in "${!args[@]}"; do
-    if [[ "${args[$i]}" == "--lang" ]] && [[ -n "${args[$((i+1))]}" ]]; then
-        LANG_FOR_HELP="${args[$((i+1))]}"
-        break
-    fi
-done
 
-show_help() {
-    # Get language from help argument
-    local help_lang="en-US"
-    case "$LANG_FOR_HELP" in
-        zh|zh-CN|zh_CN) help_lang="zh-CN" ;;
-        ja) help_lang="ja" ;;
-        ko) help_lang="ko" ;;
-    esac
-    
-    load_language_strings "$help_lang"
-    
-    cat << HELPEOF
-$HELP_TITLE
-
-$HELP_USAGE
-
-$HELP_OPTIONS
-HELPEOF
-    exit 0
-}
-
-DEV_MODE=false
-FAKE_INSTALL=false
-AUTO_YES=false
-VERBOSE=false
-LOG_FILE=""
-EXPORT_PLAN=""
-CUSTOM_MODE=false
-RETRY_FAILED=false
-LIST_SOFTWARE=false
-SHOW_SOFTWARE=""
-SEARCH_KEYWORD=""
-VALIDATE=false
-REPORT_JSON=""
-REPORT_TXT=""
-LIST_PROFILES=false
-SHOW_PROFILE=""
-SKIP_SW=()
-ONLY_SW=()
-FAIL_FAST=false
-PROFILE_KEY=""
-NON_INTERACTIVE=false
-DEBUG=false
-LANG_OVERRIDE=""
-CFG_PATH=""
-CFG_URL=""
-
-while [[ $# -gt 0 ]]; do
-    case "$1" in
-        --dev) DEV_MODE=true; shift ;;
-        --dry-run) FAKE_INSTALL=true; shift ;;
-        --fake-install) FAKE_INSTALL=true; echo "[!] --fake-install is deprecated, use --dry-run instead" >&2; shift ;;
-        --yes|-y) AUTO_YES=true; shift ;;
-        --verbose|-v) VERBOSE=true; shift ;;
-        --log-file) LOG_FILE="$2"; shift 2 ;;
-        --export-plan) EXPORT_PLAN="$2"; shift 2 ;;
-        --custom) CUSTOM_MODE=true; shift ;;
-        --retry-failed) RETRY_FAILED=true; shift ;;
-        --list-software) LIST_SOFTWARE=true; shift ;;
-        --show-software) SHOW_SOFTWARE="$2"; shift 2 ;;
-        --search) SEARCH_KEYWORD="$2"; shift 2 ;;
-        --validate) VALIDATE=true; shift ;;
-        --report-json) REPORT_JSON="$2"; shift 2 ;;
-        --report-txt) REPORT_TXT="$2"; shift 2 ;;
-        --list-profiles) LIST_PROFILES=true; shift ;;
-        --show-profile) SHOW_PROFILE="$2"; shift 2 ;;
-        --skip) SKIP_SW+=("$2"); shift 2 ;;
-        --only) ONLY_SW+=("$2"); shift 2 ;;
-        --fail-fast) FAIL_FAST=true; shift ;;
-        --profile) PROFILE_KEY="$2"; shift 2 ;;
-        --non-interactive) NON_INTERACTIVE=true; shift ;;
-        --debug) DEBUG=true; shift ;;
-        --lang) LANG_OVERRIDE="$2"; shift 2 ;;
-        --cfg-path) CFG_PATH="$2"; shift 2 ;;
-        --cfg-url) CFG_URL="$2"; shift 2 ;;
-        --help|-h) show_help ;;
-        *) shift ;;
-    esac
-done
-
-# ============================================
-# Language System Functions
-# ============================================
-
-# Detect language from system environment
-detect_system_language() {
-    local lang=""
-    
-    # 1. Check LANG_OVERRIDE from command line
-    if [[ -n "$LANG_OVERRIDE" ]]; then
-        local mapped="$(lang_lookup "$LANG_OVERRIDE")"
-        if [[ -n "$mapped" ]]; then
-            echo "$mapped"
-            return
-        fi
-    fi
-    
-    # 2. Check LC_ALL, LC_MESSAGES, LANG environment variables (in order of priority)
-    for var in LC_ALL LC_MESSAGES LANG; do
-        if [[ -n "${!var}" ]]; then
-            lang="${!var}"
-            break
-        fi
-    done
-    
-    if [[ -n "$lang" ]]; then
-        # Extract language part (e.g., "en_US.UTF-8" -> "en_US")
-        local lang_code="${lang%%.*}"
-        lang_code="${lang_code%%@*}"
-        
-        local mapped="$(lang_lookup "$lang_code")"
-        if [[ -n "$mapped" ]]; then
-            echo "$mapped"
-            return
-        fi
-    fi
-    
-    # 3. Check LANGUAGE environment variable (colon-separated list)
-    if [[ -n "$LANGUAGE" ]]; then
-        local first_lang="${LANGUAGE%%:*}"
-        local mapped="$(lang_lookup "$first_lang")"
-        if [[ -n "$mapped" ]]; then
-            echo "$mapped"
-            return
-        fi
-    fi
-    
-    # 4. Try to detect from system locale (macOS)
-    if [[ "$(uname -s)" == "Darwin" ]]; then
-        local system_lang=$(defaults read -g AppleLanguages 2>/dev/null | head -1 | tr -d ' "\n' | cut -c1-5)
-        if [[ -n "$system_lang" ]]; then
-            local mapped="$(lang_lookup "$system_lang")"
-            if [[ -n "$mapped" ]]; then
-                echo "$mapped"
-                return
-            fi
-        fi
-    fi
-    
-    # 5. Default to English
-    echo "en-US"
-}
-
-# Load language strings function
 load_language_strings() {
     local lang="$1"
     
@@ -569,6 +417,163 @@ OPTIONS_EOF
             ;;
     esac
 }
+
+show_help() {
+    # Get language from help argument
+    local help_lang="en-US"
+    case "$LANG_FOR_HELP" in
+        zh|zh-CN|zh_CN) help_lang="zh-CN" ;;
+        ja) help_lang="ja" ;;
+        ko) help_lang="ko" ;;
+    esac
+    
+    load_language_strings "$help_lang"
+    
+    cat << HELPEOF
+$HELP_TITLE
+
+$HELP_USAGE
+
+$HELP_OPTIONS
+HELPEOF
+    exit 0
+}
+
+LANG_FOR_HELP="en"
+args=("$@")
+for i in "${!args[@]}"; do
+    if [[ "${args[$i]}" == "--lang" ]] && [[ -n "${args[$((i+1))]}" ]]; then
+        LANG_FOR_HELP="${args[$((i+1))]}"
+        break
+    fi
+done
+
+
+DEV_MODE=false
+FAKE_INSTALL=false
+AUTO_YES=false
+VERBOSE=false
+LOG_FILE=""
+EXPORT_PLAN=""
+CUSTOM_MODE=false
+RETRY_FAILED=false
+LIST_SOFTWARE=false
+SHOW_SOFTWARE=""
+SEARCH_KEYWORD=""
+VALIDATE=false
+REPORT_JSON=""
+REPORT_TXT=""
+LIST_PROFILES=false
+SHOW_PROFILE=""
+SKIP_SW=()
+ONLY_SW=()
+FAIL_FAST=false
+PROFILE_KEY=""
+NON_INTERACTIVE=false
+DEBUG=false
+LANG_OVERRIDE=""
+CFG_PATH=""
+CFG_URL=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --dev) DEV_MODE=true; shift ;;
+        --dry-run) FAKE_INSTALL=true; shift ;;
+        --fake-install) FAKE_INSTALL=true; echo "[!] --fake-install is deprecated, use --dry-run instead" >&2; shift ;;
+        --yes|-y) AUTO_YES=true; shift ;;
+        --verbose|-v) VERBOSE=true; shift ;;
+        --log-file) LOG_FILE="$2"; shift 2 ;;
+        --export-plan) EXPORT_PLAN="$2"; shift 2 ;;
+        --custom) CUSTOM_MODE=true; shift ;;
+        --retry-failed) RETRY_FAILED=true; shift ;;
+        --list-software) LIST_SOFTWARE=true; shift ;;
+        --show-software) SHOW_SOFTWARE="$2"; shift 2 ;;
+        --search) SEARCH_KEYWORD="$2"; shift 2 ;;
+        --validate) VALIDATE=true; shift ;;
+        --report-json) REPORT_JSON="$2"; shift 2 ;;
+        --report-txt) REPORT_TXT="$2"; shift 2 ;;
+        --list-profiles) LIST_PROFILES=true; shift ;;
+        --show-profile) SHOW_PROFILE="$2"; shift 2 ;;
+        --skip) SKIP_SW+=("$2"); shift 2 ;;
+        --only) ONLY_SW+=("$2"); shift 2 ;;
+        --fail-fast) FAIL_FAST=true; shift ;;
+        --profile) PROFILE_KEY="$2"; shift 2 ;;
+        --non-interactive) NON_INTERACTIVE=true; shift ;;
+        --debug) DEBUG=true; shift ;;
+        --lang) LANG_OVERRIDE="$2"; shift 2 ;;
+        --cfg-path) CFG_PATH="$2"; shift 2 ;;
+        --cfg-url) CFG_URL="$2"; shift 2 ;;
+        --help|-h) show_help ;;
+        *) shift ;;
+    esac
+done
+
+# ============================================
+# Language System Functions
+# ============================================
+
+# Detect language from system environment
+detect_system_language() {
+    local lang=""
+    
+    # 1. Check LANG_OVERRIDE from command line
+    if [[ -n "$LANG_OVERRIDE" ]]; then
+        local mapped="$(lang_lookup "$LANG_OVERRIDE")"
+        if [[ -n "$mapped" ]]; then
+            echo "$mapped"
+            return
+        fi
+    fi
+    
+    # 2. Check LC_ALL, LC_MESSAGES, LANG environment variables (in order of priority)
+    for var in LC_ALL LC_MESSAGES LANG; do
+        if [[ -n "${!var}" ]]; then
+            lang="${!var}"
+            break
+        fi
+    done
+    
+    if [[ -n "$lang" ]]; then
+        # Extract language part (e.g., "en_US.UTF-8" -> "en_US")
+        local lang_code="${lang%%.*}"
+        lang_code="${lang_code%%@*}"
+        
+        local mapped="$(lang_lookup "$lang_code")"
+        if [[ -n "$mapped" ]]; then
+            echo "$mapped"
+            return
+        fi
+    fi
+    
+    # 3. Check LANGUAGE environment variable (colon-separated list)
+    if [[ -n "$LANGUAGE" ]]; then
+        local first_lang="${LANGUAGE%%:*}"
+        local mapped="$(lang_lookup "$first_lang")"
+        if [[ -n "$mapped" ]]; then
+            echo "$mapped"
+            return
+        fi
+    fi
+    
+    # 4. Try to detect from system locale (macOS)
+    if [[ "$(uname -s)" == "Darwin" ]]; then
+        local system_lang=$(defaults read -g AppleLanguages 2>/dev/null | head -1 | tr -d ' "\n' | cut -c1-5)
+        if [[ -n "$system_lang" ]]; then
+            local mapped="$(lang_lookup "$system_lang")"
+            if [[ -n "$mapped" ]]; then
+                echo "$mapped"
+                return
+            fi
+        fi
+    fi
+    
+    # 5. Default to English
+    echo "en-US"
+}
+
+# Load language strings function
+
+
 
 # --list-profiles 在语言选择之前处理，默认英文输出
 if [[ "$LIST_PROFILES" == "true" ]]; then
