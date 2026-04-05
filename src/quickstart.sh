@@ -1095,6 +1095,7 @@ tui_interactive_select() {
     old_stty=$(stty -g 2>/dev/null)
     stty raw -echo 2>/dev/null
     
+    # Draw initial menu
     for ((i=0; i<num_items; i++)); do
         if [[ $i -eq $cursor ]]; then
             printf "  \033[7m ▶ %s\033[0m\n" "${items[$i]}"
@@ -1104,8 +1105,8 @@ tui_interactive_select() {
     done
     
     while true; do
-        tput cuu $num_items 2>/dev/null || true
-        
+        # Move cursor up and redraw
+        printf "\033[${num_items}A"
         for ((i=0; i<num_items; i++)); do
             printf "\033[2K"
             if [[ $i -eq $cursor ]]; then
