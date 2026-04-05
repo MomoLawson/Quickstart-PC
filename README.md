@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
 
-**Other Languages**: [English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
+**Other Languages**: [English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-Hant.md) | [日本語](README.ja.md) | [한국어](README.ko.md) | [Deutsch](README.de.md) | [Français](README.fr.md) | [العربية](README.ar.md) | [Português](README.pt.md) | [Italiano](README.it.md)
 
 ## Features
 
@@ -85,10 +85,16 @@ Manual language selection with arrow key navigation:
 
 - 🇺🇸 English (en-US)
 - 🇨🇳 简体中文 (zh-CN)
+- 🧡 繁體中文 (zh-Hant)
 - 🇯🇵 日本語 (ja)
 - 🇰🇷 한국어 (ko)
+- 🇩🇪 Deutsch (de)
+- 🇫🇷 Français (fr)
+- 🇸🇦 العربية (ar)
+- 🇧🇷 Português (pt)
+- 🇮🇹 Italiano (it)
 
-Use `--lang zh`, `--lang ja`, `--lang ko` or `--lang en` to skip the language selection menu.
+Use `--lang zh`, `--lang zh-Hant`, `--lang ja`, `--lang ko`, `--lang de`, `--lang fr`, `--lang ar`, `--lang pt`, `--lang it` or `--lang en` to skip the language selection menu.
 
 ## Custom Configuration
 

@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
 
-**其他语言**: [English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
+**其他语言**: [English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-Hant.md) | [日本語](README.ja.md) | [한국어](README.ko.md) | [Deutsch](README.de.md) | [Français](README.fr.md) | [العربية](README.ar.md) | [Português](README.pt.md) | [Italiano](README.it.md)
 
 ## 特性
 
@@ -79,10 +79,16 @@ bash dist/quickstart.sh --list-profiles
 
 - 🇺🇸 English (en-US)
 - 🇨🇳 简体中文 (zh-CN)
+- 🧡 繁體中文 (zh-Hant)
 - 🇯🇵 日本語 (ja)
 - 🇰🇷 한국어 (ko)
+- 🇩🇪 Deutsch (de)
+- 🇫🇷 Français (fr)
+- 🇸🇦 العربية (ar)
+- 🇧🇷 Português (pt)
+- 🇮🇹 Italiano (it)
 
-使用 `--lang zh`、`--lang ja`、`--lang ko` 或 `--lang en` 跳过语言选择菜单。
+使用 `--lang zh`、`--lang zh-Hant`、`--lang ja`、`--lang ko`、`--lang de`、`--lang fr`、`--lang ar`、`--lang pt`、`--lang it` 或 `--lang en` 跳过语言选择菜单。
 
 ## 自定义配置
 

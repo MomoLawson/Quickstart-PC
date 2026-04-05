@@ -40,16 +40,28 @@ $DEFAULT_CFG_URL = "https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/m
 $script:SUPPORTED_LANGUAGES = @{
     "en-US" = "English"
     "zh-CN" = "简体中文"
+    "zh-Hant" = "繁體中文"
     "ja" = "日本語"
     "ko" = "한국어"
+    "de" = "Deutsch"
+    "fr" = "Français"
+    "ar" = "العربية"
+    "pt" = "Português"
+    "it" = "Italiano"
 }
 
 # Language code mappings
 $script:LANGUAGE_MAPPINGS = @{
     "en" = "en-US"; "en-US" = "en-US"; "en_GB" = "en-US"
     "zh" = "zh-CN"; "zh-CN" = "zh-CN"; "zh_CN" = "zh-CN"; "zh-TW" = "zh-CN"
+    "zh-Hant" = "zh-Hant"; "zh-HK" = "zh-Hant"; "zh-TW" = "zh-Hant"
     "ja" = "ja"; "ja-JP" = "ja"; "ja_JP" = "ja"
     "ko" = "ko"; "ko-KR" = "ko"; "ko_KR" = "ko"
+    "de" = "de"; "de-DE" = "de"; "de_AT" = "de"; "de_CH" = "de"
+    "fr" = "fr"; "fr-FR" = "fr"; "fr_CA" = "fr"; "fr_BE" = "fr"
+    "ar" = "ar"; "ar-SA" = "ar"; "ar-AE" = "ar"; "ar-EG" = "ar"
+    "pt" = "pt"; "pt-BR" = "pt"; "pt-PT" = "pt"
+    "it" = "it"; "it-IT" = "it"; "it_CH" = "it"
 }
 
 # Handle deprecated --fake-install
@@ -439,6 +451,624 @@ function Initialize-LanguageStrings {
         }
         
         # ============================================
+        # Traditional Chinese - zh-Hant
+        # ============================================
+        "zh-Hant" {
+            $script:LANG = @{
+                "banner_title" = "Quickstart-PC v$VERSION"
+                "banner_desc" = "快速設定新電腦軟件環境"
+                
+                "detecting_system" = "偵測系統環境..."
+                "system_info" = "系統"
+                "package_manager" = "套件管理器"
+                "unsupported_os" = "不支援的作業系統"
+                
+                "using_remote_config" = "使用遠程配置"
+                "using_custom_config" = "使用本地配置"
+                "using_default_config" = "使用預設配置"
+                "config_not_found" = "配置文件不存在"
+                "config_invalid" = "配置文件格式無效"
+                
+                "select_profiles" = "選擇安裝套餐"
+                "select_software" = "選擇要安裝的軟件"
+                "navigate" = "↑↓ 移動 | 確認"
+                "navigate_multi" = "↑↓ 移動 | 空格 選擇 | 確認"
+                "selected" = "[✓] "
+                "not_selected" = "[  ] "
+                "select_all" = "全選"
+                "installed" = "已安裝"
+                
+                "no_profile_selected" = "未選擇任何套餐"
+                "no_software_selected" = "未選擇任何軟件"
+                "confirm_install" = "確認安裝？[Y/n]"
+                "cancelled" = "已取消"
+                "start_installing" = "開始安裝軟件"
+                "installing" = "安裝中"
+                "install_success" = "安裝完成"
+                "install_failed" = "安裝失敗"
+                "platform_not_supported" = "不支援的平台"
+                "installation_complete" = "安裝完成"
+                "total_installed" = "共安裝"
+                
+                "dev_mode" = "開發模式：僅顯示選擇的軟件，不實際安裝"
+                "fake_install_mode" = "模擬安裝模式：展示安裝過程但不實際安裝"
+                "fake_installing" = "模擬安裝"
+                
+                "checking_installation" = "正在偵測安裝情況..."
+                "skipping_installed" = "已安裝，跳過"
+                "all_installed" = "所有軟件均已安裝，無需操作"
+                
+                "ask_continue" = "安裝完成，是否繼續安裝其他套餐？"
+                "continue_btn" = "繼續安裝"
+                "exit_btn" = "退出"
+                
+                "title_select_profile" = "選擇套餐"
+                "title_select_software" = "選擇軟件"
+                "title_installing" = "安裝中"
+                "title_ask_continue" = "是否繼續安裝"
+                
+                "lang_prompt" = "請選擇語言"
+                "help_lang" = "設定語言 (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)"
+                "noninteractive_error" = "非互動模式需要 --profile 參數"
+                "profile_not_found" = "Profile 不存在"
+                "npm_not_found" = "npm 未安裝，正在安裝..."
+                "winget_not_found" = "winget 未找到，無法自動安裝 npm"
+                
+                "help_usage" = "用法: quickstart.ps1 [選項]"
+                "help_cfg_path" = "使用本地 profiles.json 文件"
+                "help_cfg_url" = "使用遠程 profiles.json URL"
+                "help_dev" = "開發模式：顯示選擇的軟件但不實際安裝"
+                "help_dry_run" = "模擬安裝：展示安裝過程但不實際安裝"
+                "help_fake_install" = "同 --dry-run（已棄用）"
+                "help_yes" = "自動確認所有提示"
+                "help_verbose" = "顯示詳細調試信息"
+                "help_log_file" = "將日誌寫入文件"
+                "help_export_plan" = "匯出安裝計劃到文件"
+                "help_custom" = "自訂軟件選擇模式"
+                "help_retry_failed" = "重試之前失敗的軟件"
+                "help_list_software" = "列出所有可用軟件"
+                "help_show_software" = "顯示指定軟件詳情"
+                "help_search" = "搜尋軟件"
+                "help_validate" = "驗證配置文件"
+                "help_report_json" = "匯出 JSON 格式安裝報告"
+                "help_report_txt" = "匯出 TXT 格式安裝報告"
+                "help_list_profiles" = "列出所有可用套餐"
+                "help_show_profile" = "顯示指定套餐詳情"
+                "help_skip" = "跳過指定軟件（可多次使用）"
+                "help_only" = "只安裝指定軟件（可多次使用）"
+                "help_fail_fast" = "遇到錯誤時立即停止"
+                "help_profile" = "直接指定安裝套餐（跳過選擇選單）"
+                "help_non_interactive" = "非互動模式（禁止所有 TUI/prompt）"
+                "help_help" = "顯示此幫助信息"
+                
+                "validating_config" = "正在驗證配置文件..."
+                "json_valid" = "JSON 語法有效"
+                "json_invalid" = "JSON 語法無效"
+                "profiles_count" = "配置文件"
+                "software_count" = "軟件條目"
+                "validation_passed" = "驗證通過"
+                "validation_failed" = "驗證失敗"
+                
+                "search_results" = "搜尋結果"
+            }
+        }
+        
+        # ============================================
+        # German - de
+        # ============================================
+        "de" {
+            $script:LANG = @{
+                "banner_title" = "Quickstart-PC v$VERSION"
+                "banner_desc" = "Schnelle Einrichtung für neue Computer"
+                
+                "detecting_system" = "Erkennung der Systemumgebung..."
+                "system_info" = "System"
+                "package_manager" = "Paketmanager"
+                "unsupported_os" = "Nicht unterstütztes Betriebssystem"
+                
+                "using_remote_config" = "Verwendung der Remote-Konfiguration"
+                "using_custom_config" = "Verwendung der lokalen Konfiguration"
+                "using_default_config" = "Verwendung der Standardkonfiguration"
+                "config_not_found" = "Konfigurationsdatei nicht gefunden"
+                "config_invalid" = "Konfigurationsdateiformat ungültig"
+                
+                "select_profiles" = "Installationsprofile auswählen"
+                "select_software" = "Software zum Installieren auswählen"
+                "navigate" = "↑↓ Bewegen | ENTER Bestätigen"
+                "navigate_multi" = "↑↓ Bewegen | LEERTASTE Auswählen | ENTER Bestätigen"
+                "selected" = "[✓] "
+                "not_selected" = "[  ] "
+                "select_all" = "Alle auswählen"
+                "installed" = "installiert"
+                
+                "no_profile_selected" = "Kein Profil ausgewählt"
+                "no_software_selected" = "Keine Software ausgewählt"
+                "confirm_install" = "Installation bestätigen? [Y/n]"
+                "cancelled" = "Abgebrochen"
+                "start_installing" = "Software-Installation starten"
+                "installing" = "Installiere"
+                "install_success" = "erfolgreich installiert"
+                "install_failed" = "Installation fehlgeschlagen"
+                "platform_not_supported" = "Plattform nicht unterstützt"
+                "installation_complete" = "Installation abgeschlossen"
+                "total_installed" = "Gesamt installiert"
+                
+                "dev_mode" = "Entwicklermodus: Ausgewählte Software anzeigen ohne zu installieren"
+                "fake_install_mode" = "Simulationsmodus: Installationsprozess anzeigen ohne tatsächlich zu installieren"
+                "fake_installing" = "Installation simulieren"
+                
+                "checking_installation" = "Installationsstatus wird überprüft..."
+                "skipping_installed" = "Bereits installiert, überspringen"
+                "all_installed" = "Alle Software bereits installiert, nichts zu tun"
+                
+                "ask_continue" = "Installation abgeschlossen. Andere Profile weiter installieren?"
+                "continue_btn" = "Weiter"
+                "exit_btn" = "Beenden"
+                
+                "title_select_profile" = "Profil auswählen"
+                "title_select_software" = "Software auswählen"
+                "title_installing" = "Installiere"
+                "title_ask_continue" = "Weiter installieren?"
+                
+                "lang_prompt" = "Bitte Sprache auswählen"
+                "help_lang" = "Sprache festlegen (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)"
+                "noninteractive_error" = "Nicht-interaktiver Modus erfordert --profile Parameter"
+                "profile_not_found" = "Profil nicht gefunden"
+                "npm_not_found" = "npm nicht gefunden, wird installiert..."
+                "winget_not_found" = "winget nicht gefunden, kann npm nicht automatisch installieren"
+                
+                "help_usage" = "Verwendung: quickstart.ps1 [OPTIONEN]"
+                "help_cfg_path" = "Lokale profiles.json verwenden"
+                "help_cfg_url" = "Remote profiles.json URL verwenden"
+                "help_dev" = "Entwicklermodus: Auswahl anzeigen ohne zu installieren"
+                "help_dry_run" = "Simulation: Prozess anzeigen ohne zu installieren"
+                "help_fake_install" = "Alias für --dry-run (veraltet)"
+                "help_yes" = "Alle Prompts automatisch bestätigen"
+                "help_verbose" = "Detaillierte Debug-Infos anzeigen"
+                "help_log_file" = "Logs in Datei schreiben"
+                "help_export_plan" = "Installationsplan exportieren"
+                "help_custom" = "Benutzerdefinierte Software-Auswahl"
+                "help_retry_failed" = "Zuerst fehlgeschlagene Pakete erneut versuchen"
+                "help_list_software" = "Alle verfügbare Software auflisten"
+                "help_show_software" = "Software-Details anzeigen"
+                "help_search" = "Software suchen"
+                "help_validate" = "Konfigurationsdatei validieren"
+                "help_report_json" = "JSON-Installationsbericht exportieren"
+                "help_report_txt" = "TXT-Installationsbericht exportieren"
+                "help_list_profiles" = "Alle verfügbaren Profile auflisten"
+                "help_show_profile" = "Profil-Details anzeigen"
+                "help_skip" = "Software überspringen (wiederholbar)"
+                "help_only" = "Nur angegebene Software installieren (wiederholbar)"
+                "help_fail_fast" = "Bei erstem Fehler stoppen"
+                "help_profile" = "Profil direkt auswählen (Menü überspringen)"
+                "help_non_interactive" = "Nicht-interaktiver Modus (keine TUI/Prompts)"
+                "help_help" = "Diese Hilfemeldung anzeigen"
+                
+                "validating_config" = "Konfiguration wird validiert..."
+                "json_valid" = "JSON-Syntax gültig"
+                "json_invalid" = "JSON-Syntax ungültig"
+                "profiles_count" = "Profile"
+                "software_count" = "Softwareeinträge"
+                "validation_passed" = "Validierung erfolgreich"
+                "validation_failed" = "Validierung fehlgeschlagen"
+                
+                "search_results" = "Suchergebnisse"
+            }
+        }
+        
+        # ============================================
+        # French - fr
+        # ============================================
+        "fr" {
+            $script:LANG = @{
+                "banner_title" = "Quickstart-PC v$VERSION"
+                "banner_desc" = "Configuration rapide pour nouveaux ordinateurs"
+                
+                "detecting_system" = "Détection de l'environnement système..."
+                "system_info" = "Système"
+                "package_manager" = "Gestionnaire de paquets"
+                "unsupported_os" = "Système d'exploitation non pris en charge"
+                
+                "using_remote_config" = "Utilisation de la configuration distante"
+                "using_custom_config" = "Utilisation de la configuration locale"
+                "using_default_config" = "Utilisation de la configuration par défaut"
+                "config_not_found" = "Fichier de configuration non trouvé"
+                "config_invalid" = "Format du fichier de configuration invalide"
+                
+                "select_profiles" = "Sélectionner les profils d'installation"
+                "select_software" = "Sélectionner les logiciels à installer"
+                "navigate" = "↑↓ Déplacer | ENTRÉE Confirmer"
+                "navigate_multi" = "↑↓ Déplacer | ESPACE Sélectionner | ENTRÉE Confirmer"
+                "selected" = "[✓] "
+                "not_selected" = "[  ] "
+                "select_all" = "Tout sélectionner"
+                "installed" = "installé"
+                
+                "no_profile_selected" = "Aucun profil sélectionné"
+                "no_software_selected" = "Aucun logiciel sélectionné"
+                "confirm_install" = "Confirmer l'installation ? [Y/n]"
+                "cancelled" = "Annulé"
+                "start_installing" = "Démarrage de l'installation des logiciels"
+                "installing" = "Installation"
+                "install_success" = "installé avec succès"
+                "install_failed" = "installation échouée"
+                "platform_not_supported" = "Plateforme non prise en charge"
+                "installation_complete" = "Installation terminée"
+                "total_installed" = "Total installé"
+                
+                "dev_mode" = "Mode développement: afficher les logiciels sélectionnés sans installer"
+                "fake_install_mode" = "Mode installation simulée: afficher le processus sans installer"
+                "fake_installing" = "Installation simulée"
+                
+                "checking_installation" = "Vérification du statut d'installation..."
+                "skipping_installed" = "Déjà installé, ignoré"
+                "all_installed" = "Tous les logiciels déjà installés, rien à faire"
+                
+                "ask_continue" = "Installation terminée. Continuer l'installation d'autres profils ?"
+                "continue_btn" = "Continuer"
+                "exit_btn" = "Quitter"
+                
+                "title_select_profile" = "Sélectionner le profil"
+                "title_select_software" = "Sélectionner les logiciels"
+                "title_installing" = "Installation"
+                "title_ask_continue" = "Continuer l'installation ?"
+                
+                "lang_prompt" = "Veuillez sélectionner la langue"
+                "help_lang" = "Définir la langue (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)"
+                "noninteractive_error" = "Le mode non interactif requiert le paramètre --profile"
+                "profile_not_found" = "Profil non trouvé"
+                "npm_not_found" = "npm non trouvé, installation..."
+                "winget_not_found" = "winget non trouvé, impossible d'installer automatiquement npm"
+                
+                "help_usage" = "Utilisation: quickstart.ps1 [OPTIONS]"
+                "help_cfg_path" = "Utiliser le fichier profiles.json local"
+                "help_cfg_url" = "Utiliser l'URL profiles.json distante"
+                "help_dev" = "Mode développement: afficher les sélections sans installer"
+                "help_dry_run" = "Installation simulée: afficher le processus sans installer"
+                "help_fake_install" = "Alias pour --dry-run (déprécié)"
+                "help_yes" = "Confirmer automatiquement toutes les invites"
+                "help_verbose" = "Afficher les infos de débogage détaillées"
+                "help_log_file" = "Écrire les logs dans un fichier"
+                "help_export_plan" = "Exporter le plan d'installation"
+                "help_custom" = "Mode de sélection de logiciels personnalisé"
+                "help_retry_failed" = "Réessayer les paquets précédemment échoués"
+                "help_list_software" = "Lister tous les logiciels disponibles"
+                "help_show_software" = "Afficher les détails du logiciel"
+                "help_search" = "Rechercher un logiciel"
+                "help_validate" = "Valider le fichier de configuration"
+                "help_report_json" = "Exporter le rapport d'installation en JSON"
+                "help_report_txt" = "Exporter le rapport d'installation en TXT"
+                "help_list_profiles" = "Lister tous les profils disponibles"
+                "help_show_profile" = "Afficher les détails du profil"
+                "help_skip" = "Ignorer le logiciel spécifié (répétable)"
+                "help_only" = "Installer uniquement le logiciel spécifié (répétable)"
+                "help_fail_fast" = "Arrêter à la première erreur"
+                "help_profile" = "Sélectionner le profil directement (passer le menu)"
+                "help_non_interactive" = "Mode non interactif (pas de TUI/prompts)"
+                "help_help" = "Afficher ce message d'aide"
+                
+                "validating_config" = "Validation de la configuration..."
+                "json_valid" = "Syntaxe JSON valide"
+                "json_invalid" = "Syntaxe JSON invalide"
+                "profiles_count" = "Profils"
+                "software_count" = "Entrées logicielles"
+                "validation_passed" = "Validation réussie"
+                "validation_failed" = "Validation échouée"
+                
+                "search_results" = "Résultats de recherche"
+            }
+        }
+        
+        # ============================================
+        # Arabic - ar (LTR for terminal compatibility)
+        # ============================================
+        "ar" {
+            $script:LANG = @{
+                "banner_title" = "Quickstart-PC v$VERSION"
+                "banner_desc" = "إعداد سريع لأجهزة الكمبيوتر الجديدة"
+                
+                "detecting_system" = "جاري اكتشاف بيئة النظام..."
+                "system_info" = "النظام"
+                "package_manager" = "مدير الحزم"
+                "unsupported_os" = "نظام تشغيل غير مدعوم"
+                
+                "using_remote_config" = "استخدام التكوين البعيد"
+                "using_custom_config" = "استخدام التكوين المحلي"
+                "using_default_config" = "استخدام التكوين الافتراضي"
+                "config_not_found" = "ملف التكوين غير موجود"
+                "config_invalid" = "تنسيق ملف التكوين غير صالح"
+                
+                "select_profiles" = "اختيار ملفات التثبيت"
+                "select_software" = "اختيار البرامج للتثبيت"
+                "navigate" = "↑↓ تحريك | ENTER تأكيد"
+                "navigate_multi" = "↑↓ تحريك | مسافة اختيار | ENTER تأكيد"
+                "selected" = "[✓] "
+                "not_selected" = "[  ] "
+                "select_all" = "تحديد الكل"
+                "installed" = "مثبت"
+                
+                "no_profile_selected" = "لم يتم اختيار أي ملف شخصي"
+                "no_software_selected" = "لم يتم اختيار أي برنامج"
+                "confirm_install" = "تأكيد التثبيت؟ [Y/n]"
+                "cancelled" = "تم الإلغاء"
+                "start_installing" = "بدء تثبيت البرامج"
+                "installing" = "جاري التثبيت"
+                "install_success" = "تم التثبيت بنجاح"
+                "install_failed" = "فشل التثبيت"
+                "platform_not_supported" = "المنصة غير مدعومة"
+                "installation_complete" = "اكتمل التثبيت"
+                "total_installed" = "المجموع المثبت"
+                
+                "dev_mode" = "وضع التطوير: إظهار البرامج المحددة دون تثبيت"
+                "fake_install_mode" = "وضع التثبيت الوهمي: إظهار عملية التثبيت دون التثبيت الفعلي"
+                "fake_installing" = "محاكاة التثبيت"
+                
+                "checking_installation" = "التحقق من حالة التثبيت..."
+                "skipping_installed" = "مثبت بالفعل، تخطي"
+                "all_installed" = "جميع البرامج مثبتة بالفعل، لا شيء القيام به"
+                
+                "ask_continue" = "اكتمل التثبيت. متابعة تثبيت ملفات شخصية أخرى؟"
+                "continue_btn" = "متابعة"
+                "exit_btn" = "خروج"
+                
+                "title_select_profile" = "اختيار الملف الشخصي"
+                "title_select_software" = "اختيار البرامج"
+                "title_installing" = "التثبيت"
+                "title_ask_continue" = "متابعة التثبيت؟"
+                
+                "lang_prompt" = "يرجى اختيار اللغة"
+                "help_lang" = "تعيين اللغة (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)"
+                "noninteractive_error" = "الوضع غير التفاعلي يتطلب معامل --profile"
+                "profile_not_found" = "الملف الشخصي غير موجود"
+                "npm_not_found" = "npm غير موجود، جاري التثبيت..."
+                "winget_not_found" = "winget غير موجود، لا يمكن تثبيت npm تلقائياً"
+                
+                "help_usage" = "الاستخدام: quickstart.ps1 [الخيارات]"
+                "help_cfg_path" = "استخدام ملف profiles.json المحلي"
+                "help_cfg_url" = "استخدام عنوان profiles.json البعيد"
+                "help_dev" = "وضع التطوير: إظهار التحديدات دون التثبيت"
+                "help_dry_run" = "تثبيت وهمي: إظهار العملية دون التثبيت"
+                "help_fake_install" = "اسم مستعار لـ --dry-run (مهمل)"
+                "help_yes" = "تأكيد جميع الأسئلة تلقائياً"
+                "help_verbose" = "إظهار معلومات التصحيح التفصيلية"
+                "help_log_file" = "كتابة السجلات في ملف"
+                "help_export_plan" = "تصدير خطة التثبيت"
+                "help_custom" = "وضع اختيار البرامج المخصص"
+                "help_retry_failed" = "إعادة المحاولة للحزم الفاشلة سابقاً"
+                "help_list_software" = "سرد جميع البرامج المتاحة"
+                "help_show_software" = "إظهار تفاصيل البرنامج"
+                "help_search" = "البحث عن برنامج"
+                "help_validate" = "التحقق من ملف التكوين"
+                "help_report_json" = "تصدير تقرير التثبيت بـ JSON"
+                "help_report_txt" = "تصدير تقرير التثبيت بـ TXT"
+                "help_list_profiles" = "سرد جميع الملفات الشخصية المتاحة"
+                "help_show_profile" = "إظهار تفاصيل الملف الشخصي"
+                "help_skip" = "تخطي البرنامج المحدد (قابل للتكرار)"
+                "help_only" = "تثبيت البرنامج المحدد فقط (قابل للتكرار)"
+                "help_fail_fast" = "التوقف عند الخطأ الأول"
+                "help_profile" = "تحديد الملف الشخصي مباشرة (تخطي القائمة)"
+                "help_non_interactive" = "الوضع غير التفاعلي (لا TUI/مطالبات)"
+                "help_help" = "إظهار رسالة المساعدة هذه"
+                
+                "validating_config" = "جاري التحقق من ملف التكوين..."
+                "json_valid" = "صيغة JSON صالحة"
+                "json_invalid" = "صيغة JSON غير صالحة"
+                "profiles_count" = "الملفات الشخصية"
+                "software_count" = "إدخالات البرامج"
+                "validation_passed" = "التحقق نجح"
+                "validation_failed" = "التحقق فشل"
+                
+                "search_results" = "نتائج البحث"
+            }
+        }
+        
+        # ============================================
+        # Portuguese - pt
+        # ============================================
+        "pt" {
+            $script:LANG = @{
+                "banner_title" = "Quickstart-PC v$VERSION"
+                "banner_desc" = "Configuração rápida para novos computadores"
+                
+                "detecting_system" = "Detectando ambiente do sistema..."
+                "system_info" = "Sistema"
+                "package_manager" = "Gerenciador de pacotes"
+                "unsupported_os" = "Sistema operacional não suportado"
+                
+                "using_remote_config" = "Usando configuração remota"
+                "using_custom_config" = "Usando configuração local"
+                "using_default_config" = "Usando configuração padrão"
+                "config_not_found" = "Arquivo de configuração não encontrado"
+                "config_invalid" = "Formato do arquivo de configuração inválido"
+                
+                "select_profiles" = "Selecionar Perfis de Instalação"
+                "select_software" = "Selecionar Software para Instalar"
+                "navigate" = "↑↓ Mover | ENTER Confirmar"
+                "navigate_multi" = "↑↓ Mover | ESPAÇO Selecionar | ENTER Confirmar"
+                "selected" = "[✓] "
+                "not_selected" = "[  ] "
+                "select_all" = "Selecionar Tudo"
+                "installed" = "instalado"
+                
+                "no_profile_selected" = "Nenhum perfil selecionado"
+                "no_software_selected" = "Nenhum software selecionado"
+                "confirm_install" = "Confirmar instalação? [Y/n]"
+                "cancelled" = "Cancelado"
+                "start_installing" = "Iniciando instalação de software"
+                "installing" = "Instalando"
+                "install_success" = "instalado com sucesso"
+                "install_failed" = "instalação falhou"
+                "platform_not_supported" = "Plataforma não suportada"
+                "installation_complete" = "Instalação Concluída"
+                "total_installed" = "Total instalado"
+                
+                "dev_mode" = "Modo desenvolvimento: mostrar software selecionado sem instalar"
+                "fake_install_mode" = "Modo instalação simulada: mostrar processo sem instalar"
+                "fake_installing" = "Simulando instalação"
+                
+                "checking_installation" = "Verificando status da instalação..."
+                "skipping_installed" = "Já instalado, pulando"
+                "all_installed" = "Todo software já instalado, nada a fazer"
+                
+                "ask_continue" = "Instalação concluída. Continuar instalando outros perfis?"
+                "continue_btn" = "Continuar"
+                "exit_btn" = "Sair"
+                
+                "title_select_profile" = "Selecionar Perfil"
+                "title_select_software" = "Selecionar Software"
+                "title_installing" = "Instalando"
+                "title_ask_continue" = "Continuar Instalação?"
+                
+                "lang_prompt" = "Por favor, selecione o idioma"
+                "help_lang" = "Definir idioma (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)"
+                "noninteractive_error" = "Modo não interativo requer parâmetro --profile"
+                "profile_not_found" = "Perfil não encontrado"
+                "npm_not_found" = "npm não encontrado, instalando..."
+                "winget_not_found" = "winget não encontrado, não é possível instalar npm automaticamente"
+                
+                "help_usage" = "Uso: quickstart.ps1 [OPÇÕES]"
+                "help_cfg_path" = "Usar arquivo profiles.json local"
+                "help_cfg_url" = "Usar URL profiles.json remota"
+                "help_dev" = "Modo desenvolvimento: mostrar escolhas sem instalar"
+                "help_dry_run" = "Instalação simulada: mostrar processo sem instalar"
+                "help_fake_install" = "Apelido para --dry-run (obsoleto)"
+                "help_yes" = "Confirmar automaticamente todos os prompts"
+                "help_verbose" = "Mostrar informações de debug detalhadas"
+                "help_log_file" = "Escrever logs em arquivo"
+                "help_export_plan" = "Exportar plano de instalação"
+                "help_custom" = "Modo de seleção de software personalizado"
+                "help_retry_failed" = "Tentar pacotes que falharam anteriormente"
+                "help_list_software" = "Listar todos os softwares disponíveis"
+                "help_show_software" = "Mostrar detalhes do software"
+                "help_search" = "Pesquisar software"
+                "help_validate" = "Validar arquivo de configuração"
+                "help_report_json" = "Exportar relatório de instalação em JSON"
+                "help_report_txt" = "Exportar relatório de instalação em TXT"
+                "help_list_profiles" = "Listar todos os perfis disponíveis"
+                "help_show_profile" = "Mostrar detalhes do perfil"
+                "help_skip" = "Pular software especificado (repetível)"
+                "help_only" = "Instalar apenas o software especificado (repetível)"
+                "help_fail_fast" = "Parar no primeiro erro"
+                "help_profile" = "Selecionar perfil diretamente (pular menu)"
+                "help_non_interactive" = "Modo não interativo (sem TUI/prompts)"
+                "help_help" = "Mostrar esta mensagem de ajuda"
+                
+                "validating_config" = "Validando configuração..."
+                "json_valid" = "Sintaxe JSON válida"
+                "json_invalid" = "Sintaxe JSON inválida"
+                "profiles_count" = "Perfis"
+                "software_count" = "Entradas de software"
+                "validation_passed" = "Validação bem-sucedida"
+                "validation_failed" = "Validação falhou"
+                
+                "search_results" = "Resultados da pesquisa"
+            }
+        }
+        
+        # ============================================
+        # Italian - it
+        # ============================================
+        "it" {
+            $script:LANG = @{
+                "banner_title" = "Quickstart-PC v$VERSION"
+                "banner_desc" = "Configurazione rapida per nuovi computer"
+                
+                "detecting_system" = "Rilevamento ambiente sistema..."
+                "system_info" = "Sistema"
+                "package_manager" = "Gestore pacchetti"
+                "unsupported_os" = "Sistema operativo non supportato"
+                
+                "using_remote_config" = "Utilizzo configurazione remota"
+                "using_custom_config" = "Utilizzo configurazione locale"
+                "using_default_config" = "Utilizzo configurazione predefinita"
+                "config_not_found" = "File di configurazione non trovato"
+                "config_invalid" = "Formato file di configurazione non valido"
+                
+                "select_profiles" = "Seleziona Profili di Installazione"
+                "select_software" = "Seleziona Software da Installare"
+                "navigate" = "↑↓ Muovi | INVIO Conferma"
+                "navigate_multi" = "↑↓ Muovi | SPAZIO Seleziona | INVIO Conferma"
+                "selected" = "[✓] "
+                "not_selected" = "[  ] "
+                "select_all" = "Seleziona Tutto"
+                "installed" = "installato"
+                
+                "no_profile_selected" = "Nessun profilo selezionato"
+                "no_software_selected" = "Nessun software selezionato"
+                "confirm_install" = "Confermare installazione? [Y/n]"
+                "cancelled" = "Annullato"
+                "start_installing" = "Avvio installazione software"
+                "installing" = "Installazione"
+                "install_success" = "installato con successo"
+                "install_failed" = "installazione fallita"
+                "platform_not_supported" = "Piattaforma non supportata"
+                "installation_complete" = "Installazione Completata"
+                "total_installed" = "Totale installato"
+                
+                "dev_mode" = "Modalità sviluppo: mostra software selezionato senza installare"
+                "fake_install_mode" = "Modalità installazione simulata: mostra processo senza installare"
+                "fake_installing" = "Simulazione installazione"
+                
+                "checking_installation" = "Verifica stato installazione..."
+                "skipping_installed" = "Già installato, salto"
+                "all_installed" = "Tutto il software già installato, niente da fare"
+                
+                "ask_continue" = "Installazione completata. Continuare installazione altri profili?"
+                "continue_btn" = "Continua"
+                "exit_btn" = "Esci"
+                
+                "title_select_profile" = "Seleziona Profilo"
+                "title_select_software" = "Seleziona Software"
+                "title_installing" = "Installazione"
+                "title_ask_continue" = "Continuare Installazione?"
+                
+                "lang_prompt" = "Per favore, seleziona la lingua"
+                "help_lang" = "Imposta lingua (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)"
+                "noninteractive_error" = "Modalità non interattiva richiede parametro --profile"
+                "profile_not_found" = "Profilo non trovato"
+                "npm_not_found" = "npm non trovato, installazione..."
+                "winget_not_found" = "winget non trovato, impossibile installare npm automaticamente"
+                
+                "help_usage" = "Utilizzo: quickstart.ps1 [OPZIONI]"
+                "help_cfg_path" = "Usa file profiles.json locale"
+                "help_cfg_url" = "Usa URL profiles.json remota"
+                "help_dev" = "Modalità sviluppo: mostra selezioni senza installare"
+                "help_dry_run" = "Installazione simulata: mostra processo senza installare"
+                "help_fake_install" = "Alias per --dry-run (deprecato)"
+                "help_yes" = "Conferma automaticamente tutti i prompt"
+                "help_verbose" = "Mostra info di debug dettagliate"
+                "help_log_file" = "Scrivi log su file"
+                "help_export_plan" = "Esporta piano di installazione"
+                "help_custom" = "Modalità selezione software personalizzata"
+                "help_retry_failed" = "Riprova pacchetti precedentemente falliti"
+                "help_list_software" = "Elenca tutto il software disponibile"
+                "help_show_software" = "Mostra dettagli software"
+                "help_search" = "Cerca software"
+                "help_validate" = "Valida file di configurazione"
+                "help_report_json" = "Esporta report installazione JSON"
+                "help_report_txt" = "Esporta report installazione TXT"
+                "help_list_profiles" = "Elenca tutti i profili disponibili"
+                "help_show_profile" = "Mostra dettagli profilo"
+                "help_skip" = "Salta software specificato (ripetibile)"
+                "help_only" = "Installa solo software specificato (ripetibile)"
+                "help_fail_fast" = "Ferma al primo errore"
+                "help_profile" = "Seleziona profilo direttamente (salta menu)"
+                "help_non_interactive" = "Modalità non interattiva (no TUI/prompt)"
+                "help_help" = "Mostra questo messaggio di aiuto"
+                
+                "validating_config" = "Validazione configurazione..."
+                "json_valid" = "Sintassi JSON valida"
+                "json_invalid" = "Sintassi JSON non valida"
+                "profiles_count" = "Profili"
+                "software_count" = "Voci software"
+                "validation_passed" = "Validazione superata"
+                "validation_failed" = "Validazione fallita"
+                
+                "search_results" = "Risultati della ricerca"
+            }
+        }
+        
+        # ============================================
         # English (default) - en-US
         # ============================================
         default {
@@ -496,7 +1126,7 @@ function Initialize-LanguageStrings {
                 "title_ask_continue" = "Continue Installing?"
                 
                 "lang_prompt" = "Please select language"
-                "help_lang" = "Set language (en, zh, ja, ko)"
+                "help_lang" = "Set language (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)"
                 "noninteractive_error" = "Non-interactive mode requires --profile parameter"
                 "profile_not_found" = "Profile not found"
                 "npm_not_found" = "npm not found, installing..."
@@ -794,7 +1424,18 @@ function Test-SoftwareInstalled {
 function Show-Banner {
     param([string]$Lang)
     
-    $title = if ($Lang -eq "zh-CN") { "快速配置新电脑软件环境" } elseif ($Lang -eq "ja") { "新PCのソフトウェア環境を素早く設定" } elseif ($Lang -eq "ko") { "새 PC 소프트웨어 환경을 빠르게 설정" } else { "Quick setup for new computers" }
+    $title = switch ($Lang) {
+        "zh-CN" { "快速配置新电脑软件环境" }
+        "zh-Hant" { "快速設定新電腦軟件環境" }
+        "ja" { "新PCのソフトウェア環境を素早く設定" }
+        "ko" { "새 PC 소프트웨어 환경을 빠르게 설정" }
+        "de" { "Schnelle Einrichtung für neue Computer" }
+        "fr" { "Configuration rapide pour nouveaux ordinateurs" }
+        "ar" { "إعداد سريع لأجهزة الكمبيوتر الجديدة" }
+        "pt" { "Configuração rápida para novos computadores" }
+        "it" { "Configurazione rapida per nuovi computer" }
+        default { "Quick setup for new computers" }
+    }
     
     Write-Host ""
     Write-Host "╔══════════════════════════════════════╗" -ForegroundColor Cyan
@@ -834,7 +1475,7 @@ function Select-Language {
     $items = @()
     $langCodes = @()
     
-    foreach ($code in @("en-US", "zh-CN", "ja", "ko")) {
+    foreach ($code in @("en-US", "zh-CN", "zh-Hant", "ja", "ko", "de", "fr", "ar", "pt", "it")) {
         if ($script:SUPPORTED_LANGUAGES[$code]) {
             $langCodes += $code
             $items += $script:SUPPORTED_LANGUAGES[$code]

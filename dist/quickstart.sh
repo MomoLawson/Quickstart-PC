@@ -13,16 +13,28 @@ DEFAULT_CFG_URL="https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main
 declare -A SUPPORTED_LANGUAGES=(
     ["en-US"]="English"
     ["zh-CN"]="简体中文"
+    ["zh-Hant"]="繁體中文"
     ["ja"]="日本語"
     ["ko"]="한국어"
+    ["de"]="Deutsch"
+    ["fr"]="Français"
+    ["ar"]="العربية"
+    ["pt"]="Português"
+    ["it"]="Italiano"
 )
 
 # Language code mappings for detection
 declare -A LANGUAGE_MAPPINGS=(
     ["en"]="en-US" ["en-US"]="en-US" ["en_GB"]="en-US" ["en-US"]="en-US"
     ["zh"]="zh-CN" ["zh-CN"]="zh-CN" ["zh_CN"]="zh-CN" ["zh-TW"]="zh-CN" ["zh-TW"]="zh-CN"
+    ["zh-Hant"]="zh-Hant" ["zh-HK"]="zh-Hant" ["zh-TW"]="zh-Hant"
     ["ja"]="ja" ["ja-JP"]="ja" ["ja_JP"]="ja"
     ["ko"]="ko" ["ko-KR"]="ko" ["ko_KR"]="ko"
+    ["de"]="de" ["de-DE"]="de" ["de_AT"]="de" ["de_CH"]="de"
+    ["fr"]="fr" ["fr-FR"]="fr" ["fr_CA"]="fr" ["fr_BE"]="fr"
+    ["ar"]="ar" ["ar-SA"]="ar" ["ar-AE"]="ar" ["ar-EG"]="ar"
+    ["pt"]="pt" ["pt-BR"]="pt" ["pt-PT"]="pt"
+    ["it"]="it" ["it-IT"]="it" ["it_CH"]="it"
 )
 
 LANG_FOR_HELP="en"
@@ -39,8 +51,14 @@ show_help() {
     local help_lang="en-US"
     case "$LANG_FOR_HELP" in
         zh|zh-CN|zh_CN) help_lang="zh-CN" ;;
+        zh-Hant|zh-HK|zh-TW) help_lang="zh-Hant" ;;
         ja) help_lang="ja" ;;
         ko) help_lang="ko" ;;
+        de) help_lang="de" ;;
+        fr) help_lang="fr" ;;
+        ar) help_lang="ar" ;;
+        pt) help_lang="pt" ;;
+        it) help_lang="it" ;;
     esac
     
     load_language_strings "$help_lang"
@@ -468,6 +486,576 @@ OPTIONS_EOF
             ;;
             
         # ============================================
+        # Traditional Chinese - zh-Hant
+        # ============================================
+        zh-Hant)
+            HELP_TITLE="Quickstart-PC - 一鍵設定新電腦"
+            HELP_USAGE="用法: quickstart.sh [選項]"
+            HELP_OPTIONS=$(cat << 'OPTIONS_EOF'
+選項:
+  --lang LANG        設定語言 (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)
+  --cfg-path PATH    使用本地 profiles.json 文件
+  --cfg-url URL      使用遠程 profiles.json URL
+  --dev              開發模式：顯示選擇的軟件但不實際安裝
+  --dry-run          模擬安裝：展示安裝過程但不實際安裝
+  --fake-install     同 --dry-run（已棄用）
+  --yes, -y          自動確認所有提示
+  --verbose, -v      顯示詳細調試信息
+  --log-file FILE    將日誌寫入文件
+  --export-plan FILE 匯出安裝計劃到文件
+  --custom           自訂軟件選擇模式
+  --retry-failed     重試之前失敗的軟件
+  --list-software    列出所有可用軟件
+  --show-software ID 顯示指定軟件詳情
+  --search KEYWORD   搜尋軟件
+  --validate         驗證配置文件
+  --report-json FILE 匯出 JSON 格式安裝報告
+  --report-txt FILE  匯出 TXT 格式安裝報告
+  --list-profiles    列出所有可用套餐
+  --show-profile KEY 顯示指定套餐詳情
+  --skip SW          跳過指定軟件（可多次使用）
+  --only SW          只安裝指定軟件（可多次使用）
+  --fail-fast        遇到錯誤時立即停止
+  --profile NAME     直接指定安裝套餐（跳過選擇選單）
+  --non-interactive  非互動模式（禁止所有 TUI/prompt）
+  --help             顯示此幫助信息
+OPTIONS_EOF
+)
+            
+            LANG_BANNER_TITLE="Quickstart-PC v0.30.0"
+            LANG_BANNER_DESC="快速設定新電腦軟件環境"
+            LANG_DETECTING_SYSTEM="偵測系統環境..."
+            LANG_SYSTEM_INFO="系統"
+            LANG_PACKAGE_MANAGER="套件管理器"
+            LANG_UNSUPPORTED_OS="不支援的作業系統"
+            LANG_USING_REMOTE_CONFIG="使用遠程配置"
+            LANG_USING_CUSTOM_CONFIG="使用本地配置"
+            LANG_USING_DEFAULT_CONFIG="使用預設配置"
+            LANG_CONFIG_NOT_FOUND="配置文件不存在"
+            LANG_CONFIG_INVALID="配置文件格式無效"
+            LANG_SELECT_PROFILES="選擇安裝套餐"
+            LANG_SELECT_SOFTWARE="選擇要安裝的軟件"
+            LANG_NAVIGATE="↑↓ 移動 | 確認"
+            LANG_NAVIGATE_MULTI="↑↓ 移動 | 空格 選擇 | 確認"
+            LANG_SELECTED="[✓] "
+            LANG_NOT_SELECTED="[  ] "
+            LANG_SELECT_ALL="全選"
+            LANG_NO_PROFILE_SELECTED="未選擇任何套餐"
+            LANG_NO_SOFTWARE_SELECTED="未選擇任何軟件"
+            LANG_CONFIRM_INSTALL="確認安裝？[Y/n]"
+            LANG_CANCELLED="已取消"
+            LANG_START_INSTALLING="開始安裝軟件"
+            LANG_INSTALLING="安裝中"
+            LANG_INSTALL_SUCCESS="安裝完成"
+            LANG_INSTALL_FAILED="安裝失敗"
+            LANG_PLATFORM_NOT_SUPPORTED="不支援的平台"
+            LANG_INSTALLATION_COMPLETE="安裝完成"
+            LANG_TOTAL_INSTALLED="共安裝"
+            LANG_DEV_MODE="開發模式：僅顯示選擇的軟件，不實際安裝"
+            LANG_FAKE_INSTALL_MODE="模擬安裝模式：展示安裝過程但不實際安裝"
+            LANG_FAKE_INSTALLING="模擬安裝"
+            LANG_JQ_DETECTED="偵測到 jq，使用 jq"
+            LANG_JQ_NOT_FOUND="未偵測到 jq，安裝中..."
+            LANG_JQ_INSTALLED="jq 安裝成功"
+            LANG_JQ_INSTALL_FAILED="jq 安裝失敗，嘗試使用備用解析方案..."
+            LANG_USING_PYTHON3="使用 python3 作為備用解析器"
+            LANG_NO_JSON_PARSER="無可用 JSON 解析器 (jq/python3)"
+            LANG_CHECKING_INSTALLATION="正在偵測安裝情況..."
+            LANG_SKIPPING_INSTALLED="已安裝，跳過"
+            LANG_ALL_INSTALLED="所有軟件均已安裝，無需操作"
+            LANG_ASK_CONTINUE="安裝完成，是否繼續安裝其他套餐？"
+            LANG_CONTINUE="繼續安裝"
+            LANG_EXIT="退出"
+            LANG_TITLE_SELECT_PROFILE="選擇套餐"
+            LANG_TITLE_SELECT_SOFTWARE="選擇軟件"
+            LANG_TITLE_INSTALLING="安裝中"
+            LANG_TITLE_ASK_CONTINUE="是否繼續安裝"
+            LANG_LANG_PROMPT="請選擇語言"
+            LANG_LANG_MENU_ENTER="確認"
+            LANG_LANG_MENU_SPACE="選擇"
+            LANG_NONINTERACTIVE_ERROR="非互動模式需要 --profile 參數"
+            LANG_PROFILE_NOT_FOUND="Profile '$PROFILE_KEY' 不存在"
+            LANG_NPM_NOT_FOUND="npm 未安裝，正在安裝..."
+            LANG_WINGET_NOT_FOUND="winget 未找到，無法自動安裝 npm"
+            LANG_NPM_AUTO="npm"
+            ;;
+            
+        # ============================================
+        # German - de
+        # ============================================
+        de)
+            HELP_TITLE="Quickstart-PC - Ein-Klick-Computer-Einrichtung"
+            HELP_USAGE="Verwendung: quickstart.sh [OPTIONEN]"
+            HELP_OPTIONS=$(cat << 'OPTIONS_EOF'
+Optionen:
+  --lang LANG        Sprache festlegen (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)
+  --cfg-path PATH    Lokale profiles.json verwenden
+  --cfg-url URL      Remote profiles.json URL verwenden
+  --dev              Entwicklermodus: Auswahl anzeigen ohne zu installieren
+  --dry-run          Simulation: Prozess anzeigen ohne zu installieren
+  --fake-install     Alias für --dry-run (veraltet)
+  --yes, -y          Alle Prompts automatisch bestätigen
+  --verbose, -v      Detaillierte Debug-Infos anzeigen
+  --log-file FILE    Logs in Datei schreiben
+  --export-plan FILE Installationsplan exportieren
+  --custom           Benutzerdefinierte Software-Auswahl
+  --retry-failed     Zuerst fehlgeschlagene Pakete erneut versuchen
+  --list-software    Alle verfügbare Software auflisten
+  --show-software ID Software-Details anzeigen
+  --search KEYWORD   Software suchen
+  --validate         Konfigurationsdatei validieren
+  --report-json FILE JSON-Installationsbericht exportieren
+  --report-txt FILE  TXT-Installationsbericht exportieren
+  --list-profiles    Alle verfügbaren Profile auflisten
+  --show-profile KEY Profil-Details anzeigen
+  --skip SW          Software überspringen (wiederholbar)
+  --only SW          Nur angegebene Software installieren (wiederholbar)
+  --fail-fast        Bei erstem Fehler stoppen
+  --profile NAME     Profil direkt auswählen (Menü überspringen)
+  --non-interactive  Nicht-interaktiver Modus (keine TUI/Prompts)
+  --help             Diese Hilfemeldung anzeigen
+OPTIONS_EOF
+)
+            
+            LANG_BANNER_TITLE="Quickstart-PC v0.30.0"
+            LANG_BANNER_DESC="Schnelle Einrichtung für neue Computer"
+            LANG_DETECTING_SYSTEM="Erkennung der Systemumgebung..."
+            LANG_SYSTEM_INFO="System"
+            LANG_PACKAGE_MANAGER="Paketmanager"
+            LANG_UNSUPPORTED_OS="Nicht unterstütztes Betriebssystem"
+            LANG_USING_REMOTE_CONFIG="Verwendung der Remote-Konfiguration"
+            LANG_USING_CUSTOM_CONFIG="Verwendung der lokalen Konfiguration"
+            LANG_USING_DEFAULT_CONFIG="Verwendung der Standardkonfiguration"
+            LANG_CONFIG_NOT_FOUND="Konfigurationsdatei nicht gefunden"
+            LANG_CONFIG_INVALID="Konfigurationsdateiformat ungültig"
+            LANG_SELECT_PROFILES="Installationsprofile auswählen"
+            LANG_SELECT_SOFTWARE="Software zum Installieren auswählen"
+            LANG_NAVIGATE="↑↓ Bewegen | ENTER Bestätigen"
+            LANG_NAVIGATE_MULTI="↑↓ Bewegen | LEERTASTE Auswählen | ENTER Bestätigen"
+            LANG_SELECTED="[✓] "
+            LANG_NOT_SELECTED="[  ] "
+            LANG_SELECT_ALL="Alle auswählen"
+            LANG_NO_PROFILE_SELECTED="Kein Profil ausgewählt"
+            LANG_NO_SOFTWARE_SELECTED="Keine Software ausgewählt"
+            LANG_CONFIRM_INSTALL="Installation bestätigen? [Y/n]"
+            LANG_CANCELLED="Abgebrochen"
+            LANG_START_INSTALLING="Software-Installation starten"
+            LANG_INSTALLING="Installiere"
+            LANG_INSTALL_SUCCESS="erfolgreich installiert"
+            LANG_INSTALL_FAILED="Installation fehlgeschlagen"
+            LANG_PLATFORM_NOT_SUPPORTED="Plattform nicht unterstützt"
+            LANG_INSTALLATION_COMPLETE="Installation abgeschlossen"
+            LANG_TOTAL_INSTALLED="Gesamt installiert"
+            LANG_DEV_MODE="Entwicklermodus: Ausgewählte Software anzeigen ohne zu installieren"
+            LANG_FAKE_INSTALL_MODE="Simulationsmodus: Installationsprozess anzeigen ohne tatsächlich zu installieren"
+            LANG_FAKE_INSTALLING="Installation simulieren"
+            LANG_JQ_DETECTED="jq erkannt, verwende jq"
+            LANG_JQ_NOT_FOUND="jq nicht gefunden, wird installiert..."
+            LANG_JQ_INSTALLED="jq erfolgreich installiert"
+            LANG_JQ_INSTALL_FAILED="jq-Installation fehlgeschlagen, versucheFallback-Parser..."
+            LANG_USING_PYTHON3="Verwende python3 als Fallback-Parser"
+            LANG_NO_JSON_PARSER="Kein JSON-Parser verfügbar (jq/python3)"
+            LANG_CHECKING_INSTALLATION="Installationsstatus wird überprüft..."
+            LANG_SKIPPING_INSTALLED="Bereits installiert, überspringen"
+            LANG_ALL_INSTALLED="Alle Software bereits installiert, nichts zu tun"
+            LANG_ASK_CONTINUE="Installation abgeschlossen. Andere Profile weiter installieren?"
+            LANG_CONTINUE="Weiter"
+            LANG_EXIT="Beenden"
+            LANG_TITLE_SELECT_PROFILE="Profil auswählen"
+            LANG_TITLE_SELECT_SOFTWARE="Software auswählen"
+            LANG_TITLE_INSTALLING="Installiere"
+            LANG_TITLE_ASK_CONTINUE="Weiter installieren?"
+            LANG_LANG_PROMPT="Bitte Sprache auswählen"
+            LANG_LANG_MENU_ENTER="Bestätigen"
+            LANG_LANG_MENU_SPACE="Auswählen"
+            LANG_NONINTERACTIVE_ERROR="Nicht-interaktiver Modus erfordert --profile Parameter"
+            LANG_PROFILE_NOT_FOUND="Profil '$PROFILE_KEY' nicht gefunden"
+            LANG_NPM_NOT_FOUND="npm nicht gefunden, wird installiert..."
+            LANG_WINGET_NOT_FOUND="winget nicht gefunden, kann npm nicht automatisch installieren"
+            LANG_NPM_AUTO="npm"
+            ;;
+            
+        # ============================================
+        # French - fr
+        # ============================================
+        fr)
+            HELP_TITLE="Quickstart-PC - Configuration PC en un clic"
+            HELP_USAGE="Utilisation: quickstart.sh [OPTIONS]"
+            HELP_OPTIONS=$(cat << 'OPTIONS_EOF'
+Options:
+  --lang LANG        Définir la langue (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)
+  --cfg-path PATH    Utiliser le fichier profiles.json local
+  --cfg-url URL      Utiliser l'URL profiles.json distante
+  --dev              Mode développement: afficher les sélections sans installer
+  --dry-run          Installation simulée: afficher le processus sans installer
+  --fake-install     Alias pour --dry-run (déprécié)
+  --yes, -y          Confirmer automatiquement toutes les invites
+  --verbose, -v      Afficher les infos de débogage détaillées
+  --log-file FILE    Écrire les logs dans un fichier
+  --export-plan FILE Exporter le plan d'installation
+  --custom           Mode de sélection de logiciels personnalisé
+  --retry-failed     Réessayer les paquets précédemment échoués
+  --list-software    Lister tous les logiciels disponibles
+  --show-software ID Afficher les détails du logiciel
+  --search KEYWORD   Rechercher un logiciel
+  --validate         Valider le fichier de configuration
+  --report-json FILE Exporter le rapport d'installation en JSON
+  --report-txt FILE  Exporter le rapport d'installation en TXT
+  --list-profiles    Lister tous les profils disponibles
+  --show-profile KEY Afficher les détails du profil
+  --skip SW          Ignorer le logiciel spécifié (répétable)
+  --only SW          Installer uniquement le logiciel spécifié (répétable)
+  --fail-fast        Arrêter à la première erreur
+  --profile NAME     Sélectionner le profil directement (passer le menu)
+  --non-interactive  Mode non interactif (pas de TUI/prompts)
+  --help             Afficher ce message d'aide
+OPTIONS_EOF
+)
+            
+            LANG_BANNER_TITLE="Quickstart-PC v0.30.0"
+            LANG_BANNER_DESC="Configuration rapide pour nouveaux ordinateurs"
+            LANG_DETECTING_SYSTEM="Détection de l'environnement système..."
+            LANG_SYSTEM_INFO="Système"
+            LANG_PACKAGE_MANAGER="Gestionnaire de paquets"
+            LANG_UNSUPPORTED_OS="Système d'exploitation non pris en charge"
+            LANG_USING_REMOTE_CONFIG="Utilisation de la configuration distante"
+            LANG_USING_CUSTOM_CONFIG="Utilisation de la configuration locale"
+            LANG_USING_DEFAULT_CONFIG="Utilisation de la configuration par défaut"
+            LANG_CONFIG_NOT_FOUND="Fichier de configuration non trouvé"
+            LANG_CONFIG_INVALID="Format du fichier de configuration invalide"
+            LANG_SELECT_PROFILES="Sélectionner les profils d'installation"
+            LANG_SELECT_SOFTWARE="Sélectionner les logiciels à installer"
+            LANG_NAVIGATE="↑↓ Déplacer | ENTRÉE Confirmer"
+            LANG_NAVIGATE_MULTI="↑↓ Déplacer | ESPACE Sélectionner | ENTRÉE Confirmer"
+            LANG_SELECTED="[✓] "
+            LANG_NOT_SELECTED="[  ] "
+            LANG_SELECT_ALL="Tout sélectionner"
+            LANG_NO_PROFILE_SELECTED="Aucun profil sélectionné"
+            LANG_NO_SOFTWARE_SELECTED="Aucun logiciel sélectionné"
+            LANG_CONFIRM_INSTALL="Confirmer l'installation ? [Y/n]"
+            LANG_CANCELLED="Annulé"
+            LANG_START_INSTALLING="Démarrage de l'installation des logiciels"
+            LANG_INSTALLING="Installation"
+            LANG_INSTALL_SUCCESS="installé avec succès"
+            LANG_INSTALL_FAILED="installation échouée"
+            LANG_PLATFORM_NOT_SUPPORTED="Plateforme non prise en charge"
+            LANG_INSTALLATION_COMPLETE="Installation terminée"
+            LANG_TOTAL_INSTALLED="Total installé"
+            LANG_DEV_MODE="Mode développement: afficher les logiciels sélectionnés sans installer"
+            LANG_FAKE_INSTALL_MODE="Mode installation simulée: afficher le processus sans installer"
+            LANG_FAKE_INSTALLING="Installation simulée"
+            LANG_JQ_DETECTED="jq détecté, utilisation de jq"
+            LANG_JQ_NOT_FOUND="jq non trouvé, installation..."
+            LANG_JQ_INSTALLED="jq installé avec succès"
+            LANG_JQ_INSTALL_FAILED="échec de l'installation de jq, tentative du parser alternatif..."
+            LANG_USING_PYTHON3="Utilisation de python3 comme parser alternatif"
+            LANG_NO_JSON_PARSER="Aucun parseur JSON disponible (jq/python3)"
+            LANG_CHECKING_INSTALLATION="Vérification du statut d'installation..."
+            LANG_SKIPPING_INSTALLED="Déjà installé, ignoré"
+            LANG_ALL_INSTALLED="Tous les logiciels déjà installés, rien à faire"
+            LANG_ASK_CONTINUE="Installation terminée. Continuer l'installation d'autres profils ?"
+            LANG_CONTINUE="Continuer"
+            LANG_EXIT="Quitter"
+            LANG_TITLE_SELECT_PROFILE="Sélectionner le profil"
+            LANG_TITLE_SELECT_SOFTWARE="Sélectionner les logiciels"
+            LANG_TITLE_INSTALLING="Installation"
+            LANG_TITLE_ASK_CONTINUE="Continuer l'installation ?"
+            LANG_LANG_PROMPT="Veuillez sélectionner la langue"
+            LANG_LANG_MENU_ENTER="Confirmer"
+            LANG_LANG_MENU_SPACE="Sélectionner"
+            LANG_NONINTERACTIVE_ERROR="Le mode non interactif requiert le paramètre --profile"
+            LANG_PROFILE_NOT_FOUND="Profil '$PROFILE_KEY' non trouvé"
+            LANG_NPM_NOT_FOUND="npm non trouvé, installation..."
+            LANG_WINGET_NOT_FOUND="winget non trouvé, impossible d'installer automatiquement npm"
+            LANG_NPM_AUTO="npm"
+            ;;
+            
+        # ============================================
+        # Arabic - ar (LTR for terminal compatibility)
+        # ============================================
+        ar)
+            HELP_TITLE="Quickstart-PC - إعداد الكمبيوتر بضغطة واحدة"
+            HELP_USAGE="الاستخدام: quickstart.sh [الخيارات]"
+            HELP_OPTIONS=$(cat << 'OPTIONS_EOF'
+الخيارات:
+  --lang LANG        تعيين اللغة (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)
+  --cfg-path PATH    استخدام ملف profiles.json المحلي
+  --cfg-url URL      استخدام عنوان profiles.json البعيد
+  --dev              وضع التطوير: إظهار التحديدات دون التثبيت
+  --dry-run          تثبيت وهمي: إظهار العملية دون التثبيت
+  --fake-install     اسم مستعار لـ --dry-run (مهمل)
+  --yes, -y          تأكيد جميع الأسئلة تلقائياً
+  --verbose, -v      إظهار معلومات التصحيح التفصيلية
+  --log-file FILE    كتابة السجلات في ملف
+  --export-plan FILE تصدير خطة التثبيت
+  --custom           وضع اختيار البرامج المخصص
+  --retry-failed     إعادة المحاولة للحزم الفاشلة سابقاً
+  --list-software    سرد جميع البرامج المتاحة
+  --show-software ID إظهار تفاصيل البرنامج
+  --search KEYWORD   البحث عن برنامج
+  --validate         التحقق من ملف التكوين
+  --report-json FILE تصدير تقرير التثبيت بـ JSON
+  --report-txt FILE  تصدير تقرير التثبيت بـ TXT
+  --list-profiles    سرد جميع الملفات الشخصية المتاحة
+  --show-profile KEY إظهار تفاصيل الملف الشخصي
+  --skip SW          تخطي البرنامج المحدد (قابل للتكرار)
+  --only SW          تثبيت البرنامج المحدد فقط (قابل للتكرار)
+  --fail-fast        التوقف عند أول خطأ
+  --profile NAME     تحديد الملف الشخصي مباشرة (تخطي القائمة)
+  --non-interactive  الوضع غير التفاعلي (لا TUI/مطالبات)
+  --help             إظهار رسالة المساعدة هذه
+OPTIONS_EOF
+)
+            
+            LANG_BANNER_TITLE="Quickstart-PC v0.30.0"
+            LANG_BANNER_DESC="إعداد سريع لأجهزة الكمبيوتر الجديدة"
+            LANG_DETECTING_SYSTEM="جاري اكتشاف بيئة النظام..."
+            LANG_SYSTEM_INFO="النظام"
+            LANG_PACKAGE_MANAGER="مدير الحزم"
+            LANG_UNSUPPORTED_OS="نظام تشغيل غير مدعوم"
+            LANG_USING_REMOTE_CONFIG="استخدام التكوين البعيد"
+            LANG_USING_CUSTOM_CONFIG="استخدام التكوين المحلي"
+            LANG_USING_DEFAULT_CONFIG="استخدام التكوين الافتراضي"
+            LANG_CONFIG_NOT_FOUND="ملف التكوين غير موجود"
+            LANG_CONFIG_INVALID="تنسيق ملف التكوين غير صالح"
+            LANG_SELECT_PROFILES="اختيار ملفات التثبيت"
+            LANG_SELECT_SOFTWARE="اختيار البرامج للتثبيت"
+            LANG_NAVIGATE="↑↓ تحريك | ENTER تأكيد"
+            LANG_NAVIGATE_MULTI="↑↓ تحريك | مسافة اختيار | ENTER تأكيد"
+            LANG_SELECTED="[✓] "
+            LANG_NOT_SELECTED="[  ] "
+            LANG_SELECT_ALL="تحديد الكل"
+            LANG_NO_PROFILE_SELECTED="لم يتم اختيار أي ملف شخصي"
+            LANG_NO_SOFTWARE_SELECTED="لم يتم اختيار أي برنامج"
+            LANG_CONFIRM_INSTALL="تأكيد التثبيت؟ [Y/n]"
+            LANG_CANCELLED="تم الإلغاء"
+            LANG_START_INSTALLING="بدء تثبيت البرامج"
+            LANG_INSTALLING="جاري التثبيت"
+            LANG_INSTALL_SUCCESS="تم التثبيت بنجاح"
+            LANG_INSTALL_FAILED="فشل التثبيت"
+            LANG_PLATFORM_NOT_SUPPORTED="المنصة غير مدعومة"
+            LANG_INSTALLATION_COMPLETE="اكتمل التثبيت"
+            LANG_TOTAL_INSTALLED="المجموع المثبت"
+            LANG_DEV_MODE="وضع التطوير: إظهار البرامج المحددة دون تثبيت"
+            LANG_FAKE_INSTALL_MODE="وضع التثبيت الوهمي: إظهار عملية التثبيت دون التثبيت الفعلي"
+            LANG_FAKE_INSTALLING="محاكاة التثبيت"
+            LANG_JQ_DETECTED="تم اكتشاف jq، استخدام jq"
+            LANG_JQ_NOT_FOUND="لم يتم العثور على jq، جاري التثبيت..."
+            LANG_JQ_INSTALLED="تم تثبيت jq بنجاح"
+            LANG_JQ_INSTALL_FAILED="فشل تثبيت jq، محاولة المحلل البديل..."
+            LANG_USING_PYTHON3="استخدام python3 كمحلل بديل"
+            LANG_NO_JSON_PARSER="لا يوجد محلل JSON متاح (jq/python3)"
+            LANG_CHECKING_INSTALLATION="التحقق من حالة التثبيت..."
+            LANG_SKIPPING_INSTALLED="مثبت بالفعل، تخطي"
+            LANG_ALL_INSTALLED="جميع البرامج مثبتة بالفعل، لا شيء القيام به"
+            LANG_ASK_CONTINUE="اكتمل التثبيت. متابعة تثبيت ملفات شخصية أخرى؟"
+            LANG_CONTINUE="متابعة"
+            LANG_EXIT="خروج"
+            LANG_TITLE_SELECT_PROFILE="اختيار الملف الشخصي"
+            LANG_TITLE_SELECT_SOFTWARE="اختيار البرامج"
+            LANG_TITLE_INSTALLING="التثبيت"
+            LANG_TITLE_ASK_CONTINUE="متابعة التثبيت؟"
+            LANG_LANG_PROMPT="يرجى اختيار اللغة"
+            LANG_LANG_MENU_ENTER="تأكيد"
+            LANG_LANG_MENU_SPACE="اختيار"
+            LANG_NONINTERACTIVE_ERROR="الوضع غير التفاعلي يتطلب معامل --profile"
+            LANG_PROFILE_NOT_FOUND="الملف الشخصي '$PROFILE_KEY' غير موجود"
+            LANG_NPM_NOT_FOUND="npm غير موجود، جاري التثبيت..."
+            LANG_WINGET_NOT_FOUND="winget غير موجود، لا يمكن تثبيت npm تلقائياً"
+            LANG_NPM_AUTO="npm"
+            ;;
+            
+        # ============================================
+        # Portuguese - pt
+        # ============================================
+        pt)
+            HELP_TITLE="Quickstart-PC - Configuração de PC com um clique"
+            HELP_USAGE="Uso: quickstart.sh [OPÇÕES]"
+            HELP_OPTIONS=$(cat << 'OPTIONS_EOF'
+Opções:
+  --lang LANG        Definir idioma (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)
+  --cfg-path PATH    Usar arquivo profiles.json local
+  --cfg-url URL      Usar URL profiles.json remota
+  --dev              Modo desenvolvimento: mostrar escolhas sem instalar
+  --dry-run          Instalação simulada: mostrar processo sem instalar
+  --fake-install     Apelido para --dry-run (obsoleto)
+  --yes, -y          Confirmar automaticamente todos os prompts
+  --verbose, -v      Mostrar informações de debug detalhadas
+  --log-file FILE    Escrever logs em arquivo
+  --export-plan FILE Exportar plano de instalação
+  --custom           Modo de seleção de software personalizado
+  --retry-failed     Tentar pacotes que falharam anteriormente
+  --list-software    Listar todos os softwares disponíveis
+  --show-software ID Mostrar detalhes do software
+  --search KEYWORD   Pesquisar software
+  --validate         Validar arquivo de configuração
+  --report-json FILE Exportar relatório de instalação em JSON
+  --report-txt FILE  Exportar relatório de instalação em TXT
+  --list-profiles    Listar todos os perfis disponíveis
+  --show-profile KEY Mostrar detalhes do perfil
+  --skip SW          Pular software especificado (repetível)
+  --only SW          Instalar apenas o software especificado (repetível)
+  --fail-fast        Parar no primeiro erro
+  --profile NAME     Selecionar perfil diretamente (pular menu)
+  --non-interactive  Modo não interativo (sem TUI/prompts)
+  --help             Mostrar esta mensagem de ajuda
+OPTIONS_EOF
+)
+            
+            LANG_BANNER_TITLE="Quickstart-PC v0.30.0"
+            LANG_BANNER_DESC="Configuração rápida para novos computadores"
+            LANG_DETECTING_SYSTEM="Detectando ambiente do sistema..."
+            LANG_SYSTEM_INFO="Sistema"
+            LANG_PACKAGE_MANAGER="Gerenciador de pacotes"
+            LANG_UNSUPPORTED_OS="Sistema operacional não suportado"
+            LANG_USING_REMOTE_CONFIG="Usando configuração remota"
+            LANG_USING_CUSTOM_CONFIG="Usando configuração local"
+            LANG_USING_DEFAULT_CONFIG="Usando configuração padrão"
+            LANG_CONFIG_NOT_FOUND="Arquivo de configuração não encontrado"
+            LANG_CONFIG_INVALID="Formato do arquivo de configuração inválido"
+            LANG_SELECT_PROFILES="Selecionar Perfis de Instalação"
+            LANG_SELECT_SOFTWARE="Selecionar Software para Instalar"
+            LANG_NAVIGATE="↑↓ Mover | ENTER Confirmar"
+            LANG_NAVIGATE_MULTI="↑↓ Mover | ESPAÇO Selecionar | ENTER Confirmar"
+            LANG_SELECTED="[✓] "
+            LANG_NOT_SELECTED="[  ] "
+            LANG_SELECT_ALL="Selecionar Tudo"
+            LANG_NO_PROFILE_SELECTED="Nenhum perfil selecionado"
+            LANG_NO_SOFTWARE_SELECTED="Nenhum software selecionado"
+            LANG_CONFIRM_INSTALL="Confirmar instalação? [Y/n]"
+            LANG_CANCELLED="Cancelado"
+            LANG_START_INSTALLING="Iniciando instalação de software"
+            LANG_INSTALLING="Instalando"
+            LANG_INSTALL_SUCCESS="instalado com sucesso"
+            LANG_INSTALL_FAILED="instalação falhou"
+            LANG_PLATFORM_NOT_SUPPORTED="Plataforma não suportada"
+            LANG_INSTALLATION_COMPLETE="Instalação Concluída"
+            LANG_TOTAL_INSTALLED="Total instalado"
+            LANG_DEV_MODE="Modo desenvolvimento: mostrar software selecionado sem instalar"
+            LANG_FAKE_INSTALL_MODE="Modo instalação simulada: mostrar processo sem instalar"
+            LANG_FAKE_INSTALLING="Simulando instalação"
+            LANG_JQ_DETECTED="jq detectado, usando jq"
+            LANG_JQ_NOT_FOUND="jq não encontrado, instalando..."
+            LANG_JQ_INSTALLED="jq instalado com sucesso"
+            LANG_JQ_INSTALL_FAILED="falha na instalação do jq, tentando parser alternativo..."
+            LANG_USING_PYTHON3="Usando python3 como parser alternativo"
+            LANG_NO_JSON_PARSER="Nenhum parser JSON disponível (jq/python3)"
+            LANG_CHECKING_INSTALLATION="Verificando status da instalação..."
+            LANG_SKIPPING_INSTALLED="Já instalado, pulando"
+            LANG_ALL_INSTALLED="Todo software já instalado, nada a fazer"
+            LANG_ASK_CONTINUE="Instalação concluída. Continuar instalando outros perfis?"
+            LANG_CONTINUE="Continuar"
+            LANG_EXIT="Sair"
+            LANG_TITLE_SELECT_PROFILE="Selecionar Perfil"
+            LANG_TITLE_SELECT_SOFTWARE="Selecionar Software"
+            LANG_TITLE_INSTALLING="Instalando"
+            LANG_TITLE_ASK_CONTINUE="Continuar Instalação?"
+            LANG_LANG_PROMPT="Por favor, selecione o idioma"
+            LANG_LANG_MENU_ENTER="Confirmar"
+            LANG_LANG_MENU_SPACE="Selecionar"
+            LANG_NONINTERACTIVE_ERROR="Modo não interativo requer parâmetro --profile"
+            LANG_PROFILE_NOT_FOUND="Perfil '$PROFILE_KEY' não encontrado"
+            LANG_NPM_NOT_FOUND="npm não encontrado, instalando..."
+            LANG_WINGET_NOT_FOUND="winget não encontrado, não é possível instalar npm automaticamente"
+            LANG_NPM_AUTO="npm"
+            ;;
+            
+        # ============================================
+        # Italian - it
+        # ============================================
+        it)
+            HELP_TITLE="Quickstart-PC - Configurazione PC con un clic"
+            HELP_USAGE="Utilizzo: quickstart.sh [OPZIONI]"
+            HELP_OPTIONS=$(cat << 'OPTIONS_EOF'
+Opzioni:
+  --lang LANG        Imposta lingua (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)
+  --cfg-path PATH    Usa file profiles.json locale
+  --cfg-url URL      Usa URL profiles.json remota
+  --dev              Modalità sviluppo: mostra selezioni senza installare
+  --dry-run          Installazione simulata: mostra processo senza installare
+  --fake-install     Alias per --dry-run (deprecato)
+  --yes, -y          Conferma automaticamente tutti i prompt
+  --verbose, -v      Mostra info di debug dettagliate
+  --log-file FILE    Scrivi log su file
+  --export-plan FILE Esporta piano di installazione
+  --custom           Modalità selezione software personalizzata
+  --retry-failed     Riprova pacchetti precedentemente falliti
+  --list-software    Elenca tutto il software disponibile
+  --show-software ID Mostra dettagli software
+  --search KEYWORD   Cerca software
+  --validate         Valida file di configurazione
+  --report-json FILE Esporta report installazione JSON
+  --report-txt FILE  Esporta report installazione TXT
+  --list-profiles    Elenca tutti i profili disponibili
+  --show-profile KEY Mostra dettagli profilo
+  --skip SW          Salta software specificato (ripetibile)
+  --only SW          Installa solo software specificato (ripetibile)
+  --fail-fast        Ferma al primo errore
+  --profile NAME     Seleziona profilo direttamente (salta menu)
+  --non-interactive  Modalità non interattiva (no TUI/prompt)
+  --help             Mostra questo messaggio di aiuto
+OPTIONS_EOF
+)
+            
+            LANG_BANNER_TITLE="Quickstart-PC v0.30.0"
+            LANG_BANNER_DESC="Configurazione rapida per nuovi computer"
+            LANG_DETECTING_SYSTEM="Rilevamento ambiente sistema..."
+            LANG_SYSTEM_INFO="Sistema"
+            LANG_PACKAGE_MANAGER="Gestore pacchetti"
+            LANG_UNSUPPORTED_OS="Sistema operativo non supportato"
+            LANG_USING_REMOTE_CONFIG="Utilizzo configurazione remota"
+            LANG_USING_CUSTOM_CONFIG="Utilizzo configurazione locale"
+            LANG_USING_DEFAULT_CONFIG="Utilizzo configurazione predefinita"
+            LANG_CONFIG_NOT_FOUND="File di configurazione non trovato"
+            LANG_CONFIG_INVALID="Formato file di configurazione non valido"
+            LANG_SELECT_PROFILES="Seleziona Profili di Installazione"
+            LANG_SELECT_SOFTWARE="Seleziona Software da Installare"
+            LANG_NAVIGATE="↑↓ Muovi | INVIO Conferma"
+            LANG_NAVIGATE_MULTI="↑↓ Muovi | SPAZIO Seleziona | INVIO Conferma"
+            LANG_SELECTED="[✓] "
+            LANG_NOT_SELECTED="[  ] "
+            LANG_SELECT_ALL="Seleziona Tutto"
+            LANG_NO_PROFILE_SELECTED="Nessun profilo selezionato"
+            LANG_NO_SOFTWARE_SELECTED="Nessun software selezionato"
+            LANG_CONFIRM_INSTALL="Confermare installazione? [Y/n]"
+            LANG_CANCELLED="Annullato"
+            LANG_START_INSTALLING="Avvio installazione software"
+            LANG_INSTALLING="Installazione"
+            LANG_INSTALL_SUCCESS="installato con successo"
+            LANG_INSTALL_FAILED="installazione fallita"
+            LANG_PLATFORM_NOT_SUPPORTED="Piattaforma non supportata"
+            LANG_INSTALLATION_COMPLETE="Installazione Completata"
+            LANG_TOTAL_INSTALLED="Totale installato"
+            LANG_DEV_MODE="Modalità sviluppo: mostra software selezionato senza installare"
+            LANG_FAKE_INSTALL_MODE="Modalità installazione simulata: mostra processo senza installare"
+            LANG_FAKE_INSTALLING="Simulazione installazione"
+            LANG_JQ_DETECTED="jq rilevato, uso jq"
+            LANG_JQ_NOT_FOUND="jq non trovato, installazione..."
+            LANG_JQ_INSTALLED="jq installato con successo"
+            LANG_JQ_INSTALL_FAILED="installazione jq fallita, tento parser alternativo..."
+            LANG_USING_PYTHON3="Uso python3 come parser alternativo"
+            LANG_NO_JSON_PARSER="Nessun parser JSON disponibile (jq/python3)"
+            LANG_CHECKING_INSTALLATION="Verifica stato installazione..."
+            LANG_SKIPPING_INSTALLED="Già installato, salto"
+            LANG_ALL_INSTALLED="Tutto il software già installato, niente da fare"
+            LANG_ASK_CONTINUE="Installazione completata. Continuare installazione altri profili?"
+            LANG_CONTINUE="Continua"
+            LANG_EXIT="Esci"
+            LANG_TITLE_SELECT_PROFILE="Seleziona Profilo"
+            LANG_TITLE_SELECT_SOFTWARE="Seleziona Software"
+            LANG_TITLE_INSTALLING="Installazione"
+            LANG_TITLE_ASK_CONTINUE="Continuare Installazione?"
+            LANG_LANG_PROMPT="Per favore, seleziona la lingua"
+            LANG_LANG_MENU_ENTER="Conferma"
+            LANG_LANG_MENU_SPACE="Seleziona"
+            LANG_NONINTERACTIVE_ERROR="Modalità non interattiva richiede parametro --profile"
+            LANG_PROFILE_NOT_FOUND="Profilo '$PROFILE_KEY' non trovato"
+            LANG_NPM_NOT_FOUND="npm non trovato, installazione..."
+            LANG_WINGET_NOT_FOUND="winget non trovato, impossibile installare npm automaticamente"
+            LANG_NPM_AUTO="npm"
+            ;;
+            
+        # ============================================
         # English (default) - en-US
         # ============================================
         *)
@@ -475,7 +1063,7 @@ OPTIONS_EOF
             HELP_USAGE="Usage: quickstart.sh [OPTIONS]"
             HELP_OPTIONS=$(cat << 'OPTIONS_EOF'
 Options:
-  --lang LANG        Set language (en, zh, ja, ko)
+  --lang LANG        Set language (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)
   --cfg-path PATH    Use local profiles.json file
   --cfg-url URL      Use remote profiles.json URL
   --dev              Dev mode: show selections without installing
@@ -1166,8 +1754,8 @@ select_language() {
     local sorted_items=()
     local sorted_codes=()
     
-    # Order: en-US, zh-CN, ja, ko
-    for code in en-US zh-CN ja ko; do
+    # Order: en-US, zh-CN, zh-Hant, ja, ko, de, fr, ar, pt, it
+    for code in en-US zh-CN zh-Hant ja ko de fr ar pt it; do
         if [[ -n "${SUPPORTED_LANGUAGES[$code]}" ]]; then
             sorted_codes+=("$code")
             sorted_items+=("${SUPPORTED_LANGUAGES[$code]}")
@@ -1181,8 +1769,14 @@ select_language() {
     case $choice in
         0) echo "en-US" ;;
         1) echo "zh-CN" ;;
-        2) echo "ja" ;;
-        3) echo "ko" ;;
+        2) echo "zh-Hant" ;;
+        3) echo "ja" ;;
+        4) echo "ko" ;;
+        5) echo "de" ;;
+        6) echo "fr" ;;
+        7) echo "ar" ;;
+        8) echo "pt" ;;
+        9) echo "it" ;;
         *) echo "en-US" ;;
     esac
 }
