@@ -223,6 +223,7 @@
     "chrome": {
       "name": "Chrome",
       "desc": "浏览器/Web browser",
+      "tier": "stable",
       "win": "winget install Google.Chrome",
       "mac": "brew install --cask google-chrome",
       "linux": "wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg && echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee /etc/apt/sources.list.d/google-chrome.list && sudo apt update && sudo apt install -y google-chrome-stable",
@@ -237,6 +238,7 @@
     "firefox": {
       "name": "Firefox",
       "desc": "开源浏览器/Open-source browser",
+      "tier": "stable",
       "win": "winget install Mozilla.Firefox",
       "mac": "brew install --cask firefox",
       "linux": "sudo apt install -y firefox",
@@ -260,7 +262,8 @@
       "check_mac": "ls /Applications/Microsoft\\ Edge.app 2>/dev/null",
       "check_linux": "which microsoft-edge 2>/dev/null",
       "check_linux_dnf": "which microsoft-edge 2>/dev/null",
-      "check_linux_pacman": "which microsoft-edge 2>/dev/null"
+      "check_linux_pacman": "which microsoft-edge 2>/dev/null",
+      "tier": "stable"
     },
     "vscode": {
       "name": "VS Code",
@@ -274,7 +277,8 @@
       "check_mac": "ls /Applications/Visual\\ Studio\\ Code.app 2>/dev/null",
       "check_linux": "which code 2>/dev/null",
       "check_linux_dnf": "which code 2>/dev/null",
-      "check_linux_pacman": "which code 2>/dev/null"
+      "check_linux_pacman": "which code 2>/dev/null",
+      "tier": "stable"
     },
     "intellij": {
       "name": "IntelliJ IDEA",
@@ -288,7 +292,8 @@
       "check_mac": "ls /Applications/IntelliJ\\ IDEA.app 2>/dev/null",
       "check_linux": "which idea 2>/dev/null",
       "check_linux_dnf": "which idea 2>/dev/null",
-      "check_linux_pacman": "which idea 2>/dev/null"
+      "check_linux_pacman": "which idea 2>/dev/null",
+      "tier": "stable"
     },
     "jetbrains-toolbox": {
       "name": "JetBrains Toolbox",
@@ -302,7 +307,8 @@
       "check_mac": "ls /Applications/JetBrains\\ Toolbox.app 2>/dev/null",
       "check_linux": "which jetbrains-toolbox 2>/dev/null",
       "check_linux_dnf": "which jetbrains-toolbox 2>/dev/null",
-      "check_linux_pacman": "which jetbrains-toolbox 2>/dev/null"
+      "check_linux_pacman": "which jetbrains-toolbox 2>/dev/null",
+      "tier": "stable"
     },
     "git": {
       "name": "Git",
@@ -316,7 +322,8 @@
       "check_mac": "which git 2>/dev/null",
       "check_linux": "which git 2>/dev/null",
       "check_linux_dnf": "which git 2>/dev/null",
-      "check_linux_pacman": "which git 2>/dev/null"
+      "check_linux_pacman": "which git 2>/dev/null",
+      "tier": "stable"
     },
     "nodejs": {
       "name": "Node.js",
@@ -330,7 +337,8 @@
       "check_mac": "which node 2>/dev/null",
       "check_linux": "which node 2>/dev/null",
       "check_linux_dnf": "which node 2>/dev/null",
-      "check_linux_pacman": "which node 2>/dev/null"
+      "check_linux_pacman": "which node 2>/dev/null",
+      "tier": "stable"
     },
     "python": {
       "name": "Python",
@@ -344,7 +352,8 @@
       "check_mac": "which python3 2>/dev/null",
       "check_linux": "which python3 2>/dev/null",
       "check_linux_dnf": "which python3 2>/dev/null",
-      "check_linux_pacman": "which python3 2>/dev/null"
+      "check_linux_pacman": "which python3 2>/dev/null",
+      "tier": "stable"
     },
     "go": {
       "name": "Go",
@@ -358,7 +367,8 @@
       "check_mac": "which go 2>/dev/null",
       "check_linux": "which go 2>/dev/null",
       "check_linux_dnf": "which go 2>/dev/null",
-      "check_linux_pacman": "which go 2>/dev/null"
+      "check_linux_pacman": "which go 2>/dev/null",
+      "tier": "stable"
     },
     "docker": {
       "name": "Docker",
@@ -372,7 +382,8 @@
       "check_mac": "which docker 2>/dev/null",
       "check_linux": "which docker 2>/dev/null",
       "check_linux_dnf": "which docker 2>/dev/null",
-      "check_linux_pacman": "which docker 2>/dev/null"
+      "check_linux_pacman": "which docker 2>/dev/null",
+      "tier": "stable"
     },
     "postman": {
       "name": "Postman",
@@ -386,7 +397,8 @@
       "check_mac": "ls /Applications/Postman.app 2>/dev/null",
       "check_linux": "which postman 2>/dev/null",
       "check_linux_dnf": "which postman 2>/dev/null",
-      "check_linux_pacman": "which postman 2>/dev/null"
+      "check_linux_pacman": "which postman 2>/dev/null",
+      "tier": "stable"
     },
     "wireshark": {
       "name": "Wireshark",
@@ -400,7 +412,8 @@
       "check_mac": "ls /Applications/Wireshark.app 2>/dev/null",
       "check_linux": "which wireshark 2>/dev/null",
       "check_linux_dnf": "which wireshark 2>/dev/null",
-      "check_linux_pacman": "which wireshark 2>/dev/null"
+      "check_linux_pacman": "which wireshark 2>/dev/null",
+      "tier": "stable"
     },
     "wps": {
       "name": "WPS Office",
@@ -414,7 +427,8 @@
       "check_mac": "ls /Applications/WPS\\ Office.app 2>/dev/null || ls /Applications/wpsoffice.app 2>/dev/null",
       "check_linux": "which wps 2>/dev/null",
       "check_linux_dnf": "which wps 2>/dev/null",
-      "check_linux_pacman": "which wps 2>/dev/null"
+      "check_linux_pacman": "which wps 2>/dev/null",
+      "tier": "stable"
     },
     "obsidian": {
       "name": "Obsidian",
@@ -428,7 +442,8 @@
       "check_mac": "ls /Applications/Obsidian.app 2>/dev/null",
       "check_linux": "which obsidian 2>/dev/null",
       "check_linux_dnf": "which obsidian 2>/dev/null",
-      "check_linux_pacman": "which obsidian 2>/dev/null"
+      "check_linux_pacman": "which obsidian 2>/dev/null",
+      "tier": "stable"
     },
     "notion": {
       "name": "Notion",
@@ -442,7 +457,8 @@
       "check_mac": "ls /Applications/Notion.app 2>/dev/null",
       "check_linux": "which notion 2>/dev/null",
       "check_linux_dnf": "which notion 2>/dev/null",
-      "check_linux_pacman": "which notion 2>/dev/null"
+      "check_linux_pacman": "which notion 2>/dev/null",
+      "tier": "stable"
     },
     "cursor": {
       "name": "Cursor",
@@ -456,7 +472,8 @@
       "check_mac": "ls /Applications/Cursor.app 2>/dev/null",
       "check_linux": "which cursor 2>/dev/null",
       "check_linux_dnf": "which cursor 2>/dev/null",
-      "check_linux_pacman": "which cursor 2>/dev/null"
+      "check_linux_pacman": "which cursor 2>/dev/null",
+      "tier": "stable"
     },
     "ollama": {
       "name": "Ollama",
@@ -470,7 +487,8 @@
       "check_mac": "which ollama 2>/dev/null",
       "check_linux": "which ollama 2>/dev/null",
       "check_linux_dnf": "which ollama 2>/dev/null",
-      "check_linux_pacman": "which ollama 2>/dev/null"
+      "check_linux_pacman": "which ollama 2>/dev/null",
+      "tier": "stable"
     },
     "lmstudio": {
       "name": "LM Studio",
@@ -484,7 +502,8 @@
       "check_mac": "ls /Applications/LM\\ Studio.app 2>/dev/null",
       "check_linux": "which lm-studio 2>/dev/null",
       "check_linux_dnf": "which lm-studio 2>/dev/null",
-      "check_linux_pacman": "which lm-studio 2>/dev/null"
+      "check_linux_pacman": "which lm-studio 2>/dev/null",
+      "tier": "stable"
     },
     "vlc": {
       "name": "VLC",
@@ -498,7 +517,8 @@
       "check_mac": "ls /Applications/VLC.app 2>/dev/null",
       "check_linux": "which vlc 2>/dev/null",
       "check_linux_dnf": "which vlc 2>/dev/null",
-      "check_linux_pacman": "which vlc 2>/dev/null"
+      "check_linux_pacman": "which vlc 2>/dev/null",
+      "tier": "stable"
     },
     "obs": {
       "name": "OBS Studio",
@@ -512,7 +532,8 @@
       "check_mac": "ls /Applications/OBS.app 2>/dev/null",
       "check_linux": "which obs 2>/dev/null",
       "check_linux_dnf": "which obs 2>/dev/null",
-      "check_linux_pacman": "which obs 2>/dev/null"
+      "check_linux_pacman": "which obs 2>/dev/null",
+      "tier": "stable"
     },
     "telegram": {
       "name": "Telegram",
@@ -526,7 +547,8 @@
       "check_mac": "ls /Applications/Telegram.app 2>/dev/null",
       "check_linux": "which telegram-desktop 2>/dev/null",
       "check_linux_dnf": "which telegram-desktop 2>/dev/null",
-      "check_linux_pacman": "which telegram-desktop 2>/dev/null"
+      "check_linux_pacman": "which telegram-desktop 2>/dev/null",
+      "tier": "stable"
     },
     "discord": {
       "name": "Discord",
@@ -540,7 +562,8 @@
       "check_mac": "ls /Applications/Discord.app 2>/dev/null",
       "check_linux": "which discord 2>/dev/null",
       "check_linux_dnf": "which discord 2>/dev/null",
-      "check_linux_pacman": "which discord 2>/dev/null"
+      "check_linux_pacman": "which discord 2>/dev/null",
+      "tier": "stable"
     },
     "spotify": {
       "name": "Spotify",
@@ -554,7 +577,8 @@
       "check_mac": "ls /Applications/Spotify.app 2>/dev/null",
       "check_linux": "which spotify 2>/dev/null",
       "check_linux_dnf": "which spotify 2>/dev/null",
-      "check_linux_pacman": "which spotify 2>/dev/null"
+      "check_linux_pacman": "which spotify 2>/dev/null",
+      "tier": "stable"
     },
     "zoom": {
       "name": "Zoom",
@@ -568,7 +592,8 @@
       "check_mac": "ls /Applications/zoom.us.app 2>/dev/null",
       "check_linux": "which zoom 2>/dev/null",
       "check_linux_dnf": "which zoom 2>/dev/null",
-      "check_linux_pacman": "which zoom 2>/dev/null"
+      "check_linux_pacman": "which zoom 2>/dev/null",
+      "tier": "stable"
     },
     "slack": {
       "name": "Slack",
@@ -582,7 +607,8 @@
       "check_mac": "ls /Applications/Slack.app 2>/dev/null",
       "check_linux": "which slack 2>/dev/null",
       "check_linux_dnf": "which slack 2>/dev/null",
-      "check_linux_pacman": "which slack 2>/dev/null"
+      "check_linux_pacman": "which slack 2>/dev/null",
+      "tier": "stable"
     },
     "figma": {
       "name": "Figma",
@@ -596,7 +622,8 @@
       "check_mac": "ls /Applications/Figma.app 2>/dev/null",
       "check_linux": "which figma-linux 2>/dev/null",
       "check_linux_dnf": "which figma-linux 2>/dev/null",
-      "check_linux_pacman": "which figma-linux 2>/dev/null"
+      "check_linux_pacman": "which figma-linux 2>/dev/null",
+      "tier": "stable"
     },
     "adobe-cc": {
       "name": "Adobe Creative Cloud",
@@ -610,7 +637,8 @@
       "check_mac": "ls /Applications/Adobe\\ Creative\\ Cloud 2>/dev/null",
       "check_linux": "which adobe-cc 2>/dev/null",
       "check_linux_dnf": "which adobe-cc 2>/dev/null",
-      "check_linux_pacman": "which adobe-cc 2>/dev/null"
+      "check_linux_pacman": "which adobe-cc 2>/dev/null",
+      "tier": "experimental"
     },
     "blender": {
       "name": "Blender",
@@ -624,7 +652,8 @@
       "check_mac": "ls /Applications/Blender.app 2>/dev/null",
       "check_linux": "which blender 2>/dev/null",
       "check_linux_dnf": "which blender 2>/dev/null",
-      "check_linux_pacman": "which blender 2>/dev/null"
+      "check_linux_pacman": "which blender 2>/dev/null",
+      "tier": "stable"
     },
     "gimp": {
       "name": "GIMP",
@@ -638,7 +667,8 @@
       "check_mac": "ls /Applications/GIMP-2.10.app 2>/dev/null || ls /Applications/GIMP.app 2>/dev/null",
       "check_linux": "which gimp 2>/dev/null",
       "check_linux_dnf": "which gimp 2>/dev/null",
-      "check_linux_pacman": "which gimp 2>/dev/null"
+      "check_linux_pacman": "which gimp 2>/dev/null",
+      "tier": "stable"
     },
     "keepassxc": {
       "name": "KeePassXC",
@@ -652,7 +682,8 @@
       "check_mac": "ls /Applications/KeePassXC.app 2>/dev/null",
       "check_linux": "which keepassxc 2>/dev/null",
       "check_linux_dnf": "which keepassxc 2>/dev/null",
-      "check_linux_pacman": "which keepassxc 2>/dev/null"
+      "check_linux_pacman": "which keepassxc 2>/dev/null",
+      "tier": "stable"
     },
     "1password": {
       "name": "1Password",
@@ -666,7 +697,8 @@
       "check_mac": "ls /Applications/1Password.app 2>/dev/null",
       "check_linux": "which 1password 2>/dev/null",
       "check_linux_dnf": "which 1password 2>/dev/null",
-      "check_linux_pacman": "which 1password 2>/dev/null"
+      "check_linux_pacman": "which 1password 2>/dev/null",
+      "tier": "stable"
     },
     "raycast": {
       "name": "Raycast",
@@ -680,7 +712,8 @@
       "check_mac": "ls /Applications/Raycast.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "stable"
     },
     "alfred": {
       "name": "Alfred",
@@ -694,7 +727,8 @@
       "check_mac": "ls /Applications/Alfred\\ 5.app 2>/dev/null || ls /Applications/Alfred\\ 4.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "stable"
     },
     "typora": {
       "name": "Typora",
@@ -708,7 +742,8 @@
       "check_mac": "ls /Applications/Typora.app 2>/dev/null",
       "check_linux": "which typora 2>/dev/null",
       "check_linux_dnf": "which typora 2>/dev/null",
-      "check_linux_pacman": "which typora 2>/dev/null"
+      "check_linux_pacman": "which typora 2>/dev/null",
+      "tier": "stable"
     },
     "sublime-text": {
       "name": "Sublime Text",
@@ -722,7 +757,8 @@
       "check_mac": "ls /Applications/Sublime\\ Text.app 2>/dev/null",
       "check_linux": "which subl 2>/dev/null",
       "check_linux_dnf": "which subl 2>/dev/null",
-      "check_linux_pacman": "which subl 2>/dev/null"
+      "check_linux_pacman": "which subl 2>/dev/null",
+      "tier": "stable"
     },
     "neovim": {
       "name": "Neovim",
@@ -736,7 +772,8 @@
       "check_mac": "which nvim 2>/dev/null",
       "check_linux": "which nvim 2>/dev/null",
       "check_linux_dnf": "which nvim 2>/dev/null",
-      "check_linux_pacman": "which nvim 2>/dev/null"
+      "check_linux_pacman": "which nvim 2>/dev/null",
+      "tier": "stable"
     },
     "xcode-tools": {
       "name": "Xcode CLI Tools",
@@ -750,7 +787,8 @@
       "check_mac": "xcode-select -p 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "anaconda": {
       "name": "Anaconda",
@@ -764,7 +802,8 @@
       "check_mac": "ls /Applications/Anaconda-Navigator.app 2>/dev/null",
       "check_linux": "which conda 2>/dev/null",
       "check_linux_dnf": "which conda 2>/dev/null",
-      "check_linux_pacman": "which conda 2>/dev/null"
+      "check_linux_pacman": "which conda 2>/dev/null",
+      "tier": "stable"
     },
     "rust": {
       "name": "Rust",
@@ -778,7 +817,8 @@
       "check_mac": "which rustc 2>/dev/null",
       "check_linux": "which rustc 2>/dev/null",
       "check_linux_dnf": "which rustc 2>/dev/null",
-      "check_linux_pacman": "which rustc 2>/dev/null"
+      "check_linux_pacman": "which rustc 2>/dev/null",
+      "tier": "stable"
     },
     "java-jdk": {
       "name": "Java JDK",
@@ -792,7 +832,8 @@
       "check_mac": "which java 2>/dev/null",
       "check_linux": "which java 2>/dev/null",
       "check_linux_dnf": "which java 2>/dev/null",
-      "check_linux_pacman": "which java 2>/dev/null"
+      "check_linux_pacman": "which java 2>/dev/null",
+      "tier": "stable"
     },
     "cmake": {
       "name": "CMake",
@@ -806,7 +847,8 @@
       "check_mac": "which cmake 2>/dev/null",
       "check_linux": "which cmake 2>/dev/null",
       "check_linux_dnf": "which cmake 2>/dev/null",
-      "check_linux_pacman": "which cmake 2>/dev/null"
+      "check_linux_pacman": "which cmake 2>/dev/null",
+      "tier": "stable"
     },
     "gitkraken": {
       "name": "GitKraken",
@@ -820,7 +862,8 @@
       "check_mac": "ls /Applications/GitKraken.app 2>/dev/null",
       "check_linux": "which gitkraken 2>/dev/null",
       "check_linux_dnf": "which gitkraken 2>/dev/null",
-      "check_linux_pacman": "which gitkraken 2>/dev/null"
+      "check_linux_pacman": "which gitkraken 2>/dev/null",
+      "tier": "stable"
     },
     "termius": {
       "name": "Termius",
@@ -834,7 +877,8 @@
       "check_mac": "ls /Applications/Termius.app 2>/dev/null",
       "check_linux": "which termius-app 2>/dev/null",
       "check_linux_dnf": "which termius-app 2>/dev/null",
-      "check_linux_pacman": "which termius-app 2>/dev/null"
+      "check_linux_pacman": "which termius-app 2>/dev/null",
+      "tier": "stable"
     },
     "rectangle": {
       "name": "Rectangle",
@@ -848,7 +892,8 @@
       "check_mac": "ls /Applications/Rectangle.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "stable"
     },
     "the-unarchiver": {
       "name": "The Unarchiver",
@@ -862,7 +907,8 @@
       "check_mac": "ls /Applications/The\\ Unarchiver.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "balenaetcher": {
       "name": "BalenaEtcher",
@@ -876,7 +922,8 @@
       "check_mac": "ls /Applications/balenaEtcher.app 2>/dev/null",
       "check_linux": "which balena-etcher 2>/dev/null",
       "check_linux_dnf": "which balena-etcher 2>/dev/null",
-      "check_linux_pacman": "which balena-etcher 2>/dev/null"
+      "check_linux_pacman": "which balena-etcher 2>/dev/null",
+      "tier": "stable"
     },
     "transmission": {
       "name": "Transmission",
@@ -890,7 +937,8 @@
       "check_mac": "ls /Applications/Transmission.app 2>/dev/null",
       "check_linux": "which transmission-gtk 2>/dev/null",
       "check_linux_dnf": "which transmission-gtk 2>/dev/null",
-      "check_linux_pacman": "which transmission-gtk 2>/dev/null"
+      "check_linux_pacman": "which transmission-gtk 2>/dev/null",
+      "tier": "stable"
     },
     "qbittorrent": {
       "name": "qBittorrent",
@@ -904,7 +952,8 @@
       "check_mac": "ls /Applications/qBittorrent.app 2>/dev/null",
       "check_linux": "which qbittorrent 2>/dev/null",
       "check_linux_dnf": "which qbittorrent 2>/dev/null",
-      "check_linux_pacman": "which qbittorrent 2>/dev/null"
+      "check_linux_pacman": "which qbittorrent 2>/dev/null",
+      "tier": "stable"
     },
     "handbrake": {
       "name": "HandBrake",
@@ -918,7 +967,8 @@
       "check_mac": "ls /Applications/HandBrake.app 2>/dev/null",
       "check_linux": "which handbrake 2>/dev/null",
       "check_linux_dnf": "which HandBrakeCLI 2>/dev/null",
-      "check_linux_pacman": "which handbrake 2>/dev/null"
+      "check_linux_pacman": "which handbrake 2>/dev/null",
+      "tier": "stable"
     },
     "audacity": {
       "name": "Audacity",
@@ -932,7 +982,8 @@
       "check_mac": "ls /Applications/Audacity.app 2>/dev/null",
       "check_linux": "which audacity 2>/dev/null",
       "check_linux_dnf": "which audacity 2>/dev/null",
-      "check_linux_pacman": "which audacity 2>/dev/null"
+      "check_linux_pacman": "which audacity 2>/dev/null",
+      "tier": "stable"
     },
     "7zip": {
       "name": "7-Zip",
@@ -946,7 +997,8 @@
       "check_mac": "which 7z 2>/dev/null",
       "check_linux": "which 7z 2>/dev/null",
       "check_linux_dnf": "which 7z 2>/dev/null",
-      "check_linux_pacman": "which 7z 2>/dev/null"
+      "check_linux_pacman": "which 7z 2>/dev/null",
+      "tier": "stable"
     },
     "winrar": {
       "name": "WinRAR",
@@ -960,7 +1012,8 @@
       "check_mac": "which rar 2>/dev/null",
       "check_linux": "which rar 2>/dev/null",
       "check_linux_dnf": "which rar 2>/dev/null",
-      "check_linux_pacman": "which rar 2>/dev/null"
+      "check_linux_pacman": "which rar 2>/dev/null",
+      "tier": "stable"
     },
     "keka": {
       "name": "Keka",
@@ -974,7 +1027,8 @@
       "check_mac": "ls /Applications/Keka.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "dbeaver": {
       "name": "DBeaver",
@@ -988,7 +1042,8 @@
       "check_mac": "ls /Applications/DBeaver.app 2>/dev/null",
       "check_linux": "which dbeaver 2>/dev/null",
       "check_linux_dnf": "which dbeaver 2>/dev/null",
-      "check_linux_pacman": "which dbeaver 2>/dev/null"
+      "check_linux_pacman": "which dbeaver 2>/dev/null",
+      "tier": "stable"
     },
     "tableplus": {
       "name": "TablePlus",
@@ -1002,7 +1057,8 @@
       "check_mac": "ls /Applications/TablePlus.app 2>/dev/null",
       "check_linux": "which tableplus 2>/dev/null",
       "check_linux_dnf": null,
-      "check_linux_pacman": "which tableplus 2>/dev/null"
+      "check_linux_pacman": "which tableplus 2>/dev/null",
+      "tier": "partial"
     },
     "mongodb-compass": {
       "name": "MongoDB Compass",
@@ -1016,7 +1072,8 @@
       "check_mac": "ls /Applications/MongoDB\\ Compass.app 2>/dev/null",
       "check_linux": "which mongodb-compass 2>/dev/null",
       "check_linux_dnf": null,
-      "check_linux_pacman": "which mongodb-compass 2>/dev/null"
+      "check_linux_pacman": "which mongodb-compass 2>/dev/null",
+      "tier": "partial"
     },
     "redis-insight": {
       "name": "Redis Insight",
@@ -1030,7 +1087,8 @@
       "check_mac": "ls /Applications/Redis\\ Insight.app 2>/dev/null",
       "check_linux": "which redis-insight 2>/dev/null",
       "check_linux_dnf": "which redis-insight 2>/dev/null",
-      "check_linux_pacman": "which redis-insight 2>/dev/null"
+      "check_linux_pacman": "which redis-insight 2>/dev/null",
+      "tier": "partial"
     },
     "kitty": {
       "name": "Kitty",
@@ -1044,7 +1102,8 @@
       "check_mac": "ls /Applications/kitty.app 2>/dev/null",
       "check_linux": "which kitty 2>/dev/null",
       "check_linux_dnf": "which kitty 2>/dev/null",
-      "check_linux_pacman": "which kitty 2>/dev/null"
+      "check_linux_pacman": "which kitty 2>/dev/null",
+      "tier": "stable"
     },
     "warp": {
       "name": "Warp",
@@ -1058,7 +1117,8 @@
       "check_mac": "ls /Applications/Warp.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "tabby": {
       "name": "Tabby",
@@ -1072,7 +1132,8 @@
       "check_mac": "ls /Applications/Tabby.app 2>/dev/null",
       "check_linux": "which tabby 2>/dev/null",
       "check_linux_dnf": "which tabby 2>/dev/null",
-      "check_linux_pacman": "which tabby 2>/dev/null"
+      "check_linux_pacman": "which tabby 2>/dev/null",
+      "tier": "stable"
     },
     "iterm2": {
       "name": "iTerm2",
@@ -1086,7 +1147,8 @@
       "check_mac": "ls /Applications/iTerm.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "stable"
     },
     "daisydisk": {
       "name": "DaisyDisk",
@@ -1100,7 +1162,8 @@
       "check_mac": "ls /Applications/DaisyDisk.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "cleanmymac": {
       "name": "CleanMyMac",
@@ -1114,7 +1177,8 @@
       "check_mac": "ls /Applications/CleanMyMac\\ X.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "appcleaner": {
       "name": "AppCleaner",
@@ -1128,7 +1192,8 @@
       "check_mac": "ls /Applications/AppCleaner.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "monitorcontrol": {
       "name": "MonitorControl",
@@ -1142,7 +1207,8 @@
       "check_mac": "ls /Applications/MonitorControl.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "karabiner-elements": {
       "name": "Karabiner-Elements",
@@ -1156,7 +1222,8 @@
       "check_mac": "ls /Applications/Karabiner-Elements.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "hammerspoon": {
       "name": "Hammerspoon",
@@ -1170,7 +1237,8 @@
       "check_mac": "ls /Applications/Hammerspoon.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "stats": {
       "name": "Stats",
@@ -1184,7 +1252,8 @@
       "check_mac": "ls /Applications/Stats.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "iina": {
       "name": "IINA",
@@ -1198,7 +1267,8 @@
       "check_mac": "ls /Applications/IINA.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "kaleidoscope": {
       "name": "Kaleidoscope",
@@ -1212,7 +1282,8 @@
       "check_mac": "ls /Applications/Kaleidoscope.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "experimental"
     },
     "github-desktop": {
       "name": "GitHub Desktop",
@@ -1226,7 +1297,8 @@
       "check_mac": "ls /Applications/GitHub\\ Desktop.app 2>/dev/null",
       "check_linux": "which github-desktop 2>/dev/null",
       "check_linux_dnf": "which github-desktop 2>/dev/null",
-      "check_linux_pacman": "which github-desktop 2>/dev/null"
+      "check_linux_pacman": "which github-desktop 2>/dev/null",
+      "tier": "stable"
     },
     "arc": {
       "name": "Arc",
@@ -1240,7 +1312,8 @@
       "check_mac": "ls /Applications/Arc.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "stable"
     },
     "windsurf": {
       "name": "Windsurf",
@@ -1254,7 +1327,8 @@
       "check_mac": "ls /Applications/Windsurf.app 2>/dev/null",
       "check_linux": "which windsurf 2>/dev/null",
       "check_linux_dnf": "which windsurf 2>/dev/null",
-      "check_linux_pacman": "which windsurf 2>/dev/null"
+      "check_linux_pacman": "which windsurf 2>/dev/null",
+      "tier": "partial"
     },
     "claude-desktop": {
       "name": "Claude Desktop",
@@ -1268,7 +1342,8 @@
       "check_mac": "ls /Applications/Claude.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "devtoys": {
       "name": "DevToys",
@@ -1282,7 +1357,8 @@
       "check_mac": null,
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "zed": {
       "name": "Zed",
@@ -1296,7 +1372,8 @@
       "check_mac": "ls /Applications/Zed.app 2>/dev/null",
       "check_linux": "which zed 2>/dev/null",
       "check_linux_dnf": "which zed 2>/dev/null",
-      "check_linux_pacman": "which zed 2>/dev/null"
+      "check_linux_pacman": "which zed 2>/dev/null",
+      "tier": "partial"
     },
     "vmware": {
       "name": "VMware Fusion/Workstation",
@@ -1310,7 +1387,8 @@
       "check_mac": "ls /Applications/VMware\\ Fusion.app 2>/dev/null",
       "check_linux": "which vmware 2>/dev/null",
       "check_linux_dnf": "which vmware 2>/dev/null",
-      "check_linux_pacman": "which vmware 2>/dev/null"
+      "check_linux_pacman": "which vmware 2>/dev/null",
+      "tier": "partial"
     },
     "powershell": {
       "name": "PowerShell",
@@ -1324,7 +1402,8 @@
       "check_mac": "which pwsh 2>/dev/null",
       "check_linux": "which pwsh 2>/dev/null",
       "check_linux_dnf": "which pwsh 2>/dev/null",
-      "check_linux_pacman": "which pwsh 2>/dev/null"
+      "check_linux_pacman": "which pwsh 2>/dev/null",
+      "tier": "stable"
     },
     "wechat": {
       "name": "微信",
@@ -1338,7 +1417,8 @@
       "check_mac": "ls /Applications/WeChat.app 2>/dev/null",
       "check_linux": "which wechat 2>/dev/null",
       "check_linux_dnf": "which wechat 2>/dev/null",
-      "check_linux_pacman": "which electronic-wechat 2>/dev/null"
+      "check_linux_pacman": "which electronic-wechat 2>/dev/null",
+      "tier": "partial"
     },
     "qq": {
       "name": "QQ",
@@ -1352,7 +1432,8 @@
       "check_mac": "ls /Applications/QQ.app 2>/dev/null",
       "check_linux": "which qq 2>/dev/null",
       "check_linux_dnf": "which qq 2>/dev/null",
-      "check_linux_pacman": "which linuxqq 2>/dev/null"
+      "check_linux_pacman": "which linuxqq 2>/dev/null",
+      "tier": "partial"
     },
     "dingtalk": {
       "name": "钉钉",
@@ -1366,7 +1447,8 @@
       "check_mac": "ls /Applications/DingTalk.app 2>/dev/null",
       "check_linux": "which dingtalk 2>/dev/null",
       "check_linux_dnf": null,
-      "check_linux_pacman": "which dingtalk 2>/dev/null"
+      "check_linux_pacman": "which dingtalk 2>/dev/null",
+      "tier": "partial"
     },
     "feishu": {
       "name": "飞书",
@@ -1380,7 +1462,8 @@
       "check_mac": "ls /Applications/Feishu.app 2>/dev/null",
       "check_linux": "which feishu 2>/dev/null",
       "check_linux_dnf": null,
-      "check_linux_pacman": "which feishu 2>/dev/null"
+      "check_linux_pacman": "which feishu 2>/dev/null",
+      "tier": "partial"
     },
     "netease-music": {
       "name": "网易云音乐",
@@ -1394,7 +1477,8 @@
       "check_mac": "ls /Applications/NeteaseMusic.app 2>/dev/null",
       "check_linux": "which netease-cloud-music 2>/dev/null",
       "check_linux_dnf": null,
-      "check_linux_pacman": "which netease-cloud-music 2>/dev/null"
+      "check_linux_pacman": "which netease-cloud-music 2>/dev/null",
+      "tier": "partial"
     },
     "baidu-netdisk": {
       "name": "百度网盘",
@@ -1408,7 +1492,8 @@
       "check_mac": "ls /Applications/BaiduNetdisk.app 2>/dev/null",
       "check_linux": "which baidu-netdisk 2>/dev/null",
       "check_linux_dnf": null,
-      "check_linux_pacman": "which baidu-netdisk 2>/dev/null"
+      "check_linux_pacman": "which baidu-netdisk 2>/dev/null",
+      "tier": "partial"
     },
     "xunlei": {
       "name": "迅雷",
@@ -1422,7 +1507,8 @@
       "check_mac": "ls /Applications/Xunlei.app 2>/dev/null",
       "check_linux": "which xunlei 2>/dev/null",
       "check_linux_dnf": null,
-      "check_linux_pacman": "which xunlei 2>/dev/null"
+      "check_linux_pacman": "which xunlei 2>/dev/null",
+      "tier": "partial"
     },
     "tencent-meeting": {
       "name": "腾讯会议",
@@ -1436,7 +1522,8 @@
       "check_mac": "ls /Applications/TencentMeeting.app 2>/dev/null",
       "check_linux": "which TencentMeeting 2>/dev/null",
       "check_linux_dnf": null,
-      "check_linux_pacman": "which TencentMeeting 2>/dev/null"
+      "check_linux_pacman": "which TencentMeeting 2>/dev/null",
+      "tier": "partial"
     },
     "wechat-keyboard": {
       "name": "微信输入法",
@@ -1450,7 +1537,8 @@
       "check_mac": "ls /Applications/微信输入法.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "jianying": {
       "name": "剪映",
@@ -1464,7 +1552,8 @@
       "check_mac": "ls /Applications/剪映专业版.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "bilibili-bijian": {
       "name": "Bilibili 必剪",
@@ -1478,7 +1567,8 @@
       "check_mac": "ls /Applications/必剪.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "potplayer": {
       "name": "PotPlayer",
@@ -1492,7 +1582,8 @@
       "check_mac": null,
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "huorong": {
       "name": "火绒安全",
@@ -1506,7 +1597,8 @@
       "check_mac": null,
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "libreoffice": {
       "name": "LibreOffice",
@@ -1520,7 +1612,8 @@
       "check_mac": "ls /Applications/LibreOffice.app 2>/dev/null",
       "check_linux": "which libreoffice 2>/dev/null",
       "check_linux_dnf": "which libreoffice 2>/dev/null",
-      "check_linux_pacman": "which libreoffice 2>/dev/null"
+      "check_linux_pacman": "which libreoffice 2>/dev/null",
+      "tier": "stable"
     },
     "inkscape": {
       "name": "Inkscape",
@@ -1534,7 +1627,8 @@
       "check_mac": "ls /Applications/Inkscape.app 2>/dev/null",
       "check_linux": "which inkscape 2>/dev/null",
       "check_linux_dnf": "which inkscape 2>/dev/null",
-      "check_linux_pacman": "which inkscape 2>/dev/null"
+      "check_linux_pacman": "which inkscape 2>/dev/null",
+      "tier": "partial"
     },
     "krita": {
       "name": "Krita",
@@ -1548,7 +1642,8 @@
       "check_mac": "ls /Applications/Krita.app 2>/dev/null",
       "check_linux": "which krita 2>/dev/null",
       "check_linux_dnf": "which krita 2>/dev/null",
-      "check_linux_pacman": "which krita 2>/dev/null"
+      "check_linux_pacman": "which krita 2>/dev/null",
+      "tier": "partial"
     },
     "signal": {
       "name": "Signal",
@@ -1562,7 +1657,8 @@
       "check_mac": "ls /Applications/Signal.app 2>/dev/null",
       "check_linux": "which signal-desktop 2>/dev/null",
       "check_linux_dnf": "which signal-desktop 2>/dev/null",
-      "check_linux_pacman": "which signal-desktop 2>/dev/null"
+      "check_linux_pacman": "which signal-desktop 2>/dev/null",
+      "tier": "stable"
     },
     "thunderbird": {
       "name": "Thunderbird",
@@ -1576,7 +1672,8 @@
       "check_mac": "ls /Applications/Thunderbird.app 2>/dev/null",
       "check_linux": "which thunderbird 2>/dev/null",
       "check_linux_dnf": "which thunderbird 2>/dev/null",
-      "check_linux_pacman": "which thunderbird 2>/dev/null"
+      "check_linux_pacman": "which thunderbird 2>/dev/null",
+      "tier": "stable"
     },
     "ffmpeg": {
       "name": "FFmpeg",
@@ -1590,7 +1687,8 @@
       "check_mac": "which ffmpeg 2>/dev/null",
       "check_linux": "which ffmpeg 2>/dev/null",
       "check_linux_dnf": "which ffmpeg 2>/dev/null",
-      "check_linux_pacman": "which ffmpeg 2>/dev/null"
+      "check_linux_pacman": "which ffmpeg 2>/dev/null",
+      "tier": "stable"
     },
     "imagemagick": {
       "name": "ImageMagick",
@@ -1604,7 +1702,8 @@
       "check_mac": "which magick 2>/dev/null",
       "check_linux": "which magick 2>/dev/null",
       "check_linux_dnf": "which magick 2>/dev/null",
-      "check_linux_pacman": "which magick 2>/dev/null"
+      "check_linux_pacman": "which magick 2>/dev/null",
+      "tier": "stable"
     },
     "calibre": {
       "name": "Calibre",
@@ -1618,7 +1717,8 @@
       "check_mac": "ls /Applications/calibre.app 2>/dev/null",
       "check_linux": "which calibre 2>/dev/null",
       "check_linux_dnf": "which calibre 2>/dev/null",
-      "check_linux_pacman": "which calibre 2>/dev/null"
+      "check_linux_pacman": "which calibre 2>/dev/null",
+      "tier": "stable"
     },
     "veracrypt": {
       "name": "VeraCrypt",
@@ -1632,7 +1732,8 @@
       "check_mac": "ls /Applications/VeraCrypt.app 2>/dev/null",
       "check_linux": "which veracrypt 2>/dev/null",
       "check_linux_dnf": null,
-      "check_linux_pacman": "which veracrypt 2>/dev/null"
+      "check_linux_pacman": "which veracrypt 2>/dev/null",
+      "tier": "stable"
     },
     "kdenlive": {
       "name": "Kdenlive",
@@ -1646,7 +1747,8 @@
       "check_mac": "ls /Applications/kdenlive.app 2>/dev/null",
       "check_linux": "which kdenlive 2>/dev/null",
       "check_linux_dnf": "which kdenlive 2>/dev/null",
-      "check_linux_pacman": "which kdenlive 2>/dev/null"
+      "check_linux_pacman": "which kdenlive 2>/dev/null",
+      "tier": "stable"
     },
     "brave": {
       "name": "Brave",
@@ -1660,7 +1762,8 @@
       "check_mac": "ls /Applications/Brave\\ Browser.app 2>/dev/null",
       "check_linux": "which brave-browser 2>/dev/null",
       "check_linux_dnf": "which brave-browser 2>/dev/null",
-      "check_linux_pacman": "which brave-browser 2>/dev/null"
+      "check_linux_pacman": "which brave-browser 2>/dev/null",
+      "tier": "stable"
     },
     "chatgpt-desktop": {
       "name": "ChatGPT Desktop",
@@ -1674,7 +1777,8 @@
       "check_mac": "ls /Applications/ChatGPT.app 2>/dev/null",
       "check_linux": "which chatgpt 2>/dev/null",
       "check_linux_dnf": null,
-      "check_linux_pacman": "which chatgpt 2>/dev/null"
+      "check_linux_pacman": "which chatgpt 2>/dev/null",
+      "tier": "partial"
     },
     "n8n": {
       "name": "n8n",
@@ -1688,7 +1792,8 @@
       "check_mac": "which n8n 2>/dev/null",
       "check_linux": "which n8n 2>/dev/null",
       "check_linux_dnf": "which n8n 2>/dev/null",
-      "check_linux_pacman": "which n8n 2>/dev/null"
+      "check_linux_pacman": "which n8n 2>/dev/null",
+      "tier": "stable"
     },
     "codex-desktop": {
       "name": "OpenAI Codex Desktop",
@@ -1702,7 +1807,8 @@
       "check_mac": "ls /Applications/Codex.app 2>/dev/null",
       "check_linux": null,
       "check_linux_dnf": null,
-      "check_linux_pacman": null
+      "check_linux_pacman": null,
+      "tier": "partial"
     },
     "claude-code": {
       "name": "Claude Code",
@@ -1716,7 +1822,8 @@
       "check_mac": "which claude 2>/dev/null",
       "check_linux": "which claude 2>/dev/null",
       "check_linux_dnf": "which claude 2>/dev/null",
-      "check_linux_pacman": "which claude 2>/dev/null"
+      "check_linux_pacman": "which claude 2>/dev/null",
+      "tier": "partial"
     },
     "qoder": {
       "name": "Qoder",
@@ -1730,7 +1837,8 @@
       "check_mac": "ls /Applications/Qoder.app 2>/dev/null",
       "check_linux": "which qoder 2>/dev/null",
       "check_linux_dnf": "which qoder 2>/dev/null",
-      "check_linux_pacman": "which qoder 2>/dev/null"
+      "check_linux_pacman": "which qoder 2>/dev/null",
+      "tier": "partial"
     },
     "gemini-cli": {
       "name": "Gemini CLI",
@@ -1744,7 +1852,8 @@
       "check_mac": "which gemini 2>/dev/null",
       "check_linux": "which gemini 2>/dev/null",
       "check_linux_dnf": "which gemini 2>/dev/null",
-      "check_linux_pacman": "which gemini 2>/dev/null"
+      "check_linux_pacman": "which gemini 2>/dev/null",
+      "tier": "partial"
     },
     "kimi-cli": {
       "name": "Kimi CLI",
@@ -1758,7 +1867,8 @@
       "check_mac": "which kimi 2>/dev/null",
       "check_linux": "which kimi 2>/dev/null",
       "check_linux_dnf": "which kimi 2>/dev/null",
-      "check_linux_pacman": "which kimi 2>/dev/null"
+      "check_linux_pacman": "which kimi 2>/dev/null",
+      "tier": "partial"
     },
     "qwen-cli": {
       "name": "Qwen CLI",
@@ -1772,7 +1882,8 @@
       "check_mac": "which qwen 2>/dev/null",
       "check_linux": "which qwen 2>/dev/null",
       "check_linux_dnf": "which qwen 2>/dev/null",
-      "check_linux_pacman": "which qwen 2>/dev/null"
+      "check_linux_pacman": "which qwen 2>/dev/null",
+      "tier": "partial"
     },
     "openclaw": {
       "name": "OpenClaw",
@@ -1786,7 +1897,8 @@
       "check_mac": "which openclaw 2>/dev/null",
       "check_linux": "which openclaw 2>/dev/null",
       "check_linux_dnf": "which openclaw 2>/dev/null",
-      "check_linux_pacman": "which openclaw 2>/dev/null"
+      "check_linux_pacman": "which openclaw 2>/dev/null",
+      "tier": "partial"
     },
     "aider": {
       "name": "Aider",
@@ -1800,7 +1912,8 @@
       "check_mac": "which aider 2>/dev/null",
       "check_linux": "which aider 2>/dev/null",
       "check_linux_dnf": "which aider 2>/dev/null",
-      "check_linux_pacman": "which aider 2>/dev/null"
+      "check_linux_pacman": "which aider 2>/dev/null",
+      "tier": "stable"
     },
     "continue-dev": {
       "name": "Continue",
@@ -1814,7 +1927,8 @@
       "check_mac": "ls /Applications/Continue.app 2>/dev/null",
       "check_linux": "which continue 2>/dev/null",
       "check_linux_dnf": "which continue 2>/dev/null",
-      "check_linux_pacman": "which continue 2>/dev/null"
+      "check_linux_pacman": "which continue 2>/dev/null",
+      "tier": "partial"
     },
     "comfyui": {
       "name": "ComfyUI",
@@ -1828,7 +1942,8 @@
       "check_mac": "ls /Applications/ComfyUI.app 2>/dev/null",
       "check_linux": "test -d ~/ComfyUI && echo installed",
       "check_linux_dnf": "test -d ~/ComfyUI && echo installed",
-      "check_linux_pacman": "which comfyui 2>/dev/null"
+      "check_linux_pacman": "which comfyui 2>/dev/null",
+      "tier": "partial"
     },
     "opencode": {
       "name": "OpenCode",
@@ -1842,7 +1957,8 @@
       "check_mac": "which opencode 2>/dev/null",
       "check_linux": "which opencode 2>/dev/null",
       "check_linux_dnf": "which opencode 2>/dev/null",
-      "check_linux_pacman": "which opencode 2>/dev/null"
+      "check_linux_pacman": "which opencode 2>/dev/null",
+      "tier": "stable"
     }
   }
 }

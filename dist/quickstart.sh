@@ -42,6 +42,8 @@ Quickstart-PC - 一键配置新电脑
   --show-software ID 显示指定软件详情
   --search KEYWORD   搜索软件
   --validate         校验配置文件
+  --report-json FILE 导出 JSON 格式安装报告
+  --report-txt FILE  导出 TXT 格式安装报告
   --list-profiles    列出所有可用套餐
   --show-profile KEY 显示指定套餐详情
   --skip SW          跳过指定软件（可多次使用）
@@ -74,6 +76,8 @@ Options:
   --show-software ID Show software details
   --search KEYWORD   Search software
   --validate         Validate configuration file
+  --report-json FILE Export JSON installation report
+  --report-txt FILE  Export TXT installation report
   --list-profiles    List all available profiles
   --show-profile KEY Show profile details
   --skip SW          Skip specified software (repeatable)
@@ -99,6 +103,8 @@ LIST_SOFTWARE=false
 SHOW_SOFTWARE=""
 SEARCH_KEYWORD=""
 VALIDATE=false
+REPORT_JSON=""
+REPORT_TXT=""
 LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
@@ -126,6 +132,8 @@ while [[ $# -gt 0 ]]; do
         --show-software) SHOW_SOFTWARE="$2"; shift 2 ;;
         --search) SEARCH_KEYWORD="$2"; shift 2 ;;
         --validate) VALIDATE=true; shift ;;
+        --report-json) REPORT_JSON="$2"; shift 2 ;;
+        --report-txt) REPORT_TXT="$2"; shift 2 ;;
         --list-profiles) LIST_PROFILES=true; shift ;;
         --show-profile) SHOW_PROFILE="$2"; shift 2 ;;
         --skip) SKIP_SW+=("$2"); shift 2 ;;
@@ -272,7 +280,8 @@ if [[ "$LIST_SOFTWARE" == "true" ]]; then
             [[ -z "$key" ]] && continue
             sw_name=$(jq -r ".software[\"$key\"].name // \"$key\"" "$CONFIG_FILE")
             sw_desc=$(jq -r ".software[\"$key\"].desc // \"\"" "$CONFIG_FILE")
-            echo "  $key - $sw_name: $sw_desc"
+            sw_tier=$(jq -r ".software[\"$key\"].tier // \"partial\"" "$CONFIG_FILE")
+            echo "  $key - $sw_name: $sw_desc [$sw_tier]"
         done < <(jq -r '.software | keys[]' "$CONFIG_FILE")
         echo ""
     else
@@ -307,6 +316,10 @@ if [[ -n "$SHOW_SOFTWARE" ]]; then
         echo ""
         echo "Software: $sw_name"
         echo "Description: $sw_desc"
+        
+        sw_tier=$(jq -r ".software[\"$SHOW_SOFTWARE\"].tier // \"partial\"" "$CONFIG_FILE")
+        echo "Status: $sw_tier"
+        
         echo ""
         echo "Install commands:"
         
@@ -415,6 +428,13 @@ if [[ "$VALIDATE" == "true" ]]; then
             done
             if [[ "$has_platform" == "false" ]]; then
                 echo "[✗] Software '$sw' has no platform install commands"
+                ((errors++))
+            fi
+            
+            # Check tier field
+            tier=$(jq -r ".software[\"$sw\"].tier // \"\"" "$CONFIG_FILE")
+            if [[ -n "$tier" && "$tier" != "stable" && "$tier" != "partial" && "$tier" != "experimental" && "$tier" != "deprecated" ]]; then
+                echo "[✗] Software '$sw' has invalid tier: '$tier'"
                 ((errors++))
             fi
         done < <(jq -r '.software | keys[]' "$CONFIG_FILE")
@@ -1789,6 +1809,68 @@ main() {
             else
                 failed_list=()
             fi
+        fi
+    fi
+    
+    # 导出报告
+    if [[ -n "$REPORT_JSON" || -n "$REPORT_TXT" ]]; then
+        local report_time=$(date '+%Y-%m-%d %H:%M:%S')
+        
+        if [[ -n "$REPORT_TXT" ]]; then
+            {
+                echo "=== Quickstart-PC Installation Report ==="
+                echo "Time: $report_time"
+                echo "Platform: $os ($(get_system_info))"
+                echo "Profile: ${SELECTED_PROFILES[*]}"
+                echo ""
+                echo "Installed (${#installed_list[@]}):"
+                for item in "${installed_list[@]}"; do echo "  + $item"; done
+                echo ""
+                echo "Skipped (${#skipped_list[@]}):"
+                for item in "${skipped_list[@]}"; do echo "  ~ $item"; done
+                echo ""
+                echo "Failed (${#failed_list[@]}):"
+                for item in "${failed_list[@]}"; do echo "  - $item"; done
+                echo ""
+                echo "Total: ${#installed_list[@]} installed, ${#skipped_list[@]} skipped, ${#failed_list[@]} failed"
+            } > "$REPORT_TXT"
+            log_info "Text report exported to $REPORT_TXT"
+        fi
+        
+        if [[ -n "$REPORT_JSON" ]]; then
+            local installed_json=""
+            for item in "${installed_list[@]}"; do
+                [[ -n "$installed_json" ]] && installed_json+=","
+                installed_json+="\"$item\""
+            done
+            local skipped_json=""
+            for item in "${skipped_list[@]}"; do
+                [[ -n "$skipped_json" ]] && skipped_json+=","
+                skipped_json+="\"$item\""
+            done
+            local failed_json=""
+            for item in "${failed_list[@]}"; do
+                [[ -n "$failed_json" ]] && failed_json+=","
+                failed_json+="\"$item\""
+            done
+            
+            cat > "$REPORT_JSON" << JSONEOF
+{
+  "time": "$report_time",
+  "platform": "$os",
+  "system_info": "$(get_system_info)",
+  "profiles": [$(printf '"%s",' "${SELECTED_PROFILES[@]}" | sed 's/,$//')],
+  "installed": [$installed_json],
+  "skipped": [$skipped_json],
+  "failed": [$failed_json],
+  "summary": {
+    "installed": ${#installed_list[@]},
+    "skipped": ${#skipped_list[@]},
+    "failed": ${#failed_list[@]}
+  }
+}
+JSONEOF
+            log_info "JSON report exported to $REPORT_JSON"
         fi
     fi
     
