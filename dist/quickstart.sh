@@ -2284,9 +2284,9 @@ JSONEOF
         elif [[ "$key" == $'\x1b' ]]; then
             local seq=""
             IFS= read -rsn2 seq < /dev/tty
-            if [[ "$seq" == "[C" ]]; then
+            if [[ "$seq" == "[C" || "$seq" == "OC" ]]; then
                 continue_cursor=1
-            elif [[ "$seq" == "[D" ]]; then
+            elif [[ "$seq" == "[D" || "$seq" == "OD" ]]; then
                 continue_cursor=0
             fi
         fi
