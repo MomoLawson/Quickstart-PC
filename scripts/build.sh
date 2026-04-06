@@ -59,7 +59,7 @@ LANG_SRC="$SRC_DIR/lang"
 LANG_DIST="$DIST_DIR/lang"
 if [[ -d "$LANG_SRC" ]]; then
     mkdir -p "$LANG_DIST"
-    for lang_file in "$LANG_SRC"/*.sh; do
+    for lang_file in "$LANG_SRC"/*.sh "$LANG_SRC"/*.json; do
         if [[ -f "$lang_file" ]]; then
             cp "$lang_file" "$LANG_DIST/"
             echo "[✓] Lang: $(basename "$lang_file")"

@@ -896,18 +896,41 @@ select_language() {
     printf "\033[0m%s:\n" "$LANG_LANG_PROMPT" >&2
     echo "" >&2
     
-    # Build language menu items
+    # Build language menu items from available.json
     local lang_items=()
     local lang_codes=()
+    local avail_file=""
     
-    # Order: en-US, zh-CN, ja, ko
-    for code in en-US zh-CN ja ko; do
-        local name=$(lang_name "$code")
-        if [[ -n "$name" ]]; then
+    # Try to find available.json
+    if [[ -n "$LOCAL_LANG_PATH" ]] && [[ -f "$LOCAL_LANG_PATH/available.json" ]]; then
+        avail_file="$LOCAL_LANG_PATH/available.json"
+    else
+        local script_dir
+        script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        avail_file="$script_dir/lang/available.json"
+    fi
+    
+    if [[ -f "$avail_file" ]]; then
+        while IFS='|' read -r code name; do
+            [[ -z "$code" ]] && continue
             lang_codes+=("$code")
             lang_items+=("$name")
-        fi
-    done
+        done < <(python3 -c "
+import json
+with open('$avail_file') as f:
+    data = json.load(f)
+for lang in data.get('languages', []):
+    print(f\"{lang['code']}|{lang['name']}\")
+" 2>/dev/null)
+    fi
+    
+    # Fallback to hardcoded list if available.json not found
+    if [[ ${#lang_codes[@]} -eq 0 ]]; then
+        for code in en-US zh-CN zh-Hant ja ko de fr ar pt it; do
+            lang_codes+=("$code")
+            lang_items+=("$(lang_name "$code")")
+        done
+    fi
     
     tui_interactive_select "${lang_items[@]}" >&2
     local choice=$?
