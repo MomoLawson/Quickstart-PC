@@ -1843,9 +1843,9 @@ main() {
             elif [[ "$key" == $'\x1b' ]]; then
                 local seq=""
                 IFS= read -rsn2 seq < /dev/tty
-                if [[ "$seq" == "[C" ]]; then
+                if [[ "$seq" == "[C" || "$seq" == "OC" ]]; then
                     continue_cursor=1
-                elif [[ "$seq" == "[D" ]]; then
+                elif [[ "$seq" == "[D" || "$seq" == "OD" ]]; then
                     continue_cursor=0
                 fi
             fi
@@ -1944,9 +1944,9 @@ main() {
                 elif [[ "$key" == $'\x1b' ]]; then
                     local seq=""
                     IFS= read -rsn2 seq < /dev/tty
-                    if [[ "$seq" == "[C" ]]; then
+                    if [[ "$seq" == "[C" || "$seq" == "OC" ]]; then
                         cancel_cursor=1
-                    elif [[ "$seq" == "[D" ]]; then
+                    elif [[ "$seq" == "[D" || "$seq" == "OD" ]]; then
                         cancel_cursor=0
                     fi
                 fi
@@ -2016,232 +2016,15 @@ main() {
             elif [[ "$key" == $'\x1b' ]]; then
                 local seq=""
                 IFS= read -rsn2 seq < /dev/tty
-                if [[ "$seq" == "[C" ]]; then
+                if [[ "$seq" == "[C" || "$seq" == "OC" ]]; then
                     continue_cursor=1
-                elif [[ "$seq" == "[D" ]]; then
+                elif [[ "$seq" == "[D" || "$seq" == "OD" ]]; then
                     continue_cursor=0
                 fi
             fi
         done
         
         continue
-    fi
-    
-    set_title "QSPC | $LANG_TITLE_INSTALLING"
-    log_header "$LANG_START_INSTALLING"
-    
-    local total=${#to_install[@]}
-    local current=0
-    local -a installed_list=()
-    local -a skipped_list=()
-    local -a failed_list=()
-    local -a warning_list=()
-    
-    for sw in "${to_install[@]}"; do
-        ((current++))
-        local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
-        printf "\r${CYAN}[%3d%%]${NC} %s" "$((current * 100 / total))" "$LANG_INSTALLING $sw_name"
-        
-        if install_software "$CONFIG_FILE" "$os" "$sw"; then
-            installed_list+=("$sw_name")
-        else
-            failed_list+=("$sw_name")
-            if [[ "$FAIL_FAST" == "true" ]]; then
-                echo ""
-                log_error "Fail-fast: stopping at $sw_name"
-                break
-            fi
-        fi
-    done
-    echo ""
-    
-    # 合并已跳过的软件（检测阶段 + 安装阶段）
-    skipped_list+=("${already_installed[@]}")
-    
-    log_header "$LANG_INSTALLATION_COMPLETE"
-    echo ""
-    echo -e "${GREEN}Installed:${NC}"
-    log_to_file "Installed:"
-    if [[ ${#installed_list[@]} -eq 0 ]]; then
-        echo -e "${GRAY}  (none)${NC}"
-        log_to_file "  (none)"
-    else
-        for item in "${installed_list[@]}"; do
-            echo -e "  ${GREEN}- $item${NC}"
-            log_to_file "  - $item"
-        done
-    fi
-    
-    echo ""
-    echo -e "${CYAN}Skipped:${NC}"
-    log_to_file ""
-    log_to_file "Skipped:"
-    if [[ ${#skipped_list[@]} -eq 0 ]]; then
-        echo -e "${GRAY}  (none)${NC}"
-        log_to_file "  (none)"
-    else
-        for item in "${skipped_list[@]}"; do
-            echo -e "  ${GRAY}- $item${NC}"
-            log_to_file "  - $item"
-        done
-    fi
-    
-    echo ""
-    echo -e "${RED}Failed:${NC}"
-    log_to_file ""
-    log_to_file "Failed:"
-    if [[ ${#failed_list[@]} -eq 0 ]]; then
-        echo -e "${GRAY}  (none)${NC}"
-        log_to_file "  (none)"
-    else
-        for item in "${failed_list[@]}"; do
-            echo -e "  ${RED}- $item${NC}"
-            log_to_file "  - $item"
-        done
-    fi
-    
-    echo ""
-    echo -e "${YELLOW}Warnings:${NC}"
-    log_to_file ""
-    log_to_file "Warnings:"
-    if [[ ${#warning_list[@]} -eq 0 ]]; then
-        echo -e "${GRAY}  (none)${NC}"
-        log_to_file "  (none)"
-    else
-        for item in "${warning_list[@]}"; do
-            echo -e "  ${YELLOW}- $item${NC}"
-            log_to_file "  - $item"
-        done
-    fi
-    
-    echo ""
-    log_success "$LANG_TOTAL_INSTALLED ${#installed_list[@]} / $total"
-    
-    # 重试失败的软件
-    if [[ ${#failed_list[@]} -gt 0 ]]; then
-        if [[ "$RETRY_FAILED" == "true" ]] || [[ "$AUTO_YES" == "true" ]]; then
-            echo ""
-            log_info "Retrying ${#failed_list[@]} failed package(s)..."
-        else
-            echo ""
-            printf "Retry failed packages? [Y/n] "
-            local retry_confirm=""
-            IFS= read -rsn1 retry_confirm < /dev/tty
-            echo ""
-            if [[ "$retry_confirm" =~ ^[Nn] ]]; then
-                log_info "Skipping retry"
-            else
-                RETRY_FAILED=true
-            fi
-        fi
-        
-        if [[ "$RETRY_FAILED" == "true" ]]; then
-            local -a retry_installed=()
-            local -a retry_failed=()
-            local retry_total=${#failed_list[@]}
-            local retry_current=0
-            
-            for item in "${failed_list[@]}"; do
-                ((retry_current++))
-                # Find the software key by name
-                local sw_key=""
-                for sw in "${SELECTED_SOFTWARE[@]}"; do
-                    local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
-                    if [[ "$sw_name" == "$item" ]]; then
-                        sw_key="$sw"
-                        break
-                    fi
-                done
-                [[ -z "$sw_key" ]] && continue
-                
-                printf "\r${CYAN}[Retry %3d%%]${NC} %s" "$((retry_current * 100 / retry_total))" "$LANG_INSTALLING $item"
-                
-                if install_software "$CONFIG_FILE" "$os" "$sw_key"; then
-                    retry_installed+=("$item")
-                else
-                    retry_failed+=("$item")
-                fi
-            done
-            echo ""
-            
-            if [[ ${#retry_installed[@]} -gt 0 ]]; then
-                echo -e "${GREEN}Retry succeeded:${NC}"
-                for item in "${retry_installed[@]}"; do
-                    echo -e "  ${GREEN}- $item${NC}"
-                done
-            fi
-            if [[ ${#retry_failed[@]} -gt 0 ]]; then
-                echo -e "${RED}Retry still failed:${NC}"
-                for item in "${retry_failed[@]}"; do
-                    echo -e "  ${RED}- $item${NC}"
-                done
-                failed_list=("${retry_failed[@]}")
-            else
-                failed_list=()
-            fi
-        fi
-    fi
-    
-    # 导出报告
-    if [[ -n "$REPORT_JSON" || -n "$REPORT_TXT" ]]; then
-        local report_time=$(date '+%Y-%m-%d %H:%M:%S')
-        
-        if [[ -n "$REPORT_TXT" ]]; then
-            {
-                echo "=== Quickstart-PC Installation Report ==="
-                echo "Time: $report_time"
-                echo "Platform: $os ($(get_system_info))"
-                echo "Profile: ${SELECTED_PROFILES[*]}"
-                echo ""
-                echo "Installed (${#installed_list[@]}):"
-                for item in "${installed_list[@]}"; do echo "  + $item"; done
-                echo ""
-                echo "Skipped (${#skipped_list[@]}):"
-                for item in "${skipped_list[@]}"; do echo "  ~ $item"; done
-                echo ""
-                echo "Failed (${#failed_list[@]}):"
-                for item in "${failed_list[@]}"; do echo "  - $item"; done
-                echo ""
-                echo "Total: ${#installed_list[@]} installed, ${#skipped_list[@]} skipped, ${#failed_list[@]} failed"
-            } > "$REPORT_TXT"
-            log_info "Text report exported to $REPORT_TXT"
-        fi
-        
-        if [[ -n "$REPORT_JSON" ]]; then
-            local installed_json=""
-            for item in "${installed_list[@]}"; do
-                [[ -n "$installed_json" ]] && installed_json+=","
-                installed_json+="\"$item\""
-            done
-            local skipped_json=""
-            for item in "${skipped_list[@]}"; do
-                [[ -n "$skipped_json" ]] && skipped_json+=","
-                skipped_json+="\"$item\""
-            done
-            local failed_json=""
-            for item in "${failed_list[@]}"; do
-                [[ -n "$failed_json" ]] && failed_json+=","
-                failed_json+="\"$item\""
-            done
-            
-            cat > "$REPORT_JSON" << JSONEOF
-{
-  "time": "$report_time",
-  "platform": "$os",
-  "system_info": "$(get_system_info)",
-  "profiles": [$(printf '"%s",' "${SELECTED_PROFILES[@]}" | sed 's/,$//')],
-  "installed": [$installed_json],
-  "skipped": [$skipped_json],
-  "failed": [$failed_json],
-  "summary": {
-    "installed": ${#installed_list[@]},
-    "skipped": ${#skipped_list[@]},
-    "failed": ${#failed_list[@]}
-  }
-}
-JSONEOF
-            log_info "JSON report exported to $REPORT_JSON"
-        fi
     fi
     
     # 非交互模式直接退出
