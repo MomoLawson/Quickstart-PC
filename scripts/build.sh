@@ -53,3 +53,16 @@ if [[ -f "$SRC_FILE" ]]; then
     echo "[✓] Built: $DIST_FILE ($VERSION)"
     echo "    Size: $(wc -c < "$DIST_FILE") bytes"
 fi
+
+# Copy language files to dist/lang/
+LANG_SRC="$SRC_DIR/lang"
+LANG_DIST="$DIST_DIR/lang"
+if [[ -d "$LANG_SRC" ]]; then
+    mkdir -p "$LANG_DIST"
+    for lang_file in "$LANG_SRC"/*.sh; do
+        if [[ -f "$lang_file" ]]; then
+            cp "$lang_file" "$LANG_DIST/"
+            echo "[✓] Lang: $(basename "$lang_file")"
+        fi
+    done
+fi
