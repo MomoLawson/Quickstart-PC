@@ -5,8 +5,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
 
-**다른 언어**: [English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md) | 한국어
-
+**다른 언어**:  [English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-Hant.md) | [日本語](README.ja.md) | 한국어 | [Deutsch](README.de.md) | [Français](README.fr.md) | [العربية](README.ar.md) | [Português](README.pt.md) | [Italiano](README.it.md)
 ## 기능
 
 - 🚀 **원클릭 설치** - 하나의 명령으로 새 PC 설정
