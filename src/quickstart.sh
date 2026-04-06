@@ -911,17 +911,27 @@ select_language() {
     fi
     
     if [[ -f "$avail_file" ]]; then
-        while IFS='|' read -r code name; do
-            [[ -z "$code" ]] && continue
-            lang_codes+=("$code")
-            lang_items+=("$name")
-        done < <(python3 -c "
+        # Try jq first, fallback to python3
+        local json_output=""
+        if command -v jq &>/dev/null; then
+            json_output=$(jq -r '.languages[]? | "\(.code)|\(.name)"' "$avail_file" 2>/dev/null)
+        fi
+        if [[ -z "$json_output" ]] && command -v python3 &>/dev/null; then
+            json_output=$(python3 -c "
 import json
 with open('$avail_file') as f:
     data = json.load(f)
 for lang in data.get('languages', []):
     print(f\"{lang['code']}|{lang['name']}\")
 " 2>/dev/null)
+        fi
+        if [[ -n "$json_output" ]]; then
+            while IFS='|' read -r code name; do
+                [[ -z "$code" ]] && continue
+                lang_codes+=("$code")
+                lang_items+=("$name")
+            done <<< "$json_output"
+        fi
     fi
     
     # Fallback to hardcoded list if available.json not found
