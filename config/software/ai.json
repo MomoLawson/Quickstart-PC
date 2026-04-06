@@ -97,11 +97,11 @@
     "linux": "npm install -g n8n",
     "linux_dnf": "npm install -g n8n",
     "linux_pacman": "npm install -g n8n",
-    "check_win": "npx n8n --version",
-    "check_mac": "npx n8n --version",
-    "check_linux": "npx n8n --version",
-    "check_linux_dnf": "npx n8n --version",
-    "check_linux_pacman": "npx n8n --version",
+    "check_win": "Get-Command n8n -ErrorAction SilentlyContinue",
+    "check_mac": "which n8n",
+    "check_linux": "which n8n",
+    "check_linux_dnf": "which n8n",
+    "check_linux_pacman": "which n8n",
     "tier": "stable"
   },
   "codex-desktop": {
