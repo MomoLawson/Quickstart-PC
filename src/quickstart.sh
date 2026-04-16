@@ -1731,11 +1731,30 @@ main() {
         else
             echo -e "  ${CYAN}[→]${NC} $sw_name - $LANG_INSTALLING"
             to_install+=("$sw")
+fi
+done
+echo ""
+
+# 执行实际安装 (Bug 2 修复: 之前缺少安装循环)
+if [[ ${#to_install[@]} -gt 0 ]]; then
+    log_info "$LANG_START_INSTALLING"
+    local -a install_failed=()
+    for sw in "${to_install[@]}"; do
+        local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
+        if install_software "$CONFIG_FILE" "$os" "$sw"; then
+            echo -e " ${GREEN}[✓]${NC} $sw_name - $LANG_INSTALL_SUCCESS"
+        else
+            echo -e " ${RED}[✗]${NC} $sw_name - $LANG_INSTALL_FAILED"
+            install_failed+=("$sw_name")
         fi
     done
     echo ""
-    
-    if [[ ${#to_install[@]} -eq 0 ]]; then
+    if [[ ${#install_failed[@]} -gt 0 ]]; then
+        log_warn "以下软件安装失败: ${install_failed[*]}"
+    fi
+fi
+
+if [[ ${#to_install[@]} -eq 0 ]]; then
         log_info "$LANG_ALL_INSTALLED"
         # 非交互模式直接退出
         if [[ "$NON_INTERACTIVE" == "true" ]]; then
