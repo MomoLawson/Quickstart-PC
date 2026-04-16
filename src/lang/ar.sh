@@ -10,8 +10,7 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --cfg-path PATH    استخدام ملف profiles.json المحلي
   --cfg-url URL      استخدام عنوان profiles.json البعيد
   --dev              وضع المطور: عرض التحديدات بدون تثبيت
-  --dry-run          محاكاة: عرض العملية بدون تثبيت
-  --fake-install     اسم مستعار لـ --dry-run (مهمل)
+  --dry-run          وضع المعاينة: عرض عملية التثبيت بدون تثبيت فعلي
   --yes, -y          تأكيد جميع المطالبات تلقائياً
   --verbose, -v      عرض معلومات التصحيح التفصيلية
   --log-file FILE    كتابة السجلات في ملف
@@ -64,8 +63,8 @@ LANG_PLATFORM_NOT_SUPPORTED="المنصة غير مدعومة"
 LANG_INSTALLATION_COMPLETE="اكتمل التثبيت"
 LANG_TOTAL_INSTALLED="إجمالي المثبت"
 LANG_DEV_MODE="وضع المطور: عرض البرامج المحددة بدون تثبيت"
-LANG_FAKE_INSTALL_MODE="وضع المحاكاة: عرض عملية التثبيت بدون تثبيت فعلي"
-LANG_FAKE_INSTALLING="جاري المحاكاة"
+LANG_DRY_RUN_MODE="وضع المعاينة: عرض عملية التثبيت بدون تثبيت فعلي"
+LANG_DRY_RUN_INSTALLING="جاري المحاكاة"
 LANG_JQ_DETECTED="تم اكتشاف jq، استخدام jq"
 LANG_JQ_NOT_FOUND="لم يتم العثور على jq، جاري التثبيت..."
 LANG_JQ_INSTALLED="تم تثبيت jq بنجاح"

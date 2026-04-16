@@ -104,8 +104,8 @@ load_language_strings() {
     LANG_INSTALLATION_COMPLETE="Installation Complete"
     LANG_TOTAL_INSTALLED="Total installed"
     LANG_DEV_MODE="Dev mode: Show selected software without installing"
-    LANG_FAKE_INSTALL_MODE="Fake install mode: Show process without installing"
-    LANG_FAKE_INSTALLING="Simulating install"
+LANG_DRY_RUN_MODE="Preview mode: Show process without installing"
+LANG_DRY_RUN_INSTALLING="Simulating install"
     LANG_JQ_DETECTED="jq detected, using jq"
     LANG_JQ_NOT_FOUND="jq not found, installing..."
     LANG_JQ_INSTALLED="jq installed successfully"
@@ -173,7 +173,7 @@ done
 
 
 DEV_MODE=false
-FAKE_INSTALL=false
+DRY_RUN=false
 AUTO_YES=false
 VERBOSE=false
 LOG_FILE=""
@@ -202,8 +202,7 @@ CFG_URL=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --dev) DEV_MODE=true; shift ;;
-        --dry-run) FAKE_INSTALL=true; shift ;;
-        --fake-install) FAKE_INSTALL=true; echo "[!] --fake-install is deprecated, use --dry-run instead" >&2; shift ;;
+--dry-run) DRY_RUN=true; shift ;;
         --yes|-y) AUTO_YES=true; shift ;;
         --verbose|-v) VERBOSE=true; shift ;;
         --log-file) LOG_FILE="$2"; shift 2 ;;
@@ -1283,8 +1282,8 @@ install_software() {
         return 1
     fi
     
-    if [[ "$FAKE_INSTALL" == "true" ]]; then
-        log_step "$LANG_FAKE_INSTALLING: $key"
+if [[ "$DRY_RUN" == "true" ]]; then
+log_step "$LANG_DRY_RUN_INSTALLING: $key"
         echo -e "  ${CYAN}→ Command: $cmd${NC}"
         sleep 1
         log_success "$key $LANG_INSTALL_SUCCESS (simulated)"
@@ -1440,7 +1439,7 @@ main() {
         show_banner
         
         [[ "$DEV_MODE" == "true" ]] && log_warn "$LANG_DEV_MODE" && echo ""
-        [[ "$FAKE_INSTALL" == "true" ]] && log_warn "$LANG_FAKE_INSTALL_MODE" && echo ""
+        [[ "$DRY_RUN" == "true" ]] && log_warn "$LANG_DRY_RUN_MODE" && echo ""
         
         log_info "$LANG_DETECTING_SYSTEM"
         local os=$(detect_os)

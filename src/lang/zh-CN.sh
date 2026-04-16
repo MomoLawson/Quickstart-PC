@@ -10,8 +10,7 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --cfg-path PATH    使用本地 profiles.json 文件
   --cfg-url URL      使用远程 profiles.json URL
   --dev              开发模式：显示选择的软件但不安装
-  --dry-run          假装安装：展示安装过程但不实际安装
-  --fake-install     同 --dry-run（已弃用）
+ --dry-run 预览模式：展示安装过程但不实际安装
   --yes, -y          自动确认所有提示
   --verbose, -v      显示详细调试信息
   --log-file FILE    将日志写入文件
@@ -64,8 +63,8 @@ LANG_PLATFORM_NOT_SUPPORTED="不支持的平台"
 LANG_INSTALLATION_COMPLETE="安装完成"
 LANG_TOTAL_INSTALLED="共安装"
 LANG_DEV_MODE="开发者模式：仅显示选择的软件，不实际安装"
-LANG_FAKE_INSTALL_MODE="假装安装模式：展示安装过程但不实际安装"
-LANG_FAKE_INSTALLING="模拟安装"
+LANG_DRY_RUN_MODE="预览模式：展示安装过程但不实际安装"
+LANG_DRY_RUN_INSTALLING="模拟安装"
 LANG_JQ_DETECTED="检测到 jq，使用 jq"
 LANG_JQ_NOT_FOUND="未检测到 jq，安装中..."
 LANG_JQ_INSTALLED="jq 安装成功"

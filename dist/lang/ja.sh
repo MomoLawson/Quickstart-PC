@@ -10,8 +10,7 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --cfg-path PATH    ローカルの profiles.json を使用
   --cfg-url URL      リモートの profiles.json URL を使用
   --dev              開発モード：選択したソフトを表示但不インストール
-  --dry-run          假装インストール：过程を表示但不实际インストール
-  --fake-install     --dry-run のエイリアス（廃止）
+  --dry-run          プレビューモード：インストール過程を表示但不实际インストール
   --yes, -y          全てのプロンプトに自動同意
   --verbose, -v      詳細なデバッグ情報を表示
   --log-file FILE    ログをファイルに書き込む
@@ -64,8 +63,8 @@ LANG_PLATFORM_NOT_SUPPORTED="サポートされていないプラットフォー
 LANG_INSTALLATION_COMPLETE="インストール完了"
 LANG_TOTAL_INSTALLED="合計インストール"
 LANG_DEV_MODE="開発モード：選択したソフトウェアを表示但不インストール"
-LANG_FAKE_INSTALL_MODE="假装インストールモード：インストール过程を表示但不实际インストール"
-LANG_FAKE_INSTALLING="インストールをシミュレート"
+LANG_DRY_RUN_MODE="プレビューモード：インストール過程を表示但不实际インストール"
+LANG_DRY_RUN_INSTALLING="インストールをシミュレート"
 LANG_JQ_DETECTED="jq を検出、jqを使用"
 LANG_JQ_NOT_FOUND="jq が見つかりません、インストール中..."
 LANG_JQ_INSTALLED="jq のインストール成功"

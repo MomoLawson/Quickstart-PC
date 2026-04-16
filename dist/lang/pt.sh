@@ -10,8 +10,7 @@ Opções:
   --cfg-path PATH    Usar arquivo profiles.json local
   --cfg-url URL      Usar URL profiles.json remoto
   --dev              Modo desenvolvedor: mostrar seleções sem instalar
-  --dry-run          Simulação: mostrar processo sem instalar
-  --fake-install     Alias para --dry-run (obsoleto)
+  --dry-run          Modo visualização: mostrar processo sem instalar
   --yes, -y          Confirmar automaticamente todos os prompts
   --verbose, -v      Mostrar informações de depuração detalhadas
   --log-file FILE    Escrever logs em arquivo
@@ -64,8 +63,8 @@ LANG_PLATFORM_NOT_SUPPORTED="Plataforma não suportada"
 LANG_INSTALLATION_COMPLETE="Instalação Concluída"
 LANG_TOTAL_INSTALLED="Total instalado"
 LANG_DEV_MODE="Modo desenvolvedor: mostrar software selecionado sem instalar"
-LANG_FAKE_INSTALL_MODE="Modo simulação: mostrar processo de instalação sem instalar realmente"
-LANG_FAKE_INSTALLING="Simulando instalação"
+LANG_DRY_RUN_MODE="Modo visualização: mostrar processo sem instalar"
+LANG_DRY_RUN_INSTALLING="Simulando instalação"
 LANG_JQ_DETECTED="jq detectado, usando jq"
 LANG_JQ_NOT_FOUND="jq não encontrado, instalando..."
 LANG_JQ_INSTALLED="jq instalado com sucesso"

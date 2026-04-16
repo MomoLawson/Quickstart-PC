@@ -10,8 +10,7 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --cfg-path PATH    로컬 profiles.json 사용
   --cfg-url URL      원격 profiles.json URL 사용
   --dev              개발 모드: 선택한 소프트웨어 표시但不설치
-  --dry-run          흉내 설치: 과정 표시，但不실제 설치
-  --fake-install     --dry-run의 별칭 (사용되지 않음)
+  --dry-run          미리보기 모드: 설치 과정 표시하지만 실제 설치하지 않음
   --yes, -y          모든 프롬프트에 자동 동의
   --verbose, -v     詳細な 디버그 정보 표시
   --log-file FILE    로그를 파일에 쓰기
@@ -64,8 +63,8 @@ LANG_PLATFORM_NOT_SUPPORTED="지원되지 않는 플랫폼"
 LANG_INSTALLATION_COMPLETE="설치 완료"
 LANG_TOTAL_INSTALLED="총 설치"
 LANG_DEV_MODE="개발 모드: 선택한 소프트웨어 표시但不설치"
-LANG_FAKE_INSTALL_MODE="흉내 설치 모드: 설치 과정 표시，但不실제 설치"
-LANG_FAKE_INSTALLING="설치 시뮬레이션"
+LANG_DRY_RUN_MODE="미리보기 모드: 설치 과정 표시하지만 실제 설치하지 않음"
+LANG_DRY_RUN_INSTALLING="설치 시뮬레이션"
 LANG_JQ_DETECTED="jq 감지됨, jq 사용"
 LANG_JQ_NOT_FOUND="jq를 찾을 수 없습니다, 설치 중..."
 LANG_JQ_INSTALLED="jq 설치 성공"

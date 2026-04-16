@@ -64,11 +64,7 @@ $script:LANGUAGE_MAPPINGS = @{
     "it" = "it"; "it-IT" = "it"; "it_CH" = "it"
 }
 
-# Handle deprecated --fake-install
-if ($fakeInstall) {
-    $dryRun = $true
-    Write-Warning "--fake-install is deprecated, use --dry-run instead"
-}
+
 
 # Script variables
 $script:CONFIG_FILE = ""
@@ -183,8 +179,8 @@ function Initialize-LanguageStrings {
                 "total_installed" = "共安装"
                 
                 "dev_mode" = "开发者模式：仅显示选择的软件，不实际安装"
-                "fake_install_mode" = "假装安装模式：展示安装过程但不实际安装"
-                "fake_installing" = "模拟安装"
+                "dry_run_mode" = "预览模式：展示安装过程但不实际安装"
+                "dry_run_installing" = "模拟安装"
                 
                 "checking_installation" = "正在检测安装情况..."
                 "skipping_installed" = "已安装，跳过"
@@ -210,8 +206,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_path" = "使用本地 profiles.json 文件"
                 "help_cfg_url" = "使用远程 profiles.json URL"
                 "help_dev" = "开发模式：显示选择的软件但不安装"
-                "help_dry_run" = "假装安装：展示安装过程但不实际安装"
-                "help_fake_install" = "同 --dry-run（已弃用）"
+                "help_dry_run" = "预览模式：展示安装过程但不实际安装"
                 "help_yes" = "自动确认所有提示"
                 "help_verbose" = "显示详细调试信息"
                 "help_log_file" = "将日志写入文件"
@@ -286,8 +281,8 @@ function Initialize-LanguageStrings {
                 "total_installed" = "合計インストール"
                 
                 "dev_mode" = "開発モード：選択したソフトウェアを表示但不インストール"
-                "fake_install_mode" = "假装インストールモード：インストール过程を表示但不实际インストール"
-                "fake_installing" = "インストールをシミュレート"
+                "dry_run_mode" = "プレビューモード：インストール過程を表示但不实际インストール"
+                "dry_run_installing" = "インストールをシミュレート"
                 
                 "checking_installation" = "インストール狀態を確認中..."
                 "skipping_installed" = "インストール済み、スキップ"
@@ -313,8 +308,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_path" = "ローカルの profiles.json を使用"
                 "help_cfg_url" = "リモート profiles.json URL を使用"
                 "help_dev" = "開発モード：選択したソフトを表示但不インストール"
-                "help_dry_run" = "假装インストール：过程を表示但不实际インストール"
-                "help_fake_install" = "--dry-run のエイリアス（廃止）"
+                "help_dry_run" = "プレビューモード：インストール過程を表示但不实际インストール"
                 "help_yes" = "全てのプロンプトに自動同意"
                 "help_verbose" = "詳細なデバッグ情報を表示"
                 "help_log_file" = "ログをファイルに書き込む"
@@ -389,8 +383,8 @@ function Initialize-LanguageStrings {
                 "total_installed" = "총 설치"
                 
                 "dev_mode" = "개발 모드: 선택한 소프트웨어 표시但不설치"
-                "fake_install_mode" = "흉내 설치 모드: 설치 과정 표시，但不실제 설치"
-                "fake_installing" = "설치 시뮬레이션"
+                "dry_run_mode" = "미리보기 모드: 설치 과정 표시하지만 실제 설치하지 않음"
+                "dry_run_installing" = "설치 시뮬레이션"
                 
                 "checking_installation" = "설치 상태 확인 중..."
                 "skipping_installed" = "이미 설치됨, 건너뛰기"
@@ -416,8 +410,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_path" = "로컬 profiles.json 사용"
                 "help_cfg_url" = "원격 profiles.json URL 사용"
                 "help_dev" = "개발 모드: 선택한 소프트웨어 표시他不설치"
-                "help_dry_run" = "흉내 설치: 과정 표시，但不실제 설치"
-                "help_fake_install" = "--dry-run의 별칭 (사용되지 않음)"
+                "help_dry_run" = "미리보기 모드: 설치 과정 표시하지만 실제 설치하지 않음"
                 "help_yes" = "모든 프롬프트에 자동 동의"
                 "help_verbose" = "詳細な 디버그 정보 표시"
                 "help_log_file" = "로그를 파일에 쓰기"
@@ -492,8 +485,8 @@ function Initialize-LanguageStrings {
                 "total_installed" = "共安裝"
                 
                 "dev_mode" = "開發模式：僅顯示選擇的軟件，不實際安裝"
-                "fake_install_mode" = "模擬安裝模式：展示安裝過程但不實際安裝"
-                "fake_installing" = "模擬安裝"
+                "dry_run_mode" = "預覽模式：展示安裝過程但不實際安裝"
+                "dry_run_installing" = "模擬安裝"
                 
                 "checking_installation" = "正在偵測安裝情況..."
                 "skipping_installed" = "已安裝，跳過"
@@ -519,8 +512,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_path" = "使用本地 profiles.json 文件"
                 "help_cfg_url" = "使用遠程 profiles.json URL"
                 "help_dev" = "開發模式：顯示選擇的軟件但不實際安裝"
-                "help_dry_run" = "模擬安裝：展示安裝過程但不實際安裝"
-                "help_fake_install" = "同 --dry-run（已棄用）"
+                "help_dry_run" = "預覽模式：展示安裝過程但不實際安裝"
                 "help_yes" = "自動確認所有提示"
                 "help_verbose" = "顯示詳細調試信息"
                 "help_log_file" = "將日誌寫入文件"
@@ -595,8 +587,8 @@ function Initialize-LanguageStrings {
                 "total_installed" = "Gesamt installiert"
                 
                 "dev_mode" = "Entwicklermodus: Ausgewählte Software anzeigen ohne zu installieren"
-                "fake_install_mode" = "Simulationsmodus: Installationsprozess anzeigen ohne tatsächlich zu installieren"
-                "fake_installing" = "Installation simulieren"
+                "dry_run_mode" = "Vorschau-Modus: Installationsprozess anzeigen ohne tatsächliche Installation"
+                "dry_run_installing" = "Installation simulieren"
                 
                 "checking_installation" = "Installationsstatus wird überprüft..."
                 "skipping_installed" = "Bereits installiert, überspringen"
@@ -622,8 +614,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_path" = "Lokale profiles.json verwenden"
                 "help_cfg_url" = "Remote profiles.json URL verwenden"
                 "help_dev" = "Entwicklermodus: Auswahl anzeigen ohne zu installieren"
-                "help_dry_run" = "Simulation: Prozess anzeigen ohne zu installieren"
-                "help_fake_install" = "Alias für --dry-run (veraltet)"
+                "help_dry_run" = "Vorschau-Modus: Installationsprozess anzeigen ohne tatsächliche Installation"
                 "help_yes" = "Alle Prompts automatisch bestätigen"
                 "help_verbose" = "Detaillierte Debug-Infos anzeigen"
                 "help_log_file" = "Logs in Datei schreiben"
@@ -698,8 +689,8 @@ function Initialize-LanguageStrings {
                 "total_installed" = "Total installé"
                 
                 "dev_mode" = "Mode développement: afficher les logiciels sélectionnés sans installer"
-                "fake_install_mode" = "Mode installation simulée: afficher le processus sans installer"
-                "fake_installing" = "Installation simulée"
+                "dry_run_mode" = "Mode aperçu : afficher le processus sans installer"
+                "dry_run_installing" = "Simulation en cours"
                 
                 "checking_installation" = "Vérification du statut d'installation..."
                 "skipping_installed" = "Déjà installé, ignoré"
@@ -723,10 +714,9 @@ function Initialize-LanguageStrings {
                 
                 "help_usage" = "Utilisation: quickstart.ps1 [OPTIONS]"
                 "help_cfg_path" = "Utiliser le fichier profiles.json local"
-                "help_cfg_url" = "Utiliser l'URL profiles.json distante"
-                "help_dev" = "Mode développement: afficher les sélections sans installer"
-                "help_dry_run" = "Installation simulée: afficher le processus sans installer"
-                "help_fake_install" = "Alias pour --dry-run (déprécié)"
+"help_cfg_url" = "Utiliser l'URL profiles.json distante"
+                "help_dev" = "Mode développement: afficher les selections sans installer"
+                "help_dry_run" = "Mode aperçu : afficher le processus sans installer"
                 "help_yes" = "Confirmer automatiquement toutes les invites"
                 "help_verbose" = "Afficher les infos de débogage détaillées"
                 "help_log_file" = "Écrire les logs dans un fichier"
@@ -801,8 +791,8 @@ function Initialize-LanguageStrings {
                 "total_installed" = "المجموع المثبت"
                 
                 "dev_mode" = "وضع التطوير: إظهار البرامج المحددة دون تثبيت"
-                "fake_install_mode" = "وضع التثبيت الوهمي: إظهار عملية التثبيت دون التثبيت الفعلي"
-                "fake_installing" = "محاكاة التثبيت"
+                "dry_run_mode" = "وضع المعاينة: عرض عملية التثبيت بدون تثبيت فعلي"
+                "dry_run_installing" = "جاري المحاكاة"
                 
                 "checking_installation" = "التحقق من حالة التثبيت..."
                 "skipping_installed" = "مثبت بالفعل، تخطي"
@@ -828,8 +818,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_path" = "استخدام ملف profiles.json المحلي"
                 "help_cfg_url" = "استخدام عنوان profiles.json البعيد"
                 "help_dev" = "وضع التطوير: إظهار التحديدات دون التثبيت"
-                "help_dry_run" = "تثبيت وهمي: إظهار العملية دون التثبيت"
-                "help_fake_install" = "اسم مستعار لـ --dry-run (مهمل)"
+                "help_dry_run" = "وضع المعاينة: عرض عملية التثبيت بدون تثبيت فعلي"
                 "help_yes" = "تأكيد جميع الأسئلة تلقائياً"
                 "help_verbose" = "إظهار معلومات التصحيح التفصيلية"
                 "help_log_file" = "كتابة السجلات في ملف"
@@ -904,8 +893,8 @@ function Initialize-LanguageStrings {
                 "total_installed" = "Total instalado"
                 
                 "dev_mode" = "Modo desenvolvimento: mostrar software selecionado sem instalar"
-                "fake_install_mode" = "Modo instalação simulada: mostrar processo sem instalar"
-                "fake_installing" = "Simulando instalação"
+                "dry_run_mode" = "Modo visualização: mostrar processo sem instalar"
+                "dry_run_installing" = "Simulando instalação"
                 
                 "checking_installation" = "Verificando status da instalação..."
                 "skipping_installed" = "Já instalado, pulando"
@@ -931,8 +920,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_path" = "Usar arquivo profiles.json local"
                 "help_cfg_url" = "Usar URL profiles.json remota"
                 "help_dev" = "Modo desenvolvimento: mostrar escolhas sem instalar"
-                "help_dry_run" = "Instalação simulada: mostrar processo sem instalar"
-                "help_fake_install" = "Apelido para --dry-run (obsoleto)"
+                "help_dry_run" = "Modo visualização: mostrar processo sem instalar"
                 "help_yes" = "Confirmar automaticamente todos os prompts"
                 "help_verbose" = "Mostrar informações de debug detalhadas"
                 "help_log_file" = "Escrever logs em arquivo"
@@ -1007,8 +995,8 @@ function Initialize-LanguageStrings {
                 "total_installed" = "Totale installato"
                 
                 "dev_mode" = "Modalità sviluppo: mostra software selezionato senza installare"
-                "fake_install_mode" = "Modalità installazione simulata: mostra processo senza installare"
-                "fake_installing" = "Simulazione installazione"
+                "dry_run_mode" = "Modalità anteprima: mostra processo senza installare"
+                "dry_run_installing" = "Simulazione in corso"
                 
                 "checking_installation" = "Verifica stato installazione..."
                 "skipping_installed" = "Già installato, salto"
@@ -1034,8 +1022,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_path" = "Usa file profiles.json locale"
                 "help_cfg_url" = "Usa URL profiles.json remota"
                 "help_dev" = "Modalità sviluppo: mostra selezioni senza installare"
-                "help_dry_run" = "Installazione simulata: mostra processo senza installare"
-                "help_fake_install" = "Alias per --dry-run (deprecato)"
+                "help_dry_run" = "Modalità anteprima: mostra processo senza installare"
                 "help_yes" = "Conferma automaticamente tutti i prompt"
                 "help_verbose" = "Mostra info di debug dettagliate"
                 "help_log_file" = "Scrivi log su file"
@@ -1110,8 +1097,8 @@ function Initialize-LanguageStrings {
                 "total_installed" = "Total installed"
                 
                 "dev_mode" = "Dev mode: Show selected software without installing"
-                "fake_install_mode" = "Fake install mode: Show installation process without actually installing"
-                "fake_installing" = "Simulating install"
+                "dry_run_mode" = "Preview mode: Show process without installing"
+                "dry_run_installing" = "Simulating install"
                 
                 "checking_installation" = "Checking installation status..."
                 "skipping_installed" = "Already installed, skipping"
@@ -1137,8 +1124,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_path" = "Use local profiles.json file"
                 "help_cfg_url" = "Use remote profiles.json URL"
                 "help_dev" = "Dev mode"
-                "help_dry_run" = "Fake install: show process without installing"
-                "help_fake_install" = "Alias for --dry-run (deprecated)"
+                "help_dry_run" = "Preview mode: Show process without installing"
                 "help_yes" = "Auto-confirm all prompts"
                 "help_verbose" = "Show detailed debug info"
                 "help_log_file" = "Write logs to file"
@@ -1769,7 +1755,7 @@ function Install-Software {
     }
     
     if ($dryRun) {
-        Write-Log "$($script:LANG["fake_installing"]): $Key" "STEP"
+        Write-Log "$($script:LANG["dry_run_installing"]): $Key" "STEP"
         Write-Host "  → Command: $cmd" -ForegroundColor Cyan
         Start-Sleep -Milliseconds 500
         Write-Log "$Key $($script:LANG["install_success"]) (simulated)" "SUCCESS"
@@ -1867,7 +1853,6 @@ $($h["help_lang"])
   --cfg-url URL      $($h["help_cfg_url"])
   --dev              $($h["help_dev"])
   --dry-run          $($h["help_dry_run"])
-  --fake-install     $($h["help_fake_install"])
   --yes, -y         $($h["help_yes"])
   --verbose, -v      $($h["help_verbose"])
   --log-file FILE    $($h["help_log_file"])
@@ -2301,7 +2286,7 @@ function Main {
         Show-Banner -Lang $script:DETECTED_LANG
         
         if ($dev) { Write-Log $h["dev_mode"] "WARN"; Write-Host "" }
-        if ($dryRun) { Write-Log $h["fake_install_mode"] "WARN"; Write-Host "" }
+        if ($dryRun) { Write-Log $h["dry_run_mode"] "WARN"; Write-Host "" }
         
         Write-Log $h["detecting_system"] "INFO"
         $os = Get-CurrentOS
