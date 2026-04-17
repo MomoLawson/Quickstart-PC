@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Quickstart-PC Language Pack: ko (Korean)
 
 HELP_TITLE="Quickstart-PC - 원클릭 PC 설정"

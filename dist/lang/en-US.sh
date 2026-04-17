@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Quickstart-PC Language Pack: en-US (English)
 
 HELP_TITLE="Quickstart-PC - One-click computer setup"

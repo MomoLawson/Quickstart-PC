@@ -9,15 +9,14 @@ param(
     [string]$cfgUrl,
     [switch]$dev,
     [switch]$dryRun,
-    [switch]$fakeInstall,
     [switch]$doctor,
     [switch]$yes,
     [switch]$verbose,
     [string]$logFile,
     [string]$exportPlan,
-[switch]$custom,
-[switch]$retryFailed,
-[switch]$listSoftware,
+    [switch]$custom,
+    [switch]$retryFailed,
+    [switch]$listSoftware,
     [string]$showSoftware,
     [string]$search,
     [switch]$validate,
@@ -31,6 +30,7 @@ param(
     [string]$profile,
     [switch]$nonInteractive,
     [switch]$debug,
+    [string]$localLang,
     [switch]$help
 )
 
@@ -197,8 +197,9 @@ function Initialize-LanguageStrings {
                 "title_ask_continue" = "是否继续安装"
                 
                 "lang_prompt" = "请选择语言"
-                "help_lang" = "设置语言 (en, zh, ja, ko)"
-                "noninteractive_error" = "非交互模式需要 --profile 参数"
+"help_lang" = "设置语言 (en, zh, ja, ko)"
+"help_local_lang" = "使用本地语言脚本文件夹"
+"help_cfg_path" = "使用本地 profiles.json 文件"
                 "profile_not_found" = "Profile 不存在"
                 "npm_not_found" = "npm 未安装，正在安装..."
                 "winget_not_found" = "winget 未找到，无法自动安装 npm"
@@ -2105,6 +2106,207 @@ function Show-Search {
 }
 
 # ============================================
+# QC Doctor - Environment Diagnostics
+# ============================================
+function Show-Doctor {
+    Write-Host ""
+    Write-Host "╔════════════════════════════════════════════════════════════╗"
+    Write-Host "║ 🔧 QC Doctor                                                ║"
+    Write-Host "║         Quickstart-PC Environment Diagnostics              ║"
+    Write-Host "╚════════════════════════════════════════════════════════════╝"
+    Write-Host ""
+    
+    $passed = 0
+    $warnings = 0
+    $failed = 0
+    $osName = (Get-CurrentOS).OS
+    
+    # 1. System Information
+    Write-Host "━━━ System Information ━━━"
+    Write-Host " OS: $osName"
+    $arch = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture
+    Write-Host " Arch: $arch"
+    if ($osName -eq "Windows") {
+        $osVersion = [System.Environment]::OSVersion.VersionString
+        Write-Host " Version: $osVersion"
+    } elseif ($osName -eq "macOS") {
+        try {
+            $osVersion = sw_vers -productVersion 2>&1 | Select-Object -First 1
+            Write-Host " Version: $osVersion"
+        } catch {}
+    } elseif ($osName -eq "Linux") {
+        try {
+            $distro = Get-Content /etc/os-release 2>/dev/null | grep PRETTY_NAME | cut -d'"' -f2
+            Write-Host " Distro: ${distro}"
+        } catch {}
+    }
+    Write-Host ""
+    $passed++
+    
+    # 2. Package Manager
+    Write-Host "━━━ Package Manager ━━━"
+    if ($osName -eq "Windows") {
+        if (Get-Command winget -ErrorAction SilentlyContinue) {
+            Write-Host " [✓] winget" -ForegroundColor Green
+            $passed++
+        } else {
+            Write-Host " [!] winget not found (optional on Windows)" -ForegroundColor Yellow
+            $warnings++
+        }
+    } elseif ($osName -eq "macOS") {
+        if (Get-Command brew -ErrorAction SilentlyContinue) {
+            $brewVer = brew --version 2>&1 | Select-Object -First 1
+            Write-Host " [✓] Homebrew: $brewVer" -ForegroundColor Green
+            $passed++
+        } else {
+            Write-Host " [✗] Homebrew not found" -ForegroundColor Red
+            Write-Host "     → Install: /bin/bash -c `"`$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)`""
+            $failed++
+        }
+    } elseif ($osName -eq "Linux") {
+        if (Get-Command apt -ErrorAction SilentlyContinue) {
+            Write-Host " [✓] apt (Debian/Ubuntu)" -ForegroundColor Green
+            $passed++
+        } elseif (Get-Command dnf -ErrorAction SilentlyContinue) {
+            Write-Host " [✓] dnf (Fedora/RHEL)" -ForegroundColor Green
+            $passed++
+        } elseif (Get-Command pacman -ErrorAction SilentlyContinue) {
+            Write-Host " [✓] pacman (Arch)" -ForegroundColor Green
+            $passed++
+        } else {
+            Write-Host " [✗] No supported package manager found" -ForegroundColor Red
+            $failed++
+        }
+    }
+    Write-Host ""
+    
+    # 3. Required Tools
+    Write-Host "━━━ Required Tools ━━━"
+    if (Get-Command jq -ErrorAction SilentlyContinue) {
+        $jqVer = jq --version 2>&1
+        Write-Host " [✓] jq: $jqVer" -ForegroundColor Green
+        $passed++
+    } else {
+        Write-Host " [✗] jq not found (JSON parser required)" -ForegroundColor Red
+        Write-Host "     → Install: brew install jq (macOS) or apt install jq (Linux)"
+        $failed++
+    }
+    
+    if (Get-Command curl -ErrorAction SilentlyContinue) {
+        Write-Host " [✓] curl: available" -ForegroundColor Green
+        $passed++
+    } else {
+        Write-Host " [✗] curl not found" -ForegroundColor Red
+        $failed++
+    }
+    Write-Host ""
+    
+    # 4. Network Connectivity
+    Write-Host "━━━ Network Connectivity ━━━"
+    try {
+        $response = Invoke-WebRequest -Uri "https://raw.githubusercontent.com" -TimeoutSec 10 -UseBasicParsing 2>&1
+        if ($response.StatusCode -eq 200) {
+            Write-Host " [✓] GitHub raw content: reachable" -ForegroundColor Green
+            $passed++
+        } else {
+            Write-Host " [✗] GitHub raw content: unreachable" -ForegroundColor Red
+            Write-Host "     → Check network connection or proxy settings"
+            $failed++
+        }
+    } catch {
+        Write-Host " [✗] GitHub raw content: unreachable" -ForegroundColor Red
+        Write-Host "     → Check network connection or proxy settings"
+        $failed++
+    }
+    
+    try {
+        $response = Invoke-WebRequest -Uri "https://github.com" -TimeoutSec 10 -UseBasicParsing 2>&1
+        if ($response.StatusCode -eq 200) {
+            Write-Host " [✓] GitHub: reachable" -ForegroundColor Green
+            $passed++
+        } else {
+            Write-Host " [!] GitHub: unreachable (may be temporary)" -ForegroundColor Yellow
+            $warnings++
+        }
+    } catch {
+        Write-Host " [!] GitHub: unreachable (may be temporary)" -ForegroundColor Yellow
+        $warnings++
+    }
+    Write-Host ""
+    
+    # 5. Disk Space
+    Write-Host "━━━ Disk Space ━━━"
+    try {
+        $disk = Get-PSDrive -Name (Split-Path $env:TEMP -PathRoot) -ErrorAction Stop
+        $freeGB = [math]::Round($disk.Free / 1GB, 2)
+        if ($freeGB -gt 1) {
+            Write-Host " [✓] Available: ${freeGB}GB" -ForegroundColor Green
+            $passed++
+        } else {
+            Write-Host " [!] Available: ${freeGB}GB (recommend >1GB)" -ForegroundColor Yellow
+            $warnings++
+        }
+    } catch {
+        Write-Host " [!] Could not determine disk space" -ForegroundColor Yellow
+        $warnings++
+    }
+    Write-Host ""
+    
+    # 6. Temp Directory
+    Write-Host "━━━ Temp Directory ━━━"
+    $tmpDir = $env:TEMP ?? "/tmp"
+    if (Test-Path $tmpDir) {
+        try {
+            $testFile = Join-Path $tmpDir "qc-test-$(Get-Random)"
+            [System.IO.File]::WriteAllText($testFile, "test")
+            [System.IO.File]::Delete($testFile)
+            Write-Host " [✓] $tmpDir : writable" -ForegroundColor Green
+            $passed++
+        } catch {
+            Write-Host " [✗] $tmpDir : not writable" -ForegroundColor Red
+            $failed++
+        }
+    } else {
+        Write-Host " [✗] $tmpDir : does not exist" -ForegroundColor Red
+        $failed++
+    }
+    Write-Host ""
+    
+    # 7. Configuration
+    Write-Host "━━━ Configuration ━━━"
+    try {
+        $configFile = Get-ConfigFile
+        if (Test-JsonValid -Path $configFile) {
+            $profileCount = (Get-ProfileKeys -Path $configFile).Count
+            $swCount = (Get-SoftwareKeys -Path $configFile).Count
+            Write-Host " [✓] profiles.json: valid ($swCount software, $profileCount profiles)" -ForegroundColor Green
+            $passed++
+        } else {
+            Write-Host " [✗] profiles.json: invalid JSON" -ForegroundColor Red
+            $failed++
+        }
+        Remove-Item $configFile -Force -ErrorAction SilentlyContinue
+    } catch {
+        Write-Host " [!] Could not download profiles.json (network issue?)" -ForegroundColor Yellow
+        $warnings++
+    }
+    Write-Host ""
+    
+    # Summary
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    Write-Host " Summary: $passed passed, $warnings warnings, $failed failed"
+    if ($failed -eq 0) {
+        Write-Host " Status: ✅ Environment ready for Quickstart-PC" -ForegroundColor Green
+        Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        exit 0
+    } else {
+        Write-Host " Status: ⚠️  Some issues need attention before installation" -ForegroundColor Yellow
+        Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        exit 1
+    }
+}
+
+# ============================================
 # Validate config
 # ============================================
 function Show-Validate {
@@ -2270,13 +2472,17 @@ function Main {
         Show-ShowSoftware -Key $showSoftware
     }
     
-    if ($search) {
-        Show-Search -Keyword $search
-    }
-    
-    if ($validate) {
-        Show-Validate
-    }
+if ($search) {
+    Show-Search -Keyword $search
+}
+
+if ($doctor) {
+    Show-Doctor
+}
+
+if ($validate) {
+    Show-Validate
+}
     
     $script:DETECTED_LANG = Select-Language
     Initialize-LanguageStrings -Lang $script:DETECTED_LANG

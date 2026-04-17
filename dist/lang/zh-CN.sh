@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Quickstart-PC Language Pack: zh-CN (Chinese Simplified)
 
 HELP_TITLE="Quickstart-PC - 一键配置新电脑"
