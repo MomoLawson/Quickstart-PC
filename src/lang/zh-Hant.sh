@@ -11,6 +11,7 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --cfg-url URL      使用遠程 profiles.json URL
   --dev              開發模式：僅顯示選擇的軟體，不安裝
   --dry-run          預覽模式：展示安裝過程但不實際安裝
+  --doctor           執行 QC Doctor 環境診斷
   --yes, -y          自動確認所有提示
   --verbose, -v      顯示詳細調試信息
   --log-file FILE    將日誌寫入文件

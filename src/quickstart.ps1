@@ -10,12 +10,13 @@ param(
     [switch]$dev,
     [switch]$dryRun,
     [switch]$fakeInstall,
+    [switch]$doctor,
     [switch]$yes,
     [switch]$verbose,
     [string]$logFile,
     [string]$exportPlan,
     [switch]$custom,
-    [switch]$retryFailed,
+    [switch>$retryFailed,
     [switch]$listSoftware,
     [string]$showSoftware,
     [string]$search,
@@ -207,6 +208,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_url" = "使用远程 profiles.json URL"
                 "help_dev" = "开发模式：显示选择的软件但不安装"
                 "help_dry_run" = "预览模式：展示安装过程但不实际安装"
+                "help_doctor" = "运行 QC Doctor 环境诊断"
                 "help_yes" = "自动确认所有提示"
                 "help_verbose" = "显示详细调试信息"
                 "help_log_file" = "将日志写入文件"
@@ -309,6 +311,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_url" = "リモート profiles.json URL を使用"
                 "help_dev" = "開発モード：選択したソフトを表示但不インストール"
                 "help_dry_run" = "プレビューモード：インストール過程を表示但不实际インストール"
+                "help_doctor" = "QC Doctor 環境診断を実行"
                 "help_yes" = "全てのプロンプトに自動同意"
                 "help_verbose" = "詳細なデバッグ情報を表示"
                 "help_log_file" = "ログをファイルに書き込む"
@@ -411,6 +414,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_url" = "원격 profiles.json URL 사용"
                 "help_dev" = "개발 모드: 선택한 소프트웨어 표시他不설치"
                 "help_dry_run" = "미리보기 모드: 설치 과정 표시하지만 실제 설치하지 않음"
+                "help_doctor" = "QC Doctor 환경 진단 실행"
                 "help_yes" = "모든 프롬프트에 자동 동의"
                 "help_verbose" = "詳細な 디버그 정보 표시"
                 "help_log_file" = "로그를 파일에 쓰기"
@@ -513,6 +517,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_url" = "使用遠程 profiles.json URL"
                 "help_dev" = "開發模式：顯示選擇的軟件但不實際安裝"
                 "help_dry_run" = "預覽模式：展示安裝過程但不實際安裝"
+                "help_doctor" = "執行 QC Doctor 環境診斷"
                 "help_yes" = "自動確認所有提示"
                 "help_verbose" = "顯示詳細調試信息"
                 "help_log_file" = "將日誌寫入文件"
@@ -615,6 +620,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_url" = "Remote profiles.json URL verwenden"
                 "help_dev" = "Entwicklermodus: Auswahl anzeigen ohne zu installieren"
                 "help_dry_run" = "Vorschau-Modus: Installationsprozess anzeigen ohne tatsächliche Installation"
+                "help_doctor" = "QC Doctor Umgebungsdiagnose ausführen"
                 "help_yes" = "Alle Prompts automatisch bestätigen"
                 "help_verbose" = "Detaillierte Debug-Infos anzeigen"
                 "help_log_file" = "Logs in Datei schreiben"
@@ -717,6 +723,7 @@ function Initialize-LanguageStrings {
 "help_cfg_url" = "Utiliser l'URL profiles.json distante"
                 "help_dev" = "Mode développement: afficher les selections sans installer"
                 "help_dry_run" = "Mode aperçu : afficher le processus sans installer"
+                "help_doctor" = "Exécuter les diagnostics QC Doctor"
                 "help_yes" = "Confirmer automatiquement toutes les invites"
                 "help_verbose" = "Afficher les infos de débogage détaillées"
                 "help_log_file" = "Écrire les logs dans un fichier"
@@ -819,6 +826,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_url" = "استخدام عنوان profiles.json البعيد"
                 "help_dev" = "وضع التطوير: إظهار التحديدات دون التثبيت"
                 "help_dry_run" = "وضع المعاينة: عرض عملية التثبيت بدون تثبيت فعلي"
+                "help_doctor" = "تشغيل تشخيص بيئة QC Doctor"
                 "help_yes" = "تأكيد جميع الأسئلة تلقائياً"
                 "help_verbose" = "إظهار معلومات التصحيح التفصيلية"
                 "help_log_file" = "كتابة السجلات في ملف"
@@ -921,6 +929,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_url" = "Usar URL profiles.json remota"
                 "help_dev" = "Modo desenvolvimento: mostrar escolhas sem instalar"
                 "help_dry_run" = "Modo visualização: mostrar processo sem instalar"
+                "help_doctor" = "Executar diagnósticos QC Doctor"
                 "help_yes" = "Confirmar automaticamente todos os prompts"
                 "help_verbose" = "Mostrar informações de debug detalhadas"
                 "help_log_file" = "Escrever logs em arquivo"
@@ -1023,6 +1032,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_url" = "Usa URL profiles.json remota"
                 "help_dev" = "Modalità sviluppo: mostra selezioni senza installare"
                 "help_dry_run" = "Modalità anteprima: mostra processo senza installare"
+                "help_doctor" = "Esegui diagnosi ambiente QC Doctor"
                 "help_yes" = "Conferma automaticamente tutti i prompt"
                 "help_verbose" = "Mostra info di debug dettagliate"
                 "help_log_file" = "Scrivi log su file"
@@ -1125,6 +1135,7 @@ function Initialize-LanguageStrings {
                 "help_cfg_url" = "Use remote profiles.json URL"
                 "help_dev" = "Dev mode"
                 "help_dry_run" = "Preview mode: Show process without installing"
+                "help_doctor" = "Run QC Doctor environment diagnostics"
                 "help_yes" = "Auto-confirm all prompts"
                 "help_verbose" = "Show detailed debug info"
                 "help_log_file" = "Write logs to file"
@@ -1852,8 +1863,9 @@ $($h["help_lang"])
   --cfg-path PATH    $($h["help_cfg_path"])
   --cfg-url URL      $($h["help_cfg_url"])
   --dev              $($h["help_dev"])
-  --dry-run          $($h["help_dry_run"])
-  --yes, -y         $($h["help_yes"])
+--dry-run $($h["help_dry_run"])
+--doctor $($h["help_doctor"])
+--yes, -y $($h["help_yes"])
   --verbose, -v      $($h["help_verbose"])
   --log-file FILE    $($h["help_log_file"])
   --export-plan FILE $($h["help_export_plan"])

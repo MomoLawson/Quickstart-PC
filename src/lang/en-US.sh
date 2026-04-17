@@ -11,6 +11,7 @@ Options:
   --cfg-url URL      Use remote profiles.json URL
   --dev              Dev mode: show selections without installing
   --dry-run          Preview mode: Show process without installing
+  --doctor          Run QC Doctor environment diagnostics
   --yes, -y          Auto-confirm all prompts
   --verbose, -v      Show detailed debug info
   --log-file FILE    Write logs to file

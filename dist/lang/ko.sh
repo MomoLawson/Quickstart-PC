@@ -11,6 +11,7 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --cfg-url URL      원격 profiles.json URL 사용
   --dev              개발 모드: 선택한 소프트웨어 표시但不설치
   --dry-run          미리보기 모드: 설치 과정 표시하지만 실제 설치하지 않음
+  --doctor QC Doctor 환경 진단 실행
   --yes, -y          모든 프롬프트에 자동 동의
   --verbose, -v     詳細な 디버그 정보 표시
   --log-file FILE    로그를 파일에 쓰기

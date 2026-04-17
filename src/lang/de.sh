@@ -11,6 +11,7 @@ Optionen:
   --cfg-url URL      Remote profiles.json URL verwenden
   --dev              Entwicklermodus: Auswahl anzeigen ohne Installation
   --dry-run          Vorschau-Modus: Installationsprozess anzeigen ohne tatsächliche Installation
+  --doctor           QC Doctor Umgebungsdiagnose ausführen
   --yes, -y          Alle Bestätigungen automatisch bestätigen
   --verbose, -v      Detaillierte Debug-Infos anzeigen
   --log-file FILE    Logs in Datei schreiben

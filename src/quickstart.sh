@@ -174,6 +174,7 @@ done
 
 DEV_MODE=false
 DRY_RUN=false
+DOCTOR=false
 AUTO_YES=false
 VERBOSE=false
 LOG_FILE=""
@@ -203,6 +204,7 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         --dev) DEV_MODE=true; shift ;;
 --dry-run) DRY_RUN=true; shift ;;
+--doctor) DOCTOR=true; shift ;;
         --yes|-y) AUTO_YES=true; shift ;;
         --verbose|-v) VERBOSE=true; shift ;;
         --log-file) LOG_FILE="$2"; shift 2 ;;
@@ -514,8 +516,188 @@ if [[ -n "$SEARCH_KEYWORD" ]]; then
         echo "[ERROR] Failed to load configuration"
     fi
     
-    rm -f "$CONFIG_FILE" 2>/dev/null
-    exit 0
+rm -f "$CONFIG_FILE" 2>/dev/null
+exit 0
+fi
+
+# --doctor (QC Doctor) 在语言选择之前处理
+if [[ "$DOCTOR" == "true" ]]; then
+echo ""
+echo "╔════════════════════════════════════════════════════════════╗"
+echo "║                    🔧 QC Doctor                            ║"
+echo "║         Quickstart-PC Environment Diagnostics              ║"
+echo "╚════════════════════════════════════════════════════════════╝"
+echo ""
+
+passed=0
+warnings=0
+failed=0
+
+# 1. 系统检测
+echo "━━━ System Information ━━━"
+os_name=$(uname -s)
+os_arch=$(uname -m)
+echo "  OS: $os_name"
+echo "  Arch: $os_arch"
+if [[ "$os_name" == "Darwin" ]]; then
+echo "  macOS Version: $(sw_vers -productVersion 2>/dev/null || echo 'Unknown')"
+elif [[ "$os_name" == "Linux" ]]; then
+distro=$(cat /etc/os-release 2>/dev/null | grep PRETTY_NAME | cut -d'"' -f2)
+echo "  Distro: ${distro:-Unknown}"
+fi
+echo ""
+((passed++))
+
+# 2. 包管理器检测
+echo "━━━ Package Manager ━━━"
+case "$os_name" in
+Darwin)
+if command -v brew &>/dev/null; then
+brew_ver=$(brew --version 2>/dev/null | head -1)
+echo "  [✓] Homebrew: $brew_ver"
+((passed++))
+else
+echo "  [✗] Homebrew not found"
+echo "      → Install: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+((failed++))
+fi
+;;
+Linux)
+if command -v apt &>/dev/null; then
+echo "  [✓] apt (Debian/Ubuntu)"
+((passed++))
+elif command -v dnf &>/dev/null; then
+echo "  [✓] dnf (Fedora/RHEL)"
+((passed++))
+elif command -v pacman &>/dev/null; then
+echo "  [✓] pacman (Arch)"
+((passed++))
+else
+echo "  [✗] No supported package manager found"
+((failed++))
+fi
+;;
+MINGW*|MSYS*|CYGWIN*)
+if command -v winget &>/dev/null; then
+echo "  [✓] winget"
+((passed++))
+else
+echo "  [!] winget not found (optional on Windows)"
+((warnings++))
+fi
+;;
+esac
+echo ""
+
+# 3. 必要工具检测
+echo "━━━ Required Tools ━━━"
+if command -v jq &>/dev/null; then
+jq_ver=$(jq --version 2>/dev/null)
+echo "  [✓] jq: $jq_ver"
+((passed++))
+else
+echo "  [✗] jq not found (JSON parser required)"
+echo "      → Install: brew install jq (macOS) or apt install jq (Linux)"
+((failed++))
+fi
+
+if command -v curl &>/dev/null; then
+curl_ver=$(curl --version 2>/dev/null | head -1)
+echo "  [✓] curl: available"
+((passed++))
+else
+echo "  [✗] curl not found"
+((failed++))
+fi
+echo ""
+
+# 4. 网络连接检测
+echo "━━━ Network Connectivity ━━━"
+if curl -fsSL --connect-timeout 5 --max-time 10 "https://raw.githubusercontent.com" &>/dev/null; then
+echo "  [✓] GitHub raw content: reachable"
+((passed++))
+else
+echo "  [✗] GitHub raw content: unreachable"
+echo "      → Check network connection or proxy settings"
+((failed++))
+fi
+
+if curl -fsSL --connect-timeout 5 --max-time 10 "https://github.com" &>/dev/null; then
+echo "  [✓] GitHub: reachable"
+((passed++))
+else
+echo "  [!] GitHub: unreachable (may be temporary)"
+((warnings++))
+fi
+echo ""
+
+# 5. 磁盘空间检测
+echo "━━━ Disk Space ━━━"
+if [[ "$os_name" == "Darwin" ]]; then
+free_space=$(df -g /tmp 2>/dev/null | tail -1 | awk '{print $4}')
+if [[ "$free_space" -gt 1 ]]; then
+echo "  [✓] Available: ${free_space}GB"
+((passed++))
+else
+echo "  [!] Available: ${free_space}GB (recommend >1GB)"
+((warnings++))
+fi
+elif [[ "$os_name" == "Linux" ]]; then
+free_space=$(df -BG /tmp 2>/dev/null | tail -1 | awk '{print $4}' | tr -d 'G')
+if [[ "$free_space" -gt 1 ]]; then
+echo "  [✓] Available: ${free_space}GB"
+((passed++))
+else
+echo "  [!] Available: ${free_space}GB (recommend >1GB)"
+((warnings++))
+fi
+fi
+echo ""
+
+# 6. 临时目录检测
+echo "━━━ Temp Directory ━━━"
+tmp_dir="/tmp"
+if [[ -d "$tmp_dir" && -w "$tmp_dir" ]]; then
+echo "  [✓] $tmp_dir: writable"
+((passed++))
+else
+echo "  [✗] $tmp_dir: not writable"
+((failed++))
+fi
+echo ""
+
+# 7. 配置文件检测
+echo "━━━ Configuration ━━━"
+test_config=$(mktemp /tmp/qc-doctor-config-XXXXXX.json)
+if curl -fsSL --connect-timeout 10 --max-time 30 "$DEFAULT_CFG_URL" -o "$test_config" 2>/dev/null; then
+if command -v jq &>/dev/null && jq empty "$test_config" 2>/dev/null; then
+profile_count=$(jq '.profiles | length' "$test_config" 2>/dev/null)
+sw_count=$(jq '.software | length' "$test_config" 2>/dev/null)
+echo "  [✓] profiles.json: valid ($sw_count software, $profile_count profiles)"
+((passed++))
+else
+echo "  [✗] profiles.json: invalid JSON"
+((failed++))
+fi
+rm -f "$test_config"
+else
+echo "  [!] Could not download profiles.json (network issue?)"
+((warnings++))
+fi
+echo ""
+
+# 总结
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  Summary: $passed passed, $warnings warnings, $failed failed"
+if [[ $failed -eq 0 ]]; then
+echo "  Status: ✅ Environment ready for Quickstart-PC"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+exit 0
+else
+echo "  Status: ⚠️  Some issues need attention before installation"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+exit 1
+fi
 fi
 
 # --validate 在语言选择之前处理
