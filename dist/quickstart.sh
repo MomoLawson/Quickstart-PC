@@ -1717,42 +1717,52 @@ main() {
             sw_keys+=("$key")
         done < <(json_get_profile_includes "$CONFIG_FILE" "$PROFILE_KEY")
         
-        SELECTED_SOFTWARE=("${sw_keys[@]}")
-    elif [[ -n "$PROFILE_KEY" ]]; then
-        # --profile 参数：跳过菜单，直接选择
-        local profile_exists=false
-        while IFS= read -r key; do
-            if [[ "$key" == "$PROFILE_KEY" ]]; then
-                profile_exists=true
-                break
-            fi
-        done < <(json_list_profiles "$CONFIG_FILE")
-        
-        if [[ "$profile_exists" != "true" ]]; then
-            log_error "${LANG_PROFILE_NOT_FOUND/'$PROFILE_KEY'/$PROFILE_KEY}"
-            exit 1
-        fi
-        
-        SELECTED_PROFILES=("$PROFILE_KEY")
-        local profile_name=$(json_get_profile_field "$CONFIG_FILE" "$PROFILE_KEY" "name")
-        set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
-        if [[ "$CUSTOM_MODE" == "true" ]]; then
-            custom_select_software "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
-        else
-            show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
-        fi
-    else
-        set_title "QSPC | $LANG_TITLE_SELECT_PROFILE"
-        show_profile_menu "$CONFIG_FILE"
-        [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
-        local profile_name=$(json_get_profile_field "$CONFIG_FILE" "${SELECTED_PROFILES[@]}" "name")
-        set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
-        if [[ "$CUSTOM_MODE" == "true" ]]; then
-            custom_select_software "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
-        else
-            show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
-        fi
-    fi
+SELECTED_SOFTWARE=("${sw_keys[@]}")
+elif [[ -n "$PROFILE_KEY" ]]; then
+# --profile 参数：跳过菜单，直接选择
+local profile_exists=false
+while IFS= read -r key; do
+if [[ "$key" == "$PROFILE_KEY" ]]; then
+profile_exists=true
+break
+fi
+done < <(json_list_profiles "$CONFIG_FILE")
+
+if [[ "$profile_exists" != "true" ]]; then
+log_error "${LANG_PROFILE_NOT_FOUND/'$PROFILE_KEY'/$PROFILE_KEY}"
+exit 1
+fi
+
+SELECTED_PROFILES=("$PROFILE_KEY")
+local profile_name=$(json_get_profile_field "$CONFIG_FILE" "$PROFILE_KEY" "name")
+set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
+# 清屏，准备显示软件选择界面
+clear
+echo ""
+log_header "$LANG_SELECT_SOFTWARE"
+echo ""
+if [[ "$CUSTOM_MODE" == "true" ]]; then
+custom_select_software "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+else
+show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+fi
+else
+set_title "QSPC | $LANG_TITLE_SELECT_PROFILE"
+show_profile_menu "$CONFIG_FILE"
+[[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
+local profile_name=$(json_get_profile_field "$CONFIG_FILE" "${SELECTED_PROFILES[@]}" "name")
+# 清屏，准备显示软件选择界面
+clear
+echo ""
+log_header "$LANG_SELECT_SOFTWARE"
+echo ""
+set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
+if [[ "$CUSTOM_MODE" == "true" ]]; then
+custom_select_software "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+else
+show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+fi
+fi
     
     if [[ ${#SELECTED_SOFTWARE[@]} -eq 0 ]]; then
         log_warn "$LANG_NO_SOFTWARE_SELECTED"
