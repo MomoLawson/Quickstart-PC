@@ -1766,11 +1766,9 @@ show_banner
 log_info "$LANG_DETECTING_SYSTEM"
 local os=$(detect_os)
 local system_info=$(get_system_info)
-PKG_MANAGER=$(get_package_manager "$os")
+PKG_MANAGER=$(check_package_manager "$os")
 log_info "$LANG_SYSTEM_INFO: $system_info"
 log_info "$LANG_PACKAGE_MANAGER: $PKG_MANAGER"
-echo ""
-log_header "$LANG_SELECT_SOFTWARE"
 echo ""
 set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
 if [[ "$CUSTOM_MODE" == "true" ]]; then
@@ -1791,11 +1789,9 @@ show_banner
 log_info "$LANG_DETECTING_SYSTEM"
 local os=$(detect_os)
 local system_info=$(get_system_info)
-PKG_MANAGER=$(get_package_manager "$os")
+PKG_MANAGER=$(check_package_manager "$os")
 log_info "$LANG_SYSTEM_INFO: $system_info"
 log_info "$LANG_PACKAGE_MANAGER: $PKG_MANAGER"
-echo ""
-log_header "$LANG_SELECT_SOFTWARE"
 echo ""
 set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
 if [[ "$CUSTOM_MODE" == "true" ]]; then
@@ -1816,7 +1812,7 @@ show_banner
 log_info "$LANG_DETECTING_SYSTEM"
 os=$(detect_os)
 system_info=$(get_system_info)
-PKG_MANAGER=$(get_package_manager "$os")
+PKG_MANAGER=$(check_package_manager "$os")
 log_info "$LANG_SYSTEM_INFO: $system_info"
 log_info "$LANG_PACKAGE_MANAGER: $PKG_MANAGER"
 echo ""
