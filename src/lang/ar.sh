@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Quickstart-PC Language Pack: ar (العربية)
 
 HELP_TITLE="Quickstart-PC - إعداد الكمبيوتر بنقرة واحدة"

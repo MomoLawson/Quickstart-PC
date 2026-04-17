@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Quickstart-PC Language Pack: ja (Japanese)
 
 HELP_TITLE="Quickstart-PC - ワンクリックPC設定"

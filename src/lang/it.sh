@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Quickstart-PC Language Pack: it (Italiano)
 
 HELP_TITLE="Quickstart-PC - Configurazione PC con un clic"
