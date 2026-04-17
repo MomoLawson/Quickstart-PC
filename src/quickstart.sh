@@ -688,14 +688,16 @@ echo ""
 
 # 总结
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  Summary: $passed passed, $warnings warnings, $failed failed"
+echo " Summary: $passed passed, $warnings warnings, $failed failed"
 if [[ $failed -eq 0 ]]; then
-echo "  Status: ✅ Environment ready for Quickstart-PC"
+echo " Status: ✅ Environment ready for Quickstart-PC"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+tput cnorm 2>/dev/null || true
 exit 0
 else
-echo "  Status: ⚠️  Some issues need attention before installation"
+echo " Status: ⚠️  Some issues need attention before installation"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+tput cnorm 2>/dev/null || true
 exit 1
 fi
 fi
