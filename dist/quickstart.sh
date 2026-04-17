@@ -1363,9 +1363,9 @@ for k, v in data['software'].items():
     local -a menu_keys menu_names
     local -a checked
     
-    menu_keys=("select_all")
-    menu_names=("${ORANGE}$LANG_SELECT_ALL${NC}")
-    checked=(0)
+menu_keys=("select_all" "back_to_profiles")
+menu_names=("${ORANGE}$LANG_SELECT_ALL${NC}" "${RED}← $LANG_BACK_TO_PROFILES${NC}")
+checked=(0 0)
     
     for key in "${sw_keys[@]}"; do
         local line=$(echo "$sw_data" | grep "^${key}	" | head -1)
@@ -1450,10 +1450,20 @@ for k, v in data['software'].items():
     tput cnorm 2>/dev/null || true
     stty echo 2>/dev/null
     
-    SELECTED_SOFTWARE=()
-    for ((i=1; i<num_items; i++)); do
-        [[ ${checked[$i]} -eq 1 ]] && SELECTED_SOFTWARE+=("${menu_keys[$i]}")
-    done
+SELECTED_SOFTWARE=()
+for ((i=2; i<num_items; i++)); do
+	[[ ${checked[$i]} -eq 1 ]] && SELECTED_SOFTWARE+=("${menu_keys[$i]}")
+done
+
+# 如果选择了返回套餐选择
+if [[ $cursor -eq 1 ]] && [[ $((1 - checked[1])) -eq 0 ]]; then
+	# 没有选择返回选项，正常退出
+	:
+elif [[ $cursor -eq 1 ]]; then
+	# 用户选择了返回
+	SELECTED_SOFTWARE=()
+	return 1
+fi
 }
 
 install_software() {
@@ -1754,13 +1764,21 @@ local profile_name=$(json_get_profile_field "$CONFIG_FILE" "${SELECTED_PROFILES[
 # 清屏，准备显示软件选择界面
 clear
 echo ""
-log_header "$LANG_SELECT_SOFTWARE"
-echo ""
 set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
 if [[ "$CUSTOM_MODE" == "true" ]]; then
-custom_select_software "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+	custom_select_software "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
 else
-show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+	if ! show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"; then
+		# 用户选择返回套餐选择
+		set_title "QSPC | $LANG_TITLE_SELECT_PROFILE"
+		show_profile_menu "$CONFIG_FILE"
+		[[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
+		profile_name=$(json_get_profile_field "$CONFIG_FILE" "${SELECTED_PROFILES[@]}" "name")
+		clear
+		echo ""
+		set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
+		show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+	fi
 fi
 fi
     
