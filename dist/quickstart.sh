@@ -910,12 +910,21 @@ print(result if result else '')
 }
 
 json_list_profiles() {
-    local json_file=$1
-    if [[ "$JSON_PARSER" == "jq" ]]; then
-        jq -r '.profiles | keys[]' "$json_file" 2>/dev/null
-    else
-        python3 -c "import json; [print(k) for k in json.load(open('$json_file'))['profiles'].keys()]" 2>/dev/null
-    fi
+	local json_file=$1
+	if [[ "$JSON_PARSER" == "jq" ]]; then
+		# recommended profile 始终排在最前面
+		jq -r 'if .profiles | has("recommended") then "recommended" end, (.profiles | keys[] | select(. != "recommended"))' "$json_file" 2>/dev/null
+	else
+		python3 -c "
+import json
+data = json.load(open('$json_file'))
+if 'recommended' in data['profiles']:
+    print('recommended')
+for k in data['profiles'].keys():
+    if k != 'recommended':
+        print(k)
+" 2>/dev/null
+	fi
 }
 
 json_get_profile_includes() {
