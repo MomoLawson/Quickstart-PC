@@ -1365,37 +1365,32 @@ for k, v in data['software'].items():
         sw_keys+=("$key")
     done < <(json_get_profile_includes "$json_file" "$profile_key")
     
-local -a menu_keys menu_names
-local -a checked
+  local -a menu_keys menu_names
+  local -a checked
 
-menu_keys=("back_to_profiles")
-menu_names=("${RED}← $LANG_BACK_TO_PROFILES${NC}")
-checked=(0)
+  menu_keys=("back_to_profiles" "select_all")
+  menu_names=("${RED}← $LANG_BACK_TO_PROFILES${NC}" "${ORANGE}$LANG_SELECT_ALL${NC}")
+  checked=(0 0)
 
-for key in "${sw_keys[@]}"; do
-local line=$(echo "$sw_data" | grep "^${key} " | head -1)
-local name=$(echo "$line" | cut -f2)
-local desc=$(echo "$line" | cut -f3)
+  for key in "${sw_keys[@]}"; do
+    local line=$(echo "$sw_data" | grep "^${key}"$'\t' | head -1)
+    local name=$(echo "$line" | cut -f2)
+    local desc=$(echo "$line" | cut -f3)
 
-local check_cmd=""
-case "$os" in
-macos) check_cmd=$(echo "$line" | cut -f4) ;;
-windows) check_cmd=$(echo "$line" | cut -f5) ;;
-linux) check_cmd=$(echo "$line" | cut -f6) ;;
-esac
+    local check_cmd=""
+    case "$os" in
+    macos) check_cmd=$(echo "$line" | cut -f4) ;;
+    windows) check_cmd=$(echo "$line" | cut -f5) ;;
+    linux) check_cmd=$(echo "$line" | cut -f6) ;;
+    esac
 
-menu_keys+=("$key")
-menu_names+=("$name - $desc")
-checked+=(0)
-done
+    menu_keys+=("$key")
+    menu_names+=("$name - $desc")
+    checked+=(0)
+  done
 
-# 在最后添加"全选"
-menu_keys+=("select_all")
-menu_names+=("${ORANGE}$LANG_SELECT_ALL${NC}")
-checked+=(0)
-
-local num_items=${#menu_keys[@]}
-local cursor=1
+  local num_items=${#menu_keys[@]}
+  local cursor=2
     
     tput civis 2>/dev/null || true
     stty -echo 2>/dev/null
@@ -1443,27 +1438,20 @@ case "$key" in
 '[B'|'OB') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
 esac
 ;;
-32)
-# 返回选项（cursor=0）不能用空格选择
-if [[ $cursor -eq 0 ]]; then
-# 跳过，不做任何操作
-:
-elif [[ "${menu_keys[$cursor]}" == "select_all" ]]; then
-# 全选逻辑
-local new_state=$((1 - checked[$cursor]))
-for ((i=1; i<num_items; i++)); do
-if [[ "${menu_keys[$i]}" != "select_all" ]]; then
-checked[$i]=$new_state
-fi
-done
-checked[$cursor]=$new_state
-else
-# 普通软件选择
-checked[$cursor]=$((1 - checked[$cursor]))
-fi
-;;
+      32)
+      if [[ $cursor -eq 0 ]]; then
+        :
+      elif [[ "${menu_keys[$cursor]}" == "select_all" ]]; then
+        local new_state=$((1 - checked[$cursor]))
+        for ((i=2; i<num_items; i++)); do
+          checked[$i]=$new_state
+        done
+        checked[$cursor]=$new_state
+      else
+        checked[$cursor]=$((1 - checked[$cursor]))
+      fi
+      ;;
       10|13|0)
-      # 回车键：如果是返回选项，直接返回
       if [[ $cursor -eq 0 ]]; then
         tput cnorm 2>/dev/null || true
         stty echo 2>/dev/null
@@ -1486,11 +1474,11 @@ fi
   printf "\033[J"
 
   SELECTED_SOFTWARE=()
-for ((i=1; i<num_items; i++)); do
-if [[ "${menu_keys[$i]}" != "select_all" ]] && [[ ${checked[$i]} -eq 1 ]]; then
-SELECTED_SOFTWARE+=("${menu_keys[$i]}")
-fi
-done
+  for ((i=2; i<num_items; i++)); do
+    if [[ ${checked[$i]} -eq 1 ]]; then
+      SELECTED_SOFTWARE+=("${menu_keys[$i]}")
+    fi
+  done
 }
 
 install_software() {
