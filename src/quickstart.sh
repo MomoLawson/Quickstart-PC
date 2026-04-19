@@ -92,6 +92,7 @@ load_language_strings() {
     LANG_SELECTED="[✓] "
     LANG_NOT_SELECTED="[  ] "
     LANG_SELECT_ALL="Select All"
+LANG_BACK_TO_PROFILES="Back to Profiles"
     LANG_NO_PROFILE_SELECTED="No profile selected"
     LANG_NO_SOFTWARE_SELECTED="No software selected"
     LANG_CONFIRM_INSTALL="Confirm installation? [Y/n]"
@@ -1369,7 +1370,7 @@ for k, v in data['software'].items():
   local -a checked
 
   menu_keys=("back_to_profiles" "select_all")
-  menu_names=("${RED}← $LANG_BACK_TO_PROFILES${NC}" "${ORANGE}$LANG_SELECT_ALL${NC}")
+  menu_names=("← $LANG_BACK_TO_PROFILES" "$LANG_SELECT_ALL")
   checked=(0 0)
 
   for key in "${sw_keys[@]}"; do
@@ -1401,24 +1402,47 @@ for k, v in data['software'].items():
     echo -e "  ${CYAN}$LANG_NAVIGATE_MULTI${NC}"
     echo ""
     
-    draw_menu() {
-        for ((i=0; i<num_items; i++)); do
-            printf "\033[2K"
-            if [[ $i -eq $cursor ]]; then
-                if [[ ${checked[$i]} -eq 1 ]]; then
-                    echo -e "  ${REVERSE}${GREEN}${LANG_SELECTED}${NC}${REVERSE}${menu_names[$i]}${NC}"
-                else
-                    echo -e "  ${REVERSE}${LANG_NOT_SELECTED}${menu_names[$i]}${NC}"
-                fi
-            else
-                if [[ ${checked[$i]} -eq 1 ]]; then
-                    echo -e "  ${GREEN}${LANG_SELECTED}${NC}${menu_names[$i]}"
-                else
-                    echo -e "  ${LANG_NOT_SELECTED}${menu_names[$i]}"
-                fi
-            fi
-        done
-    }
+  draw_menu() {
+    for ((i=0; i<num_items; i++)); do
+      printf "\033[2K"
+      local item_text="${menu_names[$i]}"
+      local prefix=""
+      local color=""
+
+      if [[ "${menu_keys[$i]}" == "back_to_profiles" ]]; then
+        prefix=""
+        color="${RED}"
+      elif [[ "${menu_keys[$i]}" == "select_all" ]]; then
+        if [[ ${checked[$i]} -eq 1 ]]; then
+          prefix="${GREEN}${LANG_SELECTED}${NC}"
+        else
+          prefix="${LANG_NOT_SELECTED}"
+        fi
+        color="${ORANGE}"
+      else
+        if [[ ${checked[$i]} -eq 1 ]]; then
+          prefix="${GREEN}${LANG_SELECTED}${NC}"
+        else
+          prefix="${LANG_NOT_SELECTED}"
+        fi
+        color=""
+      fi
+
+      if [[ $i -eq $cursor ]]; then
+        if [[ -n "$color" ]]; then
+          echo -e " ${REVERSE}${prefix}${color}${item_text}${NC}"
+        else
+          echo -e " ${REVERSE}${prefix}${item_text}${NC}"
+        fi
+      else
+        if [[ -n "$color" ]]; then
+          echo -e " ${prefix}${color}${item_text}${NC}"
+        else
+          echo -e " ${prefix}${item_text}"
+        fi
+      fi
+    done
+  }
     
     draw_menu
     
@@ -1500,13 +1524,21 @@ install_software() {
         return 1
     fi
     
-if [[ "$DRY_RUN" == "true" ]]; then
-log_step "$LANG_DRY_RUN_INSTALLING: $key"
-        echo -e "  ${CYAN}→ Command: $cmd${NC}"
-        sleep 1
-        log_success "$key $LANG_INSTALL_SUCCESS (simulated)"
-        return 0
-    fi
+  if [[ "$DRY_RUN" == "true" ]]; then
+    log_to_file "[STEP] $LANG_DRY_RUN_INSTALLING: $key"
+    echo -e " ${CYAN}→ Command: $cmd${NC}"
+    sleep 1
+    log_to_file "[SUCCESS] $key $LANG_INSTALL_SUCCESS (simulated)"
+    return 0
+  fi
+
+  log_to_file "[STEP] $LANG_INSTALLING: $key"
+  if eval "$cmd" 2>/dev/null; then
+    log_to_file "[SUCCESS] $key $LANG_INSTALL_SUCCESS"
+  else
+    log_error "$key $LANG_INSTALL_FAILED"
+    return 1
+  fi
     
     log_step "$LANG_INSTALLING: $key"
     if eval "$cmd" 2>/dev/null; then

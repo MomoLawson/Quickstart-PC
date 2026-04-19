@@ -53,6 +53,7 @@ LANG_NAVIGATE_MULTI="↑↓ Déplacer | ESPACE Sélectionner | ENTRÉE Confirmer
 LANG_SELECTED="[✓] "
 LANG_NOT_SELECTED="[  ] "
 LANG_SELECT_ALL="Tout sélectionner"
+LANG_BACK_TO_PROFILES="Retour à la sélection des profils"
 LANG_NO_PROFILE_SELECTED="Aucun profil sélectionné"
 LANG_NO_SOFTWARE_SELECTED="Aucun logiciel sélectionné"
 LANG_CONFIRM_INSTALL="Confirmer l'installation ? [Y/n]"
