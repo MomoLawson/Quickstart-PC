@@ -1391,7 +1391,7 @@ for k, v in data['software'].items():
   done
 
   local num_items=${#menu_keys[@]}
-  local cursor=2
+  local cursor=1
     
     tput civis 2>/dev/null || true
     stty -echo 2>/dev/null
@@ -1429,11 +1429,7 @@ for k, v in data['software'].items():
       fi
 
       if [[ $i -eq $cursor ]]; then
-        if [[ -n "$color" ]]; then
-          echo -e " ${REVERSE}${prefix}${color}${item_text}${NC}"
-        else
-          echo -e " ${REVERSE}${prefix}${item_text}${NC}"
-        fi
+        echo -e " ${REVERSE}${prefix}${item_text}${NC}"
       else
         if [[ -n "$color" ]]; then
           echo -e " ${prefix}${color}${item_text}${NC}"
