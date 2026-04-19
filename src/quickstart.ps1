@@ -1538,12 +1538,14 @@ function Show-ProfileMenu {
         $profileData += @{ Key = $key; Name = $name; Desc = $desc; Icon = $icon }
     }
     
-    Write-Host ""
-    Write-Header ($script:LANG["select_profiles"])
-    Write-Host "  $($script:LANG["navigate"])" -ForegroundColor Cyan
-    Write-Host ""
-    
-    $cursor = 0
+  $menuStartLine = [Console]::CursorTop
+
+  Write-Host ""
+  Write-Header ($script:LANG["select_profiles"])
+  Write-Host " $($script:LANG["navigate"])" -ForegroundColor Cyan
+  Write-Host ""
+
+  $cursor = 0
     $oldVisible = Get-CursorVisible
     Set-CursorVisible -Visible $false
     
@@ -1577,12 +1579,14 @@ function Show-ProfileMenu {
                 [Console]::SetCursorPosition(0, [Console]::CursorTop - 1)
             }
         }
-    } finally {
-        Set-CursorVisible -Visible $oldVisible
-    }
-    
-    Write-Host ""
-    return $profileData[$cursor].Key
+  } finally {
+    Set-CursorVisible -Visible $oldVisible
+  }
+
+  [Console]::SetCursorPosition(0, $menuStartLine)
+  [Console]::Write([char]27 + "[J")
+
+  return $profileData[$cursor].Key
 }
 
 function Show-SoftwareMenu {
@@ -1626,12 +1630,14 @@ function Show-SoftwareMenu {
         $checked += $false
     }
     
-    Write-Host ""
-    Write-Header ($script:LANG["select_software"])
-    Write-Host "  $($script:LANG["navigate_multi"])" -ForegroundColor Cyan
-    Write-Host ""
-    
-    $cursor = 0
+  $menuStartLine = [Console]::CursorTop
+
+  Write-Host ""
+  Write-Header ($script:LANG["select_software"])
+  Write-Host " $($script:LANG["navigate_multi"])" -ForegroundColor Cyan
+  Write-Host ""
+
+  $cursor = 0
     $oldVisible = Get-CursorVisible
     Set-CursorVisible -Visible $false
     
@@ -1689,13 +1695,14 @@ function Show-SoftwareMenu {
                 [Console]::SetCursorPosition(0, [Console]::CursorTop - 1)
             }
         }
-    } finally {
-        Set-CursorVisible -Visible $oldVisible
-    }
-    
-    Write-Host ""
-    
-    $selected = @()
+  } finally {
+    Set-CursorVisible -Visible $oldVisible
+  }
+
+  [Console]::SetCursorPosition(0, $menuStartLine)
+  [Console]::Write([char]27 + "[J")
+
+  $selected = @()
     for ($i = 1; $i -lt $swData.Count; $i++) {
         if ($checked[$i]) {
             $selected += $swData[$i].Key

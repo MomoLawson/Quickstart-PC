@@ -1328,10 +1328,15 @@ show_profile_menu() {
         esac
     done
     
-    tput cnorm 2>/dev/null || true
-    stty echo 2>/dev/null
-    
-    SELECTED_PROFILES=("${profile_keys[$cursor]}")
+  tput cnorm 2>/dev/null || true
+  stty echo 2>/dev/null
+
+  # 清除菜单区域（保留上方 banner 和系统信息）
+  local profile_menu_lines=$((8 + num_profiles))
+  tput cuu "$profile_menu_lines" 2>/dev/null || true
+  printf "\033[J"
+
+  SELECTED_PROFILES=("${profile_keys[$cursor]}")
 }
 
 show_software_menu() {
@@ -1457,21 +1462,30 @@ else
 checked[$cursor]=$((1 - checked[$cursor]))
 fi
 ;;
-10|13|0)
-# 回车键：如果是返回选项，直接返回
-if [[ $cursor -eq 0 ]]; then
-SELECTED_SOFTWARE=()
-return 1
-fi
-break
-;;
-esac
-done
+      10|13|0)
+      # 回车键：如果是返回选项，直接返回
+      if [[ $cursor -eq 0 ]]; then
+        tput cnorm 2>/dev/null || true
+        stty echo 2>/dev/null
+        local software_menu_lines=$((8 + num_items))
+        tput cuu "$software_menu_lines" 2>/dev/null || true
+        printf "\033[J"
+        SELECTED_SOFTWARE=()
+        return 1
+      fi
+      break
+      ;;
+    esac
+  done
 
-tput cnorm 2>/dev/null || true
-stty echo 2>/dev/null
+  tput cnorm 2>/dev/null || true
+  stty echo 2>/dev/null
 
-SELECTED_SOFTWARE=()
+  local software_menu_lines=$((8 + num_items))
+  tput cuu "$software_menu_lines" 2>/dev/null || true
+  printf "\033[J"
+
+  SELECTED_SOFTWARE=()
 for ((i=1; i<num_items; i++)); do
 if [[ "${menu_keys[$i]}" != "select_all" ]] && [[ ${checked[$i]} -eq 1 ]]; then
 SELECTED_SOFTWARE+=("${menu_keys[$i]}")
@@ -1591,13 +1605,13 @@ custom_select_software() {
         elif [[ "$key" == $'\x1b' ]]; then
             local seq=""
             IFS= read -rsn2 seq < /dev/tty
-            if [[ "$seq" == "[A" ]]; then
-                ((cursor--))
-                [[ $cursor -lt 0 ]] && cursor=$((num_items - 1))
-            elif [[ "$seq" == "[B" ]]; then
-                ((cursor++))
-                [[ $cursor -ge $num_items ]] && cursor=0
-            fi
+    if [[ "$seq" == "[A" || "$seq" == "OA" ]]; then
+      ((cursor--))
+      [[ $cursor -lt 0 ]] && cursor=$((num_items - 1))
+    elif [[ "$seq" == "[B" || "$seq" == "OB" ]]; then
+      ((cursor++))
+      [[ $cursor -ge $num_items ]] && cursor=0
+    fi
         # 空格 = 切换选择
         elif [[ "$key" == " " ]]; then
             if [[ $cursor -eq 0 ]]; then
@@ -1614,11 +1628,15 @@ custom_select_software() {
         printf '\033[%dA' "$num_items"
     done
     
-    tput cnorm 2>/dev/null || true
-    stty echo 2>/dev/null
-    echo ""
-    
-    SELECTED_SOFTWARE=()
+  tput cnorm 2>/dev/null || true
+  stty echo 2>/dev/null
+  echo ""
+
+  # 退出时清除菜单区域：循环末尾已上移到第一项行，再上移8行到header前
+  tput cuu $((8 + 1)) 2>/dev/null || true
+  printf "\033[J"
+
+  SELECTED_SOFTWARE=()
     for ((i=1; i<num_items; i++)); do
         [[ ${checked[$i]} -eq 1 ]] && SELECTED_SOFTWARE+=("${sw_keys[$((i-1))]}")
     done
@@ -1756,73 +1774,33 @@ log_error "${LANG_PROFILE_NOT_FOUND/'$PROFILE_KEY'/$PROFILE_KEY}"
 exit 1
 fi
 
-SELECTED_PROFILES=("$PROFILE_KEY")
-local profile_name=$(json_get_profile_field "$CONFIG_FILE" "$PROFILE_KEY" "name")
-# 清屏并重新显示 logo 和系统信息
-clear
-show_banner
-[[ "$DEV_MODE" == "true" ]] && log_warn "$LANG_DEV_MODE" && echo ""
-[[ "$DRY_RUN" == "true" ]] && log_warn "$LANG_DRY_RUN_MODE" && echo ""
-log_info "$LANG_DETECTING_SYSTEM"
-local os=$(detect_os)
-local system_info=$(get_system_info)
-PKG_MANAGER=$(check_package_manager "$os")
-log_info "$LANG_SYSTEM_INFO: $system_info"
-log_info "$LANG_PACKAGE_MANAGER: $PKG_MANAGER"
-echo ""
-set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
-if [[ "$CUSTOM_MODE" == "true" ]]; then
-custom_select_software "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
-else
-show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
-fi
-else
-set_title "QSPC | $LANG_TITLE_SELECT_PROFILE"
-show_profile_menu "$CONFIG_FILE"
-[[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
-local profile_name=$(json_get_profile_field "$CONFIG_FILE" "${SELECTED_PROFILES[@]}" "name")
-# 清屏并重新显示 logo 和系统信息
-clear
-show_banner
-[[ "$DEV_MODE" == "true" ]] && log_warn "$LANG_DEV_MODE" && echo ""
-[[ "$DRY_RUN" == "true" ]] && log_warn "$LANG_DRY_RUN_MODE" && echo ""
-log_info "$LANG_DETECTING_SYSTEM"
-local os=$(detect_os)
-local system_info=$(get_system_info)
-PKG_MANAGER=$(check_package_manager "$os")
-log_info "$LANG_SYSTEM_INFO: $system_info"
-log_info "$LANG_PACKAGE_MANAGER: $PKG_MANAGER"
-echo ""
-set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
-if [[ "$CUSTOM_MODE" == "true" ]]; then
-custom_select_software "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
-else
-if ! show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"; then
-# 用户选择返回套餐选择
-clear
-show_banner
-set_title "QSPC | $LANG_TITLE_SELECT_PROFILE"
-show_profile_menu "$CONFIG_FILE"
-[[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
-profile_name=$(json_get_profile_field "$CONFIG_FILE" "${SELECTED_PROFILES[@]}" "name")
-clear
-show_banner
-[[ "$DEV_MODE" == "true" ]] && log_warn "$LANG_DEV_MODE" && echo ""
-[[ "$DRY_RUN" == "true" ]] && log_warn "$LANG_DRY_RUN_MODE" && echo ""
-log_info "$LANG_DETECTING_SYSTEM"
-os=$(detect_os)
-system_info=$(get_system_info)
-PKG_MANAGER=$(check_package_manager "$os")
-log_info "$LANG_SYSTEM_INFO: $system_info"
-log_info "$LANG_PACKAGE_MANAGER: $PKG_MANAGER"
-echo ""
-log_header "$LANG_SELECT_SOFTWARE"
-echo ""
-set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
-show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
-fi
-fi
-fi
+  SELECTED_PROFILES=("$PROFILE_KEY")
+  local profile_name=$(json_get_profile_field "$CONFIG_FILE" "$PROFILE_KEY" "name")
+  echo ""
+  set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
+  if [[ "$CUSTOM_MODE" == "true" ]]; then
+    custom_select_software "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+  else
+    show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+  fi
+ else
+  while true; do
+    set_title "QSPC | $LANG_TITLE_SELECT_PROFILE"
+    show_profile_menu "$CONFIG_FILE"
+    [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
+    local profile_name=$(json_get_profile_field "$CONFIG_FILE" "${SELECTED_PROFILES[@]}" "name")
+    echo ""
+    set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
+    if [[ "$CUSTOM_MODE" == "true" ]]; then
+      custom_select_software "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+      break
+    else
+      if show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"; then
+        break
+      fi
+    fi
+  done
+ fi
     
     if [[ ${#SELECTED_SOFTWARE[@]} -eq 0 ]]; then
         log_warn "$LANG_NO_SOFTWARE_SELECTED"
