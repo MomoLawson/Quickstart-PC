@@ -92,3 +92,4 @@ LANG_PROFILE_NOT_FOUND="프로필 '$PROFILE_KEY'을(를) 찾을 수 없습니다
 LANG_NPM_NOT_FOUND="npm을 찾을 수 없습니다, 설치 중..."
 LANG_WINGET_NOT_FOUND="winget을 찾을 수 없습니다, npm을 자동 설치할 수 없습니다"
 LANG_NPM_AUTO="npm"
+LANG_INSTALL_FAILED_LIST="다음 소프트웨어 설치 실패"

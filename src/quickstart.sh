@@ -1533,18 +1533,11 @@ install_software() {
   log_to_file "[STEP] $LANG_INSTALLING: $key"
   if eval "$cmd" 2>/dev/null; then
     log_to_file "[SUCCESS] $key $LANG_INSTALL_SUCCESS"
+    return 0
   else
-    log_error "$key $LANG_INSTALL_FAILED"
+    log_to_file "[FAIL] $key $LANG_INSTALL_FAILED"
     return 1
   fi
-    
-    log_step "$LANG_INSTALLING: $key"
-    if eval "$cmd" 2>/dev/null; then
-        log_success "$key $LANG_INSTALL_SUCCESS"
-    else
-        log_error "$key $LANG_INSTALL_FAILED"
-        return 1
-    fi
 }
 
 # 自定义软件选择模式
@@ -2008,7 +2001,7 @@ if [[ ${#to_install[@]} -gt 0 ]]; then
     done
     echo ""
     if [[ ${#install_failed[@]} -gt 0 ]]; then
-        log_warn "以下软件安装失败: ${install_failed[*]}"
+        log_warn "$LANG_INSTALL_FAILED_LIST: ${install_failed[*]}"
     fi
 fi
 
