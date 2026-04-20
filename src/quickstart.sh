@@ -1375,8 +1375,10 @@ for k, v in data['software'].items():
 
   for key in "${sw_keys[@]}"; do
     local line=$(echo "$sw_data" | grep "^${key}"$'\t' | head -1)
-    local name=$(echo "$line" | cut -f2)
-    local desc=$(echo "$line" | cut -f3)
+    local raw_name=$(echo "$line" | cut -f2)
+    local raw_desc=$(echo "$line" | cut -f3)
+    local name=$(lang_text "$raw_name")
+    local desc=$(lang_text "$raw_desc")
 
     local check_cmd=""
     case "$os" in
