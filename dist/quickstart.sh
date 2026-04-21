@@ -2014,19 +2014,28 @@ fi
     local -a install_failed=()
     local install_total=${#to_install[@]}
     local install_current=0
+    local install_start_time=$(date +%s)
     for sw in "${to_install[@]}"; do
       install_current=$((install_current + 1))
       local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
       local bar=$(draw_progress_bar $install_current $install_total 20)
+      local sw_start=$(date +%s)
       printf "\r  %s %d/%d %s - %s..." "$bar" "$install_current" "$install_total" "$sw_name" "$LANG_INSTALLING"
       if install_software "$CONFIG_FILE" "$os" "$sw"; then
-        printf "\r  %s %d/%d %s - ${GREEN}%s${NC}  \n" "$bar" "$install_current" "$install_total" "$sw_name" "$LANG_INSTALL_SUCCESS"
+        local sw_end=$(date +%s)
+        local sw_elapsed=$((sw_end - sw_start))
+        printf "\r  %s %d/%d %s - ${GREEN}%s${NC} (%d$LANG_TIME_SECONDS)  \n" "$bar" "$install_current" "$install_total" "$sw_name" "$LANG_INSTALL_SUCCESS" "$sw_elapsed"
       else
-        printf "\r  %s %d/%d %s - ${RED}%s${NC}  \n" "$bar" "$install_current" "$install_total" "$sw_name" "$LANG_INSTALL_FAILED"
+        local sw_end=$(date +%s)
+        local sw_elapsed=$((sw_end - sw_start))
+        printf "\r  %s %d/%d %s - ${RED}%s${NC} (%d$LANG_TIME_SECONDS)  \n" "$bar" "$install_current" "$install_total" "$sw_name" "$LANG_INSTALL_FAILED" "$sw_elapsed"
         install_failed+=("$sw_name")
       fi
     done
+    local install_end_time=$(date +%s)
+    local total_elapsed=$((install_end_time - install_start_time))
     echo ""
+    log_info "$LANG_TIME_TOTAL: $total_elapsed$LANG_TIME_SECONDS"
     if [[ ${#install_failed[@]} -gt 0 ]]; then
       log_warn "$LANG_INSTALL_FAILED_LIST: ${install_failed[*]}"
     fi
