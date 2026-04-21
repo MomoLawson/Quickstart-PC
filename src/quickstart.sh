@@ -391,14 +391,15 @@ if [[ -n "$SHOW_PROFILE" ]]; then
         unsupported=0
         while IFS= read -r sw; do
             [[ -z "$sw" ]] && continue
-            sw_name=$(jq -r ".software[\"$sw\"].name // \"$sw\"" "$CONFIG_FILE")
-            sw_cmd=$(jq -r ".software[\"$sw\"].$current_os // \"\"" "$CONFIG_FILE")
-            
-            if [[ -n "$sw_cmd" ]]; then
-                echo "  ✓ $sw_name"
+    sw_name=$(jq -r ".software[\"$sw\"].name // \"$sw\"" "$CONFIG_FILE")
+    sw_icon=$(jq -r ".software[\"$sw\"].icon // \"\"" "$CONFIG_FILE")
+    sw_cmd=$(jq -r ".software[\"$sw\"].$current_os // \"\"" "$CONFIG_FILE")
+
+    if [[ -n "$sw_cmd" ]]; then
+    echo " ✓ ${sw_icon:+$sw_icon }$sw_name"
                 ((supported++))
             else
-                echo "  ✗ $sw_name (not supported on this platform)"
+    echo " ✗ ${sw_icon:+$sw_icon }$sw_name (not supported on this platform)"
                 ((unsupported++))
             fi
         done < <(jq -r ".profiles[\"$SHOW_PROFILE\"].includes[]?" "$CONFIG_FILE")
@@ -430,22 +431,23 @@ if [[ "$LIST_SOFTWARE" == "true" ]]; then
         echo ""
         while IFS= read -r key; do
             [[ -z "$key" ]] && continue
-            sw_name=$(jq -r ".software[\"$key\"].name // \"$key\"" "$CONFIG_FILE")
-            sw_desc=$(jq -r ".software[\"$key\"].desc // \"\"" "$CONFIG_FILE")
-            sw_tier=$(jq -r ".software[\"$key\"].tier // \"partial\"" "$CONFIG_FILE")
-            echo "  $key - $sw_name: $sw_desc [$sw_tier]"
-        done < <(jq -r '.software | keys[]' "$CONFIG_FILE")
-        echo ""
+    sw_name=$(jq -r ".software[\"$key\"].name // \"$key\"" "$CONFIG_FILE")
+    sw_desc=$(jq -r ".software[\"$key\"].desc // \"\"" "$CONFIG_FILE")
+    sw_tier=$(jq -r ".software[\"$key\"].tier // \"partial\"" "$CONFIG_FILE")
+    sw_icon=$(jq -r ".software[\"$key\"].icon // \"\"" "$CONFIG_FILE")
+    echo " $key - ${sw_icon:+$sw_icon }$sw_name: $sw_desc [$sw_tier]"
+    done < <(jq -r '.software | keys[]' "$CONFIG_FILE")
+    echo ""
     else
-        echo "[ERROR] Failed to load configuration"
+    echo "[ERROR] Failed to load configuration"
     fi
-    
+
     rm -f "$CONFIG_FILE" 2>/dev/null
     exit 0
-fi
+    fi
 
-# --show-software 在语言选择之前处理
-if [[ -n "$SHOW_SOFTWARE" ]]; then
+    # --show-software 在语言选择之前处理
+    if [[ -n "$SHOW_SOFTWARE" ]]; then
     if ! command -v jq &>/dev/null; then
         if [[ "$(uname -s)" == "Darwin" ]]; then
             brew install jq 2>/dev/null
@@ -456,17 +458,18 @@ if [[ -n "$SHOW_SOFTWARE" ]]; then
     
     CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
     if curl -fsSL --connect-timeout 10 --max-time 30 "$DEFAULT_CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
-        sw_name=$(jq -r ".software[\"$SHOW_SOFTWARE\"].name // \"\"" "$CONFIG_FILE")
-        sw_desc=$(jq -r ".software[\"$SHOW_SOFTWARE\"].desc // \"\"" "$CONFIG_FILE")
-        
-        if [[ -z "$sw_name" ]]; then
-            echo "[ERROR] Software '$SHOW_SOFTWARE' not found"
-            rm -f "$CONFIG_FILE" 2>/dev/null
-            exit 1
-        fi
-        
-        echo ""
-        echo "Software: $sw_name"
+    sw_name=$(jq -r ".software[\"$SHOW_SOFTWARE\"].name // \"\"" "$CONFIG_FILE")
+    sw_desc=$(jq -r ".software[\"$SHOW_SOFTWARE\"].desc // \"\"" "$CONFIG_FILE")
+    sw_icon=$(jq -r ".software[\"$SHOW_SOFTWARE\"].icon // \"\"" "$CONFIG_FILE")
+
+    if [[ -z "$sw_name" ]]; then
+    echo "[ERROR] Software '$SHOW_SOFTWARE' not found"
+    rm -f "$CONFIG_FILE" 2>/dev/null
+    exit 1
+    fi
+
+    echo ""
+    echo "Software: ${sw_icon:+$sw_icon }$sw_name"
         echo "Description: $sw_desc"
         
         sw_tier=$(jq -r ".software[\"$SHOW_SOFTWARE\"].tier // \"partial\"" "$CONFIG_FILE")
@@ -506,10 +509,11 @@ if [[ -n "$SEARCH_KEYWORD" ]]; then
         echo ""
         while IFS= read -r key; do
             [[ -z "$key" ]] && continue
-            sw_name=$(jq -r ".software[\"$key\"].name // \"$key\"" "$CONFIG_FILE")
-            sw_desc=$(jq -r ".software[\"$key\"].desc // \"\"" "$CONFIG_FILE")
-            if echo "$key $sw_name $sw_desc" | grep -qi "$SEARCH_KEYWORD"; then
-                echo "  $key - $sw_name: $sw_desc"
+    sw_name=$(jq -r ".software[\"$key\"].name // \"$key\"" "$CONFIG_FILE")
+    sw_desc=$(jq -r ".software[\"$key\"].desc // \"\"" "$CONFIG_FILE")
+    sw_icon=$(jq -r ".software[\"$key\"].icon // \"\"" "$CONFIG_FILE")
+    if echo "$key $sw_name $sw_desc" | grep -qi "$SEARCH_KEYWORD"; then
+    echo " $key - ${sw_icon:+$sw_icon }$sw_name: $sw_desc"
             fi
         done < <(jq -r '.software | keys[]' "$CONFIG_FILE")
         echo ""
@@ -1364,13 +1368,13 @@ show_software_menu() {
     # 一次性加载所有软件数据到内存，避免重复调用 jq
     local sw_data=""
     if [[ "$JSON_PARSER" == "jq" ]]; then
-        sw_data=$(jq -r '.software | to_entries[] | "\(.key)\t\(.value.name)\t\(.value.desc)\t\(.value.check_mac)\t\(.value.check_win)\t\(.value.check_linux)"' "$json_file" 2>/dev/null)
+        sw_data=$(jq -r '.software | to_entries[] | "\(.key)\t\(.value.name)\t\(.value.desc)\t\(.value.check_mac)\t\(.value.check_win)\t\(.value.check_linux)\t\(.value.icon)"' "$json_file" 2>/dev/null)
     else
         sw_data=$(python3 -c "
 import json
 data = json.load(open('$json_file'))
 for k, v in data['software'].items():
-    print(f'{k}\t{v.get(\"name\",\"\")}\t{v.get(\"desc\",\"\")}\t{v.get(\"check_mac\",\"\")}\t{v.get(\"check_win\",\"\")}\t{v.get(\"check_linux\",\"\")}')
+    print(f'{k}\t{v.get(\"name\",\"\")}\t{v.get(\"desc\",\"\")}\t{v.get(\"check_mac\",\"\")}\t{v.get(\"check_win\",\"\")}\t{v.get(\"check_linux\",\"\")}\t{v.get(\"icon\",\"\")}')
 " 2>/dev/null)
     fi
     
@@ -1389,10 +1393,11 @@ for k, v in data['software'].items():
   menu_names=("← $LANG_BACK_TO_PROFILES" "$LANG_SELECT_ALL")
   checked=(0 0)
 
-  for key in "${sw_keys[@]}"; do
+for key in "${sw_keys[@]}"; do
     local line=$(echo "$sw_data" | grep "^${key}"$'\t' | head -1)
     local raw_name=$(echo "$line" | cut -f2)
     local raw_desc=$(echo "$line" | cut -f3)
+    local sw_icon=$(echo "$line" | cut -f7)
     local name=$(lang_text "$raw_name")
     local desc=$(lang_text "$raw_desc")
 
@@ -1404,9 +1409,13 @@ for k, v in data['software'].items():
     esac
 
     menu_keys+=("$key")
-    menu_names+=("$name - $desc")
+    if [[ -n "$sw_icon" ]]; then
+        menu_names+=("$sw_icon $name - $desc")
+    else
+        menu_names+=("$name - $desc")
+    fi
     checked+=(0)
-  done
+    done
 
   local num_items=${#menu_keys[@]}
   local cursor=1
@@ -1586,15 +1595,18 @@ custom_select_software() {
     checked+=(0)
     
     for key in "${sw_keys[@]}"; do
-        local name=$(json_get_software_field "$json_file" "$key" "name")
-        local desc=$(json_get_software_field "$json_file" "$key" "desc")
-        menu_keys+=("$key")
-        if is_installed "$json_file" "$os" "$key"; then
-            menu_names+=("${GRAY}$name - $desc $LANG_INSTALLED${NC}")
-        else
-            menu_names+=("$name - $desc")
-        fi
-        checked+=(0)
+    local name=$(json_get_software_field "$json_file" "$key" "name")
+    local desc=$(json_get_software_field "$json_file" "$key" "desc")
+    local sw_icon=$(json_get_software_field "$json_file" "$key" "icon")
+    local display_name="$name"
+    [[ -n "$sw_icon" ]] && display_name="$sw_icon $name"
+    menu_keys+=("$key")
+    if is_installed "$json_file" "$os" "$key"; then
+        menu_names+=("${GRAY}$display_name - $desc $LANG_INSTALLED${NC}")
+    else
+        menu_names+=("$display_name - $desc")
+    fi
+    checked+=(0)
     done
     
     local num_items=${#menu_names[@]}
@@ -1894,14 +1906,16 @@ fi
             echo ""
             echo "## Software to Install (${#SELECTED_SOFTWARE[@]} total)"
             echo ""
-            for sw in "${SELECTED_SOFTWARE[@]}"; do
-                local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
-                local sw_desc=$(json_get_software_field "$CONFIG_FILE" "$sw" "desc")
-                local cmd=$(json_get_software_field "$CONFIG_FILE" "$sw" "${os:0:3}")
-                if is_installed "$CONFIG_FILE" "$os" "$sw"; then
-                    echo "- ~~$sw_name~~ ($sw_desc) - Already installed"
-                else
-                    echo "- **$sw_name** ($sw_desc)"
+    for sw in "${SELECTED_SOFTWARE[@]}"; do
+    local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
+    local sw_desc=$(json_get_software_field "$CONFIG_FILE" "$sw" "desc")
+    local sw_icon=$(json_get_software_field "$CONFIG_FILE" "$sw" "icon")
+    local cmd=$(json_get_software_field "$CONFIG_FILE" "$sw" "${os:0:3}")
+    local sw_display="${sw_icon:+$sw_icon }$sw_name"
+    if is_installed "$CONFIG_FILE" "$os" "$sw"; then
+    echo "- ~~$sw_display~~ ($sw_desc) - Already installed"
+    else
+    echo "- **$sw_display** ($sw_desc)"
                     if [[ -n "$cmd" ]]; then
                         echo "  \`\`\`bash"
                         echo "  $cmd"
@@ -2003,10 +2017,13 @@ fi
   if [[ $total_sw -gt 0 ]]; then
     echo -e " ${check_bar} ${#already_installed[@]}/$total_sw $LANG_PROGRESS_INSTALLED, ${#to_install[@]} $LANG_PROGRESS_TO_INSTALL"
   fi
-  for sw in "${already_installed[@]}"; do
+    for sw in "${already_installed[@]}"; do
     local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
-    echo -e " ${GREEN}[✓]${NC} ${GRAY}$sw_name - $LANG_SKIPPING_INSTALLED${NC}"
-  done
+    local sw_icon=$(json_get_software_field "$CONFIG_FILE" "$sw" "icon")
+    local sw_display="$sw_name"
+    [[ -n "$sw_icon" ]] && sw_display="$sw_icon $sw_name"
+    echo -e " ${GREEN}[✓]${NC} ${GRAY}$sw_display - $LANG_SKIPPING_INSTALLED${NC}"
+    done
   echo ""
 
   if [[ ${#to_install[@]} -gt 0 ]]; then
@@ -2015,21 +2032,23 @@ fi
     local install_total=${#to_install[@]}
     local install_current=0
     local install_start_time=$(date +%s)
-    for sw in "${to_install[@]}"; do
-      install_current=$((install_current + 1))
-      local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
-      local bar=$(draw_progress_bar $install_current $install_total 20)
-      local sw_start=$(date +%s)
-      printf "\r  %s %d/%d %s - %s..." "$bar" "$install_current" "$install_total" "$sw_name" "$LANG_INSTALLING"
-      if install_software "$CONFIG_FILE" "$os" "$sw"; then
+        for sw in "${to_install[@]}"; do
+        install_current=$((install_current + 1))
+        local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
+        local sw_icon=$(json_get_software_field "$CONFIG_FILE" "$sw" "icon")
+        local sw_display="$sw_name"
+        [[ -n "$sw_icon" ]] && sw_display="$sw_icon $sw_name"
+        local bar=$(draw_progress_bar $install_current $install_total 20)
+        local sw_start=$(date +%s)
+        printf "\r %s %d/%d %s - %s..." "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALLING"
+        if install_software "$CONFIG_FILE" "$os" "$sw"; then
         local sw_end=$(date +%s)
         local sw_elapsed=$((sw_end - sw_start))
-        printf "\r  %s %d/%d %s - ${GREEN}%s${NC} (%d$LANG_TIME_SECONDS)  \n" "$bar" "$install_current" "$install_total" "$sw_name" "$LANG_INSTALL_SUCCESS" "$sw_elapsed"
+        printf "\r %s %d/%d %s - ${GREEN}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALL_SUCCESS" "$sw_elapsed"
       else
         local sw_end=$(date +%s)
         local sw_elapsed=$((sw_end - sw_start))
-        printf "\r  %s %d/%d %s - ${RED}%s${NC} (%d$LANG_TIME_SECONDS)  \n" "$bar" "$install_current" "$install_total" "$sw_name" "$LANG_INSTALL_FAILED" "$sw_elapsed"
-        # 重试提示（仅交互模式）
+        printf "\r %s %d/%d %s - ${RED}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALL_FAILED" "$sw_elapsed"
         if [[ "$NON_INTERACTIVE" != "true" && "$AUTO_YES" != "true" ]]; then
           tput cnorm 2>/dev/null || true
           stty echo 2>/dev/null || true
@@ -2041,18 +2060,18 @@ fi
             tput civis 2>/dev/null || true
             stty -echo 2>/dev/null || true
             local retry_start=$(date +%s)
-            printf "\r  %s %d/%d %s - %s...          " "$bar" "$install_current" "$install_total" "$sw_name" "$LANG_RETRYING"
+            printf "\r %s %d/%d %s - %s...          " "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_RETRYING"
             if install_software "$CONFIG_FILE" "$os" "$sw"; then
               local retry_end=$(date +%s)
               local retry_elapsed=$((retry_end - retry_start))
-              printf "\r  %s %d/%d %s - ${GREEN}%s${NC} (%d$LANG_TIME_SECONDS)  \n" "$bar" "$install_current" "$install_total" "$sw_name" "$LANG_INSTALL_SUCCESS" "$retry_elapsed"
+              printf "\r %s %d/%d %s - ${GREEN}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALL_SUCCESS" "$retry_elapsed"
               continue
             fi
           fi
           tput civis 2>/dev/null || true
           stty -echo 2>/dev/null || true
         fi
-        install_failed+=("$sw_name")
+        install_failed+=("$sw_display")
       fi
     done
     local install_end_time=$(date +%s)

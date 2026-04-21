@@ -18,17 +18,37 @@ mkdir -p "$DIST_DIR"
 # Merge config/software/*.json into config/profiles.json for distribution
 if [[ -d "$CONFIG_DIR/software" ]]; then
     echo "[→] Merging software config files..."
-    python3 -c "
+  python3 -c "
 import json, os, glob
 
 with open('$CONFIG_DIR/profiles.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
 
+category_icons = {
+    'browsers': ('🌐', 'Browsers'),
+    'communication': ('💬', 'Communication'),
+    'developer': ('💻', 'Developer'),
+    'media': ('🎬', 'Media'),
+    'office': ('📝', 'Office'),
+    'security': ('🔒', 'Security'),
+    'terminal': ('⬛', 'Terminal'),
+    'utilities': ('🔧', 'Utilities'),
+    'database': ('🗄️', 'Database'),
+    'ai': ('🤖', 'AI'),
+    'macos-tools': ('🍎', 'macOS Tools'),
+    'china-software': ('🇨🇳', 'China Software'),
+}
+
 data['software'] = {}
 for f in sorted(glob.glob('$CONFIG_DIR/software/*.json')):
+    cat_name = os.path.splitext(os.path.basename(f))[0]
+    icon, cat_label = category_icons.get(cat_name, ('📦', cat_name))
     with open(f, 'r', encoding='utf-8') as sf:
         cat_data = json.load(sf)
-        data['software'].update(cat_data)
+    for sw_key in cat_data:
+        cat_data[sw_key]['category'] = cat_name
+        cat_data[sw_key]['icon'] = icon
+    data['software'].update(cat_data)
 
 with open('$CONFIG_DIR/profiles.json', 'w', encoding='utf-8') as f:
     json.dump(data, f, indent=2, ensure_ascii=False)
