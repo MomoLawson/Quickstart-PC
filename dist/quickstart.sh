@@ -2029,6 +2029,29 @@ fi
         local sw_end=$(date +%s)
         local sw_elapsed=$((sw_end - sw_start))
         printf "\r  %s %d/%d %s - ${RED}%s${NC} (%d$LANG_TIME_SECONDS)  \n" "$bar" "$install_current" "$install_total" "$sw_name" "$LANG_INSTALL_FAILED" "$sw_elapsed"
+        # 重试提示（仅交互模式）
+        if [[ "$NON_INTERACTIVE" != "true" && "$AUTO_YES" != "true" ]]; then
+          tput cnorm 2>/dev/null || true
+          stty echo 2>/dev/null || true
+          printf "  %s " "$LANG_RETRY_PROMPT"
+          local retry_answer=""
+          IFS= read -rsn1 retry_answer < /dev/tty
+          echo ""
+          if [[ -z "$retry_answer" || "$retry_answer" =~ ^[Yy] ]]; then
+            tput civis 2>/dev/null || true
+            stty -echo 2>/dev/null || true
+            local retry_start=$(date +%s)
+            printf "\r  %s %d/%d %s - %s...          " "$bar" "$install_current" "$install_total" "$sw_name" "$LANG_RETRYING"
+            if install_software "$CONFIG_FILE" "$os" "$sw"; then
+              local retry_end=$(date +%s)
+              local retry_elapsed=$((retry_end - retry_start))
+              printf "\r  %s %d/%d %s - ${GREEN}%s${NC} (%d$LANG_TIME_SECONDS)  \n" "$bar" "$install_current" "$install_total" "$sw_name" "$LANG_INSTALL_SUCCESS" "$retry_elapsed"
+              continue
+            fi
+          fi
+          tput civis 2>/dev/null || true
+          stty -echo 2>/dev/null || true
+        fi
         install_failed+=("$sw_name")
       fi
     done
