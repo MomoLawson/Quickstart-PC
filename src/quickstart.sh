@@ -2049,29 +2049,7 @@ fi
         local sw_end=$(date +%s)
         local sw_elapsed=$((sw_end - sw_start))
         printf "\r %s %d/%d %s - ${RED}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALL_FAILED" "$sw_elapsed"
-        if [[ "$NON_INTERACTIVE" != "true" && "$AUTO_YES" != "true" ]]; then
-          tput cnorm 2>/dev/null || true
-          stty echo 2>/dev/null || true
-          printf "  %s " "$LANG_RETRY_PROMPT"
-          local retry_answer=""
-          IFS= read -rsn1 retry_answer < /dev/tty
-          echo ""
-          if [[ -z "$retry_answer" || "$retry_answer" =~ ^[Yy] ]]; then
-            tput civis 2>/dev/null || true
-            stty -echo 2>/dev/null || true
-            local retry_start=$(date +%s)
-            printf "\r %s %d/%d %s - %s...          " "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_RETRYING"
-            if install_software "$CONFIG_FILE" "$os" "$sw"; then
-              local retry_end=$(date +%s)
-              local retry_elapsed=$((retry_end - retry_start))
-              printf "\r %s %d/%d %s - ${GREEN}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALL_SUCCESS" "$retry_elapsed"
-              continue
-            fi
-          fi
-          tput civis 2>/dev/null || true
-          stty -echo 2>/dev/null || true
-        fi
-        install_failed+=("$sw_display")
+        install_failed+=("$sw")
       fi
     done
     local install_end_time=$(date +%s)
@@ -2080,6 +2058,48 @@ fi
     log_info "$LANG_TIME_TOTAL: $total_elapsed$LANG_TIME_SECONDS"
     if [[ ${#install_failed[@]} -gt 0 ]]; then
       log_warn "$LANG_INSTALL_FAILED_LIST: ${install_failed[*]}"
+
+      if [[ "$NON_INTERACTIVE" != "true" && "$AUTO_YES" != "true" ]]; then
+        tput cnorm 2>/dev/null || true
+        stty echo 2>/dev/null || true
+        printf "  %s " "$LANG_RETRY_PROMPT"
+        local retry_answer=""
+        IFS= read -rsn1 retry_answer < /dev/tty
+        echo ""
+        if [[ -z "$retry_answer" || "$retry_answer" =~ ^[Yy] ]]; then
+          tput civis 2>/dev/null || true
+          stty -echo 2>/dev/null || true
+          local -a still_failed=()
+          local retry_total=${#install_failed[@]}
+          local retry_current=0
+          for failed_sw in "${install_failed[@]}"; do
+            retry_current=$((retry_current + 1))
+            local failed_name=$(json_get_software_field "$CONFIG_FILE" "$failed_sw" "name")
+            local failed_icon=$(json_get_software_field "$CONFIG_FILE" "$failed_sw" "icon")
+            local failed_display="$failed_name"
+            [[ -n "$failed_icon" ]] && failed_display="$failed_icon $failed_name"
+            local retry_bar=$(draw_progress_bar $retry_current $retry_total 20)
+            local retry_start=$(date +%s)
+            printf "\r %s %d/%d %s - %s...          " "$retry_bar" "$retry_current" "$retry_total" "$failed_display" "$LANG_RETRYING"
+            if install_software "$CONFIG_FILE" "$os" "$failed_sw"; then
+              local retry_end=$(date +%s)
+              local retry_elapsed=$((retry_end - retry_start))
+              printf "\r %s %d/%d %s - ${GREEN}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$retry_bar" "$retry_current" "$retry_total" "$failed_display" "$LANG_INSTALL_SUCCESS" "$retry_elapsed"
+            else
+              local retry_end=$(date +%s)
+              local retry_elapsed=$((retry_end - retry_start))
+              printf "\r %s %d/%d %s - ${RED}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$retry_bar" "$retry_current" "$retry_total" "$failed_display" "$LANG_INSTALL_FAILED" "$retry_elapsed"
+              still_failed+=("$failed_display")
+            fi
+          done
+          if [[ ${#still_failed[@]} -gt 0 ]]; then
+            log_warn "$LANG_INSTALL_FAILED_LIST: ${still_failed[*]}"
+          fi
+        else
+          tput civis 2>/dev/null || true
+          stty -echo 2>/dev/null || true
+        fi
+      fi
     fi
   fi
 
