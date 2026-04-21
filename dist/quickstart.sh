@@ -827,6 +827,22 @@ log_header() {
     log_to_file ""
 }
 
+# 绘制进度条
+draw_progress_bar() {
+  local current=$1
+  local total=$2
+  local width=${3:-20}
+  local filled=0
+  if [[ $total -gt 0 ]]; then
+    filled=$(( current * width / total ))
+  fi
+  local empty=$(( width - filled ))
+  local bar=""
+  for ((i=0; i<filled; i++)); do bar+="█"; done
+  for ((i=0; i<empty; i++)); do bar+="░"; done
+  echo "$bar"
+}
+
 # 设置终端窗口标题
 set_title() {
     printf '\033]0;%s\007' "$1"
@@ -1524,7 +1540,7 @@ install_software() {
     
   if [[ "$DRY_RUN" == "true" ]]; then
     log_to_file "[STEP] $LANG_DRY_RUN_INSTALLING: $key"
-    echo -e " ${CYAN}→ Command: $cmd${NC}"
+    log_to_file "[CMD] $cmd"
     sleep 1
     log_to_file "[SUCCESS] $key $LANG_INSTALL_SUCCESS (simulated)"
     return 0
@@ -1967,45 +1983,56 @@ fi
     
     log_info "$LANG_CHECKING_INSTALLATION"
     
-    local -a to_install=()
-    local -a already_installed=()
-    
-    debug_log "DEBUG: os=[$os] CONFIG_FILE=[$CONFIG_FILE]"
-    debug_log "DEBUG: SELECTED_SOFTWARE=(${SELECTED_SOFTWARE[*]})"
-    
-    for sw in "${SELECTED_SOFTWARE[@]}"; do
-        local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
-        debug_log "DEBUG: checking sw=[$sw] name=[$sw_name]"
-        if is_installed "$CONFIG_FILE" "$os" "$sw"; then
-            echo -e "  ${GREEN}[✓]${NC} $sw_name - $LANG_SKIPPING_INSTALLED"
-            already_installed+=("$sw_name")
-        else
-            echo -e "  ${CYAN}[→]${NC} $sw_name - $LANG_INSTALLING"
-            to_install+=("$sw")
-fi
-done
-echo ""
+  local -a to_install=()
+  local -a already_installed=()
+  local total_sw=${#SELECTED_SOFTWARE[@]}
 
-# 执行实际安装 (Bug 2 修复: 之前缺少安装循环)
-if [[ ${#to_install[@]} -gt 0 ]]; then
+  debug_log "DEBUG: os=[$os] CONFIG_FILE=[$CONFIG_FILE]"
+  debug_log "DEBUG: SELECTED_SOFTWARE=(${SELECTED_SOFTWARE[*]})"
+
+  for sw in "${SELECTED_SOFTWARE[@]}"; do
+    debug_log "DEBUG: checking sw=[$sw]"
+    if is_installed "$CONFIG_FILE" "$os" "$sw"; then
+      already_installed+=("$sw")
+    else
+      to_install+=("$sw")
+    fi
+  done
+
+  local check_bar=$(draw_progress_bar ${#already_installed[@]} $total_sw 20)
+  if [[ $total_sw -gt 0 ]]; then
+    echo -e " ${check_bar} ${#already_installed[@]}/$total_sw $LANG_PROGRESS_INSTALLED, ${#to_install[@]} $LANG_PROGRESS_TO_INSTALL"
+  fi
+  for sw in "${already_installed[@]}"; do
+    local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
+    echo -e " ${GREEN}[✓]${NC} ${GRAY}$sw_name - $LANG_SKIPPING_INSTALLED${NC}"
+  done
+  echo ""
+
+  if [[ ${#to_install[@]} -gt 0 ]]; then
     log_info "$LANG_START_INSTALLING"
     local -a install_failed=()
+    local install_total=${#to_install[@]}
+    local install_current=0
     for sw in "${to_install[@]}"; do
-        local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
-        if install_software "$CONFIG_FILE" "$os" "$sw"; then
-            echo -e " ${GREEN}[✓]${NC} $sw_name - $LANG_INSTALL_SUCCESS"
-        else
-            echo -e " ${RED}[✗]${NC} $sw_name - $LANG_INSTALL_FAILED"
-            install_failed+=("$sw_name")
-        fi
+      install_current=$((install_current + 1))
+      local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
+      local bar=$(draw_progress_bar $install_current $install_total 20)
+      printf "\r  %s %d/%d %s - %s..." "$bar" "$install_current" "$install_total" "$sw_name" "$LANG_INSTALLING"
+      if install_software "$CONFIG_FILE" "$os" "$sw"; then
+        printf "\r  %s %d/%d %s - ${GREEN}%s${NC}  \n" "$bar" "$install_current" "$install_total" "$sw_name" "$LANG_INSTALL_SUCCESS"
+      else
+        printf "\r  %s %d/%d %s - ${RED}%s${NC}  \n" "$bar" "$install_current" "$install_total" "$sw_name" "$LANG_INSTALL_FAILED"
+        install_failed+=("$sw_name")
+      fi
     done
     echo ""
     if [[ ${#install_failed[@]} -gt 0 ]]; then
-        log_warn "$LANG_INSTALL_FAILED_LIST: ${install_failed[*]}"
+      log_warn "$LANG_INSTALL_FAILED_LIST: ${install_failed[*]}"
     fi
-fi
+  fi
 
-if [[ ${#to_install[@]} -eq 0 ]]; then
+  if [[ ${#to_install[@]} -eq 0 ]]; then
         log_info "$LANG_ALL_INSTALLED"
         # 非交互模式直接退出
         if [[ "$NON_INTERACTIVE" == "true" ]]; then
