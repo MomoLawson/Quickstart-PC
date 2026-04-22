@@ -184,9 +184,11 @@ function Initialize-LanguageStrings {
                 "dry_run_mode" = "预览模式：展示安装过程但不实际安装"
                 "dry_run_installing" = "模拟安装"
                 
-                "checking_installation" = "正在检测安装情况..."
-                "skipping_installed" = "已安装，跳过"
-                "all_installed" = "所有软件均已安装，无需操作"
+"checking_installation" = "正在检测安装情况..."
+"skipping_installed" = "已安装，跳过"
+"all_installed" = "所有软件均已安装，无需操作"
+"to_install" = "待安装"
+"retrying" = "重试中"
                 
                 "ask_continue" = "安装完成，是否继续安装其他套餐？"
                 "continue_btn" = "继续安装"
@@ -239,14 +241,18 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "校验通过"
                 "validation_failed" = "校验失败"
                 
-    "search_results" = "搜索结果"
-      "error_detail" = "错误详情"
-    }
-  }
+"search_results" = "搜索结果"
+"error_detail" = "错误详情"
+"time_seconds" = "秒"
+"time_total" = "总耗时"
+}
+}
 
-  # ============================================
-  # Japanese - ja
-  # ============================================
+# ============================================
+# Japanese - ja
+# ============================================
+# Japanese - ja
+# ============================================
   "ja" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
@@ -288,9 +294,11 @@ function Initialize-LanguageStrings {
                 "dry_run_mode" = "プレビューモード：インストール過程を表示但不实际インストール"
                 "dry_run_installing" = "インストールをシミュレート"
                 
-                "checking_installation" = "インストール狀態を確認中..."
-                "skipping_installed" = "インストール済み、スキップ"
-                "all_installed" = "全てのソフトウェアがインストール済み、操作不要"
+"checking_installation" = "インストール狀態を確認中..."
+"skipping_installed" = "インストール済み、スキップ"
+"all_installed" = "全てのソフトウェアがインストール済み、操作不要"
+"to_install" = "インストール予定"
+"retrying" = "再試行中"
                 
                 "ask_continue" = "インストール完了。其他プロファイルをインストールしますか？"
                 "continue_btn" = "続ける"
@@ -343,14 +351,18 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "検証成功"
                 "validation_failed" = "検証失敗"
                 
-    "search_results" = "検索結果"
-      "error_detail" = "エラー詳細"
-    }
-  }
+"search_results" = "検索結果"
+"error_detail" = "エラー詳細"
+"time_seconds" = "秒"
+"time_total" = "合計時間"
+}
+}
 
-  # ============================================
-  # Korean - ko
-  # ============================================
+# ============================================
+# Korean - ko
+# ============================================
+# Korean - ko
+# ============================================
   "ko" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
@@ -392,9 +404,11 @@ function Initialize-LanguageStrings {
                 "dry_run_mode" = "미리보기 모드: 설치 과정 표시하지만 실제 설치하지 않음"
                 "dry_run_installing" = "설치 시뮬레이션"
                 
-                "checking_installation" = "설치 상태 확인 중..."
-                "skipping_installed" = "이미 설치됨, 건너뛰기"
-                "all_installed" = "모든 소프트웨어가 이미 설치됨, 작업 없음"
+"checking_installation" = "설치 상태 확인 중..."
+"skipping_installed" = "이미 설치됨, 건너뛰기"
+"all_installed" = "모든 소프트웨어가 이미 설치됨, 작업 없음"
+"to_install" = "설치 예정"
+"retrying" = "재시도 중"
                 
                 "ask_continue" = "설치 완료. 다른 프로필을 계속 설치하시겠습니까?"
                 "continue_btn" = "계속"
@@ -447,14 +461,18 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "검증 통과"
                 "validation_failed" = "검증 실패"
                 
-    "search_results" = "검색 결과"
-      "error_detail" = "오류 상세"
-    }
-  }
+"search_results" = "검색 결과"
+"error_detail" = "오류 상세"
+"time_seconds" = "초"
+"time_total" = "총 소요 시간"
+}
+}
 
-  # ============================================
-  # Traditional Chinese - zh-Hant
-  # ============================================
+# ============================================
+# Traditional Chinese - zh-Hant
+# ============================================
+# Traditional Chinese - zh-Hant
+# ============================================
   "zh-Hant" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
@@ -496,9 +514,11 @@ function Initialize-LanguageStrings {
                 "dry_run_mode" = "預覽模式：展示安裝過程但不實際安裝"
                 "dry_run_installing" = "模擬安裝"
                 
-                "checking_installation" = "正在偵測安裝情況..."
-                "skipping_installed" = "已安裝，跳過"
-                "all_installed" = "所有軟件均已安裝，無需操作"
+"checking_installation" = "正在偵測安裝情況..."
+"skipping_installed" = "已安裝，跳過"
+"all_installed" = "所有軟件均已安裝，無需操作"
+"to_install" = "待安裝"
+"retrying" = "重試中"
                 
                 "ask_continue" = "安裝完成，是否繼續安裝其他套餐？"
                 "continue_btn" = "繼續安裝"
@@ -551,14 +571,23 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "驗證通過"
                 "validation_failed" = "驗證失敗"
                 
-    "search_results" = "搜尋結果"
-      "error_detail" = "錯誤詳情"
-    }
-  }
+"search_results" = "搜尋結果"
+"error_detail" = "錯誤詳情"
+"time_seconds" = "秒"
+"time_total" = "總耗時"
+"custom_title" = "自定義選擇軟體"
+"custom_space_toggle" = "空格: 切換選擇"
+"custom_enter_confirm" = "回車: 確認"
+"custom_a_select_all" = "A: 全選/全不選"
+"custom_selected" = "已選擇 %d/%d"
+}
+}
 
-  # ============================================
-  # German - de
-  # ============================================
+# ============================================
+# German - de
+# ============================================
+# German - de
+# ============================================
   "de" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
@@ -600,9 +629,11 @@ function Initialize-LanguageStrings {
                 "dry_run_mode" = "Vorschau-Modus: Installationsprozess anzeigen ohne tatsächliche Installation"
                 "dry_run_installing" = "Installation simulieren"
                 
-                "checking_installation" = "Installationsstatus wird überprüft..."
-                "skipping_installed" = "Bereits installiert, überspringen"
-                "all_installed" = "Alle Software bereits installiert, nichts zu tun"
+"checking_installation" = "Installationsstatus wird überprüft..."
+"skipping_installed" = "Bereits installiert, überspringen"
+"all_installed" = "Alle Software bereits installiert, nichts zu tun"
+"to_install" = "zu installieren"
+"retrying" = "Erneuter Versuch"
                 
                 "ask_continue" = "Installation abgeschlossen. Andere Profile weiter installieren?"
                 "continue_btn" = "Weiter"
@@ -655,14 +686,23 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "Validierung erfolgreich"
                 "validation_failed" = "Validierung fehlgeschlagen"
                 
-    "search_results" = "Suchergebnisse"
-      "error_detail" = "Fehlerdetail"
-    }
-  }
+"search_results" = "Suchergebnisse"
+"error_detail" = "Fehlerdetail"
+"time_seconds" = "s"
+"time_total" = "Gesamtzeit"
+"custom_title" = "Benutzerdefinierte Auswahl"
+"custom_space_toggle" = "Leertaste: umschalten"
+"custom_enter_confirm" = "Enter: bestätigen"
+"custom_a_select_all" = "A: alle auswählen/abwählen"
+"custom_selected" = "Ausgewählt %d/%d"
+}
+}
 
-  # ============================================
-  # French - fr
-  # ============================================
+# ============================================
+# French - fr
+# ============================================
+# French - fr
+# ============================================
   "fr" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
@@ -704,9 +744,11 @@ function Initialize-LanguageStrings {
                 "dry_run_mode" = "Mode aperçu : afficher le processus sans installer"
                 "dry_run_installing" = "Simulation en cours"
                 
-                "checking_installation" = "Vérification du statut d'installation..."
-                "skipping_installed" = "Déjà installé, ignoré"
-                "all_installed" = "Tous les logiciels déjà installés, rien à faire"
+"checking_installation" = "Vérification du statut d'installation..."
+"skipping_installed" = "Déjà installé, ignoré"
+"all_installed" = "Tous les logiciels déjà installés, rien à faire"
+"to_install" = "à installer"
+"retrying" = "Nouvelle tentative"
                 
                 "ask_continue" = "Installation terminée. Continuer l'installation d'autres profils ?"
                 "continue_btn" = "Continuer"
@@ -759,14 +801,23 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "Validation réussie"
                 "validation_failed" = "Validation échouée"
                 
-    "search_results" = "Résultats de recherche"
-      "error_detail" = "Détail de l'erreur"
-    }
-  }
+"search_results" = "Résultats de recherche"
+"error_detail" = "Détail de l'erreur"
+"time_seconds" = "s"
+"time_total" = "Temps total"
+"custom_title" = "Sélection personnalisée"
+"custom_space_toggle" = "Espace: basculer"
+"custom_enter_confirm" = "Entrée: confirmer"
+"custom_a_select_all" = "A: tout sélectionner/désélectionner"
+"custom_selected" = "Sélectionné %d/%d"
+}
+}
 
-  # ============================================
-  # Arabic - ar (LTR for terminal compatibility)
-  # ============================================
+# ============================================
+# Arabic - ar (LTR for terminal compatibility)
+# ============================================
+# Arabic - ar (LTR for terminal compatibility)
+# ============================================
   "ar" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
@@ -808,9 +859,11 @@ function Initialize-LanguageStrings {
                 "dry_run_mode" = "وضع المعاينة: عرض عملية التثبيت بدون تثبيت فعلي"
                 "dry_run_installing" = "جاري المحاكاة"
                 
-                "checking_installation" = "التحقق من حالة التثبيت..."
-                "skipping_installed" = "مثبت بالفعل، تخطي"
-                "all_installed" = "جميع البرامج مثبتة بالفعل، لا شيء القيام به"
+"checking_installation" = "التحقق من حالة التثبيت..."
+"skipping_installed" = "مثبت بالفعل، تخطي"
+"all_installed" = "جميع البرامج مثبتة بالفعل، لا شيء القيام به"
+"to_install" = "للتثبيت"
+"retrying" = "إعادة المحاولة"
                 
                 "ask_continue" = "اكتمل التثبيت. متابعة تثبيت ملفات شخصية أخرى؟"
                 "continue_btn" = "متابعة"
@@ -863,14 +916,23 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "التحقق نجح"
                 "validation_failed" = "التحقق فشل"
                 
-    "search_results" = "نتائج البحث"
-      "error_detail" = "تفاصيل الخطأ"
-    }
-  }
+"search_results" = "نتائج البحث"
+"error_detail" = "تفاصيل الخطأ"
+"time_seconds" = "ث"
+"time_total" = "الوقت الإجمالي"
+"custom_title" = "الاختيار المخصص"
+"custom_space_toggle" = "مسافة: تبديل"
+"custom_enter_confirm" = "Enter: تأكيد"
+"custom_a_select_all" = "A: تحديد/إلغاء تحديد الكل"
+"custom_selected" = "تم الاختيار %d/%d"
+}
+}
 
-  # ============================================
-  # Portuguese - pt
-  # ============================================
+# ============================================
+# Portuguese - pt
+# ============================================
+# Portuguese - pt
+# ============================================
   "pt" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
@@ -912,9 +974,11 @@ function Initialize-LanguageStrings {
                 "dry_run_mode" = "Modo visualização: mostrar processo sem instalar"
                 "dry_run_installing" = "Simulando instalação"
                 
-                "checking_installation" = "Verificando status da instalação..."
-                "skipping_installed" = "Já instalado, pulando"
-                "all_installed" = "Todo software já instalado, nada a fazer"
+"checking_installation" = "Verificando status da instalação..."
+"skipping_installed" = "Já instalado, pulando"
+"all_installed" = "Todo software já instalado, nada a fazer"
+"to_install" = "a instalar"
+"retrying" = "Tentando novamente"
                 
                 "ask_continue" = "Instalação concluída. Continuar instalando outros perfis?"
                 "continue_btn" = "Continuar"
@@ -967,14 +1031,23 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "Validação bem-sucedida"
                 "validation_failed" = "Validação falhou"
                 
-    "search_results" = "Resultados da pesquisa"
-      "error_detail" = "Detalhe do erro"
-    }
-  }
+"search_results" = "Resultados da pesquisa"
+"error_detail" = "Detalhe do erro"
+"time_seconds" = "s"
+"time_total" = "Tempo total"
+"custom_title" = "Seleção personalizada"
+"custom_space_toggle" = "Espaço: alternar"
+"custom_enter_confirm" = "Enter: confirmar"
+"custom_a_select_all" = "A: selecionar/deselecionar tudo"
+"custom_selected" = "Selecionado %d/%d"
+}
+}
 
-  # ============================================
-  # Italian - it
-  # ============================================
+# ============================================
+# Italian - it
+# ============================================
+# Italian - it
+# ============================================
   "it" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
@@ -1016,9 +1089,11 @@ function Initialize-LanguageStrings {
                 "dry_run_mode" = "Modalità anteprima: mostra processo senza installare"
                 "dry_run_installing" = "Simulazione in corso"
                 
-                "checking_installation" = "Verifica stato installazione..."
-                "skipping_installed" = "Già installato, salto"
-                "all_installed" = "Tutto il software già installato, niente da fare"
+"checking_installation" = "Verifica stato installazione..."
+"skipping_installed" = "Già installato, salto"
+"all_installed" = "Tutto il software già installato, niente da fare"
+"to_install" = "da installare"
+"retrying" = "Nuovo tentativo"
                 
                 "ask_continue" = "Installazione completata. Continuare installazione altri profili?"
                 "continue_btn" = "Continua"
@@ -1071,14 +1146,23 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "Validazione superata"
                 "validation_failed" = "Validazione fallita"
                 
-    "search_results" = "Risultati della ricerca"
-      "error_detail" = "Dettaglio errore"
-    }
-  }
+"search_results" = "Risultati della ricerca"
+"error_detail" = "Dettaglio errore"
+"time_seconds" = "s"
+"time_total" = "Tempo totale"
+"custom_title" = "Selezione personalizzata"
+"custom_space_toggle" = "Spazio: alterna"
+"custom_enter_confirm" = "Invio: conferma"
+"custom_a_select_all" = "A: seleziona/deseleziona tutto"
+"custom_selected" = "Selezionato %d/%d"
+}
+}
 
-  # ============================================
-  # English (default) - en-US
-  # ============================================
+# ============================================
+# English (default) - en-US
+# ============================================
+# English (default) - en-US
+# ============================================
   default {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
@@ -1120,9 +1204,11 @@ function Initialize-LanguageStrings {
                 "dry_run_mode" = "Preview mode: Show process without installing"
                 "dry_run_installing" = "Simulating install"
                 
-                "checking_installation" = "Checking installation status..."
-                "skipping_installed" = "Already installed, skipping"
-                "all_installed" = "All software already installed, nothing to do"
+"checking_installation" = "Checking installation status..."
+"skipping_installed" = "Already installed, skipping"
+"all_installed" = "All software already installed, nothing to do"
+"to_install" = "to install"
+"retrying" = "Retrying"
                 
                 "ask_continue" = "Installation complete. Continue installing other profiles?"
                 "continue_btn" = "Continue"
@@ -1175,13 +1261,21 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "Validation passed"
                 "validation_failed" = "Validation failed"
                 
-    "search_results" = "Search results"
-      "error_detail" = "Error detail"
-    }
-  }
+"search_results" = "Search results"
+"error_detail" = "Error detail"
+"time_seconds" = "s"
+"time_total" = "Total time"
+"custom_title" = "Custom Software Selection"
+"custom_space_toggle" = "Space: toggle"
+"custom_enter_confirm" = "Enter: confirm"
+"custom_a_select_all" = "A: select/deselect all"
+"custom_selected" = "Selected %d/%d"
+}
 }
 }
 
+# ============================================
+# Logging functions
 # ============================================
 # Logging functions
 # ============================================
@@ -1720,6 +1814,163 @@ function Show-SoftwareMenu {
         }
     }
     
+    return $selected
+}
+
+function Select-CustomSoftware {
+    param([string]$Path, [string]$OS, [string]$ProfileKey)
+
+    $includes = Get-ProfileIncludes -Path $Path -Key $ProfileKey
+    if ($includes.Count -eq 0) {
+        Write-Log "No software in profile" "WARN"
+        return @()
+    }
+
+    $menuItems = @()
+    $swData = @()
+    $checked = @()
+
+    # First item: "Select All / Deselect All"
+    $menuItems += $script:LANG["select_all"]
+    $swData += @{ Key = "__select_all__"; Name = $script:LANG["select_all"] }
+    $checked += $false
+
+    foreach ($sw in $includes) {
+        $name = Get-SoftwareField -Path $Path -Key $sw -Field "name"
+        $desc = Get-SoftwareField -Path $Path -Key $sw -Field "desc"
+        $icon = Get-SoftwareField -Path $Path -Key $sw -Field "icon"
+
+        $installed = Test-SoftwareInstalled -Path $Path -Key $sw -OS $OS
+
+        $displayName = if ($icon) { "$icon $name" } else { $name }
+        if ($installed) {
+            $displayName = "$displayName - $desc [$($script:LANG["installed"])]"
+        } else {
+            $displayName = "$displayName - $desc"
+        }
+
+        $menuItems += $displayName
+        $swData += @{ Key = $sw; Name = $name; Desc = $desc; Icon = $icon; Installed = $installed }
+        $checked += $false
+    }
+
+    $numItems = $menuItems.Count
+    $cursor = 0
+    $running = $true
+
+    $menuStartLine = [Console]::CursorTop
+
+    Write-Host ""
+    Write-Header ($script:LANG["custom_title"])
+    Write-Host " $($script:LANG["custom_space_toggle"]) | $($script:LANG["custom_enter_confirm"]) | $($script:LANG["custom_a_select_all"])" -ForegroundColor Cyan
+    Write-Host ""
+
+    $oldVisible = Get-CursorVisible
+    Set-CursorVisible -Visible $false
+
+    try {
+        while ($running) {
+            # Draw all items
+            for ($i = 0; $i -lt $numItems; $i++) {
+                $prefix = if ($i -eq 0) {
+                    if ($checked[$i]) { "[✓] " } else { "[ ] " }
+                } else {
+                    if ($checked[$i]) { $script:LANG["selected"] } else { $script:LANG["not_selected"] }
+                }
+
+                $lineText = "$prefix$($menuItems[$i])"
+
+                if ($i -eq $cursor) {
+                    # Cursor line with selection indicator
+                    if ($checked[$i]) {
+                        Write-Host " >$lineText" -ForegroundColor Green
+                    } else {
+                        Write-Host " >$lineText" -ForegroundColor Yellow
+                    }
+                } else {
+                    if ($checked[$i]) {
+                        if ($swData[$i].Installed -and $i -gt 0) {
+                            Write-Host "  $lineText" -ForegroundColor DarkGray
+                        } else {
+                            Write-Host "  $lineText" -ForegroundColor Green
+                        }
+                    } else {
+                        if ($swData[$i].Installed -and $i -gt 0) {
+                            Write-Host "  $lineText" -ForegroundColor DarkGray
+                        } else {
+                            Write-Host "  $lineText"
+                        }
+                    }
+                }
+            }
+
+            # Show selected count at bottom
+            $selectedCount = 0
+            for ($i = 1; $i -lt $checked.Count; $i++) {
+                if ($checked[$i]) { $selectedCount++ }
+            }
+            $countText = $script:LANG["custom_selected"] -f $selectedCount, ($numItems - 1)
+            Write-Host ""
+            Write-Host " $countText" -ForegroundColor Cyan
+
+            $keyInfo = [Console]::ReadKey($true)
+
+            switch ($keyInfo.Key) {
+                "UpArrow" {
+                    $cursor--
+                    if ($cursor -lt 0) { $cursor = $numItems - 1 }
+                }
+                "DownArrow" {
+                    $cursor++
+                    if ($cursor -ge $numItems) { $cursor = 0 }
+                }
+                "Spacebar" {
+                    if ($cursor -eq 0) {
+                        # Toggle all
+                        $newState = -not $checked[0]
+                        for ($i = 0; $i -lt $checked.Count; $i++) {
+                            $checked[$i] = $newState
+                        }
+                    } else {
+                        $checked[$cursor] = -not $checked[$cursor]
+                    }
+                }
+                "A" {
+                    # Toggle all (same as space on first item)
+                    $newState = -not $checked[0]
+                    for ($i = 0; $i -lt $checked.Count; $i++) {
+                        $checked[$i] = $newState
+                    }
+                }
+                "Enter" {
+                    $running = $false
+                }
+            }
+
+            # Clear screen for redraw (move cursor up and clear lines)
+            $totalLines = $numItems + 2  # items + header spacing + count line
+            for ($i = 0; $i -lt $totalLines; $i++) {
+                [Console]::SetCursorPosition(0, [Console]::CursorTop - 1)
+                Write-Host ("`r" + (" " * [Console]::WindowWidth)) -NoNewline
+                [Console]::SetCursorPosition(0, [Console]::CursorTop - 1)
+            }
+        }
+    } finally {
+        Set-CursorVisible -Visible $oldVisible
+    }
+
+    # Clear menu area
+    [Console]::SetCursorPosition(0, $menuStartLine)
+    [Console]::Write([char]27 + "[J")
+
+    # Return selected software keys (skip the "select all" item at index 0)
+    $selected = @()
+    for ($i = 1; $i -lt $swData.Count; $i++) {
+        if ($checked[$i]) {
+            $selected += $swData[$i].Key
+        }
+    }
+
     return $selected
 }
 
@@ -2463,6 +2714,17 @@ Installed ($($Installed.Count)):
 }
 
 # ============================================
+# Progress bar function
+# ============================================
+function Draw-ProgressBar {
+    param([int]$Current, [int]$Total, [int]$Width = 20)
+    $filled = if ($Total -gt 0) { [math]::Floor($Current * $Width / $Total) } else { 0 }
+    $empty = $Width - $filled
+    $bar = ("█" * $filled) + ("░" * $empty)
+    return $bar
+}
+
+# ============================================
 # Main execution
 # ============================================
 function Main {
@@ -2548,41 +2810,75 @@ if ($validate) {
         
         $script:CONFIG_FILE = Get-ConfigFile
         
-        if ($nonInteractive) {
-            if (-not $profile) {
-                Write-Log $h["noninteractive_error"] "ERROR"
-                exit 1
-            }
-            
-            $profileKeys = Get-ProfileKeys -Path $script:CONFIG_FILE
-            if ($profileKeys -notcontains $profile) {
-                Write-Log "$($h["profile_not_found"]): $profile" "ERROR"
-                exit 1
-            }
-            
-            $script:SELECTED_PROFILES = @($profile)
-            
-            $includes = Get-ProfileIncludes -Path $script:CONFIG_FILE -Key $profile
-            $script:SELECTED_SOFTWARE = @()
-            foreach ($sw in $includes) {
-                if ($only.Count -gt 0 -and $only -notcontains $sw) { continue }
-                if ($skip.Count -gt 0 -and $skip -contains $sw) { continue }
-                $script:SELECTED_SOFTWARE += $sw
-            }
-        }
-        elseif ($profile) {
-            $profileKeys = Get-ProfileKeys -Path $script:CONFIG_FILE
-            if ($profileKeys -notcontains $profile) {
-                Write-Log "$($h["profile_not_found"]): $profile" "ERROR"
-                exit 1
-            }
-            
-            $script:SELECTED_PROFILES = @($profile)
-            $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $profile -Field "name"
-            Set-WindowTitle -Title "QSPC | $profileName | $($h["title_select_software"])"
-            $script:SELECTED_SOFTWARE = Show-SoftwareMenu -Path $script:CONFIG_FILE -OS $os -ProfileKey $profile
-        }
-        else {
+if ($nonInteractive) {
+    if (-not $profile) {
+        Write-Log $h["noninteractive_error"] "ERROR"
+        exit 1
+    }
+
+    $profileKeys = Get-ProfileKeys -Path $script:CONFIG_FILE
+    if ($profileKeys -notcontains $profile) {
+        Write-Log "$($h["profile_not_found"]): $profile" "ERROR"
+        exit 1
+    }
+
+    $script:SELECTED_PROFILES = @($profile)
+
+    if ($custom) {
+        # Custom mode not supported in non-interactive mode
+        Write-Log "Custom mode requires interactive mode" "ERROR"
+        exit 1
+    }
+
+    $includes = Get-ProfileIncludes -Path $script:CONFIG_FILE -Key $profile
+    $script:SELECTED_SOFTWARE = @()
+    foreach ($sw in $includes) {
+        if ($only.Count -gt 0 -and $only -notcontains $sw) { continue }
+        if ($skip.Count -gt 0 -and $skip -contains $sw) { continue }
+        $script:SELECTED_SOFTWARE += $sw
+    }
+}
+elseif ($custom -and $profile) {
+    # Custom selection mode with specified profile
+    $profileKeys = Get-ProfileKeys -Path $script:CONFIG_FILE
+    if ($profileKeys -notcontains $profile) {
+        Write-Log "$($h["profile_not_found"]): $profile" "ERROR"
+        exit 1
+    }
+
+    $script:SELECTED_PROFILES = @($profile)
+    $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $profile -Field "name"
+    Set-WindowTitle -Title "QSPC | $profileName | $($h["custom_title"])"
+    $script:SELECTED_SOFTWARE = Select-CustomSoftware -Path $script:CONFIG_FILE -OS $os -ProfileKey $profile
+}
+elseif ($custom) {
+    # Custom selection mode without profile - select profile first
+    Set-WindowTitle -Title "QSPC | $($h["title_select_profile"])"
+    $selectedProfile = Show-ProfileMenu -Path $script:CONFIG_FILE
+
+    if (-not $selectedProfile) {
+        Write-Log $h["no_profile_selected"] "WARN"
+        exit 0
+    }
+
+    $script:SELECTED_PROFILES = @($selectedProfile)
+    $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $selectedProfile -Field "name"
+    Set-WindowTitle -Title "QSPC | $profileName | $($h["custom_title"])"
+    $script:SELECTED_SOFTWARE = Select-CustomSoftware -Path $script:CONFIG_FILE -OS $os -ProfileKey $selectedProfile
+}
+elseif ($profile) {
+    $profileKeys = Get-ProfileKeys -Path $script:CONFIG_FILE
+    if ($profileKeys -notcontains $profile) {
+        Write-Log "$($h["profile_not_found"]): $profile" "ERROR"
+        exit 1
+    }
+
+    $script:SELECTED_PROFILES = @($profile)
+    $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $profile -Field "name"
+    Set-WindowTitle -Title "QSPC | $profileName | $($h["title_select_software"])"
+    $script:SELECTED_SOFTWARE = Show-SoftwareMenu -Path $script:CONFIG_FILE -OS $os -ProfileKey $profile
+}
+else {
             Set-WindowTitle -Title "QSPC | $($h["title_select_profile"])"
             $script:SELECTED_PROFILES = @(Show-ProfileMenu -Path $script:CONFIG_FILE)
             
@@ -2686,18 +2982,28 @@ if ($validate) {
         $toInstall = @()
         $alreadyInstalled = @()
         
-        foreach ($sw in $script:SELECTED_SOFTWARE) {
-            $swName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "name"
-            
-            if (Test-SoftwareInstalled -Path $script:CONFIG_FILE -OS $os -Key $sw) {
-                Write-Host "  $($h["selected"])$swName - $($h["skipping_installed"])" -ForegroundColor Green
-                $alreadyInstalled += $swName
-            } else {
-                Write-Host "  [→] $swName - $($h["installing"])" -ForegroundColor Cyan
-                $toInstall += $sw
-            }
-        }
-        Write-Host ""
+foreach ($sw in $script:SELECTED_SOFTWARE) {
+    if (Test-SoftwareInstalled -Path $script:CONFIG_FILE -OS $os -Key $sw) {
+        $alreadyInstalled += $sw
+    } else {
+        $toInstall += $sw
+    }
+}
+
+# One-line summary
+$installedCount = $alreadyInstalled.Count
+$toInstallCount = $toInstall.Count
+$detBar = Draw-ProgressBar -Current $installedCount -Total ($installedCount + $toInstallCount)
+Write-Host " $detBar $installedCount/$($installedCount + $toInstallCount) $($h["installed"]), $toInstallCount $($h["to_install"])" -ForegroundColor Cyan
+
+# Show already-installed in gray
+foreach ($sw in $alreadyInstalled) {
+    $swName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "name"
+    $swIcon = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "icon"
+    $swDisplay = if ($swIcon) { "$swIcon $swName" } else { $swName }
+    Write-Host " [✓] $swDisplay - $($h["skipping_installed"])" -ForegroundColor Gray
+}
+Write-Host ""
         
         if ($toInstall.Count -eq 0) {
             Write-Log $h["all_installed"] "INFO"
@@ -2716,47 +3022,99 @@ if ($validate) {
         Set-WindowTitle -Title "QSPC | $($h["title_installing"])"
         Write-Header $h["start_installing"]
         
-        $total = $toInstall.Count
-        $current = 0
-        $installedList = @()
-        $failedList = @()
-        
-        foreach ($sw in $toInstall) {
-            $current++
-            $percent = [math]::Round(($current * 100) / $total)
-            $swName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "name"
-            Write-Host "`r$($h["installing"]) [$($percent.ToString("D3"))%] $swName" -NoNewline -ForegroundColor Cyan
-            
-            $result = Install-Software -Path $script:CONFIG_FILE -OS $os -Key $sw
-            
-            if ($result) {
-                $installedList += $swName
-            } else {
-                $failedList += $swName
-                if ($failFast) {
-                    Write-Host ""
-                    Write-Log "Fail-fast: stopping at $swName" "ERROR"
-                    break
-                }
-            }
+$total = $toInstall.Count
+$current = 0
+$installedList = @()
+$failedList = @()
+$installStartTime = Get-Date
+
+foreach ($sw in $toInstall) {
+    $current++
+    $swName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "name"
+    $swIcon = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "icon"
+    $swDisplay = if ($swIcon) { "$swIcon $swName" } else { $swName }
+    $bar = Draw-ProgressBar -Current $current -Total $total
+    Write-Host "`r $bar $current/$total $swDisplay - $($h["installing"])..." -NoNewline -ForegroundColor Cyan
+
+    $swStart = Get-Date
+    $result = Install-Software -Path $script:CONFIG_FILE -OS $os -Key $sw
+    $swEnd = Get-Date
+    $swElapsed = [math]::Round(($swEnd - $swStart).TotalSeconds)
+
+    if ($result) {
+        Write-Host "`r $bar $current/$total $swDisplay - " -NoNewline
+        Write-Host "$($h["install_success"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Green
+        $installedList += $sw
+    } else {
+        Write-Host "`r $bar $current/$total $swDisplay - " -NoNewline
+        Write-Host "$($h["install_failed"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Red
+        $failedList += $sw
+        if ($failFast) {
+            Write-Host ""
+            Write-Log "Fail-fast: stopping at $swName" "ERROR"
+            break
         }
-        Write-Host ""
+    }
+}
+$installEndTime = Get-Date
+$totalElapsed = [math]::Round(($installEndTime - $installStartTime).TotalSeconds)
+Write-Host ""
+Write-Host "$($h["time_total"]): $totalElapsed$($h["time_seconds"])" -ForegroundColor Cyan
+Write-Host ""
         
         $skippedList = $alreadyInstalled
         
         Write-Header $h["installation_complete"]
         Write-Host ""
         
-        Write-Host "Installed:" -ForegroundColor Green
-        Write-Log "Installed:" "INFO"
-        if ($installedList.Count -eq 0) {
-            Write-Host "  (none)" -ForegroundColor Gray
-            Write-Log "  (none)" "INFO"
-        } else {
-            foreach ($item in $installedList) {
-                Write-Host "  - $item" -ForegroundColor Green
-                Write-Log "  - $item" "INFO"
-            }
+Write-Host "Installed:" -ForegroundColor Green
+Write-Log "Installed:" "INFO"
+if ($installedList.Count -eq 0) {
+    Write-Host " (none)" -ForegroundColor Gray
+    Write-Log " (none)" "INFO"
+} else {
+    foreach ($item in $installedList) {
+        $displayName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $item -Field "name"
+        $displayIcon = Get-SoftwareField -Path $script:CONFIG_FILE -Key $item -Field "icon"
+        $displayText = if ($displayIcon) { "$displayIcon $displayName" } else { $displayName }
+        Write-Host " - $displayText" -ForegroundColor Green
+        Write-Log " - $displayText" "INFO"
+    }
+}
+
+Write-Host ""
+Write-Host "Skipped:" -ForegroundColor Cyan
+Write-Log "" "INFO"
+Write-Log "Skipped:" "INFO"
+if ($skippedList.Count -eq 0) {
+    Write-Host " (none)" -ForegroundColor Gray
+    Write-Log " (none)" "INFO"
+} else {
+    foreach ($item in $skippedList) {
+        $displayName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $item -Field "name"
+        $displayIcon = Get-SoftwareField -Path $script:CONFIG_FILE -Key $item -Field "icon"
+        $displayText = if ($displayIcon) { "$displayIcon $displayName" } else { $displayName }
+        Write-Host " - $displayText" -ForegroundColor Cyan
+        Write-Log " - $displayText" "INFO"
+    }
+}
+
+Write-Host ""
+Write-Host "Failed:" -ForegroundColor Red
+Write-Log "" "INFO"
+Write-Log "Failed:" "INFO"
+if ($failedList.Count -eq 0) {
+    Write-Host " (none)" -ForegroundColor Gray
+    Write-Log " (none)" "INFO"
+} else {
+    foreach ($item in $failedList) {
+        $displayName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $item -Field "name"
+        $displayIcon = Get-SoftwareField -Path $script:CONFIG_FILE -Key $item -Field "icon"
+        $displayText = if ($displayIcon) { "$displayIcon $displayName" } else { $displayName }
+        Write-Host " - $displayText" -ForegroundColor Red
+        Write-Log " - $displayText" "INFO"
+    }
+}
         }
         
         Write-Host ""
@@ -2811,33 +3169,43 @@ if ($validate) {
                 }
             }
             
-            if ($retryFailed) {
-                $retryInstalled = @()
-                $retryFailedList = @()
-                $retryTotal = $failedList.Count
-                $retryCurrent = 0
-                
-                foreach ($item in $failedList) {
-                    $retryCurrent++
-                    $swKey = ""
-                    foreach ($sw in $script:SELECTED_SOFTWARE) {
-                        $swName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "name"
-                        if ($swName -eq $item) {
-                            $swKey = $sw
-                            break
-                        }
-                    }
-                    if (-not $swKey) { continue }
-                    
-                    Write-Host "`r[Retry $($retryCurrent * 100 / $retryTotal)%] Installing $item" -NoNewline
-                    
-                    if (Install-Software -Path $script:CONFIG_FILE -OS $os -Key $swKey) {
-                        $retryInstalled += $item
-                    } else {
-                        $retryFailedList += $item
-                    }
-                }
-                Write-Host ""
+if ($retryFailed) {
+$retryInstalled = @()
+$retryFailedList = @()
+$retryTotal = $failedList.Count
+$retryCurrent = 0
+
+foreach ($item in $failedList) {
+    $retryCurrent++
+    $swKey = ""
+    foreach ($sw in $script:SELECTED_SOFTWARE) {
+        $swName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "name"
+        if ($swName -eq $item) {
+            $swKey = $sw
+            break
+        }
+    }
+    if (-not $swKey) { continue }
+
+    $retryBar = Draw-ProgressBar -Current $retryCurrent -Total $retryTotal
+    Write-Host "`r $retryBar $retryCurrent/$retryTotal $item - $($h["retrying"])..." -NoNewline -ForegroundColor Yellow
+
+    $retryStart = Get-Date
+    if (Install-Software -Path $script:CONFIG_FILE -OS $os -Key $swKey) {
+        $retryEnd = Get-Date
+        $retryElapsed = [math]::Round(($retryEnd - $retryStart).TotalSeconds)
+        Write-Host "`r $retryBar $retryCurrent/$retryTotal $item - " -NoNewline
+        Write-Host "$($h["install_success"]) ($retryElapsed$($h["time_seconds"]))" -ForegroundColor Green
+        $retryInstalled += $item
+    } else {
+        $retryEnd = Get-Date
+        $retryElapsed = [math]::Round(($retryEnd - $retryStart).TotalSeconds)
+        Write-Host "`r $retryBar $retryCurrent/$retryTotal $item - " -NoNewline
+        Write-Host "$($h["install_failed"]) ($retryElapsed$($h["time_seconds"]))" -ForegroundColor Red
+$retryFailedList += $item
+}
+}
+Write-Host ""
                 
                 if ($retryInstalled.Count -gt 0) {
                     Write-Host ""
