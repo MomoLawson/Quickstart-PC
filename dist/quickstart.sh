@@ -74,7 +74,7 @@ load_language_strings() {
     fi
     
     # 5. Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v0.60.1"
+    LANG_BANNER_TITLE="Quickstart-PC v0.70.0"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -200,6 +200,7 @@ LANG_OVERRIDE=""
 LOCAL_LANG_PATH=""
 CFG_PATH=""
 CFG_URL=""
+INSTALL_LAST_ERROR=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -1556,11 +1557,16 @@ install_software() {
   fi
 
   log_to_file "[STEP] $LANG_INSTALLING: $key"
-  if eval "$cmd" 2>/dev/null; then
+  local error_output=""
+  error_output=$(eval "$cmd" 2>&1) || true
+  local exit_code=$?
+  if [[ $exit_code -eq 0 ]]; then
     log_to_file "[SUCCESS] $key $LANG_INSTALL_SUCCESS"
+    INSTALL_LAST_ERROR=""
     return 0
   else
-    log_to_file "[FAIL] $key $LANG_INSTALL_FAILED"
+    log_to_file "[FAIL] $key $LANG_INSTALL_FAILED (exit $exit_code): $error_output"
+    INSTALL_LAST_ERROR="$error_output"
     return 1
   fi
 }

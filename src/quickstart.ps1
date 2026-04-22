@@ -74,6 +74,7 @@ $script:SELECTED_SOFTWARE = @()
 $script:DETECTED_LANG = "en-US"
 $script:PKG_MANAGER = "none"
 $script:DEBUG = $debug
+$script:INSTALL_LAST_ERROR = ""
 
 # ============================================
 # Console helpers (cross-platform safe)
@@ -238,14 +239,15 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "校验通过"
                 "validation_failed" = "校验失败"
                 
-                "search_results" = "搜索结果"
-            }
-        }
-        
-        # ============================================
-        # Japanese - ja
-        # ============================================
-        "ja" {
+    "search_results" = "搜索结果"
+      "error_detail" = "错误详情"
+    }
+  }
+
+  # ============================================
+  # Japanese - ja
+  # ============================================
+  "ja" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "新PCのソフトウェア環境を素早く設定"
@@ -341,14 +343,15 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "検証成功"
                 "validation_failed" = "検証失敗"
                 
-                "search_results" = "検索結果"
-            }
-        }
-        
-        # ============================================
-        # Korean - ko
-        # ============================================
-        "ko" {
+    "search_results" = "検索結果"
+      "error_detail" = "エラー詳細"
+    }
+  }
+
+  # ============================================
+  # Korean - ko
+  # ============================================
+  "ko" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "새 PC 소프트웨어 환경을 빠르게 설정"
@@ -444,14 +447,15 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "검증 통과"
                 "validation_failed" = "검증 실패"
                 
-                "search_results" = "검색 결과"
-            }
-        }
-        
-        # ============================================
-        # Traditional Chinese - zh-Hant
-        # ============================================
-        "zh-Hant" {
+    "search_results" = "검색 결과"
+      "error_detail" = "오류 상세"
+    }
+  }
+
+  # ============================================
+  # Traditional Chinese - zh-Hant
+  # ============================================
+  "zh-Hant" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "快速設定新電腦軟件環境"
@@ -547,14 +551,15 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "驗證通過"
                 "validation_failed" = "驗證失敗"
                 
-                "search_results" = "搜尋結果"
-            }
-        }
-        
-        # ============================================
-        # German - de
-        # ============================================
-        "de" {
+    "search_results" = "搜尋結果"
+      "error_detail" = "錯誤詳情"
+    }
+  }
+
+  # ============================================
+  # German - de
+  # ============================================
+  "de" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "Schnelle Einrichtung für neue Computer"
@@ -650,14 +655,15 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "Validierung erfolgreich"
                 "validation_failed" = "Validierung fehlgeschlagen"
                 
-                "search_results" = "Suchergebnisse"
-            }
-        }
-        
-        # ============================================
-        # French - fr
-        # ============================================
-        "fr" {
+    "search_results" = "Suchergebnisse"
+      "error_detail" = "Fehlerdetail"
+    }
+  }
+
+  # ============================================
+  # French - fr
+  # ============================================
+  "fr" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "Configuration rapide pour nouveaux ordinateurs"
@@ -753,14 +759,15 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "Validation réussie"
                 "validation_failed" = "Validation échouée"
                 
-                "search_results" = "Résultats de recherche"
-            }
-        }
-        
-        # ============================================
-        # Arabic - ar (LTR for terminal compatibility)
-        # ============================================
-        "ar" {
+    "search_results" = "Résultats de recherche"
+      "error_detail" = "Détail de l'erreur"
+    }
+  }
+
+  # ============================================
+  # Arabic - ar (LTR for terminal compatibility)
+  # ============================================
+  "ar" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "إعداد سريع لأجهزة الكمبيوتر الجديدة"
@@ -856,14 +863,15 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "التحقق نجح"
                 "validation_failed" = "التحقق فشل"
                 
-                "search_results" = "نتائج البحث"
-            }
-        }
-        
-        # ============================================
-        # Portuguese - pt
-        # ============================================
-        "pt" {
+    "search_results" = "نتائج البحث"
+      "error_detail" = "تفاصيل الخطأ"
+    }
+  }
+
+  # ============================================
+  # Portuguese - pt
+  # ============================================
+  "pt" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "Configuração rápida para novos computadores"
@@ -959,14 +967,15 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "Validação bem-sucedida"
                 "validation_failed" = "Validação falhou"
                 
-                "search_results" = "Resultados da pesquisa"
-            }
-        }
-        
-        # ============================================
-        # Italian - it
-        # ============================================
-        "it" {
+    "search_results" = "Resultados da pesquisa"
+      "error_detail" = "Detalhe do erro"
+    }
+  }
+
+  # ============================================
+  # Italian - it
+  # ============================================
+  "it" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "Configurazione rapida per nuovi computer"
@@ -1062,14 +1071,15 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "Validazione superata"
                 "validation_failed" = "Validazione fallita"
                 
-                "search_results" = "Risultati della ricerca"
-            }
-        }
-        
-        # ============================================
-        # English (default) - en-US
-        # ============================================
-        default {
+    "search_results" = "Risultati della ricerca"
+      "error_detail" = "Dettaglio errore"
+    }
+  }
+
+  # ============================================
+  # English (default) - en-US
+  # ============================================
+  default {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "Quick setup for new computers"
@@ -1165,10 +1175,11 @@ function Initialize-LanguageStrings {
                 "validation_passed" = "Validation passed"
                 "validation_failed" = "Validation failed"
                 
-                "search_results" = "Search results"
-            }
-        }
+    "search_results" = "Search results"
+      "error_detail" = "Error detail"
     }
+  }
+}
 }
 
 # ============================================
@@ -1780,21 +1791,25 @@ function Install-Software {
         return $true
     }
     
-    Write-Log "$($script:LANG["installing"]): $Key" "STEP"
-    
-    try {
-        Invoke-Expression $cmd 2>&1 | Out-Null
-        if ($LASTEXITCODE -eq 0) {
-            Write-Log "$Key $($script:LANG["install_success"])" "SUCCESS"
-            return $true
-        } else {
-            Write-Log "$Key $($script:LANG["install_failed"])" "ERROR"
-            return $false
-        }
-    } catch {
-        Write-Log "$Key $($script:LANG["install_failed"]): $_" "ERROR"
-        return $false
+  Write-Log "$($script:LANG["installing"]): $Key" "STEP"
+
+  $errorOutput = ""
+  try {
+    $errorOutput = Invoke-Expression $cmd 2>&1 | Out-String
+    if ($LASTEXITCODE -eq 0) {
+      Write-Log "$Key $($script:LANG["install_success"])" "SUCCESS"
+      $script:INSTALL_LAST_ERROR = ""
+      return $true
+    } else {
+      Write-Log "$Key $($script:LANG["install_failed"]): $errorOutput" "ERROR"
+      $script:INSTALL_LAST_ERROR = $errorOutput
+      return $false
     }
+  } catch {
+    Write-Log "$Key $($script:LANG["install_failed"]): $_" "ERROR"
+    $script:INSTALL_LAST_ERROR = "$_"
+    return $false
+  }
 }
 
 # ============================================
