@@ -31,9 +31,11 @@ param(
     [switch]$nonInteractive,
     [switch]$debug,
     [string]$localLang,
-    [switch]$resume,
-    [switch]$noResume,
-    [switch]$help
+[switch]$resume,
+  [switch]$noResume,
+  [switch]$selfUpdate,
+  [switch]$checkUpdate,
+  [switch]$help
 )
 
 $VERSION = "1.0.0"
@@ -261,6 +263,13 @@ function Initialize-LanguageStrings {
 "resuming" = "从上次中断处继续安装..."
 "checkpoint_saved" = "安装进度已保存"
 "install_complete_state" = "安装完成，清理临时文件"
+"update_checking" = "检查更新..."
+"update_available" = "发现新版本: {0} (当前: {1})"
+"update_latest" = "已是最新版本"
+"update_downloading" = "下载更新..."
+"update_success" = "更新成功！请重新运行脚本"
+"update_failed" = "更新失败: {0}"
+"update_prompt" = "是否更新到新版本？[Y/n]"
 }
 }
 
@@ -385,6 +394,13 @@ function Initialize-LanguageStrings {
 "resuming" = "前回のチェックポイントから再開..."
 "checkpoint_saved" = "インストール進捗が保存されました"
 "install_complete_state" = "インストール完了、一時ファイルをクリーンアップ"
+"update_checking" = "アップデートを確認中..."
+"update_available" = "新しいバージョンがあります: {0} (現在: {1})"
+"update_latest" = "最新バージョンです"
+"update_downloading" = "アップデートをダウンロード中..."
+"update_success" = "アップデート成功！スクリプトを再起動してください"
+"update_failed" = "アップデート失敗: {0}"
+"update_prompt" = "新しいバージョンに更新しますか？[Y/n]"
 }
 }
 
@@ -509,6 +525,13 @@ $script:LANG = @{
 "resuming" = "이전 체크포인트에서 재개..."
 "checkpoint_saved" = "설치 진행 상태가 저장되었습니다"
 "install_complete_state" = "설치 완료, 임시 파일 정리"
+"update_checking" = "업데이트 확인 중..."
+"update_available" = "새 버전 사용 가능: {0} (현재: {1})"
+"update_latest" = "최신 버전입니다"
+"update_downloading" = "업데이트 다운로드 중..."
+"update_success" = "업데이트 성공! 스크립트를 다시 실행하세요"
+"update_failed" = "업데이트 실패: {0}"
+"update_prompt" = "새 버전으로 업데이트하시겠습니까？[Y/n]"
 }
 }
 
@@ -638,6 +661,13 @@ $script:LANG = @{
 "resuming" = "從上次中斷處繼續安裝..."
 "checkpoint_saved" = "安裝進度已儲存"
 "install_complete_state" = "安裝完成，清理暫存檔"
+"update_checking" = "檢查更新..."
+"update_available" = "發現新版本: {0} (目前: {1})"
+"update_latest" = "已是最新版本"
+"update_downloading" = "下載更新..."
+"update_success" = "更新成功！請重新執行腳本"
+"update_failed" = "更新失敗: {0}"
+"update_prompt" = "是否更新到新版本？[Y/n]"
 }
 }
 
@@ -767,6 +797,13 @@ $script:LANG = @{
 "resuming" = "Fortsetzung vom letzten Checkpoint..."
 "checkpoint_saved" = "Installationsfortschritt gespeichert"
 "install_complete_state" = "Installation abgeschlossen, temporäre Dateien werden bereinigt"
+"update_checking" = "Suche nach Updates..."
+"update_available" = "Neue Version verfügbar: {0} (aktuell: {1})"
+"update_latest" = "Bereits auf der neuesten Version"
+"update_downloading" = "Update wird heruntergeladen..."
+"update_success" = "Update erfolgreich! Bitte starten Sie das Skript neu"
+"update_failed" = "Update fehlgeschlagen: {0}"
+"update_prompt" = "Auf neue Version aktualisieren? [Y/n]"
 }
 }
 
@@ -896,6 +933,13 @@ $script:LANG = @{
 "resuming" = "Reprise depuis le dernier point de contrôle..."
 "checkpoint_saved" = "Progression de l'installation sauvegardée"
 "install_complete_state" = "Installation terminée, nettoyage des fichiers temporaires"
+"update_checking" = "Vérification des mises à jour..."
+"update_available" = "Nouvelle version disponible : {0} (actuelle : {1})"
+"update_latest" = "Déjà sur la dernière version"
+"update_downloading" = "Téléchargement de la mise à jour..."
+"update_success" = "Mise à jour réussie ! Veuillez redémarrer le script"
+"update_failed" = "Échec de la mise à jour : {0}"
+"update_prompt" = "Mettre à jour vers la nouvelle version ? [Y/n]"
 }
 }
 
@@ -1025,6 +1069,13 @@ $script:LANG = @{
 "resuming" = "استئناف من آخر نقطة تحقق..."
 "checkpoint_saved" = "تم حفظ تقدم التثبيت"
 "install_complete_state" = "اكتمل التثبيت، تنظيف الملفات المؤقتة"
+"update_checking" = "التحقق من التحديثات..."
+"update_available" = "يتوفر إصدار جديد: {0} (الحالي: {1})"
+"update_latest" = "أنت على أحدث إصدار"
+"update_downloading" = "تحميل التحديث..."
+"update_success" = "تم التحديث بنجاح! يرجى إعادة تشغيل البرنامج النصي"
+"update_failed" = "فشل التحديث: {0}"
+"update_prompt" = "هل تريد التحديث إلى الإصدار الجديد؟ [Y/n]"
 }
 }
 
@@ -1154,6 +1205,13 @@ $script:LANG = @{
 "resuming" = "Retomando do último ponto de verificação..."
 "checkpoint_saved" = "Progresso da instalação salvo"
 "install_complete_state" = "Instalação concluída, limpando arquivos temporários"
+"update_checking" = "Verificando atualizações..."
+"update_available" = "Nova versão disponível: {0} (atual: {1})"
+"update_latest" = "Já está na versão mais recente"
+"update_downloading" = "Baixando atualização..."
+"update_success" = "Atualização bem-sucedida! Por favor, reinicie o script"
+"update_failed" = "Falha na atualização: {0}"
+"update_prompt" = "Atualizar para a nova versão? [Y/n]"
 }
 }
 
@@ -1283,6 +1341,13 @@ $script:LANG = @{
 "resuming" = "Ripresa dall'ultimo checkpoint..."
 "checkpoint_saved" = "Progresso dell'installazione salvato"
 "install_complete_state" = "Installazione completata, pulizia file temporanei"
+"update_checking" = "Verifica aggiornamenti..."
+"update_available" = "Nuova versione disponibile: {0} (attuale: {1})"
+"update_latest" = "Già sull'ultima versione"
+"update_downloading" = "Download aggiornamento..."
+"update_success" = "Aggiornamento riuscito! Riavviare lo script"
+"update_failed" = "Aggiornamento fallito: {0}"
+"update_prompt" = "Aggiornare alla nuova versione? [Y/n]"
 }
 }
 
@@ -1412,6 +1477,13 @@ default {
 "resuming" = "Resuming from last checkpoint..."
 "checkpoint_saved" = "Installation progress saved"
 "install_complete_state" = "Installation complete, cleaning up"
+"update_checking" = "Checking for updates..."
+"update_available" = "New version available: {0} (current: {1})"
+"update_latest" = "Already on the latest version"
+"update_downloading" = "Downloading update..."
+"update_success" = "Update successful! Please restart the script"
+"update_failed" = "Update failed: {0}"
+"update_prompt" = "Update to new version? [Y/n]"
 }
 }
 }
@@ -2972,13 +3044,82 @@ function Clear-InstallState {
   Write-Host " $($script:LANG["install_complete_state"])" -ForegroundColor Green
 }
 
+function Check-Update {
+  Write-Host " $($script:LANG["update_checking"])" -ForegroundColor Cyan
+  try {
+    $release = Invoke-RestMethod -Uri "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases/latest" -TimeoutSec 10 -ErrorAction Stop
+    $latestVersion = $release.tag_name -replace '^v',''
+    $currentVersion = $VERSION
+    if ($currentVersion -eq $latestVersion) {
+      Write-Host " $($script:LANG["update_latest"])" -ForegroundColor Green
+      return 0
+    }
+    Write-Host " $($script:LANG["update_available"] -f $latestVersion, $currentVersion)" -ForegroundColor Yellow
+    return 2
+  } catch {
+    Write-Host " $($script:LANG["update_failed"] -f $_.Exception.Message)" -ForegroundColor Red
+    return 1
+  }
+}
+
+function Self-Update {
+  $checkResult = Check-Update
+  if ($checkResult -eq 0) { return 0 }
+  if ($checkResult -eq 1) { return 1 }
+  if (-not $nonInteractive -and -not $yes) {
+    Write-Host " $($script:LANG["update_prompt"])" -ForegroundColor Yellow
+    $answer = Read-Host " [Y/n]"
+    if (-not [string]::IsNullOrWhiteSpace($answer) -and $answer -notmatch "^[Yy]") { return 0 }
+  }
+  Write-Host " $($script:LANG["update_downloading"])" -ForegroundColor Cyan
+  try {
+    $release = Invoke-RestMethod -Uri "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases/latest" -TimeoutSec 10
+    $latestVersion = $release.tag_name -replace '^v',''
+    $downloadUrl = "https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/v${latestVersion}/dist/quickstart.ps1"
+    $scriptPath = $PSCommandPath
+    if (-not $scriptPath) { $scriptPath = $MyInvocation.PSCommandPath }
+    $updateScript = @"
+`$url = "$downloadUrl"
+`$target = "$scriptPath"
+`$tmpFile = "`$env:TEMP\quickstart-update.ps1"
+try {
+  Invoke-WebRequest -Uri `$url -OutFile `$tmpFile -TimeoutSec 60
+  Copy-Item -Path `$tmpFile -Destination `$target -Force
+  Remove-Item -Path `$tmpFile -Force -ErrorAction SilentlyContinue
+  Write-Host "Update successful!" -ForegroundColor Green
+} catch {
+  Write-Host "Update failed: `$_" -ForegroundColor Red
+}
+"@
+    $updateScriptPath = [System.IO.Path]::GetTempFileName() + ".ps1"
+    Set-Content -Path $updateScriptPath -Value $updateScript
+    Write-Host " $($script:LANG["update_success"])" -ForegroundColor Green
+    Start-Process -FilePath "pwsh" -ArgumentList "-NoProfile", "-File", $updateScriptPath -Wait -NoNewWindow
+    Remove-Item -Path $updateScriptPath -Force -ErrorAction SilentlyContinue
+    return 0
+  } catch {
+    Write-Host " $($script:LANG["update_failed"] -f $_.Exception.Message)" -ForegroundColor Red
+    return 1
+  }
+}
+
 # ============================================
 # Main execution
 # ============================================
 function Main {
-    $script:LANG_OVERRIDE = $lang
-    
-    if ($help) {
+  $script:LANG_OVERRIDE = $lang
+
+  if ($checkUpdate) {
+    $result = Check-Update
+    exit $result
+  }
+
+  if ($selfUpdate) {
+    $result = Self-Update
+    exit $result
+  }
+
+  if ($help) {
         $helpLang = if ($lang) { 
             $mapped = $script:LANGUAGE_MAPPINGS[$lang]
             if ($mapped) { $mapped } else { "en-US" }

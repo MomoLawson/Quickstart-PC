@@ -202,6 +202,8 @@ CFG_PATH=""
 CFG_URL=""
 INSTALL_LAST_ERROR=""
 RESUME_MODE="" # "" = auto, "yes" = --resume, "no" = --no-resume
+SELF_UPDATE=false
+CHECK_UPDATE=false
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -232,11 +234,13 @@ while [[ $# -gt 0 ]]; do
         --local-lang) LOCAL_LANG_PATH="$2"; shift 2 ;;
 --cfg-path) CFG_PATH="$2"; shift 2 ;;
     --cfg-url) CFG_URL="$2"; shift 2 ;;
-    --resume) RESUME_MODE="yes"; shift ;;
+--resume) RESUME_MODE="yes"; shift ;;
     --no-resume) RESUME_MODE="no"; shift ;;
+    --self-update) SELF_UPDATE=true; shift ;;
+    --check-update) CHECK_UPDATE=true; shift ;;
     --help|-h) show_help ;;
-        *) shift ;;
-    esac
+    *) shift ;;
+  esac
 done
 
 # ============================================
@@ -1252,6 +1256,16 @@ DETECTED_LANG=$(auto_detect_language)
 # Load strings for detected language
 load_language_strings "$DETECTED_LANG"
 
+if [[ "$CHECK_UPDATE" == "true" ]]; then
+  check_update
+  exit $?
+fi
+
+if [[ "$SELF_UPDATE" == "true" ]]; then
+  self_update
+  exit $?
+fi
+
 # Now show language selection menu (allows user to override)
 DETECTED_LANG=$(select_language)
 
@@ -1780,17 +1794,98 @@ custom_select_software() {
 }
 
 show_banner() {
+  echo ""
+  printf "\033[0;34m╔══════════════════════════════════════╗\n"
+  printf "\033[0;34m║ ██████╗ ███████╗██████╗ ██████╗ ║\n"
+  printf "\033[0;34m║ ██╔═══██╗██╔════╝██╔══██╗██╔════╝ ║\n"
+  printf "\033[0;34m║ ██║ ██║███████╗██████╔╝██║ ║\n"
+  printf "\033[0;34m║ ██║▄▄ ██║╚════██║██╔═══╝ ██║ ║\n"
+  printf "\033[0;34m║ ╚██████╔╝███████║██║ ╚██████╗ ║\n"
+  printf "\033[0;34m║ ╚══▀▀═╝ ╚══════╝╚═╝ ╚═════╝ ║\n"
+  printf "\033[0;34m║ Quickstart-PC ║\n"
+  printf "\033[0;34m╚══════════════════════════════════════╝\n\033[0m"
+  echo ""
+}
+
+check_update() {
+  log_info "$LANG_UPDATE_CHECKING"
+  local current_version="$VERSION"
+  local latest_version
+  latest_version=$(curl -fsSL --connect-timeout 5 --max-time 10 \
+    -H "Accept: application/vnd.github+json" \
+    "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases/latest" \
+    2>/dev/null | jq -r '.tag_name // empty')
+  latest_version="${latest_version#v}"
+
+  if [[ -z "$latest_version" ]]; then
+    log_warn "$(printf "$LANG_UPDATE_FAILED" "GitHub API error")"
+    return 1
+  fi
+
+  if [[ "$current_version" == "$latest_version" ]]; then
+    log_info "$LANG_UPDATE_LATEST"
+    return 0
+  fi
+
+  log_info "$(printf "$LANG_UPDATE_AVAILABLE" "$latest_version" "$current_version")"
+  return 2
+}
+
+self_update() {
+  local current_version="$VERSION"
+  local latest_version
+  latest_version=$(curl -fsSL --connect-timeout 5 --max-time 10 \
+    -H "Accept: application/vnd.github+json" \
+    "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases/latest" \
+    2>/dev/null | jq -r '.tag_name // empty')
+  latest_version="${latest_version#v}"
+
+  if [[ -z "$latest_version" ]]; then
+    log_warn "$(printf "$LANG_UPDATE_FAILED" "GitHub API error")"
+    return 1
+  fi
+
+  if [[ "$current_version" == "$latest_version" ]]; then
+    log_info "$LANG_UPDATE_LATEST"
+    return 0
+  fi
+
+  log_info "$(printf "$LANG_UPDATE_AVAILABLE" "$latest_version" "$current_version")"
+
+  if [[ "$NON_INTERACTIVE" != "true" && "$AUTO_YES" != "true" ]]; then
+    printf " %s " "$LANG_UPDATE_PROMPT"
+    local update_answer
+    IFS= read -rsn1 update_answer < /dev/tty
     echo ""
-    printf "\033[0;34m╔══════════════════════════════════════╗\n"
-    printf "\033[0;34m║  ██████╗ ███████╗██████╗  ██████╗    ║\n"
-    printf "\033[0;34m║ ██╔═══██╗██╔════╝██╔══██╗██╔════╝    ║\n"
-    printf "\033[0;34m║ ██║   ██║███████╗██████╔╝██║         ║\n"
-    printf "\033[0;34m║ ██║▄▄ ██║╚════██║██╔═══╝ ██║         ║\n"
-    printf "\033[0;34m║ ╚██████╔╝███████║██║     ╚██████╗    ║\n"
-    printf "\033[0;34m║  ╚══▀▀═╝ ╚══════╝╚═╝      ╚═════╝    ║\n"
-    printf "\033[0;34m║            Quickstart-PC             ║\n"
-    printf "\033[0;34m╚══════════════════════════════════════╝\n\033[0m"
-    echo ""
+    if [[ ! -z "$update_answer" && ! "$update_answer" =~ ^[Yy] ]]; then
+      return 0
+    fi
+  fi
+
+  log_info "$LANG_UPDATE_DOWNLOADING"
+  local tmpfile
+  tmpfile=$(mktemp "/tmp/quickstart-XXXXXXXXXX.sh")
+  if ! curl -fsSL --connect-timeout 10 --max-time 60 \
+    "https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/v${latest_version}/dist/quickstart.sh" \
+    -o "$tmpfile" 2>/dev/null; then
+    rm -f "$tmpfile"
+    log_warn "$(printf "$LANG_UPDATE_FAILED" "Download failed")"
+    return 1
+  fi
+  chmod +x "$tmpfile"
+
+  local script_path="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
+  if ! mv -f "$tmpfile" "$script_path" 2>/dev/null; then
+    if ! cp -f "$tmpfile" "$script_path" 2>/dev/null; then
+      rm -f "$tmpfile"
+      log_warn "$(printf "$LANG_UPDATE_FAILED" "Cannot write to $script_path")"
+      return 1
+    fi
+    rm -f "$tmpfile"
+  fi
+
+  log_info "$LANG_UPDATE_SUCCESS"
+  return 0
 }
 
 main() {

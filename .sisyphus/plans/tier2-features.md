@@ -907,7 +907,7 @@ Evidence: .sisyphus/evidence/task-7-doctor-disk.txt
 
 ---
 
-- [ ] 8. 断点续装
+- [x] 8. 断点续装
 
 **What to do**:
 
