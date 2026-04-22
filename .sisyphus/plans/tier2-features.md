@@ -612,7 +612,7 @@ Evidence: .sisyphus/evidence/task-4-ps1-custom-dryrun.txt
 
 ---
 
-- [ ] 5. 网络超时友好提示
+- [x] 5. 网络超时友好提示
 
 **What to do**:
 
@@ -804,7 +804,7 @@ Evidence: .sisyphus/evidence/task-6-ps1-admin.txt
 
 ---
 
-- [ ] 7. 安装前磁盘空间检测
+- [x] 7. 安装前磁盘空间检测
 
 **What to do**:
 

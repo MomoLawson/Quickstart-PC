@@ -243,15 +243,19 @@ function Initialize-LanguageStrings {
                 
 "search_results" = "搜索结果"
 "error_detail" = "错误详情"
-"network_timeout" = "网络连接超时，请检查网络设置"
-"network_error" = "网络错误: {0}"
-"check_network" = "建议: 检查网络连接或设置代理"
-"time_seconds" = "秒"
-"time_total" = "总耗时"
-"disk_space_low" = "磁盘空间不足: 可用 {0}GB，建议至少 {1}GB"
-"disk_space_warning" = "⚠ 磁盘空间较低，安装可能失败"
-"disk_checking" = "检查磁盘空间..."
-}
+    "network_timeout" = "网络连接超时，请检查网络设置"
+    "network_error" = "网络错误: {0}"
+    "check_network" = "建议: 检查网络连接或设置代理"
+    "permission_denied" = "权限不足: {0}"
+    "permission_suggestion" = "建议: 使用 sudo 运行或联系管理员"
+    "need_sudo" = "此操作需要管理员权限"
+    "need_admin" = "请以管理员身份运行"
+    "time_seconds" = "秒"
+    "time_total" = "总耗时"
+    "disk_space_low" = "磁盘空间不足: 可用 {0}GB，建议至少 {1}GB"
+    "disk_space_warning" = "⚠ 磁盘空间较低，安装可能失败"
+    "disk_checking" = "检查磁盘空间..."
+  }
 }
 
 # ============================================
@@ -359,15 +363,19 @@ function Initialize-LanguageStrings {
                 
 "search_results" = "検索結果"
 "error_detail" = "エラー詳細"
-"network_timeout" = "ネットワーク接続がタイムアウトしました。ネットワーク設定を確認してください"
-"network_error" = "ネットワークエラー: {0}"
-"check_network" = "提案: ネットワーク接続を確認するかプロキシを設定してください"
-"time_seconds" = "秒"
-"time_total" = "合計時間"
-"disk_space_low" = "ディスク容量不足: 利用可能 {0}GB、最低 {1}GB 推奨"
-"disk_space_warning" = "⚠ ディスク容量が少ないため、インストールに失敗する可能性があります"
-"disk_checking" = "ディスク容量を確認中..."
-}
+    "network_timeout" = "ネットワーク接続がタイムアウトしました。ネットワーク設定を確認してください"
+    "network_error" = "ネットワークエラー: {0}"
+    "check_network" = "提案: ネットワーク接続を確認するかプロキシを設定してください"
+    "permission_denied" = "権限がありません: {0}"
+    "permission_suggestion" = "提案: sudo で実行するか管理者に連絡してください"
+    "need_sudo" = "この操作には管理者権限が必要です"
+    "need_admin" = "管理者として実行してください"
+    "time_seconds" = "秒"
+    "time_total" = "合計時間"
+    "disk_space_low" = "ディスク容量不足: 利用可能 {0}GB、最低 {1}GB 推奨"
+    "disk_space_warning" = "⚠ ディスク容量が少ないため、インストールに失敗する可能性があります"
+    "disk_checking" = "ディスク容量を確認中..."
+  }
 }
 
 # ============================================
@@ -475,15 +483,19 @@ $script:LANG = @{
 
 "search_results" = "검색 결과"
 "error_detail" = "오류 상세"
-"network_timeout" = "네트워크 연결 시간 초과, 네트워크 설정을 확인하세요"
-"network_error" = "네트워크 오류: {0}"
-"check_network" = "제안: 네트워크 연결을 확인하거나 프록시를 설정하세요"
-"time_seconds" = "초"
-"time_total" = "총 소요 시간"
-"disk_space_low" = "디스크 공간 부족: 사용 가능 {0}GB, 최소 {1}GB 권장"
-"disk_space_warning" = "⚠ 디스크 공간이 부족하여 설치가 실패할 수 있습니다"
-"disk_checking" = "디스크 공간 확인 중..."
-}
+    "network_timeout" = "네트워크 연결 시간 초과, 네트워크 설정을 확인하세요"
+    "network_error" = "네트워크 오류: {0}"
+    "check_network" = "제안: 네트워크 연결을 확인하거나 프록시를 설정하세요"
+    "permission_denied" = "권한이 없습니다: {0}"
+    "permission_suggestion" = "제안: sudo로 실행하거나 관리자에게 문의하세요"
+    "need_sudo" = "이 작업에는 관리자 권한이 필요합니다"
+    "need_admin" = "관리자로 실행해 주세요"
+    "time_seconds" = "초"
+    "time_total" = "총 소요 시간"
+    "disk_space_low" = "디스크 공간 부족: 사용 가능 {0}GB, 최소 {1}GB 권장"
+    "disk_space_warning" = "⚠ 디스크 공간이 부족하여 설치가 실패할 수 있습니다"
+    "disk_checking" = "디스크 공간 확인 중..."
+  }
 }
 
 # ============================================
@@ -591,20 +603,24 @@ $script:LANG = @{
                 
 "search_results" = "搜尋結果"
 "error_detail" = "錯誤詳情"
-"network_timeout" = "網路連線逾時，請檢查網路設定"
-"network_error" = "網路錯誤: {0}"
-"check_network" = "建議: 檢查網路連線或設定代理"
-"time_seconds" = "秒"
-"time_total" = "總耗時"
-"disk_space_low" = "磁碟空間不足: 可用 {0}GB，建議至少 {1}GB"
-"disk_space_warning" = "⚠ 磁碟空間較低，安裝可能失敗"
-"disk_checking" = "檢查磁碟空間..."
-"custom_title" = "自定義選擇軟體"
-"custom_space_toggle" = "空格: 切換選擇"
-"custom_enter_confirm" = "回車: 確認"
-"custom_a_select_all" = "A: 全選/全不選"
-"custom_selected" = "已選擇 %d/%d"
-}
+    "network_timeout" = "網路連線逾時，請檢查網路設定"
+    "network_error" = "網路錯誤: {0}"
+    "check_network" = "建議: 檢查網路連線或設定代理"
+    "permission_denied" = "權限不足: {0}"
+    "permission_suggestion" = "建議: 使用 sudo 執行或聯絡管理員"
+    "need_sudo" = "此操作需要管理員權限"
+    "need_admin" = "請以管理員身份執行"
+    "time_seconds" = "秒"
+    "time_total" = "總耗時"
+    "disk_space_low" = "磁碟空間不足: 可用 {0}GB，建議至少 {1}GB"
+    "disk_space_warning" = "⚠ 磁碟空間較低，安裝可能失敗"
+    "disk_checking" = "檢查磁碟空間..."
+    "custom_title" = "自定義選擇軟體"
+    "custom_space_toggle" = "空格: 切換選擇"
+    "custom_enter_confirm" = "回車: 確認"
+    "custom_a_select_all" = "A: 全選/全不選"
+    "custom_selected" = "已選擇 %d/%d"
+  }
 }
 
 # ============================================
@@ -712,20 +728,24 @@ $script:LANG = @{
                 
 "search_results" = "Suchergebnisse"
 "error_detail" = "Fehlerdetail"
-"network_timeout" = "Netzwerkverbindung zeitüberschreitung, bitte überprüfen Sie Ihre Netzwerkeinstellungen"
-"network_error" = "Netzwerkfehler: {0}"
-"check_network" = "Vorschlag: Überprüfen Sie die Netzwerkverbindung oder richten Sie einen Proxy ein"
-"time_seconds" = "s"
-"time_total" = "Gesamtzeit"
-"disk_space_low" = "Wenig Speicherplatz: {0}GB verfügbar, mindestens {1}GB empfohlen"
-"disk_space_warning" = "⚠ Wenig Speicherplatz, Installation könnte fehlschlagen"
-"disk_checking" = "Speicherplatz wird überprüft..."
-"custom_title" = "Benutzerdefinierte Auswahl"
-"custom_space_toggle" = "Leertaste: umschalten"
-"custom_enter_confirm" = "Enter: bestätigen"
-"custom_a_select_all" = "A: alle auswählen/abwählen"
-"custom_selected" = "Ausgewählt %d/%d"
-}
+    "network_timeout" = "Netzwerkverbindung zeitüberschreitung, bitte überprüfen Sie Ihre Netzwerkeinstellungen"
+    "network_error" = "Netzwerkfehler: {0}"
+    "check_network" = "Vorschlag: Überprüfen Sie die Netzwerkverbindung oder richten Sie einen Proxy ein"
+    "permission_denied" = "Berechtigung verweigert: {0}"
+    "permission_suggestion" = "Vorschlag: Mit sudo ausführen oder Administrator kontaktieren"
+    "need_sudo" = "Dieser Vorgang erfordert Administratorrechte"
+    "need_admin" = "Bitte als Administrator ausführen"
+    "time_seconds" = "s"
+    "time_total" = "Gesamtzeit"
+    "disk_space_low" = "Wenig Speicherplatz: {0}GB verfügbar, mindestens {1}GB empfohlen"
+    "disk_space_warning" = "⚠ Wenig Speicherplatz, Installation könnte fehlschlagen"
+    "disk_checking" = "Speicherplatz wird überprüft..."
+    "custom_title" = "Benutzerdefinierte Auswahl"
+    "custom_space_toggle" = "Leertaste: umschalten"
+    "custom_enter_confirm" = "Enter: bestätigen"
+    "custom_a_select_all" = "A: alle auswählen/abwählen"
+    "custom_selected" = "Ausgewählt %d/%d"
+  }
 }
 
 # ============================================
@@ -833,20 +853,24 @@ $script:LANG = @{
                 
 "search_results" = "Résultats de recherche"
 "error_detail" = "Détail de l'erreur"
-"network_timeout" = "Délai de connexion réseau dépassé, veuillez vérifier vos paramètres réseau"
-"network_error" = "Erreur réseau : {0}"
-"check_network" = "Suggestion : Vérifiez la connexion réseau ou configurez un proxy"
-"time_seconds" = "s"
-"time_total" = "Temps total"
-"disk_space_low" = "Espace disque insuffisant : {0}GB disponible, au moins {1}GB recommandé"
-"disk_space_warning" = "⚠ Espace disque faible, l'installation peut échouer"
-"disk_checking" = "Vérification de l'espace disque..."
-"custom_title" = "Sélection personnalisée"
-"custom_space_toggle" = "Espace: basculer"
-"custom_enter_confirm" = "Entrée: confirmer"
-"custom_a_select_all" = "A: tout sélectionner/désélectionner"
-"custom_selected" = "Sélectionné %d/%d"
-}
+    "network_timeout" = "Délai de connexion réseau dépassé, veuillez vérifier vos paramètres réseau"
+    "network_error" = "Erreur réseau : {0}"
+    "check_network" = "Suggestion : Vérifiez la connexion réseau ou configurez un proxy"
+    "permission_denied" = "Permission refusée : {0}"
+    "permission_suggestion" = "Suggestion : Exécutez avec sudo ou contactez votre administrateur"
+    "need_sudo" = "Cette opération nécessite des privilèges d'administrateur"
+    "need_admin" = "Veuillez exécuter en tant qu'administrateur"
+    "time_seconds" = "s"
+    "time_total" = "Temps total"
+    "disk_space_low" = "Espace disque insuffisant : {0}GB disponible, au moins {1}GB recommandé"
+    "disk_space_warning" = "⚠ Espace disque faible, l'installation peut échouer"
+    "disk_checking" = "Vérification de l'espace disque..."
+    "custom_title" = "Sélection personnalisée"
+    "custom_space_toggle" = "Espace: basculer"
+    "custom_enter_confirm" = "Entrée: confirmer"
+    "custom_a_select_all" = "A: tout sélectionner/désélectionner"
+    "custom_selected" = "Sélectionné %d/%d"
+  }
 }
 
 # ============================================
@@ -954,20 +978,24 @@ $script:LANG = @{
                 
 "search_results" = "نتائج البحث"
 "error_detail" = "تفاصيل الخطأ"
-"network_timeout" = "انتهت مهلة اتصال الشبكة، يرجى التحقق من إعدادات الشبكة"
-"network_error" = "خطأ في الشبكة: {0}"
-"check_network" = "اقتراح: تحقق من اتصال الشبكة أو قم بإعداد وكيل"
-"time_seconds" = "ث"
-"time_total" = "الوقت الإجمالي"
-"disk_space_low" = "مساحة قرص غير كافية: {0}GB متاح، يوصى بـ {1}GB على الأقل"
-"disk_space_warning" = "⚠ مساحة القرص منخفضة، قد يفشل التثبيت"
-"disk_checking" = "جاري التحقق من مساحة القرص..."
-"custom_title" = "الاختيار المخصص"
-"custom_space_toggle" = "مسافة: تبديل"
-"custom_enter_confirm" = "Enter: تأكيد"
-"custom_a_select_all" = "A: تحديد/إلغاء تحديد الكل"
-"custom_selected" = "تم الاختيار %d/%d"
-}
+    "network_timeout" = "انتهت مهلة اتصال الشبكة، يرجى التحقق من إعدادات الشبكة"
+    "network_error" = "خطأ في الشبكة: {0}"
+    "check_network" = "اقتراح: تحقق من اتصال الشبكة أو قم بإعداد وكيل"
+    "permission_denied" = "تم رفض الإذن: {0}"
+    "permission_suggestion" = "اقتراح: تشغيل مع sudo أو الاتصال بالمسؤول"
+    "need_sudo" = "تتطلب هذه العملية امتيازات المسؤول"
+    "need_admin" = "يرجى التشغيل كمسؤول"
+    "time_seconds" = "ث"
+    "time_total" = "الوقت الإجمالي"
+    "disk_space_low" = "مساحة قرص غير كافية: {0}GB متاح، يوصى بـ {1}GB على الأقل"
+    "disk_space_warning" = "⚠ مساحة القرص منخفضة، قد يفشل التثبيت"
+    "disk_checking" = "جاري التحقق من مساحة القرص..."
+    "custom_title" = "الاختيار المخصص"
+    "custom_space_toggle" = "مسافة: تبديل"
+    "custom_enter_confirm" = "Enter: تأكيد"
+    "custom_a_select_all" = "A: تحديد/إلغاء تحديد الكل"
+    "custom_selected" = "تم الاختيار %d/%d"
+  }
 }
 
 # ============================================
@@ -1075,20 +1103,24 @@ $script:LANG = @{
                 
 "search_results" = "Resultados da pesquisa"
 "error_detail" = "Detalhe do erro"
-"network_timeout" = "Tempo limite de conexão de rede esgotado, verifique suas configurações de rede"
-"network_error" = "Erro de rede: {0}"
-"check_network" = "Sugestão: Verifique a conexão de rede ou configure um proxy"
-"time_seconds" = "s"
-"time_total" = "Tempo total"
-"disk_space_low" = "Espaço em disco insuficiente: {0}GB disponível, pelo menos {1}GB recomendado"
-"disk_space_warning" = "⚠ Espaço em disco baixo, a instalação pode falhar"
-"disk_checking" = "Verificando espaço em disco..."
-"custom_title" = "Seleção personalizada"
-"custom_space_toggle" = "Espaço: alternar"
-"custom_enter_confirm" = "Enter: confirmar"
-"custom_a_select_all" = "A: selecionar/deselecionar tudo"
-"custom_selected" = "Selecionado %d/%d"
-}
+    "network_timeout" = "Tempo limite de conexão de rede esgotado, verifique suas configurações de rede"
+    "network_error" = "Erro de rede: {0}"
+    "check_network" = "Sugestão: Verifique a conexão de rede ou configure um proxy"
+    "permission_denied" = "Permissão negada: {0}"
+    "permission_suggestion" = "Sugestão: Execute com sudo ou contate o administrador"
+    "need_sudo" = "Esta operação requer privilégios de administrador"
+    "need_admin" = "Por favor, execute como Administrador"
+    "time_seconds" = "s"
+    "time_total" = "Tempo total"
+    "disk_space_low" = "Espaço em disco insuficiente: {0}GB disponível, pelo menos {1}GB recomendado"
+    "disk_space_warning" = "⚠ Espaço em disco baixo, a instalação pode falhar"
+    "disk_checking" = "Verificando espaço em disco..."
+    "custom_title" = "Seleção personalizada"
+    "custom_space_toggle" = "Espaço: alternar"
+    "custom_enter_confirm" = "Enter: confirmar"
+    "custom_a_select_all" = "A: selecionar/deselecionar tudo"
+    "custom_selected" = "Selecionado %d/%d"
+  }
 }
 
 # ============================================
@@ -1196,20 +1228,24 @@ $script:LANG = @{
                 
 "search_results" = "Risultati della ricerca"
 "error_detail" = "Dettaglio errore"
-"network_timeout" = "Timeout di connessione di rete, controllare le impostazioni di rete"
-"network_error" = "Errore di rete: {0}"
-"check_network" = "Suggerimento: Controllare la connessione di rete o impostare un proxy"
-"time_seconds" = "s"
-"time_total" = "Tempo totale"
-"disk_space_low" = "Spazio su disco insufficiente: {0}GB disponibile, almeno {1}GB consigliato"
-"disk_space_warning" = "⚠ Spazio su disco insufficiente, l'installazione potrebbe fallire"
-"disk_checking" = "Verifica dello spazio su disco..."
-"custom_title" = "Selezione personalizzata"
-"custom_space_toggle" = "Spazio: alterna"
-"custom_enter_confirm" = "Invio: conferma"
-"custom_a_select_all" = "A: seleziona/deseleziona tutto"
-"custom_selected" = "Selezionato %d/%d"
-}
+    "network_timeout" = "Timeout di connessione di rete, controllare le impostazioni di rete"
+    "network_error" = "Errore di rete: {0}"
+    "check_network" = "Suggerimento: Controllare la connessione di rete o impostare un proxy"
+    "permission_denied" = "Permesso negato: {0}"
+    "permission_suggestion" = "Suggerimento: Eseguire con sudo o contattare l'amministratore"
+    "need_sudo" = "Questa operazione richiede privilegi di amministratore"
+    "need_admin" = "Eseguire come amministratore"
+    "time_seconds" = "s"
+    "time_total" = "Tempo totale"
+    "disk_space_low" = "Spazio su disco insufficiente: {0}GB disponibile, almeno {1}GB consigliato"
+    "disk_space_warning" = "⚠ Spazio su disco insufficiente, l'installazione potrebbe fallire"
+    "disk_checking" = "Verifica dello spazio su disco..."
+    "custom_title" = "Selezione personalizzata"
+    "custom_space_toggle" = "Spazio: alterna"
+    "custom_enter_confirm" = "Invio: conferma"
+    "custom_a_select_all" = "A: seleziona/deseleziona tutto"
+    "custom_selected" = "Selezionato %d/%d"
+  }
 }
 
 # ============================================
@@ -1317,20 +1353,24 @@ $script:LANG = @{
                 
 "search_results" = "Search results"
 "error_detail" = "Error detail"
-"network_timeout" = "Network connection timed out, please check your network"
-"network_error" = "Network error: {0}"
-"check_network" = "Suggestion: Check network connection or set proxy"
-"time_seconds" = "s"
-"time_total" = "Total time"
-"disk_space_low" = "Low disk space: {0}GB available, at least {1}GB recommended"
-"disk_space_warning" = "⚠ Low disk space, installation may fail"
-"disk_checking" = "Checking disk space..."
-"custom_title" = "Custom Software Selection"
-"custom_space_toggle" = "Space: toggle"
-"custom_enter_confirm" = "Enter: confirm"
-"custom_a_select_all" = "A: select/deselect all"
-"custom_selected" = "Selected %d/%d"
-}
+    "network_timeout" = "Network connection timed out, please check your network"
+    "network_error" = "Network error: {0}"
+    "check_network" = "Suggestion: Check network connection or set proxy"
+    "permission_denied" = "Permission denied: {0}"
+    "permission_suggestion" = "Suggestion: Run with sudo or contact your administrator"
+    "need_sudo" = "This operation requires administrator privileges"
+    "need_admin" = "Please run as Administrator"
+    "time_seconds" = "s"
+    "time_total" = "Total time"
+    "disk_space_low" = "Low disk space: {0}GB available, at least {1}GB recommended"
+    "disk_space_warning" = "⚠ Low disk space, installation may fail"
+    "disk_checking" = "Checking disk space..."
+    "custom_title" = "Custom Software Selection"
+    "custom_space_toggle" = "Space: toggle"
+    "custom_enter_confirm" = "Enter: confirm"
+    "custom_a_select_all" = "A: select/deselect all"
+    "custom_selected" = "Selected %d/%d"
+  }
 }
 }
 
@@ -2119,15 +2159,20 @@ function Install-Software {
         Write-Host ""
         Write-Host "  $($script:LANG["network_timeout"])" -ForegroundColor Yellow
         Write-Host "  $($script:LANG["check_network"])" -ForegroundColor Yellow
-      } elseif ($script:INSTALL_LAST_ERROR -match "Connection refused|Network is unreachable|No route to host|接続を拒否|연결 거부") {
-        Write-Host ""
-        $firstLine = ($script:INSTALL_LAST_ERROR -split "`n")[0]
-        Write-Host "  $($script:LANG["network_error"] -f $firstLine)" -ForegroundColor Yellow
-        Write-Host "  $($script:LANG["check_network"])" -ForegroundColor Yellow
-      }
-      return $false
+  } elseif ($script:INSTALL_LAST_ERROR -match "Connection refused|Network is unreachable|No route to host|接続を拒否|연결 거부") {
+      Write-Host ""
+      $firstLine = ($script:INSTALL_LAST_ERROR -split "`n")[0]
+      Write-Host " $($script:LANG["network_error"] -f $firstLine)" -ForegroundColor Yellow
+      Write-Host " $($script:LANG["check_network"])" -ForegroundColor Yellow
+    } elseif ($script:INSTALL_LAST_ERROR -match "Permission denied|not allowed|Operation not permitted|EACCES|権限がありません|권한이 없습니다|Berechtigung verweigert|Permission refusée|权限不足|權限不足") {
+      Write-Host ""
+      $firstLine = ($script:INSTALL_LAST_ERROR -split "`n")[0]
+      Write-Host " $($script:LANG["permission_denied"] -f $firstLine)" -ForegroundColor Yellow
+      Write-Host " $($script:LANG["permission_suggestion"])" -ForegroundColor Yellow
     }
-  } catch {
+    return $false
+  }
+} catch {
     Write-Log "$Key $($script:LANG["install_failed"]): $_" "ERROR"
     $script:INSTALL_LAST_ERROR = "$_"
     # Classify network errors in catch block
@@ -2135,14 +2180,18 @@ function Install-Software {
       Write-Host ""
       Write-Host "  $($script:LANG["network_timeout"])" -ForegroundColor Yellow
       Write-Host "  $($script:LANG["check_network"])" -ForegroundColor Yellow
-    } elseif ($script:INSTALL_LAST_ERROR -match "Connection refused|Network is unreachable|No route to host|接続を拒否|연결 거부") {
+  } elseif ($script:INSTALL_LAST_ERROR -match "Connection refused|Network is unreachable|No route to host|接続を拒否|연결 거부") {
       Write-Host ""
       $firstLine = ($script:INSTALL_LAST_ERROR -split "`n")[0]
-      Write-Host "  $($script:LANG["network_error"] -f $firstLine)" -ForegroundColor Yellow
-      Write-Host "  $($script:LANG["check_network"])" -ForegroundColor Yellow
+      Write-Host " $($script:LANG["network_error"] -f $firstLine)" -ForegroundColor Yellow
+      Write-Host " $($script:LANG["check_network"])" -ForegroundColor Yellow
+    } elseif ($script:INSTALL_LAST_ERROR -match "Permission denied|not allowed|Operation not permitted|EACCES|権限がありません|권한이 없습니다|Berechtigung verweigert|Permission refusée|权限不足|權限不足") {
+      Write-Host ""
+      $firstLine = ($script:INSTALL_LAST_ERROR -split "`n")[0]
+      Write-Host " $($script:LANG["permission_denied"] -f $firstLine)" -ForegroundColor Yellow
+      Write-Host " $($script:LANG["permission_suggestion"])" -ForegroundColor Yellow
     }
     return $false
-  }
 }
 
 # ============================================
@@ -3126,11 +3175,19 @@ Write-Host ""
   continue
 }
 
-Write-Host " $($h["disk_checking"])" -ForegroundColor Cyan
-Test-DiskSpace -MinGB 5 | Out-Null
+  Write-Host " $($h["disk_checking"])" -ForegroundColor Cyan
+  Test-DiskSpace -MinGB 5 | Out-Null
 
-Set-WindowTitle -Title "QSPC | $($h["title_installing"])"
-        Write-Header $h["start_installing"]
+  # Check Windows admin privileges
+  if ($IsWindows -or $env:OS -eq "Windows_NT") {
+    $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    if (-not $isAdmin) {
+      Write-Host " $($script:LANG["need_admin"])" -ForegroundColor Yellow
+    }
+  }
+
+  Set-WindowTitle -Title "QSPC | $($h["title_installing"])"
+  Write-Header $h["start_installing"]
         
 $total = $toInstall.Count
 $current = 0
@@ -3224,132 +3281,19 @@ Write-Host ""
                 Write-Host "  - $displayText" -ForegroundColor Red
                 Write-Log "  - $displayText" "INFO"
             }
-            # Check if any failures were network-related
-            if ($script:INSTALL_LAST_ERROR -match "timed out|timeout|Connection timed|could not resolve|Connection refused|Network is unreachable|No route to host|超时|逾時|名前解決|시간 초과|接続을 거부|연결 거부") {
-                Write-Host ""
-                Write-Host "  $($script:LANG["network_timeout"])" -ForegroundColor Yellow
-                Write-Host "  $($script:LANG["check_network"])" -ForegroundColor Yellow
-            }
-        }
-}
-        }
-        
+      # Check if any failures were network-related
+      if ($script:INSTALL_LAST_ERROR -match "timed out|timeout|Connection timed|could not resolve|Connection refused|Network is unreachable|No route to host|超时|逾時|名前解決|시간 초과|接続を拒否|연결 거부") {
         Write-Host ""
-        Write-Host "Skipped:" -ForegroundColor Cyan
-        Write-Log "" "INFO"
-        Write-Log "Skipped:" "INFO"
-        if ($skippedList.Count -eq 0) {
-            Write-Host "  (none)" -ForegroundColor Gray
-            Write-Log "  (none)" "INFO"
-        } else {
-            foreach ($item in $skippedList) {
-                Write-Host "  - $item" -ForegroundColor Cyan
-                Write-Log "  - $item" "INFO"
-            }
-        }
-        
+        Write-Host " $($script:LANG["network_timeout"])" -ForegroundColor Yellow
+        Write-Host " $($script:LANG["check_network"])" -ForegroundColor Yellow
+      }
+      # Check if any failures were permission-related
+      if ($script:INSTALL_LAST_ERROR -match "Permission denied|not allowed|Operation not permitted|EACCES|権限がありません|권한이 없습니다|Berechtigung verweigert|Permission refusée|权限不足|權限不足") {
         Write-Host ""
-        Write-Host "Failed:" -ForegroundColor Red
-        Write-Log "" "INFO"
-        Write-Log "Failed:" "INFO"
-        if ($failedList.Count -eq 0) {
-            Write-Host "  (none)" -ForegroundColor Gray
-            Write-Log "  (none)" "INFO"
-        } else {
-            foreach ($item in $failedList) {
-                Write-Host "  - $item" -ForegroundColor Red
-                Write-Log "  - $item" "INFO"
-            }
-            # Check if any failures were network-related
-            if ($script:INSTALL_LAST_ERROR -match "timed out|timeout|Connection timed|could not resolve|Connection refused|Network is unreachable|No route to host|超时|逾時|名前解決|시간 초과|接続을 거부|연결 거부") {
-                Write-Host ""
-                Write-Host "  $($script:LANG["network_timeout"])" -ForegroundColor Yellow
-                Write-Host "  $($script:LANG["check_network"])" -ForegroundColor Yellow
-            }
-        }
-        
-        Write-Host ""
-        Write-Host "Warnings:" -ForegroundColor Yellow
-        Write-Log "" "INFO"
-        Write-Log "Warnings:" "INFO"
-        Write-Host "  (none)" -ForegroundColor Gray
-        Write-Log "  (none)" "INFO"
-        
-        Write-Host ""
-        Write-Log "$($h["total_installed"]) $($installedList.Count) / $total" "SUCCESS"
-        
-        if ($failedList.Count -gt 0) {
-            if ($retryFailed -or $yes) {
-                Write-Host ""
-                Write-Log "Retrying $($failedList.Count) failed package(s)..." "INFO"
-            } else {
-                Write-Host ""
-                $retry = Read-Host "Retry failed packages? [Y/n]"
-                if ($retry -match "^[Nn]") {
-                    Write-Log "Skipping retry" "INFO"
-                } else {
-                    $retryFailed = $true
-                }
-            }
-            
-if ($retryFailed) {
-$retryInstalled = @()
-$retryFailedList = @()
-$retryTotal = $failedList.Count
-$retryCurrent = 0
-
-foreach ($item in $failedList) {
-    $retryCurrent++
-    $swKey = ""
-    foreach ($sw in $script:SELECTED_SOFTWARE) {
-        $swName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "name"
-        if ($swName -eq $item) {
-            $swKey = $sw
-            break
-        }
-    }
-    if (-not $swKey) { continue }
-
-    $retryBar = Draw-ProgressBar -Current $retryCurrent -Total $retryTotal
-    Write-Host "`r $retryBar $retryCurrent/$retryTotal $item - $($h["retrying"])..." -NoNewline -ForegroundColor Yellow
-
-    $retryStart = Get-Date
-    if (Install-Software -Path $script:CONFIG_FILE -OS $os -Key $swKey) {
-        $retryEnd = Get-Date
-        $retryElapsed = [math]::Round(($retryEnd - $retryStart).TotalSeconds)
-        Write-Host "`r $retryBar $retryCurrent/$retryTotal $item - " -NoNewline
-        Write-Host "$($h["install_success"]) ($retryElapsed$($h["time_seconds"]))" -ForegroundColor Green
-        $retryInstalled += $item
-    } else {
-        $retryEnd = Get-Date
-        $retryElapsed = [math]::Round(($retryEnd - $retryStart).TotalSeconds)
-        Write-Host "`r $retryBar $retryCurrent/$retryTotal $item - " -NoNewline
-        Write-Host "$($h["install_failed"]) ($retryElapsed$($h["time_seconds"]))" -ForegroundColor Red
-$retryFailedList += $item
-}
-}
-Write-Host ""
-                
-                if ($retryInstalled.Count -gt 0) {
-                    Write-Host ""
-                    Write-Host "Retry succeeded:" -ForegroundColor Green
-                    foreach ($item in $retryInstalled) {
-                        Write-Host "  - $item" -ForegroundColor Green
-                    }
-                }
-                if ($retryFailedList.Count -gt 0) {
-                    Write-Host ""
-                    Write-Host "Retry still failed:" -ForegroundColor Red
-                    foreach ($item in $retryFailedList) {
-                        Write-Host "  - $item" -ForegroundColor Red
-                    }
-                    # Check if any failures were network-related
-                    if ($script:INSTALL_LAST_ERROR -match "timed out|timeout|Connection timed|could not resolve|Connection refused|Network is unreachable|No route to host|超时|逾時|名前解決|시간 초과|接続を拒否|연결 거부") {
-                        Write-Host ""
-                        Write-Host "  $($script:LANG["network_timeout"])" -ForegroundColor Yellow
-                        Write-Host "  $($script:LANG["check_network"])" -ForegroundColor Yellow
-                    }
-                    $failedList = $retryFailedList
+        Write-Host " $($script:LANG["permission_denied"] -f "")" -ForegroundColor Yellow
+        Write-Host " $($script:LANG["permission_suggestion"])" -ForegroundColor Yellow
+      }
+      $failedList = $retryFailedList
                 } else {
                     $failedList = @()
                 }

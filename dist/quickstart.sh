@@ -74,7 +74,7 @@ load_language_strings() {
     fi
     
     # 5. Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v0.72.0"
+    LANG_BANNER_TITLE="Quickstart-PC v0.73.0"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -1596,13 +1596,17 @@ install_software() {
         log_warn "$LANG_NETWORK_TIMEOUT"
         log_warn "$LANG_CHECK_NETWORK"
         ;;
-      *"Connection refused"*|*"Network is unreachable"*|*"No route to host"*|*"接続を拒否"*|*"연결 거부"*|*"connexion refusée"*|*"Verbindung verweigert"*)
-        log_warn "$(printf "$LANG_NETWORK_ERROR" "$(echo "$INSTALL_LAST_ERROR" | head -1)")"
-        log_warn "$LANG_CHECK_NETWORK"
-        ;;
-    esac
-    return 1
-  fi
+  *"Connection refused"*|*"Network is unreachable"*|*"No route to host"*|*"接続を拒否"*|*"연결 거부"*|*"connexion refusée"*|*"Verbindung verweigert"*)
+      log_warn "$(printf "$LANG_NETWORK_ERROR" "$(echo "$INSTALL_LAST_ERROR" | head -1)")"
+      log_warn "$LANG_CHECK_NETWORK"
+      ;;
+  *"Permission denied"*|*"not allowed"*|*"Operation not permitted"*|*"EACCES"*|*"権限がありません"*|*"권한이 없습니다"*|*"Berechtigung verweigert"*|*"Permission refusée"*|*"تم رفض الإذن"*|*"Permissão negada"*|*"Permesso negato"*|*"权限不足"*|*"權限不足"*)
+      log_warn "$(printf "$LANG_PERMISSION_DENIED" "$(echo "$INSTALL_LAST_ERROR" | head -1)")"
+      log_warn "$LANG_PERMISSION_SUGGESTION"
+      ;;
+  esac
+  return 1
+fi
 }
 
 # 自定义软件选择模式
@@ -2069,6 +2073,11 @@ fi
   log_info "$LANG_DISK_CHECKING"
   check_disk_space 5
 
+  # Check sudo availability on Unix systems (not macOS)
+  if [[ "$os" != "macos" ]] && ! command -v sudo &>/dev/null; then
+    log_warn "$LANG_NEED_SUDO"
+  fi
+
   if [[ ${#to_install[@]} -gt 0 ]]; then
     log_info "$LANG_START_INSTALLING"
     local -a install_failed=()
@@ -2103,61 +2112,72 @@ fi
       log_warn "$LANG_INSTALL_FAILED_LIST: ${install_failed[*]}"
 
       if [[ "$NON_INTERACTIVE" != "true" && "$AUTO_YES" != "true" ]]; then
-        tput cnorm 2>/dev/null || true
-        stty echo 2>/dev/null || true
-        printf "  %s " "$LANG_RETRY_PROMPT"
-        local retry_answer=""
-        IFS= read -rsn1 retry_answer < /dev/tty
-        echo ""
-        if [[ -z "$retry_answer" || "$retry_answer" =~ ^[Yy] ]]; then
-          tput civis 2>/dev/null || true
-          stty -echo 2>/dev/null || true
-          local -a still_failed=()
-          local -a network_failed=()
-          local retry_total=${#install_failed[@]}
-          local retry_current=0
-          for failed_sw in "${install_failed[@]}"; do
-            retry_current=$((retry_current + 1))
-            local failed_name=$(json_get_software_field "$CONFIG_FILE" "$failed_sw" "name")
-            local failed_icon=$(json_get_software_field "$CONFIG_FILE" "$failed_sw" "icon")
-            local failed_display="$failed_name"
-            [[ -n "$failed_icon" ]] && failed_display="$failed_icon $failed_name"
-            local retry_bar=$(draw_progress_bar $retry_current $retry_total 20)
-            local retry_start=$(date +%s)
-            printf "\r %s %d/%d %s - %s...          " "$retry_bar" "$retry_current" "$retry_total" "$failed_display" "$LANG_RETRYING"
-            if install_software "$CONFIG_FILE" "$os" "$failed_sw"; then
-              local retry_end=$(date +%s)
-              local retry_elapsed=$((retry_end - retry_start))
-              printf "\r %s %d/%d %s - ${GREEN}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$retry_bar" "$retry_current" "$retry_total" "$failed_display" "$LANG_INSTALL_SUCCESS" "$retry_elapsed"
-            else
-                local retry_end=$(date +%s)
-                local retry_elapsed=$((retry_end - retry_start))
-                printf "\r %s %d/%d %s - ${RED}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$retry_bar" "$retry_current" "$retry_total" "$failed_display" "$LANG_INSTALL_FAILED" "$retry_elapsed"
-                still_failed+=("$failed_display")
-                # Check if this is a network error
-                case "$INSTALL_LAST_ERROR" in
-        *"timed out"*|*"timeout"*|*"Connection timed"*|*"could not resolve"*|*"名前解決"*|*"시간 초과"*|*"délai"*|*"Zeitüberschreitung"*|*"超时"*|*"逾時"*|*"Connection refused"*|*"Network is unreachable"*|*"No route to host"*|*"接続を拒否"*|*"연결 거부"*|*"connexion refusée"*|*"Verbindung verweigert"*)
-          network_failed+=("$failed_display")
-          ;;
-      esac
-    fi
-    done
-    if [[ ${#still_failed[@]} -gt 0 ]]; then
-    log_warn "$LANG_INSTALL_FAILED_LIST: ${still_failed[*]}"
-    fi
-    if [[ ${#network_failed[@]} -gt 0 ]]; then
-    log_warn "$LANG_NETWORK_TIMEOUT"
-    log_warn "$LANG_CHECK_NETWORK"
-    fi
+    tput cnorm 2>/dev/null || true
+    stty echo 2>/dev/null || true
+    printf " %s " "$LANG_RETRY_PROMPT"
+    local retry_answer=""
+    IFS= read -rsn1 retry_answer < /dev/tty
+    echo ""
+    if [[ -z "$retry_answer" || "$retry_answer" =~ ^[Yy] ]]; then
+      tput civis 2>/dev/null || true
+      stty -echo 2>/dev/null || true
+      local -a still_failed=()
+      local -a network_failed=()
+      local -a permission_failed=()
+      local retry_total=${#install_failed[@]}
+      local retry_current=0
+      for failed_sw in "${install_failed[@]}"; do
+        retry_current=$((retry_current + 1))
+        local failed_name=$(json_get_software_field "$CONFIG_FILE" "$failed_sw" "name")
+        local failed_icon=$(json_get_software_field "$CONFIG_FILE" "$failed_sw" "icon")
+        local failed_display="$failed_name"
+        [[ -n "$failed_icon" ]] && failed_display="$failed_icon $failed_name"
+        local retry_bar=$(draw_progress_bar $retry_current $retry_total 20)
+        local retry_start=$(date +%s)
+        printf "\r %s %d/%d %s - %s... " "$retry_bar" "$retry_current" "$retry_total" "$failed_display" "$LANG_RETRYING"
+        if install_software "$CONFIG_FILE" "$os" "$failed_sw"; then
+          local retry_end=$(date +%s)
+          local retry_elapsed=$((retry_end - retry_start))
+          printf "\r %s %d/%d %s - ${GREEN}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$retry_bar" "$retry_current" "$retry_total" "$failed_display" "$LANG_INSTALL_SUCCESS" "$retry_elapsed"
         else
-          tput civis 2>/dev/null || true
-          stty -echo 2>/dev/null || true
+          local retry_end=$(date +%s)
+          local retry_elapsed=$((retry_end - retry_start))
+          printf "\r %s %d/%d %s - ${RED}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$retry_bar" "$retry_current" "$retry_total" "$failed_display" "$LANG_INSTALL_FAILED" "$retry_elapsed"
+          still_failed+=("$failed_display")
+          # Check if this is a network error
+          case "$INSTALL_LAST_ERROR" in
+            *"timed out"*|*"timeout"*|*"Connection timed"*|*"could not resolve"*|*"名前解決"*|*"시간 초과"*|*"délai"*|*"Zeitüberschreitung"*|*"超时"*|*"逾時"*|*"Connection refused"*|*"Network is unreachable"*|*"No route to host"*|*"接続を拒否"*|*"연결 거부"*|*"connexion refusée"*|*"Verbindung verweigert"*)
+              network_failed+=("$failed_display")
+              ;;
+          esac
+          # Check if this is a permission error
+          case "$INSTALL_LAST_ERROR" in
+            *"Permission denied"*|*"not allowed"*|*"Operation not permitted"*|*"EACCES"*|*"権限がありません"*|*"권한이 없습니다"*|*"Berechtigung verweigert"*|*"Permission refusée"*|*"تم رفض الإذن"*|*"Permissão negada"*|*"Permesso negato"*|*"权限不足"*|*"權限不足"*)
+              permission_failed+=("$failed_display")
+              ;;
+          esac
         fi
+      done
+      if [[ ${#still_failed[@]} -gt 0 ]]; then
+        log_warn "$LANG_INSTALL_FAILED_LIST: ${still_failed[*]}"
       fi
+      if [[ ${#network_failed[@]} -gt 0 ]]; then
+        log_warn "$LANG_NETWORK_TIMEOUT"
+        log_warn "$LANG_CHECK_NETWORK"
+      fi
+      if [[ ${#permission_failed[@]} -gt 0 ]]; then
+        log_warn "$LANG_PERMISSION_DENIED"
+        log_warn "$LANG_PERMISSION_SUGGESTION"
+      fi
+    else
+      tput civis 2>/dev/null || true
+      stty -echo 2>/dev/null || true
     fi
   fi
+fi
+fi
 
-  if [[ ${#to_install[@]} -eq 0 ]]; then
+if [[ ${#to_install[@]} -eq 0 ]]; then
         log_info "$LANG_ALL_INSTALLED"
         # 非交互模式直接退出
         if [[ "$NON_INTERACTIVE" == "true" ]]; then
