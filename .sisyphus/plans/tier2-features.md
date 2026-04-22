@@ -713,7 +713,7 @@ Evidence: .sisyphus/evidence/task-5-ps1-network.txt
 
 ---
 
-- [ ] 6. 权限不足友好提示
+- [x] 6. 权限不足友好提示
 
 **What to do**:
 

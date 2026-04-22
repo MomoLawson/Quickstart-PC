@@ -31,6 +31,8 @@ param(
     [switch]$nonInteractive,
     [switch]$debug,
     [string]$localLang,
+    [switch]$resume,
+    [switch]$noResume,
     [switch]$help
 )
 
@@ -254,8 +256,12 @@ function Initialize-LanguageStrings {
     "time_total" = "总耗时"
     "disk_space_low" = "磁盘空间不足: 可用 {0}GB，建议至少 {1}GB"
     "disk_space_warning" = "⚠ 磁盘空间较低，安装可能失败"
-    "disk_checking" = "检查磁盘空间..."
-  }
+"disk_checking" = "检查磁盘空间..."
+"resume_found" = "发现未完成的安装，是否继续？[Y/n]"
+"resuming" = "从上次中断处继续安装..."
+"checkpoint_saved" = "安装进度已保存"
+"install_complete_state" = "安装完成，清理临时文件"
+}
 }
 
 # ============================================
@@ -263,7 +269,7 @@ function Initialize-LanguageStrings {
 # ============================================
 # Japanese - ja
 # ============================================
-  "ja" {
+"ja" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "新PCのソフトウェア環境を素早く設定"
@@ -374,8 +380,12 @@ function Initialize-LanguageStrings {
     "time_total" = "合計時間"
     "disk_space_low" = "ディスク容量不足: 利用可能 {0}GB、最低 {1}GB 推奨"
     "disk_space_warning" = "⚠ ディスク容量が少ないため、インストールに失敗する可能性があります"
-    "disk_checking" = "ディスク容量を確認中..."
-  }
+"disk_checking" = "ディスク容量を確認中..."
+"resume_found" = "未完了のインストールが見つかりました。続行しますか？[Y/n]"
+"resuming" = "前回のチェックポイントから再開..."
+"checkpoint_saved" = "インストール進捗が保存されました"
+"install_complete_state" = "インストール完了、一時ファイルをクリーンアップ"
+}
 }
 
 # ============================================
@@ -494,8 +504,12 @@ $script:LANG = @{
     "time_total" = "총 소요 시간"
     "disk_space_low" = "디스크 공간 부족: 사용 가능 {0}GB, 최소 {1}GB 권장"
     "disk_space_warning" = "⚠ 디스크 공간이 부족하여 설치가 실패할 수 있습니다"
-    "disk_checking" = "디스크 공간 확인 중..."
-  }
+"disk_checking" = "디스크 공간 확인 중..."
+"resume_found" = "미완료된 설치가 발견되었습니다. 계속하시겠습니까？[Y/n]"
+"resuming" = "이전 체크포인트에서 재개..."
+"checkpoint_saved" = "설치 진행 상태가 저장되었습니다"
+"install_complete_state" = "설치 완료, 임시 파일 정리"
+}
 }
 
 # ============================================
@@ -614,13 +628,17 @@ $script:LANG = @{
     "time_total" = "總耗時"
     "disk_space_low" = "磁碟空間不足: 可用 {0}GB，建議至少 {1}GB"
     "disk_space_warning" = "⚠ 磁碟空間較低，安裝可能失敗"
-    "disk_checking" = "檢查磁碟空間..."
-    "custom_title" = "自定義選擇軟體"
-    "custom_space_toggle" = "空格: 切換選擇"
-    "custom_enter_confirm" = "回車: 確認"
-    "custom_a_select_all" = "A: 全選/全不選"
-    "custom_selected" = "已選擇 %d/%d"
-  }
+"disk_checking" = "檢查磁碟空間..."
+"custom_title" = "自定義選擇軟體"
+"custom_space_toggle" = "空格: 切換選擇"
+"custom_enter_confirm" = "回車: 確認"
+"custom_a_select_all" = "A: 全選/全不選"
+"custom_selected" = "已選擇 %d/%d"
+"resume_found" = "發現未完成的安裝，是否繼續？[Y/n]"
+"resuming" = "從上次中斷處繼續安裝..."
+"checkpoint_saved" = "安裝進度已儲存"
+"install_complete_state" = "安裝完成，清理暫存檔"
+}
 }
 
 # ============================================
@@ -628,7 +646,7 @@ $script:LANG = @{
 # ============================================
 # German - de
 # ============================================
-  "de" {
+"de" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "Schnelle Einrichtung für neue Computer"
@@ -739,13 +757,17 @@ $script:LANG = @{
     "time_total" = "Gesamtzeit"
     "disk_space_low" = "Wenig Speicherplatz: {0}GB verfügbar, mindestens {1}GB empfohlen"
     "disk_space_warning" = "⚠ Wenig Speicherplatz, Installation könnte fehlschlagen"
-    "disk_checking" = "Speicherplatz wird überprüft..."
-    "custom_title" = "Benutzerdefinierte Auswahl"
-    "custom_space_toggle" = "Leertaste: umschalten"
-    "custom_enter_confirm" = "Enter: bestätigen"
-    "custom_a_select_all" = "A: alle auswählen/abwählen"
-    "custom_selected" = "Ausgewählt %d/%d"
-  }
+"disk_checking" = "Speicherplatz wird überprüft..."
+"custom_title" = "Benutzerdefinierte Auswahl"
+"custom_space_toggle" = "Leertaste: umschalten"
+"custom_enter_confirm" = "Enter: bestätigen"
+"custom_a_select_all" = "A: alle auswählen/abwählen"
+"custom_selected" = "Ausgewählt %d/%d"
+"resume_found" = "Unvollständige Installation gefunden. Fortsetzen? [Y/n]"
+"resuming" = "Fortsetzung vom letzten Checkpoint..."
+"checkpoint_saved" = "Installationsfortschritt gespeichert"
+"install_complete_state" = "Installation abgeschlossen, temporäre Dateien werden bereinigt"
+}
 }
 
 # ============================================
@@ -753,7 +775,7 @@ $script:LANG = @{
 # ============================================
 # French - fr
 # ============================================
-  "fr" {
+"fr" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "Configuration rapide pour nouveaux ordinateurs"
@@ -864,13 +886,17 @@ $script:LANG = @{
     "time_total" = "Temps total"
     "disk_space_low" = "Espace disque insuffisant : {0}GB disponible, au moins {1}GB recommandé"
     "disk_space_warning" = "⚠ Espace disque faible, l'installation peut échouer"
-    "disk_checking" = "Vérification de l'espace disque..."
-    "custom_title" = "Sélection personnalisée"
-    "custom_space_toggle" = "Espace: basculer"
-    "custom_enter_confirm" = "Entrée: confirmer"
-    "custom_a_select_all" = "A: tout sélectionner/désélectionner"
-    "custom_selected" = "Sélectionné %d/%d"
-  }
+"disk_checking" = "Vérification de l'espace disque..."
+"custom_title" = "Sélection personnalisée"
+"custom_space_toggle" = "Espace: basculer"
+"custom_enter_confirm" = "Entrée: confirmer"
+"custom_a_select_all" = "A: tout sélectionner/désélectionner"
+"custom_selected" = "Sélectionné %d/%d"
+"resume_found" = "Installation incomplète trouvée. Reprendre ? [Y/n]"
+"resuming" = "Reprise depuis le dernier point de contrôle..."
+"checkpoint_saved" = "Progression de l'installation sauvegardée"
+"install_complete_state" = "Installation terminée, nettoyage des fichiers temporaires"
+}
 }
 
 # ============================================
@@ -878,7 +904,7 @@ $script:LANG = @{
 # ============================================
 # Arabic - ar (LTR for terminal compatibility)
 # ============================================
-  "ar" {
+"ar" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "إعداد سريع لأجهزة الكمبيوتر الجديدة"
@@ -989,13 +1015,17 @@ $script:LANG = @{
     "time_total" = "الوقت الإجمالي"
     "disk_space_low" = "مساحة قرص غير كافية: {0}GB متاح، يوصى بـ {1}GB على الأقل"
     "disk_space_warning" = "⚠ مساحة القرص منخفضة، قد يفشل التثبيت"
-    "disk_checking" = "جاري التحقق من مساحة القرص..."
-    "custom_title" = "الاختيار المخصص"
-    "custom_space_toggle" = "مسافة: تبديل"
-    "custom_enter_confirm" = "Enter: تأكيد"
-    "custom_a_select_all" = "A: تحديد/إلغاء تحديد الكل"
-    "custom_selected" = "تم الاختيار %d/%d"
-  }
+"disk_checking" = "جاري التحقق من مساحة القرص..."
+"custom_title" = "الاختيار المخصص"
+"custom_space_toggle" = "مسافة: تبديل"
+"custom_enter_confirm" = "Enter: تأكيد"
+"custom_a_select_all" = "A: تحديد/إلغاء تحديد الكل"
+"custom_selected" = "تم الاختيار %d/%d"
+"resume_found" = "تم العثور على تثبيت غير مكتمل. المتابعة؟ [Y/n]"
+"resuming" = "استئناف من آخر نقطة تحقق..."
+"checkpoint_saved" = "تم حفظ تقدم التثبيت"
+"install_complete_state" = "اكتمل التثبيت، تنظيف الملفات المؤقتة"
+}
 }
 
 # ============================================
@@ -1003,7 +1033,7 @@ $script:LANG = @{
 # ============================================
 # Portuguese - pt
 # ============================================
-  "pt" {
+"pt" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "Configuração rápida para novos computadores"
@@ -1114,13 +1144,17 @@ $script:LANG = @{
     "time_total" = "Tempo total"
     "disk_space_low" = "Espaço em disco insuficiente: {0}GB disponível, pelo menos {1}GB recomendado"
     "disk_space_warning" = "⚠ Espaço em disco baixo, a instalação pode falhar"
-    "disk_checking" = "Verificando espaço em disco..."
-    "custom_title" = "Seleção personalizada"
-    "custom_space_toggle" = "Espaço: alternar"
-    "custom_enter_confirm" = "Enter: confirmar"
-    "custom_a_select_all" = "A: selecionar/deselecionar tudo"
-    "custom_selected" = "Selecionado %d/%d"
-  }
+"disk_checking" = "Verificando espaço em disco..."
+"custom_title" = "Seleção personalizada"
+"custom_space_toggle" = "Espaço: alternar"
+"custom_enter_confirm" = "Enter: confirmar"
+"custom_a_select_all" = "A: selecionar/deselecionar tudo"
+"custom_selected" = "Selecionado %d/%d"
+"resume_found" = "Instalação incompleta encontrada. Continuar? [Y/n]"
+"resuming" = "Retomando do último ponto de verificação..."
+"checkpoint_saved" = "Progresso da instalação salvo"
+"install_complete_state" = "Instalação concluída, limpando arquivos temporários"
+}
 }
 
 # ============================================
@@ -1128,7 +1162,7 @@ $script:LANG = @{
 # ============================================
 # Italian - it
 # ============================================
-  "it" {
+"it" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "Configurazione rapida per nuovi computer"
@@ -1239,13 +1273,17 @@ $script:LANG = @{
     "time_total" = "Tempo totale"
     "disk_space_low" = "Spazio su disco insufficiente: {0}GB disponibile, almeno {1}GB consigliato"
     "disk_space_warning" = "⚠ Spazio su disco insufficiente, l'installazione potrebbe fallire"
-    "disk_checking" = "Verifica dello spazio su disco..."
-    "custom_title" = "Selezione personalizzata"
-    "custom_space_toggle" = "Spazio: alterna"
-    "custom_enter_confirm" = "Invio: conferma"
-    "custom_a_select_all" = "A: seleziona/deseleziona tutto"
-    "custom_selected" = "Selezionato %d/%d"
-  }
+"disk_checking" = "Verifica dello spazio su disco..."
+"custom_title" = "Selezione personalizzata"
+"custom_space_toggle" = "Spazio: alterna"
+"custom_enter_confirm" = "Invio: conferma"
+"custom_a_select_all" = "A: seleziona/deseleziona tutto"
+"custom_selected" = "Selezionato %d/%d"
+"resume_found" = "Installazione incompleta trovata. Riprendere? [Y/n]"
+"resuming" = "Ripresa dall'ultimo checkpoint..."
+"checkpoint_saved" = "Progresso dell'installazione salvato"
+"install_complete_state" = "Installazione completata, pulizia file temporanei"
+}
 }
 
 # ============================================
@@ -1253,7 +1291,7 @@ $script:LANG = @{
 # ============================================
 # English (default) - en-US
 # ============================================
-  default {
+default {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "Quick setup for new computers"
@@ -1364,13 +1402,17 @@ $script:LANG = @{
     "time_total" = "Total time"
     "disk_space_low" = "Low disk space: {0}GB available, at least {1}GB recommended"
     "disk_space_warning" = "⚠ Low disk space, installation may fail"
-    "disk_checking" = "Checking disk space..."
-    "custom_title" = "Custom Software Selection"
-    "custom_space_toggle" = "Space: toggle"
-    "custom_enter_confirm" = "Enter: confirm"
-    "custom_a_select_all" = "A: select/deselect all"
-    "custom_selected" = "Selected %d/%d"
-  }
+"disk_checking" = "Checking disk space..."
+"custom_title" = "Custom Software Selection"
+"custom_space_toggle" = "Space: toggle"
+"custom_enter_confirm" = "Enter: confirm"
+"custom_a_select_all" = "A: select/deselect all"
+"custom_selected" = "Selected %d/%d"
+"resume_found" = "Incomplete installation found. Resume? [Y/n]"
+"resuming" = "Resuming from last checkpoint..."
+"checkpoint_saved" = "Installation progress saved"
+"install_complete_state" = "Installation complete, cleaning up"
+}
 }
 }
 
@@ -2880,6 +2922,56 @@ function Test-DiskSpace {
   }
 }
 
+$script:STATE_FILE = if ($IsWindows -or $env:OS -eq "Windows_NT") {
+  "$env:USERPROFILE\.config\quickstart-pc\state.json"
+} elseif ($IsMacOS) {
+  "$HOME/.config/quickstart-pc/state.json"
+} else {
+  "$HOME/.config/quickstart-pc/state.json"
+}
+
+function Save-InstallState {
+  $stateDir = Split-Path $script:STATE_FILE
+  if (-not (Test-Path $stateDir)) {
+    New-Item -ItemType Directory -Path $stateDir -Force | Out-Null
+  }
+  $remaining = @()
+  foreach ($key in $script:toInstall) {
+    if ($key -notin $script:installedList) {
+      $remaining += $key
+    }
+  }
+  $state = @{
+    profile = $selectedProfile
+    total = $script:toInstall.Count
+    remaining = $remaining
+    installed = $script:installedList
+    failed = $script:failedList
+    timestamp = (Get-Date).ToString("o")
+  }
+  $state | ConvertTo-Json -Depth 3 | Set-Content $script:STATE_FILE
+  Write-Host " $($script:LANG["checkpoint_saved"])" -ForegroundColor Green
+}
+
+function Load-InstallState {
+  if (Test-Path $script:STATE_FILE) {
+    try {
+      $state = Get-Content $script:STATE_FILE | ConvertFrom-Json
+      return $state.remaining
+    } catch {
+      return $null
+    }
+  }
+  return $null
+}
+
+function Clear-InstallState {
+  if (Test-Path $script:STATE_FILE) {
+    Remove-Item $script:STATE_FILE -Force
+  }
+  Write-Host " $($script:LANG["install_complete_state"])" -ForegroundColor Green
+}
+
 # ============================================
 # Main execution
 # ============================================
@@ -3175,7 +3267,7 @@ Write-Host ""
   continue
 }
 
-  Write-Host " $($h["disk_checking"])" -ForegroundColor Cyan
+Write-Host " $($h["disk_checking"])" -ForegroundColor Cyan
   Test-DiskSpace -MinGB 5 | Out-Null
 
   # Check Windows admin privileges
@@ -3186,14 +3278,35 @@ Write-Host ""
     }
   }
 
+  # Check for incomplete installation state
+  if (-not $noResume) {
+    $savedRemaining = Load-InstallState
+    if ($savedRemaining) {
+      if ($resume -or $nonInteractive) {
+        Write-Host " $($h["resuming"])" -ForegroundColor Cyan
+        $script:toInstall = $savedRemaining
+      } else {
+        Write-Host " $($h["resume_found"])" -ForegroundColor Yellow
+        $resumeAnswer = Read-Host " [Y/n]"
+        if ([string]::IsNullOrWhiteSpace($resumeAnswer) -or $resumeAnswer -match "^[Yy]") {
+          Write-Host " $($h["resuming"])" -ForegroundColor Cyan
+          $script:toInstall = $savedRemaining
+        } else {
+          Clear-InstallState
+        }
+      }
+    }
+  }
+
   Set-WindowTitle -Title "QSPC | $($h["title_installing"])"
   Write-Header $h["start_installing"]
-        
-$total = $toInstall.Count
-$current = 0
-$installedList = @()
-$failedList = @()
-$installStartTime = Get-Date
+
+  $script:toInstall = $toInstall
+  $total = $toInstall.Count
+  $current = 0
+  $script:installedList = @()
+  $script:failedList = @()
+  $installStartTime = Get-Date
 
 foreach ($sw in $toInstall) {
     $current++
@@ -3208,22 +3321,24 @@ foreach ($sw in $toInstall) {
     $swEnd = Get-Date
     $swElapsed = [math]::Round(($swEnd - $swStart).TotalSeconds)
 
-    if ($result) {
-        Write-Host "`r $bar $current/$total $swDisplay - " -NoNewline
-        Write-Host "$($h["install_success"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Green
-        $installedList += $sw
+if ($result) {
+      Write-Host "`r $bar $current/$total $swDisplay - " -NoNewline
+      Write-Host "$($h["install_success"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Green
+      $script:installedList += $sw
     } else {
-        Write-Host "`r $bar $current/$total $swDisplay - " -NoNewline
-        Write-Host "$($h["install_failed"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Red
-        $failedList += $sw
-        if ($failFast) {
-            Write-Host ""
-            Write-Log "Fail-fast: stopping at $swName" "ERROR"
-            break
-        }
+      Write-Host "`r $bar $current/$total $swDisplay - " -NoNewline
+      Write-Host "$($h["install_failed"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Red
+      $script:failedList += $sw
+      if ($failFast) {
+        Write-Host ""
+        Write-Log "Fail-fast: stopping at $swName" "ERROR"
+        Save-InstallState
+        break
+      }
     }
-}
-$installEndTime = Get-Date
+    Save-InstallState
+  }
+  $installEndTime = Get-Date
 $totalElapsed = [math]::Round(($installEndTime - $installStartTime).TotalSeconds)
 Write-Host ""
 Write-Host "$($h["time_total"]): $totalElapsed$($h["time_seconds"])" -ForegroundColor Cyan
@@ -3300,14 +3415,17 @@ Write-Host ""
             }
         }
         
-        if ($reportJson -or $reportTxt) {
-            Export-Report -JsonPath $reportJson -TxtPath $reportTxt -Installed $installedList -Skipped $skippedList -Failed $failedList
-        }
-        
-        if ($nonInteractive) {
-            Set-WindowTitle -Title "QSPC"
-            exit 0
-        }
+if ($reportJson -or $reportTxt) {
+    Export-Report -JsonPath $reportJson -TxtPath $reportTxt -Installed $script:installedList -Skipped $skippedList -Failed $script:failedList
+  }
+
+  # Clear state on successful completion
+  Clear-InstallState
+
+  if ($nonInteractive) {
+    Set-WindowTitle -Title "QSPC"
+    exit 0
+  }
         
         Set-WindowTitle -Title "QSPC | $($h["title_ask_continue"])"
         Write-Host ""

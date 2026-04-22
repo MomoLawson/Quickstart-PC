@@ -201,6 +201,7 @@ LOCAL_LANG_PATH=""
 CFG_PATH=""
 CFG_URL=""
 INSTALL_LAST_ERROR=""
+RESUME_MODE="" # "" = auto, "yes" = --resume, "no" = --no-resume
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -229,9 +230,11 @@ while [[ $# -gt 0 ]]; do
         --debug) DEBUG=true; shift ;;
         --lang) LANG_OVERRIDE="$2"; shift 2 ;;
         --local-lang) LOCAL_LANG_PATH="$2"; shift 2 ;;
-        --cfg-path) CFG_PATH="$2"; shift 2 ;;
-        --cfg-url) CFG_URL="$2"; shift 2 ;;
-        --help|-h) show_help ;;
+--cfg-path) CFG_PATH="$2"; shift 2 ;;
+    --cfg-url) CFG_URL="$2"; shift 2 ;;
+    --resume) RESUME_MODE="yes"; shift ;;
+    --no-resume) RESUME_MODE="no"; shift ;;
+    --help|-h) show_help ;;
         *) shift ;;
     esac
 done
@@ -869,6 +872,57 @@ check_disk_space() {
     return 1
   fi
   return 0
+}
+
+# State file path
+STATE_FILE="$HOME/.config/quickstart-pc/state.json"
+
+save_install_state() {
+  local state_file="$STATE_FILE"
+  mkdir -p "$(dirname "$state_file")"
+
+  local -a remaining_keys=()
+  for key in "${to_install[@]}"; do
+    local already=false
+    for inst in "${install_succeeded[@]}"; do
+      [[ "$key" == "$inst" ]] && already=true && break
+    done
+    if ! $already; then
+      remaining_keys+=("$key")
+    fi
+  done
+
+  local remaining_json installed_json failed_json
+  remaining_json=$(printf '%s\n' "${remaining_keys[@]}" | jq -R . | jq -s .)
+  installed_json=$(printf '%s\n' "${install_succeeded[@]}" | jq -R . | jq -s .)
+  failed_json=$(printf '%s\n' "${install_failed[@]}" | jq -R . | jq -s .)
+
+  jq -n \
+    --arg profile "$SELECTED_PROFILE" \
+    --argjson total "${#to_install[@]}" \
+    --argjson remaining "$remaining_json" \
+    --argjson installed "$installed_json" \
+    --argjson failed "$failed_json" \
+    --arg ts "$(date -Iseconds 2>/dev/null || date +%Y-%m-%dT%H:%M:%S%z)" \
+    '{profile: $profile, total: $total, remaining: $remaining, installed: $installed, failed: $failed, timestamp: $ts}' \
+    > "$state_file"
+  log_info "$LANG_CHECKPOINT_SAVED"
+}
+
+load_install_state() {
+  local state_file="$STATE_FILE"
+  if [[ -f "$state_file" ]]; then
+    local remaining
+    remaining=$(jq -r '.remaining[]' "$state_file" 2>/dev/null)
+    echo "$remaining"
+    return 0
+  fi
+  return 1
+}
+
+clear_install_state() {
+  rm -f "$STATE_FILE"
+  log_info "$LANG_INSTALL_COMPLETE_STATE"
 }
 
 # 设置终端窗口标题
@@ -2070,7 +2124,7 @@ fi
     done
   echo ""
 
-  log_info "$LANG_DISK_CHECKING"
+log_info "$LANG_DISK_CHECKING"
   check_disk_space 5
 
   # Check sudo availability on Unix systems (not macOS)
@@ -2078,13 +2132,47 @@ fi
     log_warn "$LANG_NEED_SUDO"
   fi
 
+  # Check for incomplete installation state
+  if [[ "$RESUME_MODE" != "no" ]]; then
+    local saved_remaining
+    saved_remaining=$(load_install_state)
+    if [[ -n "$saved_remaining" ]]; then
+      if [[ "$RESUME_MODE" == "yes" || "$NON_INTERACTIVE" == "true" ]]; then
+        log_info "$LANG_RESUMING"
+        to_install=()
+        while IFS= read -r key; do
+          [[ -n "$key" ]] && to_install+=("$key")
+        done <<< "$saved_remaining"
+      else
+        log_info "$LANG_RESUME_FOUND"
+        local resume_answer
+        IFS= read -rsn1 resume_answer < /dev/tty
+        echo ""
+        if [[ -z "$resume_answer" || "$resume_answer" =~ ^[Yy] ]]; then
+          log_info "$LANG_RESUMING"
+          to_install=()
+          while IFS= read -r key; do
+            [[ -n "$key" ]] && to_install+=("$key")
+          done <<< "$saved_remaining"
+        else
+          clear_install_state
+        fi
+      fi
+    fi
+  fi
+
   if [[ ${#to_install[@]} -gt 0 ]]; then
     log_info "$LANG_START_INSTALLING"
     local -a install_failed=()
+    local -a install_succeeded=()
     local install_total=${#to_install[@]}
     local install_current=0
     local install_start_time=$(date +%s)
-        for sw in "${to_install[@]}"; do
+
+    # Trap SIGINT to save state before exit
+    trap 'log_warn "$LANG_CHECKPOINT_SAVED"; save_install_state; exit 130' INT
+
+    for sw in "${to_install[@]}"; do
         install_current=$((install_current + 1))
         local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
         local sw_icon=$(json_get_software_field "$CONFIG_FILE" "$sw" "icon")
@@ -2092,17 +2180,19 @@ fi
         [[ -n "$sw_icon" ]] && sw_display="$sw_icon $sw_name"
         local bar=$(draw_progress_bar $install_current $install_total 20)
         local sw_start=$(date +%s)
-        printf "\r %s %d/%d %s - %s..." "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALLING"
-        if install_software "$CONFIG_FILE" "$os" "$sw"; then
+printf "\r %s %d/%d %s - %s..." "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALLING"
+      if install_software "$CONFIG_FILE" "$os" "$sw"; then
         local sw_end=$(date +%s)
         local sw_elapsed=$((sw_end - sw_start))
         printf "\r %s %d/%d %s - ${GREEN}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALL_SUCCESS" "$sw_elapsed"
+        install_succeeded+=("$sw")
       else
         local sw_end=$(date +%s)
         local sw_elapsed=$((sw_end - sw_start))
         printf "\r %s %d/%d %s - ${RED}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALL_FAILED" "$sw_elapsed"
         install_failed+=("$sw")
       fi
+      save_install_state
     done
     local install_end_time=$(date +%s)
     local total_elapsed=$((install_end_time - install_start_time))
@@ -2165,20 +2255,24 @@ fi
         log_warn "$LANG_NETWORK_TIMEOUT"
         log_warn "$LANG_CHECK_NETWORK"
       fi
-      if [[ ${#permission_failed[@]} -gt 0 ]]; then
-        log_warn "$LANG_PERMISSION_DENIED"
-        log_warn "$LANG_PERMISSION_SUGGESTION"
-      fi
-    else
-      tput civis 2>/dev/null || true
-      stty -echo 2>/dev/null || true
+if [[ ${#permission_failed[@]} -gt 0 ]]; then
+      log_warn "$LANG_PERMISSION_DENIED"
+      log_warn "$LANG_PERMISSION_SUGGESTION"
     fi
+  else
+    tput civis 2>/dev/null || true
+    stty -echo 2>/dev/null || true
   fi
-fi
+  fi
+  fi
+
+# Clear trap and clear state on successful completion
+  trap - INT
+  clear_install_state
 fi
 
 if [[ ${#to_install[@]} -eq 0 ]]; then
-        log_info "$LANG_ALL_INSTALLED"
+  log_info "$LANG_ALL_INSTALLED"
         # 非交互模式直接退出
         if [[ "$NON_INTERACTIVE" == "true" ]]; then
             exit 0
