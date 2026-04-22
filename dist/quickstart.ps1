@@ -243,8 +243,14 @@ function Initialize-LanguageStrings {
                 
 "search_results" = "搜索结果"
 "error_detail" = "错误详情"
+"network_timeout" = "网络连接超时，请检查网络设置"
+"network_error" = "网络错误: {0}"
+"check_network" = "建议: 检查网络连接或设置代理"
 "time_seconds" = "秒"
 "time_total" = "总耗时"
+"disk_space_low" = "磁盘空间不足: 可用 {0}GB，建议至少 {1}GB"
+"disk_space_warning" = "⚠ 磁盘空间较低，安装可能失败"
+"disk_checking" = "检查磁盘空间..."
 }
 }
 
@@ -353,8 +359,14 @@ function Initialize-LanguageStrings {
                 
 "search_results" = "検索結果"
 "error_detail" = "エラー詳細"
+"network_timeout" = "ネットワーク接続がタイムアウトしました。ネットワーク設定を確認してください"
+"network_error" = "ネットワークエラー: {0}"
+"check_network" = "提案: ネットワーク接続を確認するかプロキシを設定してください"
 "time_seconds" = "秒"
 "time_total" = "合計時間"
+"disk_space_low" = "ディスク容量不足: 利用可能 {0}GB、最低 {1}GB 推奨"
+"disk_space_warning" = "⚠ ディスク容量が少ないため、インストールに失敗する可能性があります"
+"disk_checking" = "ディスク容量を確認中..."
 }
 }
 
@@ -363,108 +375,114 @@ function Initialize-LanguageStrings {
 # ============================================
 # Korean - ko
 # ============================================
-  "ko" {
-            $script:LANG = @{
-                "banner_title" = "Quickstart-PC v$VERSION"
-                "banner_desc" = "새 PC 소프트웨어 환경을 빠르게 설정"
-                
-                "detecting_system" = "시스템 환경 감지 중..."
-                "system_info" = "시스템"
-                "package_manager" = "패키지 관리자"
-                "unsupported_os" = "지원되지 않는 OS"
-                
-                "using_remote_config" = "원격 구성 사용"
-                "using_custom_config" = "로컬 구성 사용"
-                "using_default_config" = "기본 구성 사용"
-                "config_not_found" = "구성 파일을 찾을 수 없습니다"
-                "config_invalid" = "구성 파일 형식이 유효하지 않습니다"
-                
-                "select_profiles" = "설치 프로필 선택"
-                "select_software" = "설치할 소프트웨어 선택"
-                "navigate" = "↑↓ 이동 | Enter 확인"
-                "navigate_multi" = "↑↓ 이동 | 스페이스 선택 | Enter 확인"
-                "selected" = "[✓] "
-                "not_selected" = "[  ] "
-                "select_all" = "모두 선택"
-                "installed" = "설치됨"
-                
-                "no_profile_selected" = "프로필이 선택되지 않았습니다"
-                "no_software_selected" = "소프트웨어가 선택되지 않았습니다"
-                "confirm_install" = "설치를 확인하시겠습니까? [Y/n]"
-                "cancelled" = "취소됨"
-                "start_installing" = "소프트웨어 설치 시작"
-                "installing" = "설치 중"
-                "install_success" = "설치 완료"
-                "install_failed" = "설치 실패"
-                "platform_not_supported" = "지원되지 않는 플랫폼"
-                "installation_complete" = "설치 완료"
-                "total_installed" = "총 설치"
-                
-                "dev_mode" = "개발 모드: 선택한 소프트웨어 표시但不설치"
-                "dry_run_mode" = "미리보기 모드: 설치 과정 표시하지만 실제 설치하지 않음"
-                "dry_run_installing" = "설치 시뮬레이션"
-                
+"ko" {
+$script:LANG = @{
+"banner_title" = "Quickstart-PC v$VERSION"
+"banner_desc" = "새 PC 소프트웨어 환경을 빠르게 설정"
+
+"detecting_system" = "시스템 환경 감지 중..."
+"system_info" = "시스템"
+"package_manager" = "패키지 관리자"
+"unsupported_os" = "지원되지 않는 OS"
+
+"using_remote_config" = "원격 구성 사용"
+"using_custom_config" = "로컬 구성 사용"
+"using_default_config" = "기본 구성 사용"
+"config_not_found" = "구성 파일을 찾을 수 없습니다"
+"config_invalid" = "구성 파일 형식이 유효하지 않습니다"
+
+"select_profiles" = "설치 프로필 선택"
+"select_software" = "설치할 소프트웨어 선택"
+"navigate" = "↑↓ 이동 | Enter 확인"
+"navigate_multi" = "↑↓ 이동 | 스페이스 선택 | Enter 확인"
+"selected" = "[✓] "
+"not_selected" = "[ ] "
+"select_all" = "모두 선택"
+"installed" = "설치됨"
+
+"no_profile_selected" = "프로필이 선택되지 않았습니다"
+"no_software_selected" = "소프트웨어가 선택되지 않았습니다"
+"confirm_install" = "설치를 확인하시겠습니까? [Y/n]"
+"cancelled" = "취소됨"
+"start_installing" = "소프트웨어 설치 시작"
+"installing" = "설치 중"
+"install_success" = "설치 완료"
+"install_failed" = "설치 실패"
+"platform_not_supported" = "지원되지 않는 플랫폼"
+"installation_complete" = "설치 완료"
+"total_installed" = "총 설치"
+
+"dev_mode" = "개발 모드: 선택한 소프트웨어 표시但不설치"
+"dry_run_mode" = "미리보기 모드: 설치 과정 표시하지만 실제 설치하지 않음"
+"dry_run_installing" = "설치 시뮬레이션"
+
 "checking_installation" = "설치 상태 확인 중..."
 "skipping_installed" = "이미 설치됨, 건너뛰기"
 "all_installed" = "모든 소프트웨어가 이미 설치됨, 작업 없음"
 "to_install" = "설치 예정"
 "retrying" = "재시도 중"
-                
-                "ask_continue" = "설치 완료. 다른 프로필을 계속 설치하시겠습니까?"
-                "continue_btn" = "계속"
-                "exit_btn" = "종료"
-                
-                "title_select_profile" = "프로필 선택"
-                "title_select_software" = "소프트웨어 선택"
-                "title_installing" = "설치 중"
-                "title_ask_continue" = "설치를 계속하시겠습니까?"
-                
-                "lang_prompt" = "언어를 선택해 주세요"
-                "help_lang" = "언어 설정 (en, zh, ja, ko)"
-                "noninteractive_error" = "비대화형 모드에서는 --profile 매개변수가 필요합니다"
-                "profile_not_found" = "프로필을 찾을 수 없습니다"
-                "npm_not_found" = "npm을 찾을 수 없습니다, 설치 중..."
-                "winget_not_found" = "winget을 찾을 수 없습니다, npm을 자동 설치할 수 없습니다"
-                
-                "help_usage" = "사용법: quickstart.ps1 [옵션]"
-                "help_cfg_path" = "로컬 profiles.json 사용"
-                "help_cfg_url" = "원격 profiles.json URL 사용"
-                "help_dev" = "개발 모드: 선택한 소프트웨어 표시他不설치"
-                "help_dry_run" = "미리보기 모드: 설치 과정 표시하지만 실제 설치하지 않음"
-                "help_doctor" = "QC Doctor 환경 진단 실행"
-                "help_yes" = "모든 프롬프트에 자동 동의"
-                "help_verbose" = "詳細な 디버그 정보 표시"
-                "help_log_file" = "로그를 파일에 쓰기"
-                "help_export_plan" = "설치 계획 내보내기"
-                "help_custom" = "사용자 정의 소프트웨어 선택 모드"
-                "help_retry_failed" = "이전에 실패한 패키지 재시도"
-                "help_list_software" = "사용 가능한 모든 소프트웨어 나열"
-                "help_show_software" = "지정된 소프트웨어 상세 정보 표시"
-                "help_search" = "소프트웨어 검색"
-                "help_validate" = "구성 파일 검증"
-                "help_report_json" = "JSON 형식으로 설치 보고서 내보내기"
-                "help_report_txt" = "TXT 형식으로 설치 보고서 내보내기"
-                "help_list_profiles" = "사용 가능한 모든 프로필 나열"
-                "help_show_profile" = "지정된 프로필 상세 정보 표시"
-                "help_skip" = "지정된 소프트웨어 건너뛰기 (반복 가능)"
-                "help_only" = "지정된 소프트웨어만 설치 (반복 가능)"
-                "help_fail_fast" = "첫 번째 오류에서 중지"
-                "help_profile" = "프로필 직접 선택 (메뉴 건너뛰기)"
-                "help_non_interactive" = "비대화형 모드 (TUI/프롬프트 모두 비활성화)"
-                "help_help" = "이 도움말 표시"
-                
-                "validating_config" = "구성 파일 검증 중..."
-                "json_valid" = "JSON 구문 유효"
-                "json_invalid" = "JSON 구문 유효하지 않음"
-                "profiles_count" = "프로필"
-                "software_count" = "소프트웨어 항목"
-                "validation_passed" = "검증 통과"
-                "validation_failed" = "검증 실패"
-                
+
+"ask_continue" = "설치 완료. 다른 프로필을 계속 설치하시겠습니까?"
+"continue_btn" = "계속"
+"exit_btn" = "종료"
+
+"title_select_profile" = "프로필 선택"
+"title_select_software" = "소프트웨어 선택"
+"title_installing" = "설치 중"
+"title_ask_continue" = "설치를 계속하시겠습니까?"
+
+"lang_prompt" = "언어를 선택해 주세요"
+"help_lang" = "언어 설정 (en, zh, ja, ko)"
+"noninteractive_error" = "비대화형 모드에서는 --profile 매개변수가 필요합니다"
+"profile_not_found" = "프로필이 존재하지 않습니다"
+"npm_not_found" = "npm을 찾을 수 없습니다, 설치 중..."
+"winget_not_found" = "winget을 찾을 수 없습니다, npm을 자동 설치할 수 없습니다"
+
+"help_usage" = "사용법: quickstart.ps1 [옵션]"
+"help_cfg_path" = "로컬 profiles.json 파일 사용"
+"help_cfg_url" = "원격 profiles.json URL 사용"
+"help_dev" = "개발 모드: 선택한 소프트웨어 표시但不설치"
+"help_dry_run" = "미리보기 모드: 설치 과정 표시但不실제 설치"
+"help_doctor" = "QC Doctor 환경 진단 실행"
+"help_yes" = "모든 프롬프트에 자동 동의"
+"help_verbose" = "詳細한 디버그 정보 표시"
+"help_log_file" = "로그를 파일에 쓰기"
+"help_export_plan" = "설치 계획을 파일로 내보내기"
+"help_custom" = "사용자 정의 소프트웨어 선택 모드"
+"help_retry_failed" = "이전에 실패한 패키지 재시도"
+"help_list_software" = "사용 가능한 모든 소프트웨어 나열"
+"help_show_software" = "지정한 소프트웨어 상세 정보 표시"
+"help_search" = "소프트웨어 검색"
+"help_validate" = "구성 파일 검증"
+"help_report_json" = "JSON 형식으로 설치 보고서 내보내기"
+"help_report_txt" = "TXT 형식으로 설치 보고서 내보내기"
+"help_list_profiles" = "사용 가능한 모든 프로필 나열"
+"help_show_profile" = "지정한 프로필 상세 정보 표시"
+"help_skip" = "지정한 소프트웨어 건너뛰기 (반복 가능)"
+"help_only" = "지정한 소프트웨어만 설치 (반복 가능)"
+"help_fail_fast" = "첫 번째 오류에서 중지"
+"help_profile" = "프로필 직접 선택 (메뉴 건너뛰기)"
+"help_non_interactive" = "비대화형 모드 (TUI/프롬프트 모두 비활성화)"
+"help_help" = "이 도움말 표시"
+
+"validating_config" = "구성 파일 검증 중..."
+"json_valid" = "JSON 구문 유효함"
+"json_invalid" = "JSON 구문 유효하지 않음"
+"profiles_count" = "프로필"
+"software_count" = "소프트웨어 항목"
+"validation_passed" = "검증 통과"
+"validation_failed" = "검증 실패"
+
 "search_results" = "검색 결과"
 "error_detail" = "오류 상세"
+"network_timeout" = "네트워크 연결 시간 초과, 네트워크 설정을 확인하세요"
+"network_error" = "네트워크 오류: {0}"
+"check_network" = "제안: 네트워크 연결을 확인하거나 프록시를 설정하세요"
 "time_seconds" = "초"
 "time_total" = "총 소요 시간"
+"disk_space_low" = "디스크 공간 부족: 사용 가능 {0}GB, 최소 {1}GB 권장"
+"disk_space_warning" = "⚠ 디스크 공간이 부족하여 설치가 실패할 수 있습니다"
+"disk_checking" = "디스크 공간 확인 중..."
 }
 }
 
@@ -473,7 +491,7 @@ function Initialize-LanguageStrings {
 # ============================================
 # Traditional Chinese - zh-Hant
 # ============================================
-  "zh-Hant" {
+"zh-Hant" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "快速設定新電腦軟件環境"
@@ -573,8 +591,14 @@ function Initialize-LanguageStrings {
                 
 "search_results" = "搜尋結果"
 "error_detail" = "錯誤詳情"
+"network_timeout" = "網路連線逾時，請檢查網路設定"
+"network_error" = "網路錯誤: {0}"
+"check_network" = "建議: 檢查網路連線或設定代理"
 "time_seconds" = "秒"
 "time_total" = "總耗時"
+"disk_space_low" = "磁碟空間不足: 可用 {0}GB，建議至少 {1}GB"
+"disk_space_warning" = "⚠ 磁碟空間較低，安裝可能失敗"
+"disk_checking" = "檢查磁碟空間..."
 "custom_title" = "自定義選擇軟體"
 "custom_space_toggle" = "空格: 切換選擇"
 "custom_enter_confirm" = "回車: 確認"
@@ -688,8 +712,14 @@ function Initialize-LanguageStrings {
                 
 "search_results" = "Suchergebnisse"
 "error_detail" = "Fehlerdetail"
+"network_timeout" = "Netzwerkverbindung zeitüberschreitung, bitte überprüfen Sie Ihre Netzwerkeinstellungen"
+"network_error" = "Netzwerkfehler: {0}"
+"check_network" = "Vorschlag: Überprüfen Sie die Netzwerkverbindung oder richten Sie einen Proxy ein"
 "time_seconds" = "s"
 "time_total" = "Gesamtzeit"
+"disk_space_low" = "Wenig Speicherplatz: {0}GB verfügbar, mindestens {1}GB empfohlen"
+"disk_space_warning" = "⚠ Wenig Speicherplatz, Installation könnte fehlschlagen"
+"disk_checking" = "Speicherplatz wird überprüft..."
 "custom_title" = "Benutzerdefinierte Auswahl"
 "custom_space_toggle" = "Leertaste: umschalten"
 "custom_enter_confirm" = "Enter: bestätigen"
@@ -803,8 +833,14 @@ function Initialize-LanguageStrings {
                 
 "search_results" = "Résultats de recherche"
 "error_detail" = "Détail de l'erreur"
+"network_timeout" = "Délai de connexion réseau dépassé, veuillez vérifier vos paramètres réseau"
+"network_error" = "Erreur réseau : {0}"
+"check_network" = "Suggestion : Vérifiez la connexion réseau ou configurez un proxy"
 "time_seconds" = "s"
 "time_total" = "Temps total"
+"disk_space_low" = "Espace disque insuffisant : {0}GB disponible, au moins {1}GB recommandé"
+"disk_space_warning" = "⚠ Espace disque faible, l'installation peut échouer"
+"disk_checking" = "Vérification de l'espace disque..."
 "custom_title" = "Sélection personnalisée"
 "custom_space_toggle" = "Espace: basculer"
 "custom_enter_confirm" = "Entrée: confirmer"
@@ -918,8 +954,14 @@ function Initialize-LanguageStrings {
                 
 "search_results" = "نتائج البحث"
 "error_detail" = "تفاصيل الخطأ"
+"network_timeout" = "انتهت مهلة اتصال الشبكة، يرجى التحقق من إعدادات الشبكة"
+"network_error" = "خطأ في الشبكة: {0}"
+"check_network" = "اقتراح: تحقق من اتصال الشبكة أو قم بإعداد وكيل"
 "time_seconds" = "ث"
 "time_total" = "الوقت الإجمالي"
+"disk_space_low" = "مساحة قرص غير كافية: {0}GB متاح، يوصى بـ {1}GB على الأقل"
+"disk_space_warning" = "⚠ مساحة القرص منخفضة، قد يفشل التثبيت"
+"disk_checking" = "جاري التحقق من مساحة القرص..."
 "custom_title" = "الاختيار المخصص"
 "custom_space_toggle" = "مسافة: تبديل"
 "custom_enter_confirm" = "Enter: تأكيد"
@@ -1033,8 +1075,14 @@ function Initialize-LanguageStrings {
                 
 "search_results" = "Resultados da pesquisa"
 "error_detail" = "Detalhe do erro"
+"network_timeout" = "Tempo limite de conexão de rede esgotado, verifique suas configurações de rede"
+"network_error" = "Erro de rede: {0}"
+"check_network" = "Sugestão: Verifique a conexão de rede ou configure um proxy"
 "time_seconds" = "s"
 "time_total" = "Tempo total"
+"disk_space_low" = "Espaço em disco insuficiente: {0}GB disponível, pelo menos {1}GB recomendado"
+"disk_space_warning" = "⚠ Espaço em disco baixo, a instalação pode falhar"
+"disk_checking" = "Verificando espaço em disco..."
 "custom_title" = "Seleção personalizada"
 "custom_space_toggle" = "Espaço: alternar"
 "custom_enter_confirm" = "Enter: confirmar"
@@ -1148,8 +1196,14 @@ function Initialize-LanguageStrings {
                 
 "search_results" = "Risultati della ricerca"
 "error_detail" = "Dettaglio errore"
+"network_timeout" = "Timeout di connessione di rete, controllare le impostazioni di rete"
+"network_error" = "Errore di rete: {0}"
+"check_network" = "Suggerimento: Controllare la connessione di rete o impostare un proxy"
 "time_seconds" = "s"
 "time_total" = "Tempo totale"
+"disk_space_low" = "Spazio su disco insufficiente: {0}GB disponibile, almeno {1}GB consigliato"
+"disk_space_warning" = "⚠ Spazio su disco insufficiente, l'installazione potrebbe fallire"
+"disk_checking" = "Verifica dello spazio su disco..."
 "custom_title" = "Selezione personalizzata"
 "custom_space_toggle" = "Spazio: alterna"
 "custom_enter_confirm" = "Invio: conferma"
@@ -1263,8 +1317,14 @@ function Initialize-LanguageStrings {
                 
 "search_results" = "Search results"
 "error_detail" = "Error detail"
+"network_timeout" = "Network connection timed out, please check your network"
+"network_error" = "Network error: {0}"
+"check_network" = "Suggestion: Check network connection or set proxy"
 "time_seconds" = "s"
 "time_total" = "Total time"
+"disk_space_low" = "Low disk space: {0}GB available, at least {1}GB recommended"
+"disk_space_warning" = "⚠ Low disk space, installation may fail"
+"disk_checking" = "Checking disk space..."
 "custom_title" = "Custom Software Selection"
 "custom_space_toggle" = "Space: toggle"
 "custom_enter_confirm" = "Enter: confirm"
@@ -2054,11 +2114,33 @@ function Install-Software {
     } else {
       Write-Log "$Key $($script:LANG["install_failed"]): $errorOutput" "ERROR"
       $script:INSTALL_LAST_ERROR = $errorOutput
+      # Classify network errors
+      if ($script:INSTALL_LAST_ERROR -match "timed out|timeout|Connection timed|could not resolve|超时|逾時|名前解決|시간 초과") {
+        Write-Host ""
+        Write-Host "  $($script:LANG["network_timeout"])" -ForegroundColor Yellow
+        Write-Host "  $($script:LANG["check_network"])" -ForegroundColor Yellow
+      } elseif ($script:INSTALL_LAST_ERROR -match "Connection refused|Network is unreachable|No route to host|接続を拒否|연결 거부") {
+        Write-Host ""
+        $firstLine = ($script:INSTALL_LAST_ERROR -split "`n")[0]
+        Write-Host "  $($script:LANG["network_error"] -f $firstLine)" -ForegroundColor Yellow
+        Write-Host "  $($script:LANG["check_network"])" -ForegroundColor Yellow
+      }
       return $false
     }
   } catch {
     Write-Log "$Key $($script:LANG["install_failed"]): $_" "ERROR"
     $script:INSTALL_LAST_ERROR = "$_"
+    # Classify network errors in catch block
+    if ($script:INSTALL_LAST_ERROR -match "timed out|timeout|Connection timed|could not resolve|超时|逾時|名前解決|시간 초과") {
+      Write-Host ""
+      Write-Host "  $($script:LANG["network_timeout"])" -ForegroundColor Yellow
+      Write-Host "  $($script:LANG["check_network"])" -ForegroundColor Yellow
+    } elseif ($script:INSTALL_LAST_ERROR -match "Connection refused|Network is unreachable|No route to host|接続を拒否|연결 거부") {
+      Write-Host ""
+      $firstLine = ($script:INSTALL_LAST_ERROR -split "`n")[0]
+      Write-Host "  $($script:LANG["network_error"] -f $firstLine)" -ForegroundColor Yellow
+      Write-Host "  $($script:LANG["check_network"])" -ForegroundColor Yellow
+    }
     return $false
   }
 }
@@ -2720,8 +2802,33 @@ function Draw-ProgressBar {
     param([int]$Current, [int]$Total, [int]$Width = 20)
     $filled = if ($Total -gt 0) { [math]::Floor($Current * $Width / $Total) } else { 0 }
     $empty = $Width - $filled
-    $bar = ("█" * $filled) + ("░" * $empty)
-    return $bar
+  $bar = ("█" * $filled) + ("░" * $empty)
+  return $bar
+}
+
+function Test-DiskSpace {
+  param([int]$MinGB = 5)
+  try {
+    if ($script:OS -eq "windows") {
+      $driveName = Split-Path $env:TEMP -PathRoot
+      $disk = Get-PSDrive -Name $driveName -ErrorAction Stop
+      $availableGB = [math]::Round($disk.Free / 1GB)
+    } else {
+      $dfResult = & df -g / 2>$null | Select-Object -Last 1
+      $availableGB = if ($dfResult) { ($dfResult -split '\s+')[3] -as [int] } else { $null }
+    }
+    if ($null -eq $availableGB) {
+      return $true
+    }
+    if ($availableGB -lt $MinGB) {
+      Write-Host " $($script:LANG["disk_space_low"] -f $availableGB, $MinGB)" -ForegroundColor Yellow
+      Write-Host " $($script:LANG["disk_space_warning"])" -ForegroundColor Yellow
+      return $false
+    }
+    return $true
+  } catch {
+    return $true
+  }
 }
 
 # ============================================
@@ -3015,11 +3122,14 @@ Write-Host ""
             Write-Host ""
             Write-Log $h["ask_continue"] "INFO"
             $continue = Select-Continue -ContinueText $h["continue_btn"] -ExitText $h["exit_btn"]
-            if ($continue -eq 1) { exit 0 }
-            continue
-        }
-        
-        Set-WindowTitle -Title "QSPC | $($h["title_installing"])"
+  if ($continue -eq 1) { exit 0 }
+  continue
+}
+
+Write-Host " $($h["disk_checking"])" -ForegroundColor Cyan
+Test-DiskSpace -MinGB 5 | Out-Null
+
+Set-WindowTitle -Title "QSPC | $($h["title_installing"])"
         Write-Header $h["start_installing"]
         
 $total = $toInstall.Count
@@ -3100,20 +3210,27 @@ if ($skippedList.Count -eq 0) {
 }
 
 Write-Host ""
-Write-Host "Failed:" -ForegroundColor Red
-Write-Log "" "INFO"
-Write-Log "Failed:" "INFO"
-if ($failedList.Count -eq 0) {
-    Write-Host " (none)" -ForegroundColor Gray
-    Write-Log " (none)" "INFO"
-} else {
-    foreach ($item in $failedList) {
-        $displayName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $item -Field "name"
-        $displayIcon = Get-SoftwareField -Path $script:CONFIG_FILE -Key $item -Field "icon"
-        $displayText = if ($displayIcon) { "$displayIcon $displayName" } else { $displayName }
-        Write-Host " - $displayText" -ForegroundColor Red
-        Write-Log " - $displayText" "INFO"
-    }
+        Write-Host "Failed:" -ForegroundColor Red
+        Write-Log "" "INFO"
+        Write-Log "Failed:" "INFO"
+        if ($failedList.Count -eq 0) {
+            Write-Host "  (none)" -ForegroundColor Gray
+            Write-Log "  (none)" "INFO"
+        } else {
+            foreach ($item in $failedList) {
+                $displayName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $item -Field "name"
+                $displayIcon = Get-SoftwareField -Path $script:CONFIG_FILE -Key $item -Field "icon"
+                $displayText = if ($displayIcon) { "$displayIcon $displayName" } else { $displayName }
+                Write-Host "  - $displayText" -ForegroundColor Red
+                Write-Log "  - $displayText" "INFO"
+            }
+            # Check if any failures were network-related
+            if ($script:INSTALL_LAST_ERROR -match "timed out|timeout|Connection timed|could not resolve|Connection refused|Network is unreachable|No route to host|超时|逾時|名前解決|시간 초과|接続을 거부|연결 거부") {
+                Write-Host ""
+                Write-Host "  $($script:LANG["network_timeout"])" -ForegroundColor Yellow
+                Write-Host "  $($script:LANG["check_network"])" -ForegroundColor Yellow
+            }
+        }
 }
         }
         
@@ -3142,6 +3259,12 @@ if ($failedList.Count -eq 0) {
             foreach ($item in $failedList) {
                 Write-Host "  - $item" -ForegroundColor Red
                 Write-Log "  - $item" "INFO"
+            }
+            # Check if any failures were network-related
+            if ($script:INSTALL_LAST_ERROR -match "timed out|timeout|Connection timed|could not resolve|Connection refused|Network is unreachable|No route to host|超时|逾時|名前解決|시간 초과|接続을 거부|연결 거부") {
+                Write-Host ""
+                Write-Host "  $($script:LANG["network_timeout"])" -ForegroundColor Yellow
+                Write-Host "  $($script:LANG["check_network"])" -ForegroundColor Yellow
             }
         }
         
@@ -3219,6 +3342,12 @@ Write-Host ""
                     Write-Host "Retry still failed:" -ForegroundColor Red
                     foreach ($item in $retryFailedList) {
                         Write-Host "  - $item" -ForegroundColor Red
+                    }
+                    # Check if any failures were network-related
+                    if ($script:INSTALL_LAST_ERROR -match "timed out|timeout|Connection timed|could not resolve|Connection refused|Network is unreachable|No route to host|超时|逾時|名前解決|시간 초과|接続を拒否|연결 거부") {
+                        Write-Host ""
+                        Write-Host "  $($script:LANG["network_timeout"])" -ForegroundColor Yellow
+                        Write-Host "  $($script:LANG["check_network"])" -ForegroundColor Yellow
                     }
                     $failedList = $retryFailedList
                 } else {

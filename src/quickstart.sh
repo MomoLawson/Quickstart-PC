@@ -848,6 +848,29 @@ draw_progress_bar() {
   echo "$bar"
 }
 
+check_disk_space() {
+  local min_gb=${1:-5}
+  local available_gb=""
+  local os_name=$(uname -s)
+
+  if [[ "$os_name" == "Darwin" ]]; then
+    available_gb=$(df -g / 2>/dev/null | tail -1 | awk '{print $4}')
+  else
+    available_gb=$(df -BG / 2>/dev/null | tail -1 | awk '{print $4}' | tr -d 'G')
+  fi
+
+  if [[ -z "$available_gb" ]]; then
+    return 0
+  fi
+
+  if [[ $available_gb -lt $min_gb ]]; then
+    log_warn "$(printf "$LANG_DISK_SPACE_LOW" "$available_gb" "$min_gb")"
+    log_warn "$LANG_DISK_SPACE_WARNING"
+    return 1
+  fi
+  return 0
+}
+
 # 设置终端窗口标题
 set_title() {
     printf '\033]0;%s\007' "$1"
@@ -1567,6 +1590,17 @@ install_software() {
   else
     log_to_file "[FAIL] $key $LANG_INSTALL_FAILED (exit $exit_code): $error_output"
     INSTALL_LAST_ERROR="$error_output"
+    # Classify network errors
+    case "$INSTALL_LAST_ERROR" in
+      *"timed out"*|*"timeout"*|*"Connection timed"*|*"could not resolve"*|*"名前解決"*|*"시간 초과"*|*"délai"*|*"Zeitüberschreitung"*|*"超时"*|*"逾時"*)
+        log_warn "$LANG_NETWORK_TIMEOUT"
+        log_warn "$LANG_CHECK_NETWORK"
+        ;;
+      *"Connection refused"*|*"Network is unreachable"*|*"No route to host"*|*"接続を拒否"*|*"연결 거부"*|*"connexion refusée"*|*"Verbindung verweigert"*)
+        log_warn "$(printf "$LANG_NETWORK_ERROR" "$(echo "$INSTALL_LAST_ERROR" | head -1)")"
+        log_warn "$LANG_CHECK_NETWORK"
+        ;;
+    esac
     return 1
   fi
 }
@@ -2032,6 +2066,9 @@ fi
     done
   echo ""
 
+  log_info "$LANG_DISK_CHECKING"
+  check_disk_space 5
+
   if [[ ${#to_install[@]} -gt 0 ]]; then
     log_info "$LANG_START_INSTALLING"
     local -a install_failed=()
@@ -2076,6 +2113,7 @@ fi
           tput civis 2>/dev/null || true
           stty -echo 2>/dev/null || true
           local -a still_failed=()
+          local -a network_failed=()
           local retry_total=${#install_failed[@]}
           local retry_current=0
           for failed_sw in "${install_failed[@]}"; do
@@ -2092,15 +2130,25 @@ fi
               local retry_elapsed=$((retry_end - retry_start))
               printf "\r %s %d/%d %s - ${GREEN}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$retry_bar" "$retry_current" "$retry_total" "$failed_display" "$LANG_INSTALL_SUCCESS" "$retry_elapsed"
             else
-              local retry_end=$(date +%s)
-              local retry_elapsed=$((retry_end - retry_start))
-              printf "\r %s %d/%d %s - ${RED}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$retry_bar" "$retry_current" "$retry_total" "$failed_display" "$LANG_INSTALL_FAILED" "$retry_elapsed"
-              still_failed+=("$failed_display")
-            fi
-          done
-          if [[ ${#still_failed[@]} -gt 0 ]]; then
-            log_warn "$LANG_INSTALL_FAILED_LIST: ${still_failed[*]}"
-          fi
+                local retry_end=$(date +%s)
+                local retry_elapsed=$((retry_end - retry_start))
+                printf "\r %s %d/%d %s - ${RED}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$retry_bar" "$retry_current" "$retry_total" "$failed_display" "$LANG_INSTALL_FAILED" "$retry_elapsed"
+                still_failed+=("$failed_display")
+                # Check if this is a network error
+                case "$INSTALL_LAST_ERROR" in
+        *"timed out"*|*"timeout"*|*"Connection timed"*|*"could not resolve"*|*"名前解決"*|*"시간 초과"*|*"délai"*|*"Zeitüberschreitung"*|*"超时"*|*"逾時"*|*"Connection refused"*|*"Network is unreachable"*|*"No route to host"*|*"接続を拒否"*|*"연결 거부"*|*"connexion refusée"*|*"Verbindung verweigert"*)
+          network_failed+=("$failed_display")
+          ;;
+      esac
+    fi
+    done
+    if [[ ${#still_failed[@]} -gt 0 ]]; then
+    log_warn "$LANG_INSTALL_FAILED_LIST: ${still_failed[*]}"
+    fi
+    if [[ ${#network_failed[@]} -gt 0 ]]; then
+    log_warn "$LANG_NETWORK_TIMEOUT"
+    log_warn "$LANG_CHECK_NETWORK"
+    fi
         else
           tput civis 2>/dev/null || true
           stty -echo 2>/dev/null || true

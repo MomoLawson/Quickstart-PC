@@ -359,7 +359,7 @@ Evidence: .sisyphus/evidence/task-1-i18n.txt
 
 ---
 
-- [ ] 2. PS1 视觉进度条
+- [x] 2. PS1 视觉进度条
 
 **What to do**:
 
@@ -446,7 +446,7 @@ Evidence: .sisyphus/evidence/task-2-ps1-progressbar-en.txt
 
 ---
 
-- [ ] 3. PS1 安装耗时统计
+- [x] 3. PS1 安装耗时统计
 
 **What to do**:
 
@@ -528,7 +528,7 @@ Evidence: .sisyphus/evidence/task-3-ps1-i18n.txt
 
 ---
 
-- [ ] 4. PS1 --custom 自定义选择 TUI
+- [x] 4. PS1 --custom 自定义选择 TUI
 
 **What to do**:
 
