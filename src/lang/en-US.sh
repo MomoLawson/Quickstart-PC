@@ -32,6 +32,11 @@ Options:
   --fail-fast        Stop on first error
   --profile NAME     Select profile directly (skip menu)
   --non-interactive  Non-interactive mode (no TUI/prompts)
+  --resume                  Resume interrupted installation
+  --no-resume               Do not resume interrupted installation
+  --self-update             Update script to latest version
+  --check-update            Check for updates without installing
+  --allow-hooks             Enable hook scripts execution
   --help             Show this help message
 OPTIONS_EOF
 

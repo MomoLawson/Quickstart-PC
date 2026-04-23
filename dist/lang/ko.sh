@@ -32,6 +32,11 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --fail-fast        첫 번째 오류에서 중지
   --profile NAME     프로필 직접 선택 (메뉴 건너뛰기)
   --non-interactive  비대화형 모드 (TUI/프롬프트 모두 비활성화)
+  --resume                  중단된 설치 재개
+  --no-resume               중단된 설치 재개하지 않음
+  --self-update             스크립트를 최신 버전으로 업데이트
+  --check-update            업데이트 확인만 (설치하지 않음)
+  --allow-hooks             후크 스크립트 실행 활성화
   --help             이 도움말 표시
 OPTIONS_EOF
 

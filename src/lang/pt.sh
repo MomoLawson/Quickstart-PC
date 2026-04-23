@@ -32,6 +32,11 @@ Opções:
   --fail-fast        Parar no primeiro erro
   --profile NAME     Selecionar perfil diretamente (pular menu)
   --non-interactive  Modo não interativo (sem TUI/prompts)
+  --resume                  Retomar instalação interrompida
+  --no-resume               Não retomar instalação interrompida
+  --self-update             Atualizar script para a versão mais recente
+  --check-update            Verificar atualizações sem instalar
+  --allow-hooks             Ativar execução de scripts hook
   --help             Mostrar esta mensagem de ajuda
 OPTIONS_EOF
 

@@ -32,6 +32,11 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --fail-fast        最初のエラーで停止
   --profile NAME     プロファイルを直接指定（スキップメニュー）
   --non-interactive  非インタラクティブモード（TUI/プロンプト全て無効）
+  --resume                  中断されたインストールを再開
+  --no-resume               中断されたインストールを再開しない
+  --self-update             スクリプトを最新バージョンに更新
+  --check-update            更新を確認するのみ（インストールしない）
+  --allow-hooks             フックスクリプトの実行を有効化
   --help             このヘルプを表示
 OPTIONS_EOF
 

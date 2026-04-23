@@ -32,6 +32,11 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --fail-fast        التوقف عند أول خطأ
   --profile NAME     اختيار الملف مباشرة (تخطي القائمة)
   --non-interactive  الوضع غير التفاعلي (بدون TUI/مطالبات)
+  --resume                  استئناف التثبيت المتقطع
+  --no-resume               عدم استئناف التثبيت المتقطع
+  --self-update             تحديث البرنامج النصي إلى أحدث إصدار
+  --check-update            التحقق من التحديثات فقط
+  --allow-hooks             تمكين تنفيذ البرامج النصية للخطافات
   --help             عرض رسالة المساعدة هذه
 OPTIONS_EOF
 

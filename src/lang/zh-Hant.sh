@@ -32,6 +32,11 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --fail-fast        遇到錯誤時立即停止
   --profile NAME     直接指定安裝套餐（跳過選擇菜單）
   --non-interactive  非交互模式（禁止所有 TUI/prompt）
+  --resume                  恢復中斷的安裝
+  --no-resume               不恢復中斷的安裝
+  --self-update             更新腳本到最新版本
+  --check-update            檢查更新但不安裝
+  --allow-hooks             啟用鉤子腳本執行
   --help             顯示此幫助信息
 OPTIONS_EOF
 

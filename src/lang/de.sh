@@ -32,6 +32,11 @@ Optionen:
   --fail-fast        Bei erstem Fehler stoppen
   --profile NAME     Profil direkt auswählen (Menü überspringen)
   --non-interactive  Nicht-interaktiver Modus (keine TUI/Abfragen)
+  --resume                  Unterbrochene Installation fortsetzen
+  --no-resume               Unterbrochene Installation nicht fortsetzen
+  --self-update             Skript auf neueste Version aktualisieren
+  --check-update            Nur nach Updates suchen
+  --allow-hooks             Hook-Skripte aktivieren
   --help             Diese Hilfe anzeigen
 OPTIONS_EOF
 
