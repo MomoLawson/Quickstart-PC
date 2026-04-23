@@ -173,6 +173,12 @@ function Initialize-LanguageStrings {
                 "select_all" = "全选"
                 "installed" = "已安装"
                 
+                "custom_title" = "自定义选择软件"
+                "custom_space_toggle" = "空格: 切换选择"
+                "custom_enter_confirm" = "回车: 确认"
+                "custom_a_select_all" = "A: 全选/全不选"
+                "custom_selected" = "已选择 %d/%d"
+                
                 "no_profile_selected" = "未选择任何套餐"
                 "no_software_selected" = "未选择任何软件"
                 "confirm_install" = "确认安装？[Y/n]"
@@ -205,9 +211,9 @@ function Initialize-LanguageStrings {
                 "title_ask_continue" = "是否继续安装"
                 
 "lang_prompt" = "请选择语言"
-"help_lang" = "设置语言 (en, zh, ja, ko)"
-"help_local_lang" = "使用本地语言脚本文件夹"
-"profile_not_found" = "Profile 不存在"
+                "help_lang" = "设置语言 (en, zh, ja, ko)"
+                "noninteractive_error" = "非交互模式需要 --profile 参数"
+                "profile_not_found" = "Profile 不存在"
 "npm_not_found" = "npm 未安装，正在安装..."
 "winget_not_found" = "winget 未找到，无法自动安装 npm"
 
@@ -312,6 +318,12 @@ function Initialize-LanguageStrings {
                 "not_selected" = "[  ] "
                 "select_all" = "全て選択"
                 "installed" = "インストール済み"
+                
+                "custom_title" = "カスタムソフトウェア選択"
+                "custom_space_toggle" = "スペース: 選択切替"
+                "custom_enter_confirm" = "Enter: 確認"
+                "custom_a_select_all" = "A: 全選択/全解除"
+                "custom_selected" = "選択済み %d/%d"
                 
                 "no_profile_selected" = "プロファイルが選択されていません"
                 "no_software_selected" = "ソフトウェアが選択されていません"
@@ -451,9 +463,15 @@ $script:LANG = @{
 "selected" = "[✓] "
 "not_selected" = "[ ] "
 "select_all" = "모두 선택"
-"installed" = "설치됨"
-
-"no_profile_selected" = "프로필이 선택되지 않았습니다"
+                "installed" = "설치됨"
+                
+                "custom_title" = "사용자 정의 소프트웨어 선택"
+                "custom_space_toggle" = "스페이스: 선택 전환"
+                "custom_enter_confirm" = "Enter: 확인"
+                "custom_a_select_all" = "A: 모두 선택/해제"
+                "custom_selected" = "선택됨 %d/%d"
+                
+                "no_profile_selected" = "프로필이 선택되지 않았습니다"
 "no_software_selected" = "소프트웨어가 선택되지 않았습니다"
 "confirm_install" = "설치를 확인하시겠습니까? [Y/n]"
 "cancelled" = "취소됨"
