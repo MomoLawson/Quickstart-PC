@@ -272,13 +272,16 @@ function Initialize-LanguageStrings {
 "update_failed" = "更新失败: {0}"
     "update_prompt" = "是否更新到新版本？[Y/n]"
 
-    "hook_running" = "执行钩子: {0}"
-    "hook_success" = "钩子执行完成"
-    "hook_failed" = "钩子执行失败: {0}"
-    "hooks_disabled" = "钩子脚本已禁用，使用 --allow-hooks 启用"
-    "hooks_enabled" = "钩子脚本已启用"
-    }
-  }
+"hook_running" = "执行钩子: {0}"
+"hook_success" = "钩子执行完成"
+"hook_failed" = "钩子执行失败: {0}"
+"hooks_disabled" = "钩子脚本已禁用，使用 --allow-hooks 启用"
+"hooks_enabled" = "钩子脚本已启用"
+"batch_installing" = "批量安装 {0} 个软件..."
+"batch_success" = "批量安装完成: {0}/{1} 成功"
+"batch_failed" = "批量安装部分失败，回退逐个安装..."
+}
+}
 
 # ============================================
 # Japanese - ja
@@ -409,13 +412,16 @@ function Initialize-LanguageStrings {
 "update_failed" = "アップデート失敗: {0}"
     "update_prompt" = "新しいバージョンに更新しますか？[Y/n]"
 
-    "hook_running" = "フックを実行: {0}"
-    "hook_success" = "フックの実行が完了しました"
-    "hook_failed" = "フックの実行に失敗しました: {0}"
-    "hooks_disabled" = "フックスクリプトは無効です、--allow-hooks を使用して有効にしてください"
-    "hooks_enabled" = "フックスクリプトが有効になりました"
-    }
-  }
+"hook_running" = "フックを実行: {0}"
+"hook_success" = "フックの実行が完了しました"
+"hook_failed" = "フックの実行に失敗しました: {0}"
+"hooks_disabled" = "フックスクリプトは無効です、--allow-hooks を使用して有効にしてください"
+"hooks_enabled" = "フックスクリプトが有効になりました"
+"batch_installing" = "{0} 個のパッケージを一括インストール中..."
+"batch_success" = "一括インストール完了: {0}/{1} 成功"
+"batch_failed" = "一括インストールが一部失敗しました、個別インストールにフォールバック..."
+}
+}
 
 # ============================================
 # Korean - ko
@@ -546,13 +552,16 @@ $script:LANG = @{
 "update_failed" = "업데이트 실패: {0}"
     "update_prompt" = "새 버전으로 업데이트하시겠습니까？[Y/n]"
 
-    "hook_running" = "후크 실행: {0}"
-    "hook_success" = "후크 실행 완료"
-    "hook_failed" = "후크 실행 실패: {0}"
-    "hooks_disabled" = "후크 스크립트가 비활성화되었습니다, --allow-hooks를 사용하여 활성화하세요"
-    "hooks_enabled" = "후크 스크립트가 활성화되었습니다"
-    }
-  }
+"hook_running" = "후크 실행: {0}"
+"hook_success" = "후크 실행 완료"
+"hook_failed" = "후크 실행 실패: {0}"
+"hooks_disabled" = "후크 스크립트가 비활성화되었습니다, --allow-hooks를 사용하여 활성화하세요"
+"hooks_enabled" = "후크 스크립트가 활성화되었습니다"
+"batch_installing" = "{0}개 패키지 일괄 설치 중..."
+"batch_success" = "일괄 설치 완료: {0}/{1} 성공"
+"batch_failed" = "일괄 설치가 부분적으로 실패했습니다, 개별 설치로 폴백..."
+}
+}
 
 # ============================================
 # Traditional Chinese - zh-Hant
@@ -688,13 +697,16 @@ $script:LANG = @{
 "update_failed" = "更新失敗: {0}"
     "update_prompt" = "是否更新到新版本？[Y/n]"
 
-    "hook_running" = "執行鉤子: {0}"
-    "hook_success" = "鉤子執行完成"
-    "hook_failed" = "鉤子執行失敗: {0}"
-    "hooks_disabled" = "鉤子腳本已禁用，使用 --allow-hooks 啟用"
-    "hooks_enabled" = "鉤子腳本已啟用"
-    }
-  }
+"hook_running" = "執行鉤子: {0}"
+"hook_success" = "鉤子執行完成"
+"hook_failed" = "鉤子執行失敗: {0}"
+"hooks_disabled" = "鉤子腳本已禁用，使用 --allow-hooks 啟用"
+"hooks_enabled" = "鉤子腳本已啟用"
+"batch_installing" = "批量安裝 {0} 個軟體..."
+"batch_success" = "批量安裝完成: {0}/{1} 成功"
+"batch_failed" = "批量安裝部分失敗，回退逐個安裝..."
+}
+}
 
 # ============================================
 # German - de
@@ -830,13 +842,16 @@ $script:LANG = @{
 "update_failed" = "Update fehlgeschlagen: {0}"
     "update_prompt" = "Auf neue Version aktualisieren? [Y/n]"
 
-    "hook_running" = "Hook wird ausgeführt: {0}"
-    "hook_success" = "Hook abgeschlossen"
-    "hook_failed" = "Hook fehlgeschlagen: {0}"
-    "hooks_disabled" = "Hooks deaktiviert, verwenden Sie --allow-hooks zum Aktivieren"
-    "hooks_enabled" = "Hooks aktiviert"
-    }
-  }
+"hook_running" = "Hook wird ausgeführt: {0}"
+"hook_success" = "Hook abgeschlossen"
+"hook_failed" = "Hook fehlgeschlagen: {0}"
+"hooks_disabled" = "Hooks deaktiviert, verwenden Sie --allow-hooks zum Aktivieren"
+"hooks_enabled" = "Hooks aktiviert"
+"batch_installing" = "Batch-Installation von {0} Paketen..."
+"batch_success" = "Batch-Installation abgeschlossen: {0}/{1} erfolgreich"
+"batch_failed" = "Batch-Installation teilweise fehlgeschlagen, Rückgriff auf Einzelinstallation..."
+}
+}
 
 # ============================================
 # French - fr
@@ -972,13 +987,16 @@ $script:LANG = @{
 "update_failed" = "Échec de la mise à jour : {0}"
     "update_prompt" = "Mettre à jour vers la nouvelle version ? [Y/n]"
 
-    "hook_running" = "Exécution du hook : {0}"
-    "hook_success" = "Hook terminé"
-    "hook_failed" = "Échec du hook : {0}"
-    "hooks_disabled" = "Hooks désactivés, utilisez --allow-hooks pour activer"
-    "hooks_enabled" = "Hooks activés"
-    }
-  }
+"hook_running" = "Exécution du hook : {0}"
+"hook_success" = "Hook terminé"
+"hook_failed" = "Échec du hook : {0}"
+"hooks_disabled" = "Hooks désactivés, utilisez --allow-hooks pour activer"
+"hooks_enabled" = "Hooks activés"
+"batch_installing" = "Installation groupée de {0} paquets..."
+"batch_success" = "Installation groupée terminée : {0}/{1} réussis"
+"batch_failed" = "Installation groupée partiellement échouée, retour à l'installation individuelle..."
+}
+}
 
 # ============================================
 # Arabic - ar (LTR for terminal compatibility)
@@ -1114,13 +1132,16 @@ $script:LANG = @{
 "update_failed" = "فشل التحديث: {0}"
     "update_prompt" = "هل تريد التحديث إلى الإصدار الجديد؟ [Y/n]"
 
-    "hook_running" = "تشغيل البرنامج النصي: {0}"
-    "hook_success" = "اكتمل البرنامج النصي"
-    "hook_failed" = "فشل البرنامج النصي: {0}"
-    "hooks_disabled" = "البرامج النصية معطلة، استخدم --allow-hooks للتمكين"
-    "hooks_enabled" = "البرامج النصية ممكنة"
-    }
-  }
+"hook_running" = "تشغيل البرنامج النصي: {0}"
+"hook_success" = "اكتمل البرنامج النصي"
+"hook_failed" = "فشل البرنامج النصي: {0}"
+"hooks_disabled" = "البرامج النصية معطلة، استخدم --allow-hooks للتمكين"
+"hooks_enabled" = "البرامج النصية ممكنة"
+"batch_installing" = "تثبيت {0} حزمة دفعة واحدة..."
+"batch_success" = "اكتمل التثبيت الدفعي: {0}/{1} نجح"
+"batch_failed" = "فشل التثبيت الدفعي جزئياً، الرجوع إلى التثبيت الفردي..."
+}
+}
 
 # ============================================
 # Portuguese - pt
@@ -1256,13 +1277,16 @@ $script:LANG = @{
 "update_failed" = "Falha na atualização: {0}"
     "update_prompt" = "Atualizar para a nova versão? [Y/n]"
 
-    "hook_running" = "Executando hook: {0}"
-    "hook_success" = "Hook concluído"
-    "hook_failed" = "Falha no hook: {0}"
-    "hooks_disabled" = "Hooks desativados, use --allow-hooks para ativar"
-    "hooks_enabled" = "Hooks ativados"
-    }
-  }
+"hook_running" = "Executando hook: {0}"
+"hook_success" = "Hook concluído"
+"hook_failed" = "Falha no hook: {0}"
+"hooks_disabled" = "Hooks desativados, use --allow-hooks para ativar"
+"hooks_enabled" = "Hooks ativados"
+"batch_installing" = "Instalação em lote de {0} pacotes..."
+"batch_success" = "Instalação em lote concluída: {0}/{1} sucedidos"
+"batch_failed" = "Instalação em lote parcialmente falhou, voltando à instalação individual..."
+}
+}
 
 # ============================================
 # Italian - it
@@ -1398,13 +1422,16 @@ $script:LANG = @{
 "update_failed" = "Aggiornamento fallito: {0}"
     "update_prompt" = "Aggiornare alla nuova versione? [Y/n]"
 
-    "hook_running" = "Esecuzione hook: {0}"
-    "hook_success" = "Hook completato"
-    "hook_failed" = "Hook fallito: {0}"
-    "hooks_disabled" = "Hook disabilitati, usa --allow-hooks per abilitare"
-    "hooks_enabled" = "Hook abilitati"
-    }
-  }
+"hook_running" = "Esecuzione hook: {0}"
+"hook_success" = "Hook completato"
+"hook_failed" = "Hook fallito: {0}"
+"hooks_disabled" = "Hook disabilitati, usa --allow-hooks per abilitare"
+"hooks_enabled" = "Hook abilitati"
+"batch_installing" = "Installazione batch di {0} pacchetti..."
+"batch_success" = "Installazione batch completata: {0}/{1} riusciti"
+"batch_failed" = "Installazione batch parzialmente fallita, ritorno all'installazione individuale..."
+}
+}
 
 # ============================================
 # English (default) - en-US
@@ -1540,15 +1567,20 @@ $script:LANG = @{
 "update_failed" = "Update failed: {0}"
     "update_prompt" = "Update to new version? [Y/n]"
 
-    "hook_running" = "Running hook: {0}"
-    "hook_success" = "Hook completed"
-    "hook_failed" = "Hook failed: {0}"
-    "hooks_disabled" = "Hooks disabled, use --allow-hooks to enable"
-    "hooks_enabled" = "Hooks enabled"
-    }
-  }
+"hook_running" = "Running hook: {0}"
+"hook_success" = "Hook completed"
+"hook_failed" = "Hook failed: {0}"
+"hooks_disabled" = "Hooks disabled, use --allow-hooks to enable"
+"hooks_enabled" = "Hooks enabled"
+"batch_installing" = "Batch installing {0} packages..."
+"batch_success" = "Batch install complete: {0}/{1} succeeded"
+"batch_failed" = "Batch install partially failed, falling back to individual install..."
+}
 }
 
+
+# ============================================
+# Main script logic
 # ============================================
 # Logging functions
 # ============================================
@@ -1791,582 +1823,101 @@ function Test-SoftwareInstalled {
         if ($LASTEXITCODE -eq 0) { return $true }
         return $false
     } catch {
-        return $false
-    }
+    return $false
+  }
 }
 
-# ============================================
-# TUI Functions
-# ============================================
-function Show-Banner {
-    param([string]$Lang)
-    
-    $title = switch ($Lang) {
-        "zh-CN" { "快速配置新电脑软件环境" }
-        "zh-Hant" { "快速設定新電腦軟件環境" }
-        "ja" { "新PCのソフトウェア環境を素早く設定" }
-        "ko" { "새 PC 소프트웨어 환경을 빠르게 설정" }
-        "de" { "Schnelle Einrichtung für neue Computer" }
-        "fr" { "Configuration rapide pour nouveaux ordinateurs" }
-        "ar" { "إعداد سريع لأجهزة الكمبيوتر الجديدة" }
-        "pt" { "Configuração rápida para novos computadores" }
-        "it" { "Configurazione rapida per nuovi computer" }
-        default { "Quick setup for new computers" }
-    }
-    
-    Write-Host ""
-    Write-Host "╔══════════════════════════════════════╗" -ForegroundColor Cyan
-    Write-Host "║  ██████╗ ███████╗██████╗  ██████╗    ║" -ForegroundColor Cyan
-    Write-Host "║ ██╔═══██╗██╔════╝██╔══██╗██╔════╝    ║" -ForegroundColor Cyan
-    Write-Host "║ ██║   ██║███████╗██████╔╝██║         ║" -ForegroundColor Cyan
-    Write-Host "║ ██║▄▄ ██║╚════██║██╔═══╝ ██║         ║" -ForegroundColor Cyan
-    Write-Host "║ ╚██████╔╝███████║██║     ╚██████╗    ║" -ForegroundColor Cyan
-    Write-Host "║  ╚══▀▀═╝ ╚══════╝╚═╝      ╚═════╝    ║" -ForegroundColor Cyan
-    Write-Host "║          Quickstart-PC              ║" -ForegroundColor Cyan
-    Write-Host "╚══════════════════════════════════════╝" -ForegroundColor Cyan
-    Write-Host ""
-}
+function Install-Batch {
+  param([string]$Path, [string]$OS, [string]$Manager, [string[]]$Keys)
 
-function Select-Language {
-    if ($lang) {
-        $mapped = $script:LANGUAGE_MAPPINGS[$lang]
-        if ($mapped) { return $mapped }
-        if ($script:SUPPORTED_LANGUAGES[$lang]) { return $lang }
-        return "en-US"
+  $platform = switch ($OS) {
+    "windows" { "win" }
+    "macos" { "mac" }
+    "linux" {
+      $pkgMgr = Get-PackageManager -OS "linux"
+      switch ($pkgMgr) {
+        "dnf" { "linux_dnf" }
+        "pacman" { "linux_pacman" }
+        default { "linux" }
+      }
     }
-    
-    Write-Host ""
-    Write-Host "╔══════════════════════════════════════╗" -ForegroundColor Cyan
-    Write-Host "║  ██████╗ ███████╗██████╗  ██████╗    ║" -ForegroundColor Cyan
-    Write-Host "║ ██╔═══██╗██╔════╝██╔══██╗██╔════╝    ║" -ForegroundColor Cyan
-    Write-Host "║ ██║   ██║███████╗██████╔╝██║         ║" -ForegroundColor Cyan
-    Write-Host "║ ██║▄▄ ██║╚════██║██╔═══╝ ██║         ║" -ForegroundColor Cyan
-    Write-Host "║ ╚██████╔╝███████║██║     ╚██████╗    ║" -ForegroundColor Cyan
-    Write-Host "║  ╚══▀▀═╝ ╚══════╝╚═╝      ╚═════╝    ║" -ForegroundColor Cyan
-    Write-Host "║          Quickstart-PC              ║" -ForegroundColor Cyan
-    Write-Host "╚══════════════════════════════════════╝" -ForegroundColor Cyan
-    Write-Host ""
-    Write-Host "$($script:LANG["lang_prompt"]):" -ForegroundColor White
-    Write-Host ""
-    
-    $items = @()
-    $langCodes = @()
-    
-    foreach ($code in @("en-US", "zh-CN", "zh-Hant", "ja", "ko", "de", "fr", "ar", "pt", "it")) {
-        if ($script:SUPPORTED_LANGUAGES[$code]) {
-            $langCodes += $code
-            $items += $script:SUPPORTED_LANGUAGES[$code]
-        }
-    }
-    
-    $cursor = 0
-    
-    $oldVisible = Get-CursorVisible
-    Set-CursorVisible -Visible $false
-    
-    try {
-        while ($true) {
-            for ($i = 0; $i -lt $items.Count; $i++) {
-                [Console]::SetCursorPosition(0, [Console]::CursorTop - $items.Count + $i)
-                Write-Host ("`r" + (" " * 60))
-                [Console]::SetCursorPosition(0, [Console]::CursorTop - $items.Count + $i)
-            }
-            
-            for ($i = 0; $i -lt $items.Count; $i++) {
-                if ($i -eq $cursor) {
-                    Write-Host "  ▶ $($items[$i])" -ForegroundColor Yellow
-                } else {
-                    Write-Host "    $($items[$i])"
-                }
-            }
-            
-            $key = [Console]::ReadKey($true)
-            
-            switch ($key.Key) {
-                "UpArrow" { $cursor--; if ($cursor -lt 0) { $cursor = $items.Count - 1 } }
-                "DownArrow" { $cursor++; if ($cursor -ge $items.Count) { $cursor = 0 } }
-                "Enter" { break }
-            }
-        }
-    } finally {
-        Set-CursorVisible -Visible $oldVisible
-    }
-    
-    Write-Host ""
-    
-    return $langCodes[$cursor]
-}
-
-function Show-ProfileMenu {
-    param([string]$Path)
-    
-    $profileKeys = Get-ProfileKeys -Path $Path
-    if ($profileKeys.Count -eq 0) {
-        Write-Log "No profiles found" "ERROR"
-        return ""
-    }
-    
-    $menuItems = @()
-    $profileData = @()
-    
-    foreach ($key in $profileKeys) {
-        $name = Get-ProfileField -Path $Path -Key $key -Field "name"
-        $desc = Get-ProfileField -Path $Path -Key $key -Field "desc"
-        $icon = Get-ProfileField -Path $Path -Key $key -Field "icon"
-        
-        $menuItems += "$icon $name - $desc"
-        $profileData += @{ Key = $key; Name = $name; Desc = $desc; Icon = $icon }
-    }
-    
-  $menuStartLine = [Console]::CursorTop
-
-  Write-Host ""
-  Write-Header ($script:LANG["select_profiles"])
-  Write-Host " $($script:LANG["navigate"])" -ForegroundColor Cyan
-  Write-Host ""
-
-  $cursor = 0
-    $oldVisible = Get-CursorVisible
-    Set-CursorVisible -Visible $false
-    
-    try {
-        while ($true) {
-            for ($i = 0; $i -lt $menuItems.Count; $i++) {
-                if ($i -eq $cursor) {
-                    Write-Host "  ▶ $($menuItems[$i])" -ForegroundColor Yellow
-                } else {
-                    Write-Host "    $($menuItems[$i])"
-                }
-            }
-            
-            $key = [Console]::ReadKey($true)
-            
-            switch ($key.Key) {
-                "UpArrow" { 
-                    $cursor--; 
-                    if ($cursor -lt 0) { $cursor = $menuItems.Count - 1 } 
-                }
-                "DownArrow" { 
-                    $cursor++; 
-                    if ($cursor -ge $menuItems.Count) { $cursor = 0 } 
-                }
-                "Enter" { break }
-            }
-            
-            for ($i = 0; $i -lt $menuItems.Count; $i++) {
-                [Console]::SetCursorPosition(0, [Console]::CursorTop - 1)
-                Write-Host ("`r" + (" " * 80))
-                [Console]::SetCursorPosition(0, [Console]::CursorTop - 1)
-            }
-        }
-  } finally {
-    Set-CursorVisible -Visible $oldVisible
+    default { "" }
   }
 
-  [Console]::SetCursorPosition(0, $menuStartLine)
-  [Console]::Write([char]27 + "[J")
+  $packages = @()
+  $batchable = $true
 
-  return $profileData[$cursor].Key
-}
-
-function Show-SoftwareMenu {
-    param([string]$Path, [string]$OS, [string]$ProfileKey)
-    
-    $includes = Get-ProfileIncludes -Path $Path -Key $ProfileKey
-    if ($includes.Count -eq 0) {
-        Write-Log "No software in profile" "WARN"
-        return @()
+  foreach ($key in $Keys) {
+    $cmd = Get-SoftwareField -Path $Path -Key $key -Field $platform
+    $pkgName = ""
+    switch ($Manager) {
+      "apt" {
+        $pkgName = ($cmd -replace 'sudo apt install[^ ]* ', '') -split ' ' | Select-Object -First 1
+      }
+      "brew" {
+        $pkgName = ($cmd -split ' ') | Select-Object -Last 1
+      }
+      "winget" {
+        $pkgName = ($cmd -replace 'winget install ', '') -split ' ' | Select-Object -First 1
+      }
+      "npm" {
+        $pkgName = ($cmd -replace 'npm install[^ ]* ', '') -split ' ' | Select-Object -First 1
+      }
+      "dnf" {
+        $pkgName = ($cmd -replace 'sudo dnf install[^ ]* ', '') -split ' ' | Select-Object -First 1
+      }
+      "pacman" {
+        $pkgName = ($cmd -replace 'sudo pacman[^ ]* ', '') -split ' ' | Select-Object -First 1
+      }
+      default {
+        $batchable = $false
+        break
+      }
     }
-    
-    $filtered = @()
-    foreach ($sw in $includes) {
-        if ($only.Count -gt 0 -and $only -notcontains $sw) { continue }
-        if ($skip.Count -gt 0 -and $skip -contains $sw) { continue }
-        $filtered += $sw
+    if ($pkgName) {
+      $packages += $pkgName
     }
-    
-    if ($filtered.Count -eq 0) {
-        Write-Log "No software after filtering" "WARN"
-        return @()
-    }
-    
-    $menuItems = @()
-    $swData = @()
-    $checked = @()
-    
-    $menuItems += $script:LANG["select_all"]
-    $swData += @{ Key = "__select_all__"; Name = $script:LANG["select_all"] }
-    $checked += $false
-    
-    foreach ($sw in $filtered) {
-        $name = Get-SoftwareField -Path $Path -Key $sw -Field "name"
-        $desc = Get-SoftwareField -Path $Path -Key $sw -Field "desc"
-        
-        $installed = Test-SoftwareInstalled -Path $Path -Key $sw -OS $OS
-        $displayName = if ($installed) { "$name - $desc [$($script:LANG["installed"])]" } else { "$name - $desc" }
-        
-        $menuItems += $displayName
-        $swData += @{ Key = $sw; Name = $name; Desc = $desc; Installed = $installed }
-        $checked += $false
-    }
-    
-  $menuStartLine = [Console]::CursorTop
-
-  Write-Host ""
-  Write-Header ($script:LANG["select_software"])
-  Write-Host " $($script:LANG["navigate_multi"])" -ForegroundColor Cyan
-  Write-Host ""
-
-  $cursor = 0
-    $oldVisible = Get-CursorVisible
-    Set-CursorVisible -Visible $false
-    
-    try {
-        while ($true) {
-            for ($i = 0; $i -lt $menuItems.Count; $i++) {
-                $prefix = if ($checked[$i]) { $script:LANG["selected"] } else { $script:LANG["not_selected"] }
-                
-                if ($i -eq 0) {
-                    $prefix = if ($checked[$i]) { "[✓] " } else { "[  ] " }
-                }
-                
-                if ($i -eq $cursor) {
-                    if ($checked[$i]) {
-                        Write-Host "  $($prefix)$($menuItems[$i])" -ForegroundColor Yellow -BackgroundColor DarkGray
-                    } else {
-                        Write-Host "  ▶ $($menuItems[$i])" -ForegroundColor Yellow
-                    }
-                } else {
-                    if ($checked[$i]) {
-                        Write-Host "  $($prefix)$($menuItems[$i])" -ForegroundColor Green
-                    } else {
-                        Write-Host "  $($prefix)$($menuItems[$i])"
-                    }
-                }
-            }
-            
-            $key = [Console]::ReadKey($true)
-            
-            switch ($key.Key) {
-                "UpArrow" { 
-                    $cursor--; 
-                    if ($cursor -lt 0) { $cursor = $menuItems.Count - 1 } 
-                }
-                "DownArrow" { 
-                    $cursor++; 
-                    if ($cursor -ge $menuItems.Count) { $cursor = 0 } 
-                }
-                "Spacebar" { 
-                    if ($cursor -eq 0) {
-                        $newState = -not $checked[0]
-                        for ($i = 0; $i -lt $checked.Count; $i++) {
-                            $checked[$i] = $newState
-                        }
-                    } else {
-                        $checked[$cursor] = -not $checked[$cursor]
-                    }
-                }
-                "Enter" { break }
-            }
-            
-            for ($i = 0; $i -lt $menuItems.Count; $i++) {
-                [Console]::SetCursorPosition(0, [Console]::CursorTop - 1)
-                Write-Host ("`r" + (" " * 80))
-                [Console]::SetCursorPosition(0, [Console]::CursorTop - 1)
-            }
-        }
-  } finally {
-    Set-CursorVisible -Visible $oldVisible
   }
 
-  [Console]::SetCursorPosition(0, $menuStartLine)
-  [Console]::Write([char]27 + "[J")
-
-  $selected = @()
-    for ($i = 1; $i -lt $swData.Count; $i++) {
-        if ($checked[$i]) {
-            $selected += $swData[$i].Key
-        }
+  if (-not $batchable -or $packages.Count -le 1) {
+    foreach ($key in $Keys) {
+      Install-Software -Path $Path -OS $OS -Key $key
     }
-    
-    return $selected
-}
+    return
+  }
 
-function Select-CustomSoftware {
-    param([string]$Path, [string]$OS, [string]$ProfileKey)
+  Write-Log ($script:LANG["batch_installing"] -f $packages.Count) "INFO"
 
-    $includes = Get-ProfileIncludes -Path $Path -Key $ProfileKey
-    if ($includes.Count -eq 0) {
-        Write-Log "No software in profile" "WARN"
-        return @()
-    }
-
-    $menuItems = @()
-    $swData = @()
-    $checked = @()
-
-    # First item: "Select All / Deselect All"
-    $menuItems += $script:LANG["select_all"]
-    $swData += @{ Key = "__select_all__"; Name = $script:LANG["select_all"] }
-    $checked += $false
-
-    foreach ($sw in $includes) {
-        $name = Get-SoftwareField -Path $Path -Key $sw -Field "name"
-        $desc = Get-SoftwareField -Path $Path -Key $sw -Field "desc"
-        $icon = Get-SoftwareField -Path $Path -Key $sw -Field "icon"
-
-        $installed = Test-SoftwareInstalled -Path $Path -Key $sw -OS $OS
-
-        $displayName = if ($icon) { "$icon $name" } else { $name }
-        if ($installed) {
-            $displayName = "$displayName - $desc [$($script:LANG["installed"])]"
-        } else {
-            $displayName = "$displayName - $desc"
-        }
-
-        $menuItems += $displayName
-        $swData += @{ Key = $sw; Name = $name; Desc = $desc; Icon = $icon; Installed = $installed }
-        $checked += $false
-    }
-
-    $numItems = $menuItems.Count
-    $cursor = 0
-    $running = $true
-
-    $menuStartLine = [Console]::CursorTop
-
-    Write-Host ""
-    Write-Header ($script:LANG["custom_title"])
-    Write-Host " $($script:LANG["custom_space_toggle"]) | $($script:LANG["custom_enter_confirm"]) | $($script:LANG["custom_a_select_all"])" -ForegroundColor Cyan
-    Write-Host ""
-
-    $oldVisible = Get-CursorVisible
-    Set-CursorVisible -Visible $false
-
-    try {
-        while ($running) {
-            # Draw all items
-            for ($i = 0; $i -lt $numItems; $i++) {
-                $prefix = if ($i -eq 0) {
-                    if ($checked[$i]) { "[✓] " } else { "[ ] " }
-                } else {
-                    if ($checked[$i]) { $script:LANG["selected"] } else { $script:LANG["not_selected"] }
-                }
-
-                $lineText = "$prefix$($menuItems[$i])"
-
-                if ($i -eq $cursor) {
-                    # Cursor line with selection indicator
-                    if ($checked[$i]) {
-                        Write-Host " >$lineText" -ForegroundColor Green
-                    } else {
-                        Write-Host " >$lineText" -ForegroundColor Yellow
-                    }
-                } else {
-                    if ($checked[$i]) {
-                        if ($swData[$i].Installed -and $i -gt 0) {
-                            Write-Host "  $lineText" -ForegroundColor DarkGray
-                        } else {
-                            Write-Host "  $lineText" -ForegroundColor Green
-                        }
-                    } else {
-                        if ($swData[$i].Installed -and $i -gt 0) {
-                            Write-Host "  $lineText" -ForegroundColor DarkGray
-                        } else {
-                            Write-Host "  $lineText"
-                        }
-                    }
-                }
-            }
-
-            # Show selected count at bottom
-            $selectedCount = 0
-            for ($i = 1; $i -lt $checked.Count; $i++) {
-                if ($checked[$i]) { $selectedCount++ }
-            }
-            $countText = $script:LANG["custom_selected"] -f $selectedCount, ($numItems - 1)
-            Write-Host ""
-            Write-Host " $countText" -ForegroundColor Cyan
-
-            $keyInfo = [Console]::ReadKey($true)
-
-            switch ($keyInfo.Key) {
-                "UpArrow" {
-                    $cursor--
-                    if ($cursor -lt 0) { $cursor = $numItems - 1 }
-                }
-                "DownArrow" {
-                    $cursor++
-                    if ($cursor -ge $numItems) { $cursor = 0 }
-                }
-                "Spacebar" {
-                    if ($cursor -eq 0) {
-                        # Toggle all
-                        $newState = -not $checked[0]
-                        for ($i = 0; $i -lt $checked.Count; $i++) {
-                            $checked[$i] = $newState
-                        }
-                    } else {
-                        $checked[$cursor] = -not $checked[$cursor]
-                    }
-                }
-                "A" {
-                    # Toggle all (same as space on first item)
-                    $newState = -not $checked[0]
-                    for ($i = 0; $i -lt $checked.Count; $i++) {
-                        $checked[$i] = $newState
-                    }
-                }
-                "Enter" {
-                    $running = $false
-                }
-            }
-
-            # Clear screen for redraw (move cursor up and clear lines)
-            $totalLines = $numItems + 2  # items + header spacing + count line
-            for ($i = 0; $i -lt $totalLines; $i++) {
-                [Console]::SetCursorPosition(0, [Console]::CursorTop - 1)
-                Write-Host ("`r" + (" " * [Console]::WindowWidth)) -NoNewline
-                [Console]::SetCursorPosition(0, [Console]::CursorTop - 1)
-            }
-        }
-    } finally {
-        Set-CursorVisible -Visible $oldVisible
-    }
-
-    # Clear menu area
-    [Console]::SetCursorPosition(0, $menuStartLine)
-    [Console]::Write([char]27 + "[J")
-
-    # Return selected software keys (skip the "select all" item at index 0)
-    $selected = @()
-    for ($i = 1; $i -lt $swData.Count; $i++) {
-        if ($checked[$i]) {
-            $selected += $swData[$i].Key
-        }
-    }
-
-    return $selected
-}
-
-function Select-Continue {
-    param([string]$ContinueText, [string]$ExitText)
-    
-    $cursor = 0
-    $oldVisible = Get-CursorVisible
-    Set-CursorVisible -Visible $false
-    
-    try {
-        while ($true) {
-            Write-Host "`r" -NoNewline
-            if ($cursor -eq 0) {
-                Write-Host "  ▶ $ContinueText    $ExitText" -ForegroundColor Yellow
-            } else {
-                Write-Host "    $ContinueText    ▶ $ExitText" -ForegroundColor Yellow
-            }
-            
-            $key = [Console]::ReadKey($true)
-            
-            switch ($key.Key) {
-                "LeftArrow" { $cursor = 0 }
-                "RightArrow" { $cursor = 1 }
-                "Enter" { 
-                    Set-CursorVisible -Visible $oldVisible
-                    Write-Host ""
-                    return $cursor 
-                }
-            }
-        }
-    } finally {
-        Set-CursorVisible -Visible $oldVisible
-    }
-}
-
-# ============================================
-# Installation functions
-# ============================================
-function Install-Software {
-    param([string]$Path, [string]$OS, [string]$Key)
-    
-    $platform = switch ($OS) {
-        "windows" { "win" }
-        "macos" { "mac" }
-        "linux" { 
-            $pkgMgr = Get-PackageManager -OS "linux"
-            switch ($pkgMgr) {
-                "dnf" { "linux_dnf" }
-                "pacman" { "linux_pacman" }
-                default { "linux" }
-            }
-        }
-        default { "" }
-    }
-    
-    $cmd = Get-SoftwareField -Path $Path -Key $Key -Field $platform
-    
-    if (-not $cmd) {
-        Write-Log "$($script:LANG["platform_not_supported"]): $Key" "WARN"
-        return $false
-    }
-    
-    if ($dryRun) {
-        Write-Log "$($script:LANG["dry_run_installing"]): $Key" "STEP"
-        Write-Host "  → Command: $cmd" -ForegroundColor Cyan
-        Start-Sleep -Milliseconds 500
-        Write-Log "$Key $($script:LANG["install_success"]) (simulated)" "SUCCESS"
-        return $true
-    }
-    
-  Write-Log "$($script:LANG["installing"]): $Key" "STEP"
+  $batchCmd = ""
+  switch ($Manager) {
+    "apt" { $batchCmd = "sudo apt install -y $($packages -join ' ')" }
+    "brew" { $batchCmd = "brew install $($packages -join ' ')" }
+    "winget" { $batchCmd = "winget install $($packages -join ' ')" }
+    "npm" { $batchCmd = "npm install -g $($packages -join ' ')" }
+    "dnf" { $batchCmd = "sudo dnf install -y $($packages -join ' ')" }
+    "pacman" { $batchCmd = "sudo pacman -S --noconfirm $($packages -join ' ')" }
+  }
 
   $errorOutput = ""
   try {
-    $errorOutput = Invoke-Expression $cmd 2>&1 | Out-String
+    $errorOutput = Invoke-Expression $batchCmd 2>&1 | Out-String
     if ($LASTEXITCODE -eq 0) {
-      Write-Log "$Key $($script:LANG["install_success"])" "SUCCESS"
-      $script:INSTALL_LAST_ERROR = ""
-      return $true
+      Write-Log ($script:LANG["batch_success"] -f $packages.Count, $packages.Count) "SUCCESS"
+      foreach ($key in $Keys) {
+        $script:installedList += $key
+      }
     } else {
-      Write-Log "$Key $($script:LANG["install_failed"]): $errorOutput" "ERROR"
-      $script:INSTALL_LAST_ERROR = $errorOutput
-      # Classify network errors
-      if ($script:INSTALL_LAST_ERROR -match "timed out|timeout|Connection timed|could not resolve|超时|逾時|名前解決|시간 초과") {
-        Write-Host ""
-        Write-Host "  $($script:LANG["network_timeout"])" -ForegroundColor Yellow
-        Write-Host "  $($script:LANG["check_network"])" -ForegroundColor Yellow
-  } elseif ($script:INSTALL_LAST_ERROR -match "Connection refused|Network is unreachable|No route to host|接続を拒否|연결 거부") {
-      Write-Host ""
-      $firstLine = ($script:INSTALL_LAST_ERROR -split "`n")[0]
-      Write-Host " $($script:LANG["network_error"] -f $firstLine)" -ForegroundColor Yellow
-      Write-Host " $($script:LANG["check_network"])" -ForegroundColor Yellow
-    } elseif ($script:INSTALL_LAST_ERROR -match "Permission denied|not allowed|Operation not permitted|EACCES|権限がありません|권한이 없습니다|Berechtigung verweigert|Permission refusée|权限不足|權限不足") {
-      Write-Host ""
-      $firstLine = ($script:INSTALL_LAST_ERROR -split "`n")[0]
-      Write-Host " $($script:LANG["permission_denied"] -f $firstLine)" -ForegroundColor Yellow
-      Write-Host " $($script:LANG["permission_suggestion"])" -ForegroundColor Yellow
+      Write-Log $script:LANG["batch_failed"] "WARN"
+      foreach ($key in $Keys) {
+        Install-Software -Path $Path -OS $OS -Key $key
+      }
     }
-    return $false
+  } catch {
+    Write-Log $script:LANG["batch_failed"] "WARN"
+    foreach ($key in $Keys) {
+      Install-Software -Path $Path -OS $OS -Key $key
+    }
   }
-} catch {
-    Write-Log "$Key $($script:LANG["install_failed"]): $_" "ERROR"
-    $script:INSTALL_LAST_ERROR = "$_"
-    # Classify network errors in catch block
-    if ($script:INSTALL_LAST_ERROR -match "timed out|timeout|Connection timed|could not resolve|超时|逾時|名前解決|시간 초과") {
-      Write-Host ""
-      Write-Host "  $($script:LANG["network_timeout"])" -ForegroundColor Yellow
-      Write-Host "  $($script:LANG["check_network"])" -ForegroundColor Yellow
-  } elseif ($script:INSTALL_LAST_ERROR -match "Connection refused|Network is unreachable|No route to host|接続を拒否|연결 거부") {
-      Write-Host ""
-      $firstLine = ($script:INSTALL_LAST_ERROR -split "`n")[0]
-      Write-Host " $($script:LANG["network_error"] -f $firstLine)" -ForegroundColor Yellow
-      Write-Host " $($script:LANG["check_network"])" -ForegroundColor Yellow
-    } elseif ($script:INSTALL_LAST_ERROR -match "Permission denied|not allowed|Operation not permitted|EACCES|権限がありません|권한이 없습니다|Berechtigung verweigert|Permission refusée|权限不足|權限不足") {
-      Write-Host ""
-      $firstLine = ($script:INSTALL_LAST_ERROR -split "`n")[0]
-      Write-Host " $($script:LANG["permission_denied"] -f $firstLine)" -ForegroundColor Yellow
-      Write-Host " $($script:LANG["permission_suggestion"])" -ForegroundColor Yellow
-    }
-    return $false
 }
 
 # ============================================
@@ -3527,42 +3078,156 @@ $script:installedList = @()
 $script:failedList = @()
 $installStartTime = Get-Date
 
-Invoke-HookScript -HookType "pre_install"
+  Invoke-HookScript -HookType "pre_install"
 
-foreach ($sw in $toInstall) {
-    $current++
-    $swName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "name"
-    $swIcon = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "icon"
-    $swDisplay = if ($swIcon) { "$swIcon $swName" } else { $swName }
-    $bar = Draw-ProgressBar -Current $current -Total $total
-    Write-Host "`r $bar $current/$total $swDisplay - $($h["installing"])..." -NoNewline -ForegroundColor Cyan
+  if ($dryRun) {
+    foreach ($sw in $toInstall) {
+      $current++
+      $swName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "name"
+      $swIcon = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "icon"
+      $swDisplay = if ($swIcon) { "$swIcon $swName" } else { $swName }
+      $bar = Draw-ProgressBar -Current $current -Total $total
+      Write-Host "`r $bar $current/$total $swDisplay - $($h["installing"])..." -NoNewline -ForegroundColor Cyan
 
-    $env:SOFTWARE_KEY = $sw
-    $env:SOFTWARE_NAME = $swName
-    Invoke-HookScript -HookType "pre_software"
+      $env:SOFTWARE_KEY = $sw
+      $env:SOFTWARE_NAME = $swName
+      Invoke-HookScript -HookType "pre_software"
 
-    $swStart = Get-Date
-    $result = Install-Software -Path $script:CONFIG_FILE -OS $os -Key $sw
-    $swEnd = Get-Date
-    $swElapsed = [math]::Round(($swEnd - $swStart).TotalSeconds)
+      $swStart = Get-Date
+      $result = Install-Software -Path $script:CONFIG_FILE -OS $os -Key $sw
+      $swEnd = Get-Date
+      $swElapsed = [math]::Round(($swEnd - $swStart).TotalSeconds)
 
-    if ($result) {
-      Write-Host "`r $bar $current/$total $swDisplay - " -NoNewline
-      Write-Host "$($h["install_success"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Green
-      $script:installedList += $sw
-    } else {
-      Write-Host "`r $bar $current/$total $swDisplay - " -NoNewline
-      Write-Host "$($h["install_failed"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Red
-      $script:failedList += $sw
-      if ($failFast) {
-        Write-Host ""
-        Write-Log "Fail-fast: stopping at $swName" "ERROR"
-        Save-InstallState
-        break
+      if ($result) {
+        Write-Host "`r $bar $current/$total $swDisplay - " -NoNewline
+        Write-Host "$($h["install_success"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Green
+        $script:installedList += $sw
+      } else {
+        Write-Host "`r $bar $current/$total $swDisplay - " -NoNewline
+        Write-Host "$($h["install_failed"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Red
+        $script:failedList += $sw
+        if ($failFast) {
+          Write-Host ""
+          Write-Log "Fail-fast: stopping at $swName" "ERROR"
+          Save-InstallState
+          break
+        }
+      }
+      Invoke-HookScript -HookType "post_software"
+      Save-InstallState
+    }
+  } else {
+    $platform = switch ($os) {
+      "windows" { "win" }
+      "macos" { "mac" }
+      "linux" {
+        $pkgMgr = Get-PackageManager -OS "linux"
+        switch ($pkgMgr) {
+          "dnf" { "linux_dnf" }
+          "pacman" { "linux_pacman" }
+          default { "linux" }
+        }
       }
     }
-    Invoke-HookScript -HookType "post_software"
-    Save-InstallState
+
+    $aptPackages = @()
+    $brewPackages = @()
+    $wingetPackages = @()
+    $npmPackages = @()
+    $dnfPackages = @()
+    $pacmanPackages = @()
+    $otherPackages = @()
+
+    foreach ($sw in $toInstall) {
+      $cmd = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field $platform
+      $firstWord = ($cmd -split ' ')[0]
+      $manager = ""
+
+      if ($firstWord -eq "sudo") {
+        $secondWord = ($cmd -split ' ')[1]
+        switch ($secondWord) {
+          "apt" { $manager = "apt" }
+          "dnf" { $manager = "dnf" }
+          "pacman" { $manager = "pacman" }
+          default { $manager = "other" }
+        }
+      } elseif ($firstWord -eq "brew") {
+        $manager = "brew"
+      } elseif ($firstWord -eq "winget") {
+        $manager = "winget"
+      } elseif ($firstWord -eq "npm") {
+        $manager = "npm"
+      } else {
+        $manager = "other"
+      }
+
+      switch ($manager) {
+        "apt" { $aptPackages += $sw }
+        "brew" { $brewPackages += $sw }
+        "winget" { $wingetPackages += $sw }
+        "npm" { $npmPackages += $sw }
+        "dnf" { $dnfPackages += $sw }
+        "pacman" { $pacmanPackages += $sw }
+        default { $otherPackages += $sw }
+      }
+    }
+
+    function Process-BatchGroup {
+      param([string]$Manager, [string[]]$Keys)
+      if ($Keys.Count -eq 0) { return }
+
+      if ($Keys.Count -eq 1) {
+        $sw = $Keys[0]
+        $script:current++
+        $swName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "name"
+        $swIcon = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "icon"
+        $swDisplay = if ($swIcon) { "$swIcon $swName" } else { $swName }
+        $bar = Draw-ProgressBar -Current $script:current -Total $script:total
+        Write-Host "`r $bar $script:current/$script:total $swDisplay - $($h["installing"])..." -NoNewline -ForegroundColor Cyan
+
+        $env:SOFTWARE_KEY = $sw
+        $env:SOFTWARE_NAME = $swName
+        Invoke-HookScript -HookType "pre_software"
+
+        $swStart = Get-Date
+        $result = Install-Software -Path $script:CONFIG_FILE -OS $os -Key $sw
+        $swEnd = Get-Date
+        $swElapsed = [math]::Round(($swEnd - $swStart).TotalSeconds)
+
+        if ($result) {
+          Write-Host "`r $bar $script:current/$script:total $swDisplay - " -NoNewline
+          Write-Host "$($h["install_success"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Green
+          $script:installedList += $sw
+        } else {
+          Write-Host "`r $bar $script:current/$script:total $swDisplay - " -NoNewline
+          Write-Host "$($h["install_failed"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Red
+          $script:failedList += $sw
+          if ($failFast) {
+            Write-Host ""
+            Write-Log "Fail-fast: stopping at $swName" "ERROR"
+            Save-InstallState
+            return
+          }
+        }
+        Invoke-HookScript -HookType "post_software"
+        Save-InstallState
+      } else {
+        Install-Batch -Path $script:CONFIG_FILE -OS $os -Manager $Manager -Keys $Keys
+        foreach ($sw in $Keys) {
+          Invoke-HookScript -HookType "pre_software"
+          Invoke-HookScript -HookType "post_software"
+          Save-InstallState
+        }
+      }
+    }
+
+    Process-BatchGroup -Manager "apt" -Keys $aptPackages
+    Process-BatchGroup -Manager "brew" -Keys $brewPackages
+    Process-BatchGroup -Manager "winget" -Keys $wingetPackages
+    Process-BatchGroup -Manager "npm" -Keys $npmPackages
+    Process-BatchGroup -Manager "dnf" -Keys $dnfPackages
+    Process-BatchGroup -Manager "pacman" -Keys $pacmanPackages
+    Process-BatchGroup -Manager "other" -Keys $otherPackages
   }
 
   Invoke-HookScript -HookType "post_install"

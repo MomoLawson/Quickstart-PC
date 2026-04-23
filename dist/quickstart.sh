@@ -74,7 +74,7 @@ load_language_strings() {
     fi
     
     # 5. Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v0.76.0"
+    LANG_BANNER_TITLE="Quickstart-PC v0.77.0"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -1698,6 +1698,103 @@ install_software() {
 fi
 }
 
+install_batch() {
+  local json_file=$1
+  local os=$2
+  local manager="$3"
+  shift 3
+  local software_keys=("$@")
+  local platform
+
+  case "$os" in
+    windows) platform="win" ;;
+    macos) platform="mac" ;;
+    linux) platform=$(get_linux_field "$PKG_MANAGER") ;;
+  esac
+
+  local packages=()
+  local batchable=true
+
+  for key in "${software_keys[@]}"; do
+    local cmd=$(json_get_software_field "$json_file" "$key" "$platform")
+    local pkg_name=""
+    case "$manager" in
+      apt)
+        pkg_name=$(echo "$cmd" | sed 's/sudo apt install[^ ]* //' | awk '{print $1}')
+        ;;
+      brew)
+        pkg_name=$(echo "$cmd" | awk '{print $NF}')
+        ;;
+      winget)
+        pkg_name=$(echo "$cmd" | sed 's/winget install //' | awk '{print $1}')
+        ;;
+      npm)
+        pkg_name=$(echo "$cmd" | sed 's/npm install[^ ]* //' | awk '{print $1}')
+        ;;
+      dnf)
+        pkg_name=$(echo "$cmd" | sed 's/sudo dnf install[^ ]* //' | awk '{print $1}')
+        ;;
+      pacman)
+        pkg_name=$(echo "$cmd" | sed 's/sudo pacman[^ ]* //' | awk '{print $1}')
+        ;;
+      *)
+        batchable=false
+        break
+        ;;
+    esac
+    if [[ -n "$pkg_name" ]]; then
+      packages+=("$pkg_name")
+    fi
+  done
+
+  if [[ "$batchable" != "true" || ${#packages[@]} -le 1 ]]; then
+    for key in "${software_keys[@]}"; do
+      install_software "$json_file" "$os" "$key"
+    done
+    return
+  fi
+
+  log_info "$(printf "$LANG_BATCH_INSTALLING" "${#packages[@]}")"
+
+  local batch_cmd=""
+  case "$manager" in
+    apt)
+      batch_cmd="sudo apt install -y ${packages[*]}"
+      ;;
+    brew)
+      batch_cmd="brew install ${packages[*]}"
+      ;;
+    winget)
+      batch_cmd="winget install ${packages[*]}"
+      ;;
+    npm)
+      batch_cmd="npm install -g ${packages[*]}"
+      ;;
+    dnf)
+      batch_cmd="sudo dnf install -y ${packages[*]}"
+      ;;
+    pacman)
+      batch_cmd="sudo pacman -S --noconfirm ${packages[*]}"
+      ;;
+  esac
+
+  local error_output
+  error_output=$(eval "$batch_cmd" 2>&1) || true
+  local exit_code=$?
+
+  if [[ $exit_code -eq 0 ]]; then
+    log_info "$(printf "$LANG_BATCH_SUCCESS" "${#packages[@]}" "${#packages[@]}")"
+    for key in "${software_keys[@]}"; do
+      install_succeeded+=("$key")
+    done
+  else
+    log_warn "$(printf "$LANG_BATCH_FAILED")"
+    for key in "${software_keys[@]}"; do
+      install_software "$json_file" "$os" "$key"
+    done
+  fi
+}
+
 # 自定义软件选择模式
 custom_select_software() {
     local json_file=$1
@@ -2290,32 +2387,131 @@ if [[ ${#to_install[@]} -gt 0 ]]; then
 
   run_hook "pre_install"
 
-  for sw in "${to_install[@]}"; do
-    install_current=$((install_current + 1))
-    local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
-    local sw_icon=$(json_get_software_field "$CONFIG_FILE" "$sw" "icon")
-    local sw_display="$sw_name"
-    [[ -n "$sw_icon" ]] && sw_display="$sw_icon $sw_name"
-    local bar=$(draw_progress_bar $install_current $install_total 20)
-    local sw_start=$(date +%s)
-    printf "\r %s %d/%d %s - %s..." "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALLING"
-    export SOFTWARE_KEY="$sw"
-    export SOFTWARE_NAME="$sw_name"
-    run_hook "pre_software"
-    if install_software "$CONFIG_FILE" "$os" "$sw"; then
-      local sw_end=$(date +%s)
-      local sw_elapsed=$((sw_end - sw_start))
-      printf "\r %s %d/%d %s - ${GREEN}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALL_SUCCESS" "$sw_elapsed"
-      install_succeeded+=("$sw")
-    else
-      local sw_end=$(date +%s)
-      local sw_elapsed=$((sw_end - sw_start))
-      printf "\r %s %d/%d %s - ${RED}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALL_FAILED" "$sw_elapsed"
-      install_failed+=("$sw")
-    fi
-    run_hook "post_software"
-    save_install_state
-  done
+  if [[ "$DRY_RUN" == "true" ]]; then
+    for sw in "${to_install[@]}"; do
+      install_current=$((install_current + 1))
+      local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
+      local sw_icon=$(json_get_software_field "$CONFIG_FILE" "$sw" "icon")
+      local sw_display="$sw_name"
+      [[ -n "$sw_icon" ]] && sw_display="$sw_icon $sw_name"
+      local bar=$(draw_progress_bar $install_current $install_total 20)
+      local sw_start=$(date +%s)
+      printf "\r %s %d/%d %s - %s..." "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALLING"
+      export SOFTWARE_KEY="$sw"
+      export SOFTWARE_NAME="$sw_name"
+      run_hook "pre_software"
+      if install_software "$CONFIG_FILE" "$os" "$sw"; then
+        local sw_end=$(date +%s)
+        local sw_elapsed=$((sw_end - sw_start))
+        printf "\r %s %d/%d %s - ${GREEN}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALL_SUCCESS" "$sw_elapsed"
+        install_succeeded+=("$sw")
+      else
+        local sw_end=$(date +%s)
+        local sw_elapsed=$((sw_end - sw_start))
+        printf "\r %s %d/%d %s - ${RED}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALL_FAILED" "$sw_elapsed"
+        install_failed+=("$sw")
+      fi
+      run_hook "post_software"
+      save_install_state
+    done
+  else
+    local platform
+    case "$os" in
+      windows) platform="win" ;;
+      macos) platform="mac" ;;
+      linux) platform=$(get_linux_field "$PKG_MANAGER") ;;
+    esac
+
+    local -a apt_packages=()
+    local -a brew_packages=()
+    local -a winget_packages=()
+    local -a npm_packages=()
+    local -a dnf_packages=()
+    local -a pacman_packages=()
+    local -a other_packages=()
+
+    for sw in "${to_install[@]}"; do
+      local cmd=$(json_get_software_field "$CONFIG_FILE" "$sw" "$platform")
+      local first_word=$(echo "$cmd" | awk '{print $1}')
+      local manager=""
+
+      if [[ "$first_word" == "sudo" ]]; then
+        local second_word=$(echo "$cmd" | awk '{print $2}')
+        case "$second_word" in
+          apt|dnf|pacman) manager="$second_word" ;;
+          *) manager="other" ;;
+        esac
+      elif [[ "$first_word" == "brew" ]]; then
+        manager="brew"
+      elif [[ "$first_word" == "winget" ]]; then
+        manager="winget"
+      elif [[ "$first_word" == "npm" ]]; then
+        manager="npm"
+      else
+        manager="other"
+      fi
+
+      case "$manager" in
+        apt) apt_packages+=("$sw") ;;
+        brew) brew_packages+=("$sw") ;;
+        winget) winget_packages+=("$sw") ;;
+        npm) npm_packages+=("$sw") ;;
+        dnf) dnf_packages+=("$sw") ;;
+        pacman) pacman_packages+=("$sw") ;;
+        *) other_packages+=("$sw") ;;
+      esac
+    done
+
+    process_batch_group() {
+      local manager="$1"
+      shift
+      local -a keys=("$@")
+      [[ ${#keys[@]} -eq 0 ]] && return
+
+      if [[ ${#keys[@]} -eq 1 ]]; then
+        local sw="${keys[0]}"
+        install_current=$((install_current + 1))
+        local sw_name=$(json_get_software_field "$CONFIG_FILE" "$sw" "name")
+        local sw_icon=$(json_get_software_field "$CONFIG_FILE" "$sw" "icon")
+        local sw_display="$sw_name"
+        [[ -n "$sw_icon" ]] && sw_display="$sw_icon $sw_name"
+        local bar=$(draw_progress_bar $install_current $install_total 20)
+        local sw_start=$(date +%s)
+        printf "\r %s %d/%d %s - %s..." "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALLING"
+        export SOFTWARE_KEY="$sw"
+        export SOFTWARE_NAME="$sw_name"
+        run_hook "pre_software"
+        if install_software "$CONFIG_FILE" "$os" "$sw"; then
+          local sw_end=$(date +%s)
+          local sw_elapsed=$((sw_end - sw_start))
+          printf "\r %s %d/%d %s - ${GREEN}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALL_SUCCESS" "$sw_elapsed"
+          install_succeeded+=("$sw")
+        else
+          local sw_end=$(date +%s)
+          local sw_elapsed=$((sw_end - sw_start))
+          printf "\r %s %d/%d %s - ${RED}%s${NC} (%d$LANG_TIME_SECONDS) \n" "$bar" "$install_current" "$install_total" "$sw_display" "$LANG_INSTALL_FAILED" "$sw_elapsed"
+          install_failed+=("$sw")
+        fi
+        run_hook "post_software"
+        save_install_state
+      else
+        install_batch "$CONFIG_FILE" "$os" "$manager" "${keys[@]}"
+        for sw in "${keys[@]}"; do
+          run_hook "pre_software"
+          run_hook "post_software"
+          save_install_state
+        done
+      fi
+    }
+
+    process_batch_group "apt" "${apt_packages[@]}"
+    process_batch_group "brew" "${brew_packages[@]}"
+    process_batch_group "winget" "${winget_packages[@]}"
+    process_batch_group "npm" "${npm_packages[@]}"
+    process_batch_group "dnf" "${dnf_packages[@]}"
+    process_batch_group "pacman" "${pacman_packages[@]}"
+    process_batch_group "other" "${other_packages[@]}"
+  fi
 
   run_hook "post_install"
     local install_end_time=$(date +%s)

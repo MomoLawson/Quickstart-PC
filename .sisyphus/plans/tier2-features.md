@@ -1195,7 +1195,7 @@ Evidence: .sisyphus/evidence/task-9-ps1-update.txt
 
 ---
 
-- [ ] 10. 安装前后钩子脚本
+- [x] 10. 安装前后钩子脚本
 
 **What to do**:
 
