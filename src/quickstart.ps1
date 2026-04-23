@@ -2747,7 +2747,258 @@ try {
   } catch {
     Write-Host " $($script:LANG["update_failed"] -f $_.Exception.Message)" -ForegroundColor Red
     return 1
-  }
+    }
+}
+
+# ============================================
+# Profile Menu (TUI)
+# ============================================
+function Show-ProfileMenu {
+    param([string]$Path)
+
+    $h = $script:LANG
+
+    # Get profile data
+    $profileKeys = Get-ProfileKeys -Path $Path
+    if ($profileKeys.Count -eq 0) { return $null }
+
+    $profileNames = @()
+    $profileIcons = @()
+    $profileDescs = @()
+
+    foreach ($key in $profileKeys) {
+        $profileNames += Get-ProfileField -Path $Path -Key $key -Field "name"
+        $profileIcons += Get-ProfileField -Path $Path -Key $key -Field "icon"
+        $profileDescs += Get-ProfileField -Path $Path -Key $key -Field "desc"
+    }
+
+    $numProfiles = $profileKeys.Count
+    $menuNames = @()
+    for ($i = 0; $i -lt $numProfiles; $i++) {
+        $icon = $profileIcons[$i]
+        $name = $profileNames[$i]
+        $desc = $profileDescs[$i]
+        if ($icon) {
+            $menuNames += "$icon $name - $desc"
+        } else {
+            $menuNames += "$name - $desc"
+        }
+    }
+
+    $cursor = 0
+    $oldCursorVisible = [Console]::CursorVisible
+    [Console]::CursorVisible = $false
+
+    Write-Host ""
+    Write-Log $h["select_profiles"] "INFO"
+    Write-Host ""
+    Write-Host " $($h["navigate"])" -ForegroundColor Cyan
+    Write-Host ""
+
+    $startRow = [Console]::CursorTop
+
+    function Draw-ProfileMenu {
+        param([int]$CursorPos)
+        for ($i = 0; $i -lt $numProfiles; $i++) {
+            [Console]::SetCursorPosition(0, $startRow + $i)
+            if ($i -eq $CursorPos) {
+                Write-Host " ▶ $($menuNames[$i])" -NoNewline -BackgroundColor White -ForegroundColor Black
+            } else {
+                Write-Host "   $($menuNames[$i])" -NoNewline
+            }
+            Write-Host ""  # Clear rest of line
+        }
+    }
+
+    Draw-ProfileMenu -CursorPos $cursor
+
+    $running = $true
+    while ($running) {
+        $key = [Console]::ReadKey($true)
+
+        switch ($key.VirtualKeyCode) {
+            38 { # Up arrow
+                $cursor--
+                if ($cursor -lt 0) { $cursor = $numProfiles - 1 }
+                Draw-ProfileMenu -CursorPos $cursor
+            }
+            40 { # Down arrow
+                $cursor++
+                if ($cursor -ge $numProfiles) { $cursor = 0 }
+                Draw-ProfileMenu -CursorPos $cursor
+            }
+            13 { # Enter
+                $running = $false
+            }
+        }
+    }
+
+    [Console]::CursorVisible = $oldCursorVisible
+
+    # Clear menu area
+    for ($i = 0; $i -lt $numProfiles; $i++) {
+        [Console]::SetCursorPosition(0, $startRow + $i)
+        Write-Host (" " * [Console]::WindowWidth) -NoNewline
+    }
+    [Console]::SetCursorPosition(0, $startRow)
+
+    return $profileKeys[$cursor]
+}
+
+# ============================================
+# Custom Software Selection (TUI with checkboxes)
+# ============================================
+function Select-CustomSoftware {
+    param([string]$Path, [string]$OS, [string]$ProfileKey)
+
+    $h = $script:LANG
+
+    # Get software keys from profile
+    $swKeys = Get-ProfileIncludes -Path $Path -Key $ProfileKey
+    if ($swKeys.Count -eq 0) { return @() }
+
+    # Build menu items
+    $menuKeys = @()
+    $menuNames = @()
+    $checked = @()
+
+    # Add "Select All" option
+    $menuKeys += "select_all"
+    $menuNames += $h["select_all"]
+    $checked += 0
+
+    foreach ($key in $swKeys) {
+        $name = Get-SoftwareField -Path $Path -Key $key -Field "name"
+        $desc = Get-SoftwareField -Path $Path -Key $key -Field "desc"
+        $swIcon = Get-SoftwareField -Path $Path -Key $key -Field "icon"
+
+        $displayName = $name
+        if ($swIcon) { $displayName = "$swIcon $name" }
+
+        $menuKeys += $key
+
+        if (Test-SoftwareInstalled -Path $Path -OS $OS -Key $key) {
+            $menuNames += "$displayName - $desc $($h["installed"])"
+        } else {
+            $menuNames += "$displayName - $desc"
+        }
+        $checked += 0
+    }
+
+    $numItems = $menuNames.Count
+    $cursor = 0
+    $oldCursorVisible = [Console]::CursorVisible
+    [Console]::CursorVisible = $false
+
+    Write-Host ""
+    Write-Log $h["custom_title"] "INFO"
+    Write-Host ""
+    Write-Host " $($h["custom_space_toggle"]) | $($h["custom_enter_confirm"]) | $($h["custom_a_select_all"])" -ForegroundColor Cyan
+    Write-Host ""
+
+    $startRow = [Console]::CursorTop
+
+    function Draw-CustomMenu {
+        param([int]$CursorPos, [int]$SelectedCount)
+
+        for ($i = 0; $i -lt $numItems; $i++) {
+            [Console]::SetCursorPosition(0, $startRow + $i)
+
+            $prefix = if ($checked[$i] -eq 1) { $h["selected"] } else { $h["not_selected"] }
+            $itemText = $menuNames[$i]
+
+            if ($i -eq $CursorPos) {
+                if ($checked[$i] -eq 1) {
+                    Write-Host " $prefix$itemText" -NoNewline -BackgroundColor White -ForegroundColor Green
+                } else {
+                    Write-Host " $prefix$itemText" -NoNewline -BackgroundColor White -ForegroundColor Black
+                }
+            } else {
+                if ($checked[$i] -eq 1) {
+                    Write-Host " $prefix$itemText" -NoNewline -ForegroundColor Green
+                } else {
+                    Write-Host " $prefix$itemText" -NoNewline
+                }
+            }
+            Write-Host ""  # Clear rest of line
+        }
+
+        # Show selection count
+        [Console]::SetCursorPosition(0, $startRow + $numItems + 1)
+        $countText = $h["custom_selected"] -f $SelectedCount, ($numItems - 1)
+        Write-Host " $countText" -NoNewline
+        Write-Host ""  # Clear rest of line
+    }
+
+    function Get-SelectedCount {
+        $count = 0
+        for ($i = 1; $i -lt $numItems; $i++) {
+            if ($checked[$i] -eq 1) { $count++ }
+        }
+        return $count
+    }
+
+    Draw-CustomMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
+
+    $running = $true
+    while ($running) {
+        $key = [Console]::ReadKey($true)
+
+        switch ($key.VirtualKeyCode) {
+            38 { # Up arrow
+                $cursor--
+                if ($cursor -lt 0) { $cursor = $numItems - 1 }
+                Draw-CustomMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
+            }
+            40 { # Down arrow
+                $cursor++
+                if ($cursor -ge $numItems) { $cursor = 0 }
+                Draw-CustomMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
+            }
+            32 { # Space - toggle selection
+                if ($cursor -eq 0) {
+                    # Toggle all
+                    $newState = if ($checked[0] -eq 1) { 0 } else { 1 }
+                    for ($i = 0; $i -lt $numItems; $i++) {
+                        $checked[$i] = $newState
+                    }
+                } else {
+                    $checked[$cursor] = if ($checked[$cursor] -eq 1) { 0 } else { 1 }
+                }
+                Draw-CustomMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
+            }
+            65 { # 'A' key - select/deselect all
+                $newState = if ($checked[0] -eq 1) { 0 } else { 1 }
+                for ($i = 0; $i -lt $numItems; $i++) {
+                    $checked[$i] = $newState
+                }
+                Draw-CustomMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
+            }
+            13 { # Enter - confirm
+                $running = $false
+            }
+        }
+    }
+
+    [Console]::CursorVisible = $oldCursorVisible
+
+    # Clear menu area
+    $totalLines = $numItems + 3
+    for ($i = 0; $i -lt $totalLines; $i++) {
+        [Console]::SetCursorPosition(0, $startRow + $i)
+        Write-Host (" " * [Console]::WindowWidth) -NoNewline
+    }
+    [Console]::SetCursorPosition(0, $startRow)
+
+    # Build result array
+    $result = @()
+    for ($i = 1; $i -lt $numItems; $i++) {
+        if ($checked[$i] -eq 1) {
+            $result += $menuKeys[$i]
+        }
+    }
+
+    return $result
 }
 
 # ============================================
