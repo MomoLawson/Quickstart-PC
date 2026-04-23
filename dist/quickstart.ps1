@@ -35,6 +35,7 @@ param(
   [switch]$noResume,
   [switch]$selfUpdate,
   [switch]$checkUpdate,
+  [switch]$allowHooks,
   [switch]$help
 )
 
@@ -269,16 +270,22 @@ function Initialize-LanguageStrings {
 "update_downloading" = "下载更新..."
 "update_success" = "更新成功！请重新运行脚本"
 "update_failed" = "更新失败: {0}"
-"update_prompt" = "是否更新到新版本？[Y/n]"
-}
-}
+    "update_prompt" = "是否更新到新版本？[Y/n]"
+
+    "hook_running" = "执行钩子: {0}"
+    "hook_success" = "钩子执行完成"
+    "hook_failed" = "钩子执行失败: {0}"
+    "hooks_disabled" = "钩子脚本已禁用，使用 --allow-hooks 启用"
+    "hooks_enabled" = "钩子脚本已启用"
+    }
+  }
 
 # ============================================
 # Japanese - ja
 # ============================================
 # Japanese - ja
 # ============================================
-"ja" {
+  "ja" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "新PCのソフトウェア環境を素早く設定"
@@ -400,16 +407,22 @@ function Initialize-LanguageStrings {
 "update_downloading" = "アップデートをダウンロード中..."
 "update_success" = "アップデート成功！スクリプトを再起動してください"
 "update_failed" = "アップデート失敗: {0}"
-"update_prompt" = "新しいバージョンに更新しますか？[Y/n]"
-}
-}
+    "update_prompt" = "新しいバージョンに更新しますか？[Y/n]"
+
+    "hook_running" = "フックを実行: {0}"
+    "hook_success" = "フックの実行が完了しました"
+    "hook_failed" = "フックの実行に失敗しました: {0}"
+    "hooks_disabled" = "フックスクリプトは無効です、--allow-hooks を使用して有効にしてください"
+    "hooks_enabled" = "フックスクリプトが有効になりました"
+    }
+  }
 
 # ============================================
 # Korean - ko
 # ============================================
 # Korean - ko
 # ============================================
-"ko" {
+  "ko" {
 $script:LANG = @{
 "banner_title" = "Quickstart-PC v$VERSION"
 "banner_desc" = "새 PC 소프트웨어 환경을 빠르게 설정"
@@ -531,16 +544,22 @@ $script:LANG = @{
 "update_downloading" = "업데이트 다운로드 중..."
 "update_success" = "업데이트 성공! 스크립트를 다시 실행하세요"
 "update_failed" = "업데이트 실패: {0}"
-"update_prompt" = "새 버전으로 업데이트하시겠습니까？[Y/n]"
-}
-}
+    "update_prompt" = "새 버전으로 업데이트하시겠습니까？[Y/n]"
+
+    "hook_running" = "후크 실행: {0}"
+    "hook_success" = "후크 실행 완료"
+    "hook_failed" = "후크 실행 실패: {0}"
+    "hooks_disabled" = "후크 스크립트가 비활성화되었습니다, --allow-hooks를 사용하여 활성화하세요"
+    "hooks_enabled" = "후크 스크립트가 활성화되었습니다"
+    }
+  }
 
 # ============================================
 # Traditional Chinese - zh-Hant
 # ============================================
 # Traditional Chinese - zh-Hant
 # ============================================
-"zh-Hant" {
+  "zh-Hant" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "快速設定新電腦軟件環境"
@@ -667,16 +686,22 @@ $script:LANG = @{
 "update_downloading" = "下載更新..."
 "update_success" = "更新成功！請重新執行腳本"
 "update_failed" = "更新失敗: {0}"
-"update_prompt" = "是否更新到新版本？[Y/n]"
-}
-}
+    "update_prompt" = "是否更新到新版本？[Y/n]"
+
+    "hook_running" = "執行鉤子: {0}"
+    "hook_success" = "鉤子執行完成"
+    "hook_failed" = "鉤子執行失敗: {0}"
+    "hooks_disabled" = "鉤子腳本已禁用，使用 --allow-hooks 啟用"
+    "hooks_enabled" = "鉤子腳本已啟用"
+    }
+  }
 
 # ============================================
 # German - de
 # ============================================
 # German - de
 # ============================================
-"de" {
+  "de" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "Schnelle Einrichtung für neue Computer"
@@ -803,16 +828,22 @@ $script:LANG = @{
 "update_downloading" = "Update wird heruntergeladen..."
 "update_success" = "Update erfolgreich! Bitte starten Sie das Skript neu"
 "update_failed" = "Update fehlgeschlagen: {0}"
-"update_prompt" = "Auf neue Version aktualisieren? [Y/n]"
-}
-}
+    "update_prompt" = "Auf neue Version aktualisieren? [Y/n]"
+
+    "hook_running" = "Hook wird ausgeführt: {0}"
+    "hook_success" = "Hook abgeschlossen"
+    "hook_failed" = "Hook fehlgeschlagen: {0}"
+    "hooks_disabled" = "Hooks deaktiviert, verwenden Sie --allow-hooks zum Aktivieren"
+    "hooks_enabled" = "Hooks aktiviert"
+    }
+  }
 
 # ============================================
 # French - fr
 # ============================================
 # French - fr
 # ============================================
-"fr" {
+  "fr" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "Configuration rapide pour nouveaux ordinateurs"
@@ -939,16 +970,22 @@ $script:LANG = @{
 "update_downloading" = "Téléchargement de la mise à jour..."
 "update_success" = "Mise à jour réussie ! Veuillez redémarrer le script"
 "update_failed" = "Échec de la mise à jour : {0}"
-"update_prompt" = "Mettre à jour vers la nouvelle version ? [Y/n]"
-}
-}
+    "update_prompt" = "Mettre à jour vers la nouvelle version ? [Y/n]"
+
+    "hook_running" = "Exécution du hook : {0}"
+    "hook_success" = "Hook terminé"
+    "hook_failed" = "Échec du hook : {0}"
+    "hooks_disabled" = "Hooks désactivés, utilisez --allow-hooks pour activer"
+    "hooks_enabled" = "Hooks activés"
+    }
+  }
 
 # ============================================
 # Arabic - ar (LTR for terminal compatibility)
 # ============================================
 # Arabic - ar (LTR for terminal compatibility)
 # ============================================
-"ar" {
+  "ar" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "إعداد سريع لأجهزة الكمبيوتر الجديدة"
@@ -1075,16 +1112,22 @@ $script:LANG = @{
 "update_downloading" = "تحميل التحديث..."
 "update_success" = "تم التحديث بنجاح! يرجى إعادة تشغيل البرنامج النصي"
 "update_failed" = "فشل التحديث: {0}"
-"update_prompt" = "هل تريد التحديث إلى الإصدار الجديد؟ [Y/n]"
-}
-}
+    "update_prompt" = "هل تريد التحديث إلى الإصدار الجديد؟ [Y/n]"
+
+    "hook_running" = "تشغيل البرنامج النصي: {0}"
+    "hook_success" = "اكتمل البرنامج النصي"
+    "hook_failed" = "فشل البرنامج النصي: {0}"
+    "hooks_disabled" = "البرامج النصية معطلة، استخدم --allow-hooks للتمكين"
+    "hooks_enabled" = "البرامج النصية ممكنة"
+    }
+  }
 
 # ============================================
 # Portuguese - pt
 # ============================================
 # Portuguese - pt
 # ============================================
-"pt" {
+  "pt" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "Configuração rápida para novos computadores"
@@ -1211,16 +1254,22 @@ $script:LANG = @{
 "update_downloading" = "Baixando atualização..."
 "update_success" = "Atualização bem-sucedida! Por favor, reinicie o script"
 "update_failed" = "Falha na atualização: {0}"
-"update_prompt" = "Atualizar para a nova versão? [Y/n]"
-}
-}
+    "update_prompt" = "Atualizar para a nova versão? [Y/n]"
+
+    "hook_running" = "Executando hook: {0}"
+    "hook_success" = "Hook concluído"
+    "hook_failed" = "Falha no hook: {0}"
+    "hooks_disabled" = "Hooks desativados, use --allow-hooks para ativar"
+    "hooks_enabled" = "Hooks ativados"
+    }
+  }
 
 # ============================================
 # Italian - it
 # ============================================
 # Italian - it
 # ============================================
-"it" {
+  "it" {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "Configurazione rapida per nuovi computer"
@@ -1347,16 +1396,22 @@ $script:LANG = @{
 "update_downloading" = "Download aggiornamento..."
 "update_success" = "Aggiornamento riuscito! Riavviare lo script"
 "update_failed" = "Aggiornamento fallito: {0}"
-"update_prompt" = "Aggiornare alla nuova versione? [Y/n]"
-}
-}
+    "update_prompt" = "Aggiornare alla nuova versione? [Y/n]"
+
+    "hook_running" = "Esecuzione hook: {0}"
+    "hook_success" = "Hook completato"
+    "hook_failed" = "Hook fallito: {0}"
+    "hooks_disabled" = "Hook disabilitati, usa --allow-hooks per abilitare"
+    "hooks_enabled" = "Hook abilitati"
+    }
+  }
 
 # ============================================
 # English (default) - en-US
 # ============================================
 # English (default) - en-US
 # ============================================
-default {
+  default {
             $script:LANG = @{
                 "banner_title" = "Quickstart-PC v$VERSION"
                 "banner_desc" = "Quick setup for new computers"
@@ -1483,9 +1538,15 @@ default {
 "update_downloading" = "Downloading update..."
 "update_success" = "Update successful! Please restart the script"
 "update_failed" = "Update failed: {0}"
-"update_prompt" = "Update to new version? [Y/n]"
-}
-}
+    "update_prompt" = "Update to new version? [Y/n]"
+
+    "hook_running" = "Running hook: {0}"
+    "hook_success" = "Hook completed"
+    "hook_failed" = "Hook failed: {0}"
+    "hooks_disabled" = "Hooks disabled, use --allow-hooks to enable"
+    "hooks_enabled" = "Hooks enabled"
+    }
+  }
 }
 
 # ============================================
@@ -3044,6 +3105,23 @@ function Clear-InstallState {
   Write-Host " $($script:LANG["install_complete_state"])" -ForegroundColor Green
 }
 
+function Invoke-HookScript {
+  param([string]$HookType)
+  $hookScript = jq -r ".hooks.${HookType} // empty" $script:CONFIG_FILE 2>$null
+  if (-not $hookScript) { return }
+  if (-not $allowHooks) {
+    Write-Host " $($script:LANG["hooks_disabled"])" -ForegroundColor DarkGray
+    return
+  }
+  Write-Host " $($script:LANG["hook_running"] -f $HookType)" -ForegroundColor Cyan
+  try {
+    & $hookScript
+    Write-Host " $($script:LANG["hook_success"])" -ForegroundColor Green
+  } catch {
+    Write-Warning "$($script:LANG["hook_failed"] -f $HookType)"
+  }
+}
+
 function Check-Update {
   Write-Host " $($script:LANG["update_checking"])" -ForegroundColor Cyan
   try {
@@ -3439,15 +3517,17 @@ Write-Host " $($h["disk_checking"])" -ForegroundColor Cyan
     }
   }
 
-  Set-WindowTitle -Title "QSPC | $($h["title_installing"])"
-  Write-Header $h["start_installing"]
+Set-WindowTitle -Title "QSPC | $($h["title_installing"])"
+Write-Header $h["start_installing"]
 
-  $script:toInstall = $toInstall
-  $total = $toInstall.Count
-  $current = 0
-  $script:installedList = @()
-  $script:failedList = @()
-  $installStartTime = Get-Date
+$script:toInstall = $toInstall
+$total = $toInstall.Count
+$current = 0
+$script:installedList = @()
+$script:failedList = @()
+$installStartTime = Get-Date
+
+Invoke-HookScript -HookType "pre_install"
 
 foreach ($sw in $toInstall) {
     $current++
@@ -3457,12 +3537,16 @@ foreach ($sw in $toInstall) {
     $bar = Draw-ProgressBar -Current $current -Total $total
     Write-Host "`r $bar $current/$total $swDisplay - $($h["installing"])..." -NoNewline -ForegroundColor Cyan
 
+    $env:SOFTWARE_KEY = $sw
+    $env:SOFTWARE_NAME = $swName
+    Invoke-HookScript -HookType "pre_software"
+
     $swStart = Get-Date
     $result = Install-Software -Path $script:CONFIG_FILE -OS $os -Key $sw
     $swEnd = Get-Date
     $swElapsed = [math]::Round(($swEnd - $swStart).TotalSeconds)
 
-if ($result) {
+    if ($result) {
       Write-Host "`r $bar $current/$total $swDisplay - " -NoNewline
       Write-Host "$($h["install_success"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Green
       $script:installedList += $sw
@@ -3477,8 +3561,11 @@ if ($result) {
         break
       }
     }
+    Invoke-HookScript -HookType "post_software"
     Save-InstallState
   }
+
+  Invoke-HookScript -HookType "post_install"
   $installEndTime = Get-Date
 $totalElapsed = [math]::Round(($installEndTime - $installStartTime).TotalSeconds)
 Write-Host ""

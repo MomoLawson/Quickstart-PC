@@ -1053,7 +1053,7 @@ Evidence: .sisyphus/evidence/task-8-state-cleanup.txt
 
 ---
 
-- [ ] 9. 自我更新 --self-update
+- [x] 9. 自我更新 --self-update
 
 **What to do**:
 
