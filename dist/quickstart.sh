@@ -74,7 +74,7 @@ load_language_strings() {
     fi
     
     # 5. Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v0.77.4"
+    LANG_BANNER_TITLE="Quickstart-PC v0.77.5"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -1904,13 +1904,13 @@ custom_select_software() {
 show_banner() {
   echo ""
   printf "\033[0;34m╔══════════════════════════════════════╗\n"
-  printf "\033[0;34m║ ██████╗ ███████╗██████╗ ██████╗ ║\n"
-  printf "\033[0;34m║ ██╔═══██╗██╔════╝██╔══██╗██╔════╝ ║\n"
-  printf "\033[0;34m║ ██║ ██║███████╗██████╔╝██║ ║\n"
-  printf "\033[0;34m║ ██║▄▄ ██║╚════██║██╔═══╝ ██║ ║\n"
-  printf "\033[0;34m║ ╚██████╔╝███████║██║ ╚██████╗ ║\n"
-  printf "\033[0;34m║ ╚══▀▀═╝ ╚══════╝╚═╝ ╚═════╝ ║\n"
-  printf "\033[0;34m║ Quickstart-PC ║\n"
+  printf "\033[0;34m║  ██████╗ ███████╗██████╗  ██████╗    ║\n"
+  printf "\033[0;34m║ ██╔═══██╗██╔════╝██╔══██╗██╔════╝    ║\n"
+  printf "\033[0;34m║ ██║   ██║███████╗██████╔╝██║         ║\n"
+  printf "\033[0;34m║ ██║▄▄ ██║╚════██║██╔═══╝ ██║         ║\n"
+  printf "\033[0;34m║ ╚██████╔╝███████║██║     ╚██████╗    ║\n"
+  printf "\033[0;34m║  ╚══▀▀═╝ ╚══════╝╚═╝      ╚═════╝    ║\n"
+  printf "\033[0;34m║            Quickstart-PC             ║\n"
   printf "\033[0;34m╚══════════════════════════════════════╝\n\033[0m"
   echo ""
 }

@@ -70,12 +70,12 @@
 - 安装分组/批量执行
 
 ### Definition of Done
-- [ ] `bash scripts/build.sh` 每个功能后都成功
-- [ ] 每个功能单独一个版本号提交
-- [ ] `dist/quickstart.sh --help` 和 `dist/quickstart.ps1 -?` 均正常
-- [ ] 10 个 Bash 语言文件键值数一致
-- [ ] 10 个 PS1 语言块键值数一致
-- [ ] ShellCheck / PS1 语法检查通过
+- [x] `bash scripts/build.sh` 每个功能后都成功
+- [x] 每个功能单独一个版本号提交
+- [x] `dist/quickstart.sh --help` 和 `dist/quickstart.ps1 -?` 均正常
+- [x] 10 个 Bash 语言文件键值数一致
+- [x] 10 个 PS1 语言块键值数一致
+- [x] ShellCheck / PS1 语法检查通过
 
 ### Must Have
 - 所有新 UI 文本走 LANG 国际化变量
@@ -1337,7 +1337,7 @@ Evidence: .sisyphus/evidence/task-10-hooks-enabled.txt
 
 ---
 
-- [ ] 11. 安装分组/批量执行
+- [x] 11. 安装分组/批量执行
 
 **What to do**:
 
