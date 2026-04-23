@@ -1277,16 +1277,6 @@ DETECTED_LANG=$(auto_detect_language)
 # Load strings for detected language
 load_language_strings "$DETECTED_LANG"
 
-if [[ "$CHECK_UPDATE" == "true" ]]; then
-  check_update
-  exit $?
-fi
-
-if [[ "$SELF_UPDATE" == "true" ]]; then
-  self_update
-  exit $?
-fi
-
 # Now show language selection menu (allows user to override)
 DETECTED_LANG=$(select_language)
 
@@ -2007,6 +1997,16 @@ self_update() {
 }
 
 main() {
+    if [[ "$CHECK_UPDATE" == "true" ]]; then
+        check_update
+        exit $?
+    fi
+
+    if [[ "$SELF_UPDATE" == "true" ]]; then
+        self_update
+        exit $?
+    fi
+
     trap 'set_title ""; stty echo 2>/dev/null; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
     
     while true; do

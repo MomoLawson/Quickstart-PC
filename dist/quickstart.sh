@@ -74,7 +74,7 @@ load_language_strings() {
     fi
     
     # 5. Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v0.77.3"
+    LANG_BANNER_TITLE="Quickstart-PC v0.77.4"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -1277,16 +1277,6 @@ DETECTED_LANG=$(auto_detect_language)
 # Load strings for detected language
 load_language_strings "$DETECTED_LANG"
 
-if [[ "$CHECK_UPDATE" == "true" ]]; then
-  check_update
-  exit $?
-fi
-
-if [[ "$SELF_UPDATE" == "true" ]]; then
-  self_update
-  exit $?
-fi
-
 # Now show language selection menu (allows user to override)
 DETECTED_LANG=$(select_language)
 
@@ -2007,6 +1997,16 @@ self_update() {
 }
 
 main() {
+    if [[ "$CHECK_UPDATE" == "true" ]]; then
+        check_update
+        exit $?
+    fi
+
+    if [[ "$SELF_UPDATE" == "true" ]]; then
+        self_update
+        exit $?
+    fi
+
     trap 'set_title ""; stty echo 2>/dev/null; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
     
     while true; do
