@@ -34,7 +34,7 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --non-interactive  非交互模式（禁止所有 TUI/prompt）
   --resume                  恢复中断的安装
   --no-resume               不恢复中断的安装
-  --self-update             更新脚本到最新版本
+  --update             更新脚本到最新版本
   --check-update            检查更新但不安装
   --allow-hooks             启用钩子脚本执行
   --help             显示此帮助信息

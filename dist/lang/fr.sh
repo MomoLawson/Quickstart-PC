@@ -34,7 +34,7 @@ Options :
   --non-interactive  Mode non interactif (pas de TUI/invites)
   --resume                  Reprendre l'installation interrompue
   --no-resume               Ne pas reprendre l'installation interrompue
-  --self-update             Mettre à jour le script vers la dernière version
+  --update             Mettre à jour le script vers la dernière version
   --check-update            Vérifier les mises à jour sans installer
   --allow-hooks             Activer l'exécution des scripts hook
   --help             Afficher ce message d'aide

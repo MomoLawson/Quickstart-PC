@@ -34,7 +34,7 @@ Optionen:
   --non-interactive  Nicht-interaktiver Modus (keine TUI/Abfragen)
   --resume                  Unterbrochene Installation fortsetzen
   --no-resume               Unterbrochene Installation nicht fortsetzen
-  --self-update             Skript auf neueste Version aktualisieren
+  --update             Skript auf neueste Version aktualisieren
   --check-update            Nur nach Updates suchen
   --allow-hooks             Hook-Skripte aktivieren
   --help             Diese Hilfe anzeigen

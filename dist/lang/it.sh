@@ -34,7 +34,7 @@ Opzioni:
   --non-interactive  Modalità non interattiva (senza TUI/prompt)
   --resume                  Riprendere installazione interrotta
   --no-resume               Non riprendere installazione interrotta
-  --self-update             Aggiornare lo script all'ultima versione
+  --update             Aggiornare lo script all'ultima versione
   --check-update            Verificare aggiornamenti senza installare
   --allow-hooks             Abilitare esecuzione script hook
   --help             Mostra questo messaggio di aiuto

@@ -33,7 +33,7 @@ param(
     [string]$localLang,
 [switch]$resume,
   [switch]$noResume,
-  [switch]$selfUpdate,
+  [switch]$update,
   [switch]$checkUpdate,
   [switch]$allowHooks,
   [switch]$help
@@ -2709,7 +2709,7 @@ function Check-Update {
   }
 }
 
-function Self-Update {
+function Update-Self {
   $checkResult = Check-Update
   if ($checkResult -eq 0) { return 0 }
   if ($checkResult -eq 1) { return 1 }
@@ -3012,8 +3012,8 @@ function Main {
     exit $result
   }
 
-  if ($selfUpdate) {
-    $result = Self-Update
+  if ($update) {
+    $result = Update-Self
     exit $result
   }
 

@@ -34,7 +34,7 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --non-interactive  비대화형 모드 (TUI/프롬프트 모두 비활성화)
   --resume                  중단된 설치 재개
   --no-resume               중단된 설치 재개하지 않음
-  --self-update             스크립트를 최신 버전으로 업데이트
+  --update             스크립트를 최신 버전으로 업데이트
   --check-update            업데이트 확인만 (설치하지 않음)
   --allow-hooks             후크 스크립트 실행 활성화
   --help             이 도움말 표시

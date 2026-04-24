@@ -202,7 +202,7 @@ CFG_PATH=""
 CFG_URL=""
 INSTALL_LAST_ERROR=""
 RESUME_MODE="" # "" = auto, "yes" = --resume, "no" = --no-resume
-SELF_UPDATE=false
+UPDATE=false
 CHECK_UPDATE=false
 ALLOW_HOOKS=false
 
@@ -237,7 +237,7 @@ while [[ $# -gt 0 ]]; do
     --cfg-url) CFG_URL="$2"; shift 2 ;;
 --resume) RESUME_MODE="yes"; shift ;;
     --no-resume) RESUME_MODE="no"; shift ;;
-  --self-update) SELF_UPDATE=true; shift ;;
+  --update) UPDATE=true; shift ;;
   --check-update) CHECK_UPDATE=true; shift ;;
   --allow-hooks) ALLOW_HOOKS=true; shift ;;
   --help|-h) show_help ;;
@@ -2002,7 +2002,7 @@ main() {
         exit $?
     fi
 
-    if [[ "$SELF_UPDATE" == "true" ]]; then
+    if [[ "$UPDATE" == "true" ]]; then
         self_update
         exit $?
     fi
