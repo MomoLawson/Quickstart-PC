@@ -4,7 +4,7 @@
 # Or: iwr https://.../quickstart.ps1 | iex
 
 param(
-    [string]$lang,
+    [string]$lang = "__NONE__",
     [string]$cfgPath,
     [string]$cfgUrl,
     [switch]$dev,
@@ -101,6 +101,62 @@ function Set-WindowTitle {
 # ============================================
 # Language Detection Functions
 # ============================================
+function Select-Language {
+    if ($script:LANG_OVERRIDE -eq "SELECT") {
+        $script:LANG_OVERRIDE = ""
+    }
+    if ($script:LANG_OVERRIDE) {
+        $mapped = $script:LANGUAGE_MAPPINGS[$script:LANG_OVERRIDE]
+        if ($mapped) { return $mapped }
+        foreach ($code in @("en-US", "zh-CN", "zh-Hant", "ja", "ko", "de", "fr", "ar", "pt", "it")) {
+            if ($script:LANG_OVERRIDE -eq $code) { return $code }
+        }
+        return "en-US"
+    }
+    if (-not $script:LANG_OVERRIDE) {
+        $langKeys = @("en-US", "zh-CN", "zh-Hant", "ja", "ko", "de", "fr", "ar", "pt", "it")
+        $langNames = @("English", "简体中文", "繁體中文", "日本語", "한국어", "Deutsch", "Français", "العربية", "Português", "Italiano")
+        $numLangs = $langKeys.Length
+        $cursor = 0
+        $startRow = [Console]::CursorTop
+        $oldCursorVisible = [Console]::CursorVisible
+        [Console]::CursorVisible = $false
+
+        try {
+            while ($true) {
+                [Console]::SetCursorPosition(0, $startRow)
+                Write-Host ""
+                for ($i = 0; $i -lt $numLangs; $i++) {
+                    if ($i -eq $cursor) {
+                        Write-Host "  > $($langNames[$i])" -ForegroundColor Cyan
+                    } else {
+                        Write-Host "    $($langNames[$i])" -ForegroundColor Gray
+                    }
+                }
+                Write-Host ""
+                Write-Host "  [↑↓] Select  [Enter] Confirm" -ForegroundColor DarkGray -NoNewline
+
+                $key = [Console]::ReadKey($true)
+                switch ($key.Key) {
+                    UpArrow { $cursor--; if ($cursor -lt 0) { $cursor = $numLangs - 1 } }
+                    DownArrow { $cursor++; if ($cursor -ge $numLangs) { $cursor = 0 } }
+                }
+                if ($key.Key -eq [ConsoleKey]::Enter) { break }
+            }
+        } finally {
+            [Console]::CursorVisible = $oldCursorVisible
+        }
+        $totalLines = $numLangs + 3
+        for ($i = 0; $i -lt $totalLines; $i++) {
+            [Console]::SetCursorPosition(0, $startRow + $i)
+            Write-Host (" " * [Console]::WindowWidth) -NoNewline
+        }
+        [Console]::SetCursorPosition(0, $startRow)
+        return $langKeys[$cursor]
+    }
+    return Detect-SystemLanguage
+}
+
 function Detect-SystemLanguage {
     # 1. Check LANG_OVERRIDE from command line
     if ($script:LANG_OVERRIDE) {
@@ -2036,6 +2092,7 @@ $($h["help_lang"])
 
 "@ -ForegroundColor White
     
+    try { [Console]::CursorVisible = $true } catch {}
     exit 0
 }
 
@@ -2043,7 +2100,8 @@ $($h["help_lang"])
 # Config file functions
 # ============================================
 function Get-ConfigFile {
-    $tempFile = [System.IO.Path]::GetTempFileName() + ".json"
+    $guid = [System.Guid]::NewGuid().ToString('N').Substring(0,8)
+    $tempFile = [System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), "quickstart-config-${guid}.json")
     
     if ($cfgUrl) {
         Write-Log "$($h["using_remote_config"]): $cfgUrl" "INFO"
@@ -3006,6 +3064,11 @@ function Select-CustomSoftware {
 # ============================================
 function Main {
   $script:LANG_OVERRIDE = $lang
+  if ($lang -eq "__NONE__") {
+    $script:LANG_OVERRIDE = ""  # Not provided - will auto-detect
+  } elseif ($lang -eq "") {
+    $script:LANG_OVERRIDE = "SELECT"  # Explicitly empty - show language menu
+  }
 
   if ($checkUpdate) {
     $result = Check-Update
@@ -3018,10 +3081,10 @@ function Main {
   }
 
   if ($help) {
-        $helpLang = if ($lang) { 
-            $mapped = $script:LANGUAGE_MAPPINGS[$lang]
-            if ($mapped) { $mapped } else { "en-US" }
-        } else { "en-US" }
+    $helpLang = if ($lang -and $lang -ne "__NONE__") {
+      $mapped = $script:LANGUAGE_MAPPINGS[$lang]
+      if ($mapped) { $mapped } else { "en-US" }
+    } else { "en-US" }
         Initialize-LanguageStrings -Lang $helpLang
         Show-Help -Lang $helpLang
     }

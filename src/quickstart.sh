@@ -57,7 +57,7 @@ load_language_strings() {
     # 3. Try remote loading from GitHub
     local remote_url="https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/dist/lang/${lang}.sh"
     local tmp_lang
-    tmp_lang=$(mktemp)
+    tmp_lang=$(mktemp 2>/dev/null || echo "/tmp/quickstart-lang-$$.tmp")
     if command -v curl >/dev/null 2>&1; then
         if curl -fsSL --connect-timeout 5 --max-time 10 "$remote_url" -o "$tmp_lang" 2>/dev/null; then
             source "$tmp_lang"
@@ -160,16 +160,17 @@ $HELP_USAGE
 
 $HELP_OPTIONS
 HELPEOF
+    tput cnorm 2>/dev/null || true
     exit 0
 }
 
 LANG_FOR_HELP="en"
 args=("$@")
 for i in "${!args[@]}"; do
-    if [[ "${args[$i]}" == "--lang" ]] && [[ -n "${args[$((i+1))]}" ]]; then
-        LANG_FOR_HELP="${args[$((i+1))]}"
-        break
-    fi
+if [[ "${args[$i]}" == "--lang" ]] && [[ -n "${args[$((i+1))]}" ]] && [[ "${args[$((i+1))]}" != --* ]] && [[ "${args[$((i+1))]}" != "SELECT" ]]; then
+LANG_FOR_HELP="${args[$((i+1))]}"
+break
+fi
 done
 
 
@@ -206,6 +207,19 @@ UPDATE=false
 CHECK_UPDATE=false
 ALLOW_HOOKS=false
 
+# Safe temp file creation with retry
+safe_mktemp() {
+    local template="$1"
+    local tmpfile
+    tmpfile=$(mktemp "$template" 2>/dev/null) && echo "$tmpfile" && return
+    local base="${template%XXXXXX*}"
+    local suffix="${template#*XXXXXX}"
+    tmpfile="${base}${$}_${RANDOM}${suffix}"
+    rm -f "$tmpfile" 2>/dev/null
+    touch "$tmpfile" 2>/dev/null && echo "$tmpfile" && return
+    echo "/tmp/qs-config-$(date +%s)-$$.json"
+}
+
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --dev) DEV_MODE=true; shift ;;
@@ -231,7 +245,13 @@ while [[ $# -gt 0 ]]; do
         --profile) PROFILE_KEY="$2"; shift 2 ;;
         --non-interactive) NON_INTERACTIVE=true; shift ;;
         --debug) DEBUG=true; shift ;;
-        --lang) LANG_OVERRIDE="$2"; shift 2 ;;
+        --lang)
+          if [[ -n "$2" ]] && [[ "$2" != --* ]]; then
+            LANG_OVERRIDE="$2"; shift 2
+          else
+            LANG_OVERRIDE="SELECT"; shift
+          fi
+          ;;
         --local-lang) LOCAL_LANG_PATH="$2"; shift 2 ;;
 --cfg-path) CFG_PATH="$2"; shift 2 ;;
     --cfg-url) CFG_URL="$2"; shift 2 ;;
@@ -323,7 +343,7 @@ if [[ "$LIST_PROFILES" == "true" ]]; then
         fi
     fi
     
-    CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
+    CONFIG_FILE=$(safe_mktemp /tmp/quickstart-config-XXXXXX.json)
     if [[ -n "$CFG_URL" ]]; then
         curl -fsSL --connect-timeout 10 --max-time 30 "$CFG_URL" -o "$CONFIG_FILE" 2>/dev/null
     elif [[ -n "$CFG_PATH" ]]; then
@@ -349,6 +369,7 @@ if [[ "$LIST_PROFILES" == "true" ]]; then
     fi
     
     rm -f "$CONFIG_FILE" 2>/dev/null
+    tput cnorm 2>/dev/null || true
     exit 0
 fi
 
@@ -363,7 +384,7 @@ if [[ -n "$SHOW_PROFILE" ]]; then
         fi
     fi
     
-    CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
+    CONFIG_FILE=$(safe_mktemp /tmp/quickstart-config-XXXXXX.json)
     if [[ -n "$CFG_URL" ]]; then
         curl -fsSL --connect-timeout 10 --max-time 30 "$CFG_URL" -o "$CONFIG_FILE" 2>/dev/null
     elif [[ -n "$CFG_PATH" ]]; then
@@ -388,6 +409,7 @@ if [[ -n "$SHOW_PROFILE" ]]; then
         if [[ -z "$pname" ]]; then
             echo "[ERROR] Profile '$SHOW_PROFILE' not found"
             rm -f "$CONFIG_FILE" 2>/dev/null
+            tput cnorm 2>/dev/null || true
             exit 1
         fi
         
@@ -422,6 +444,7 @@ if [[ -n "$SHOW_PROFILE" ]]; then
     fi
     
     rm -f "$CONFIG_FILE" 2>/dev/null
+    tput cnorm 2>/dev/null || true
     exit 0
 fi
 
@@ -435,7 +458,7 @@ if [[ "$LIST_SOFTWARE" == "true" ]]; then
         fi
     fi
     
-    CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
+    CONFIG_FILE=$(safe_mktemp /tmp/quickstart-config-XXXXXX.json)
     if curl -fsSL --connect-timeout 10 --max-time 30 "$DEFAULT_CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
         echo "Available software:"
         echo ""
@@ -453,6 +476,7 @@ if [[ "$LIST_SOFTWARE" == "true" ]]; then
     fi
 
     rm -f "$CONFIG_FILE" 2>/dev/null
+    tput cnorm 2>/dev/null || true
     exit 0
     fi
 
@@ -466,7 +490,7 @@ if [[ "$LIST_SOFTWARE" == "true" ]]; then
         fi
     fi
     
-    CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
+    CONFIG_FILE=$(safe_mktemp /tmp/quickstart-config-XXXXXX.json)
     if curl -fsSL --connect-timeout 10 --max-time 30 "$DEFAULT_CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
     sw_name=$(jq -r ".software[\"$SHOW_SOFTWARE\"].name // \"\"" "$CONFIG_FILE")
     sw_desc=$(jq -r ".software[\"$SHOW_SOFTWARE\"].desc // \"\"" "$CONFIG_FILE")
@@ -475,6 +499,7 @@ if [[ "$LIST_SOFTWARE" == "true" ]]; then
     if [[ -z "$sw_name" ]]; then
     echo "[ERROR] Software '$SHOW_SOFTWARE' not found"
     rm -f "$CONFIG_FILE" 2>/dev/null
+    tput cnorm 2>/dev/null || true
     exit 1
     fi
 
@@ -513,7 +538,7 @@ if [[ -n "$SEARCH_KEYWORD" ]]; then
         fi
     fi
     
-    CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
+    CONFIG_FILE=$(safe_mktemp /tmp/quickstart-config-XXXXXX.json)
     if curl -fsSL --connect-timeout 10 --max-time 30 "$DEFAULT_CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
         echo "Search results for '$SEARCH_KEYWORD':"
         echo ""
@@ -532,7 +557,8 @@ if [[ -n "$SEARCH_KEYWORD" ]]; then
     fi
     
 rm -f "$CONFIG_FILE" 2>/dev/null
-exit 0
+    tput cnorm 2>/dev/null || true
+    exit 0
 fi
 
 # --doctor (QC Doctor) 在语言选择之前处理
@@ -683,7 +709,7 @@ echo ""
 
 # 7. 配置文件检测
 echo "━━━ Configuration ━━━"
-test_config=$(mktemp /tmp/qc-doctor-config-XXXXXX.json)
+test_config=$(safe_mktemp /tmp/qc-doctor-config-XXXXXX.json)
 if curl -fsSL --connect-timeout 10 --max-time 30 "$DEFAULT_CFG_URL" -o "$test_config" 2>/dev/null; then
 if command -v jq &>/dev/null && jq empty "$test_config" 2>/dev/null; then
 profile_count=$(jq '.profiles | length' "$test_config" 2>/dev/null)
@@ -727,7 +753,7 @@ if [[ "$VALIDATE" == "true" ]]; then
         fi
     fi
     
-    CONFIG_FILE=$(mktemp /tmp/quickstart-config-XXXXXX.json)
+    CONFIG_FILE=$(safe_mktemp /tmp/quickstart-config-XXXXXX.json)
     if curl -fsSL --connect-timeout 10 --max-time 30 "$DEFAULT_CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
         errors=0
         warnings=0
@@ -798,6 +824,7 @@ if [[ "$VALIDATE" == "true" ]]; then
     fi
     
     rm -f "$CONFIG_FILE" 2>/dev/null
+    tput cnorm 2>/dev/null || true
     exit 0
 fi
 
@@ -1181,14 +1208,14 @@ tui_interactive_select() {
 }
 
 select_language() {
-    # Check for language override first
-    if [[ -n "$LANG_OVERRIDE" ]]; then
+    if [[ "$LANG_OVERRIDE" == "SELECT" ]]; then
+        LANG_OVERRIDE=""
+    elif [[ -n "$LANG_OVERRIDE" ]]; then
         local mapped="$(lang_lookup "$LANG_OVERRIDE")"
         if [[ -n "$mapped" ]]; then
             echo "$mapped"
             return
         fi
-        # Check if override is a supported language directly
         if [[ -n "$(lang_name "$LANG_OVERRIDE")" ]]; then
             echo "$LANG_OVERRIDE"
             return
@@ -1201,7 +1228,7 @@ select_language() {
     echo "" >&2
     printf "\033[0;34m  ██████╗ ██╗   ██╗████╗ ██████╗██   ▄██╗███████╗████████╗ █████╗ ██████╗ ████████╗      ██████╗  ██████╗\n" >&2
     printf "\033[0;34m ██╔═══██╗██║   ██║╚██╔╝██╔════╝██ ▄██▀╔╝██╔════╝╚══██╔══╝██╔══██╗██╔══██╗╚══██╔══╝      ██╔══██╗██╔════╝\n" >&2
-    printf "\033[0;34m ██║   ██║██║   ██║ ██║ ██║     ████  ╔╝ ███████╗   ██║   ███████║██████╔╝   ██║   █████╗██████╔╝██║     \n" >&2
+    printf "\033[0;34m ██║   ██║██║   ██║ ██║ ██║     ████ ╔═╝ ███████╗   ██║   ███████║██████╔╝   ██║   █████╗██████╔╝██║     \n" >&2
     printf "\033[0;34m ██║▄▄ ██║██║   ██║ ██║ ██║     ██╗▀██▄  ╚════██║   ██║   ██╔══██║██╔══██╗   ██║   ╚════╝██╔═══╝ ██║     \n" >&2
     printf "\033[0;34m ╚██████╔╝╚██████╔╝████╗╚██████╗██║  ▀██╗███████║   ██║   ██║  ██║██║  ██║   ██║         ██║     ╚██████╗\n" >&2
     printf "\033[0;34m  ╚══▀▀═╝  ╚═════╝ ╚═══╝ ╚═════╝╚═╝   ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝         ╚═╝      ╚═════╝\n" >&2
@@ -1902,7 +1929,7 @@ show_banner() {
   echo ""
   printf "\033[0;34m  ██████╗ ██╗   ██╗████╗ ██████╗██   ▄██╗███████╗████████╗ █████╗ ██████╗ ████████╗      ██████╗  ██████╗\n"
   printf "\033[0;34m ██╔═══██╗██║   ██║╚██╔╝██╔════╝██ ▄██▀╔╝██╔════╝╚══██╔══╝██╔══██╗██╔══██╗╚══██╔══╝      ██╔══██╗██╔════╝\n"
-  printf "\033[0;34m ██║   ██║██║   ██║ ██║ ██║     ████  ╔╝ ███████╗   ██║   ███████║██████╔╝   ██║   █████╗██████╔╝██║     \n"
+  printf "\033[0;34m ██║   ██║██║   ██║ ██║ ██║     ████ ╔═╝ ███████╗   ██║   ███████║██████╔╝   ██║   █████╗██████╔╝██║     \n"
   printf "\033[0;34m ██║▄▄ ██║██║   ██║ ██║ ██║     ██╗▀██▄  ╚════██║   ██║   ██╔══██║██╔══██╗   ██║   ╚════╝██╔═══╝ ██║     \n"
   printf "\033[0;34m ╚██████╔╝╚██████╔╝████╗╚██████╗██║  ▀██╗███████║   ██║   ██║  ██║██║  ██║   ██║         ██║     ╚██████╗\n"
   printf "\033[0;34m  ╚══▀▀═╝  ╚═════╝ ╚═══╝ ╚═════╝╚═╝   ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝         ╚═╝      ╚═════╝\n\033[0m"
@@ -1966,7 +1993,7 @@ self_update() {
 
   log_info "$LANG_UPDATE_DOWNLOADING"
   local tmpfile
-  tmpfile=$(mktemp "/tmp/quickstart-XXXXXXXXXX.sh")
+  tmpfile=$(safe_mktemp "/tmp/quickstart-XXXXXXXXXX.sh")
   if ! curl -fsSL --connect-timeout 10 --max-time 60 \
     "https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/v${latest_version}/dist/quickstart.sh" \
     -o "$tmpfile" 2>/dev/null; then
