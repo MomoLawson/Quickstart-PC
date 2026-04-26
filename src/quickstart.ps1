@@ -1649,14 +1649,13 @@ $script:LANG = @{
 "batch_installing" = "Batch installing {0} packages..."
 "batch_success" = "Batch install complete: {0}/{1} succeeded"
 "batch_failed" = "Batch install partially failed, falling back to individual install..."
-}
+        }
+    }
 }
 
 
 # ============================================
 # Main script logic
-# ============================================
-# Logging functions
 # ============================================
 # Logging functions
 # ============================================
@@ -3630,15 +3629,12 @@ Write-Host ""
       # Check if any failures were permission-related
       if ($script:INSTALL_LAST_ERROR -match "Permission denied|not allowed|Operation not permitted|EACCES|権限がありません|권한이 없습니다|Berechtigung verweigert|Permission refusée|权限不足|權限不足") {
         Write-Host ""
-        Write-Host " $($script:LANG["permission_denied"] -f "")" -ForegroundColor Yellow
-        Write-Host " $($script:LANG["permission_suggestion"])" -ForegroundColor Yellow
-      }
-      $failedList = $retryFailedList
-                } else {
-                    $failedList = @()
-                }
+            $permMsg = $script:LANG["permission_denied"] -f $script:INSTALL_LAST_ERROR
+            Write-Host " $permMsg" -ForegroundColor Yellow
+            Write-Host " $($script:LANG["permission_suggestion"])" -ForegroundColor Yellow
             }
         }
+    }
         
 if ($reportJson -or $reportTxt) {
     Export-Report -JsonPath $reportJson -TxtPath $reportTxt -Installed $script:installedList -Skipped $skippedList -Failed $script:failedList

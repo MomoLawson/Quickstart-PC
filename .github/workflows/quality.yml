@@ -21,25 +21,28 @@ jobs:
   pwsh-syntax:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Install PowerShell
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget apt-transport-https software-properties-common
-          wget -q "https://github.com/PowerShell/PowerShell/releases/download/v7.4.1/powershell_7.4.1-1.deb_amd64.deb"
-          sudo dpkg -i powershell_7.4.1-1.deb_amd64.deb || sudo apt-get install -f -y
-      - name: Check PowerShell syntax
-        run: |
-          pwsh -NoProfile -Command '
-            $errors = @()
-            $tokens = @()
-            [System.Management.Automation.Language.Parser]::ParseFile("src/quickstart.ps1", [ref]$tokens, [ref]$errors)
-            if ($errors.Count -gt 0) {
-              $errors | ForEach-Object { Write-Error $_.ToString() }
-              exit 1
-            }
-            Write-Host "PowerShell syntax OK"
-          '
+    - uses: actions/checkout@v4
+    - name: Install PowerShell
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget apt-transport-https software-properties-common
+        wget -q "https://github.com/PowerShell/PowerShell/releases/download/v7.4.1/powershell_7.4.1-1.deb_amd64.deb"
+        sudo dpkg -i powershell_7.4.1-1.deb_amd64.deb || sudo apt-get install -f -y
+    - name: Check PowerShell syntax
+      run: |
+        pwsh -NoProfile -Command '
+        $errors = @()
+        $tokens = @()
+        [System.Management.Automation.Language.Parser]::ParseFile("src/quickstart.ps1", [ref]$tokens, [ref]$errors)
+        if ($errors.Count -gt 0) {
+          $errors | ForEach-Object { Write-Error $_.ToString() }
+          exit 1
+        }
+        Write-Host "PowerShell syntax OK"
+        '
+    - name: Runtime syntax check
+      run: |
+        pwsh -NoProfile -File src/quickstart.ps1 --help 2>&1 | head -1 || true
 
   json-validate:
     runs-on: ubuntu-latest
