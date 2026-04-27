@@ -2771,8 +2771,8 @@ function Update-Self {
   if ($checkResult -eq 0) { return 0 }
   if ($checkResult -eq 1) { return 1 }
   if (-not $nonInteractive -and -not $yes) {
-    Write-Host " $($script:LANG["update_prompt"])" -ForegroundColor Yellow
-    $answer = Read-Host " [Y/n]"
+    Write-Host " $($script:LANG["update_prompt"])" -ForegroundColor Yellow -NoNewline
+    $answer = Read-Host " "
     if (-not [string]::IsNullOrWhiteSpace($answer) -and $answer -notmatch "^[Yy]") { return 0 }
   }
   Write-Host " $($script:LANG["update_downloading"])" -ForegroundColor Cyan
@@ -3311,12 +3311,10 @@ else {
             exit 0
         }
         
-        if (-not $yes -and -not $nonInteractive) {
-            Write-Host -NoNewline "$($h["confirm_install"]) "
-            $confirm = [Console]::ReadKey($true)
-            Write-Host ""
-            
-            if ($confirm.Key -eq "N" -or $confirm.Key -eq "n") {
+if (-not $yes -and -not $nonInteractive) {
+    Write-Host "$($h["confirm_install"])" -ForegroundColor Yellow -NoNewline
+    $confirm = Read-Host " "
+    if ($confirm -match "^[Nn]") {
                 Write-Log $h["cancelled"] "INFO"
                 Write-Host ""
                 Write-Log $h["ask_continue"] "INFO"
@@ -3387,8 +3385,8 @@ Write-Host " $($h["disk_checking"])" -ForegroundColor Cyan
         Write-Host " $($h["resuming"])" -ForegroundColor Cyan
         $script:toInstall = $savedRemaining
       } else {
-        Write-Host " $($h["resume_found"])" -ForegroundColor Yellow
-        $resumeAnswer = Read-Host " [Y/n]"
+Write-Host " $($h["resume_found"])" -ForegroundColor Yellow -NoNewline
+    $resumeAnswer = Read-Host " "
         if ([string]::IsNullOrWhiteSpace($resumeAnswer) -or $resumeAnswer -match "^[Yy]") {
           Write-Host " $($h["resuming"])" -ForegroundColor Cyan
           $script:toInstall = $savedRemaining

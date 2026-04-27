@@ -1982,11 +1982,10 @@ self_update() {
   log_info "$(printf "$LANG_UPDATE_AVAILABLE" "$latest_version" "$current_version")"
 
   if [[ "$NON_INTERACTIVE" != "true" && "$AUTO_YES" != "true" ]]; then
-    printf " %s " "$LANG_UPDATE_PROMPT"
-    local update_answer
-    IFS= read -rsn1 update_answer < /dev/tty
-    echo ""
-    if [[ ! -z "$update_answer" && ! "$update_answer" =~ ^[Yy] ]]; then
+	printf " %s " "$LANG_UPDATE_PROMPT"
+	local update_answer
+	IFS= read -r update_answer < /dev/tty
+	if [[ ! -z "$update_answer" && ! "$update_answer" =~ ^[Yy] ]]; then
       return 0
     fi
   fi
@@ -2279,11 +2278,10 @@ fi
     if [[ "$AUTO_YES" == "true" ]] || [[ "$NON_INTERACTIVE" == "true" ]]; then
         echo ""
     else
-        printf "%s " "$LANG_CONFIRM_INSTALL"
-        local confirm=""
-        IFS= read -rsn1 confirm < /dev/tty
-        echo ""
-        if [[ "$confirm" =~ ^[Nn] ]]; then
+	printf "%s " "$LANG_CONFIRM_INSTALL"
+	local confirm=""
+	IFS= read -r confirm < /dev/tty
+	if [[ "$confirm" =~ ^[Nn] ]]; then
             log_info "$LANG_CANCELLED"
             echo ""
             log_info "$LANG_ASK_CONTINUE"
@@ -2378,11 +2376,10 @@ log_info "$LANG_DISK_CHECKING"
           [[ -n "$key" ]] && to_install+=("$key")
         done <<< "$saved_remaining"
       else
-        log_info "$LANG_RESUME_FOUND"
-        local resume_answer
-        IFS= read -rsn1 resume_answer < /dev/tty
-        echo ""
-        if [[ -z "$resume_answer" || "$resume_answer" =~ ^[Yy] ]]; then
+	log_info "$LANG_RESUME_FOUND"
+	local resume_answer
+	IFS= read -r resume_answer < /dev/tty
+	if [[ -z "$resume_answer" || "$resume_answer" =~ ^[Yy] ]]; then
           log_info "$LANG_RESUMING"
           to_install=()
           while IFS= read -r key; do
@@ -2545,11 +2542,10 @@ if [[ ${#to_install[@]} -gt 0 ]]; then
       if [[ "$NON_INTERACTIVE" != "true" && "$AUTO_YES" != "true" ]]; then
     tput cnorm 2>/dev/null || true
     stty echo 2>/dev/null || true
-    printf " %s " "$LANG_RETRY_PROMPT"
-    local retry_answer=""
-    IFS= read -rsn1 retry_answer < /dev/tty
-    echo ""
-    if [[ -z "$retry_answer" || "$retry_answer" =~ ^[Yy] ]]; then
+	printf " %s " "$LANG_RETRY_PROMPT"
+	local retry_answer=""
+	IFS= read -r retry_answer < /dev/tty
+	if [[ -z "$retry_answer" || "$retry_answer" =~ ^[Yy] ]]; then
       tput civis 2>/dev/null || true
       stty -echo 2>/dev/null || true
       local -a still_failed=()
