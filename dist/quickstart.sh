@@ -74,7 +74,7 @@ load_language_strings() {
     fi
     
     # 5. Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v0.78.2"
+    LANG_BANNER_TITLE="Quickstart-PC v0.78.3"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -193,7 +193,7 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="0.78.2"
+VERSION="0.78.3"
 FAIL_FAST=false
 PROFILE_KEY=""
 NON_INTERACTIVE=false
@@ -1302,6 +1302,28 @@ DETECTED_LANG=$(auto_detect_language)
 # Load strings for detected language
 load_language_strings "$DETECTED_LANG"
 
+if [[ "$UPDATE" == "true" || "$CHECK_UPDATE" == "true" ]]; then
+	if [[ -n "$LANG_OVERRIDE" && "$LANG_OVERRIDE" != "SELECT" ]]; then
+		local_mapped="$(lang_lookup "$LANG_OVERRIDE")"
+		if [[ -n "$local_mapped" ]]; then
+			load_language_strings "$local_mapped"
+		else
+			load_language_strings "en-US"
+		fi
+	else
+		load_language_strings "en-US"
+	fi
+	trap 'tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
+	if [[ "$CHECK_UPDATE" == "true" ]]; then
+		check_update
+		exit $?
+	fi
+	if [[ "$UPDATE" == "true" ]]; then
+		self_update
+		exit $?
+	fi
+fi
+
 # Now show language selection menu (allows user to override)
 DETECTED_LANG=$(select_language)
 
@@ -2018,17 +2040,7 @@ self_update() {
 }
 
 main() {
-    if [[ "$CHECK_UPDATE" == "true" ]]; then
-        check_update
-        exit $?
-    fi
-
-    if [[ "$UPDATE" == "true" ]]; then
-        self_update
-        exit $?
-    fi
-
-    trap 'set_title ""; stty echo 2>/dev/null; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
+	trap 'set_title ""; stty echo 2>/dev/null; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
     
     while true; do
         clear

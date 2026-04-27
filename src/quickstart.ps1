@@ -3069,15 +3069,24 @@ function Main {
     $script:LANG_OVERRIDE = "SELECT"  # Explicitly empty - show language menu
   }
 
-  if ($checkUpdate) {
-    $result = Check-Update
-    exit $result
-  }
-
-  if ($update) {
-    $result = Update-Self
-    exit $result
-  }
+if ($checkUpdate -or $update) {
+    $updateLang = if ($lang -and $lang -ne "__NONE__" -and $lang -ne "") {
+        $mapped = $script:LANGUAGE_MAPPINGS[$lang]
+        if ($mapped) { $mapped } else { "en-US" }
+    } else {
+        "en-US"
+    }
+    Initialize-LanguageStrings -Lang $updateLang
+    trap { try { Set-CursorVisible -Visible $true } catch {} }
+    if ($checkUpdate) {
+        $result = Check-Update
+        exit $result
+    }
+    if ($update) {
+        $result = Update-Self
+        exit $result
+    }
+}
 
   if ($help) {
     $helpLang = if ($lang -and $lang -ne "__NONE__") {
