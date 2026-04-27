@@ -39,7 +39,7 @@ param(
   [switch]$help
 )
 
-$VERSION = "1.0.0"
+$VERSION = "__VERSION__"
 $DEFAULT_CFG_URL = "https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json"
 
 # Supported languages configuration
