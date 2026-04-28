@@ -1750,6 +1750,23 @@
       "category": "media",
       "icon": "🎬"
     },
+    "darktable": {
+      "name": "darktable",
+      "desc": "RAW 照片处理/RAW photo processor",
+      "win": "winget install darktable.darktable",
+      "mac": "brew install --cask darktable",
+      "linux": "sudo apt install -y darktable",
+      "linux_dnf": "sudo dnf install -y darktable",
+      "linux_pacman": "sudo pacman -S darktable",
+      "check_win": "winget list darktable.darktable",
+      "check_mac": "ls /Applications/darktable.app 2>/dev/null",
+      "check_linux": "which darktable 2>/dev/null",
+      "check_linux_dnf": "which darktable 2>/dev/null",
+      "check_linux_pacman": "which darktable 2>/dev/null",
+      "tier": "stable",
+      "category": "media",
+      "icon": "🎬"
+    },
     "wps": {
       "name": "WPS Office",
       "desc": "办公套件/Office suite",
