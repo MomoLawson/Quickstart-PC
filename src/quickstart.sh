@@ -1313,22 +1313,10 @@ if [[ "$UPDATE" == "true" || "$CHECK_UPDATE" == "true" ]]; then
 	else
 		load_language_strings "en-US"
 	fi
-	trap 'tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
-	if [[ "$CHECK_UPDATE" == "true" ]]; then
-		check_update
-		exit $?
-	fi
-	if [[ "$UPDATE" == "true" ]]; then
-		self_update
-		exit $?
-	fi
+else
+	DETECTED_LANG=$(select_language)
+	load_language_strings "$DETECTED_LANG"
 fi
-
-# Now show language selection menu (allows user to override)
-DETECTED_LANG=$(select_language)
-
-# Reload strings for final language
-load_language_strings "$DETECTED_LANG"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -2040,6 +2028,18 @@ self_update() {
 }
 
 main() {
+	if [[ "$CHECK_UPDATE" == "true" ]]; then
+		trap 'tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
+		check_update
+		exit $?
+	fi
+
+	if [[ "$UPDATE" == "true" ]]; then
+		trap 'tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
+		self_update
+		exit $?
+	fi
+
 	trap 'set_title ""; stty echo 2>/dev/null; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
     
     while true; do
