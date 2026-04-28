@@ -181,7 +181,6 @@ AUTO_YES=false
 VERBOSE=false
 LOG_FILE=""
 EXPORT_PLAN=""
-CUSTOM_MODE=false
 RETRY_FAILED=false
 LIST_SOFTWARE=false
 SHOW_SOFTWARE=""
@@ -228,10 +227,9 @@ while [[ $# -gt 0 ]]; do
 --doctor) DOCTOR=true; shift ;;
         --yes|-y) AUTO_YES=true; shift ;;
         --verbose|-v) VERBOSE=true; shift ;;
-        --log-file) LOG_FILE="$2"; shift 2 ;;
-        --export-plan) EXPORT_PLAN="$2"; shift 2 ;;
-        --custom) CUSTOM_MODE=true; shift ;;
-        --retry-failed) RETRY_FAILED=true; shift ;;
+    --log-file) LOG_FILE="$2"; shift 2 ;;
+    --export-plan) EXPORT_PLAN="$2"; shift 2 ;;
+    --retry-failed) RETRY_FAILED=true; shift ;;
         --list-software) LIST_SOFTWARE=true; shift ;;
         --show-software) SHOW_SOFTWARE="$2"; shift 2 ;;
         --search) SEARCH_KEYWORD="$2"; shift 2 ;;
@@ -1499,39 +1497,40 @@ show_profile_menu() {
 }
 
 show_software_menu() {
-    local json_file=$1
-    local os=$2
-    local profile_key=$3
-    
-    # 一次性加载所有软件数据到内存，避免重复调用 jq
-    local sw_data=""
-    if [[ "$JSON_PARSER" == "jq" ]]; then
-        sw_data=$(jq -r '.software | to_entries[] | "\(.key)\t\(.value.name)\t\(.value.desc)\t\(.value.check_mac)\t\(.value.check_win)\t\(.value.check_linux)\t\(.value.icon)"' "$json_file" 2>/dev/null)
-    else
-        sw_data=$(python3 -c "
+  local json_file=$1
+  local os=$2
+  local profile_key=$3
+
+  # 一次性加载所有软件数据到内存，避免重复调用 jq
+  local sw_data=""
+  if [[ "$JSON_PARSER" == "jq" ]]; then
+    sw_data=$(jq -r '.software | to_entries[] | "\(.key)\t\(.value.name)\t\(.value.desc)\t\(.value.check_mac)\t\(.value.check_win)\t\(.value.check_linux)\t\(.value.icon)"' "$json_file" 2>/dev/null)
+  else
+    sw_data=$(python3 -c "
 import json
 data = json.load(open('$json_file'))
 for k, v in data['software'].items():
     print(f'{k}\t{v.get(\"name\",\"\")}\t{v.get(\"desc\",\"\")}\t{v.get(\"check_mac\",\"\")}\t{v.get(\"check_win\",\"\")}\t{v.get(\"check_linux\",\"\")}\t{v.get(\"icon\",\"\")}')
 " 2>/dev/null)
-    fi
-    
-    local -a sw_keys=()
-    while IFS= read -r key; do
-        [[ -z "$key" ]] && continue
-        if [[ ${#ONLY_SW[@]} -gt 0 ]] && [[ ! " ${ONLY_SW[*]} " =~ " $key " ]]; then continue; fi
-        if [[ ${#SKIP_SW[@]} -gt 0 ]] && [[ " ${SKIP_SW[*]} " =~ " $key " ]]; then continue; fi
-        sw_keys+=("$key")
-    done < <(json_get_profile_includes "$json_file" "$profile_key")
-    
+  fi
+
+  local -a sw_keys=()
+  while IFS= read -r key; do
+    [[ -z "$key" ]] && continue
+    if [[ ${#ONLY_SW[@]} -gt 0 ]] && [[ ! " ${ONLY_SW[*]} " =~ " $key " ]]; then continue; fi
+    if [[ ${#SKIP_SW[@]} -gt 0 ]] && [[ " ${SKIP_SW[*]} " =~ " $key " ]]; then continue; fi
+    sw_keys+=("$key")
+  done < <(json_get_profile_includes "$json_file" "$profile_key")
+
   local -a menu_keys menu_names
   local -a checked
   local -a is_installed_arr
 
-  menu_keys=("select_all")
-  menu_names=("$LANG_SELECT_ALL")
-  checked=(0)
-  is_installed_arr=(0)
+  # back_to_profiles (index 0) and select_all (index 1)
+  menu_keys=("back_to_profiles" "select_all")
+  menu_names=("← $LANG_BACK_TO_PROFILES" "$LANG_SELECT_ALL")
+  checked=(0 0)
+  is_installed_arr=(0 0)
 
   for key in "${sw_keys[@]}"; do
     local line=$(echo "$sw_data" | grep "^${key}"$'\t' | head -1)
@@ -1568,7 +1567,8 @@ for k, v in data['software'].items():
   done
 
   local num_items=${#menu_keys[@]}
-  local cursor=0
+  local cursor=1 # Start on select_all
+  local running=true
 
   tput civis 2>/dev/null || true
   stty -echo 2>/dev/null
@@ -1586,7 +1586,10 @@ for k, v in data['software'].items():
       local prefix=""
       local color=""
 
-      if [[ "${menu_keys[$i]}" == "select_all" ]]; then
+      if [[ "${menu_keys[$i]}" == "back_to_profiles" ]]; then
+        prefix=""
+        color="${RED}"
+      elif [[ "${menu_keys[$i]}" == "select_all" ]]; then
         if [[ ${checked[$i]} -eq 1 ]]; then
           prefix="${GREEN}${LANG_SELECTED}${NC}"
         else
@@ -1613,55 +1616,80 @@ for k, v in data['software'].items():
       fi
     done
   }
-    
+
+  draw_menu
+
+  while [[ "$running" == "true" ]]; do
+    tput cuu $num_items 2>/dev/null || true
     draw_menu
-    
-    while true; do
-        tput cuu $num_items 2>/dev/null || true
-        draw_menu
-        
-        local key
-        IFS= read -rsn1 key < /dev/tty
-        local key_code=$(printf '%d' "'$key" 2>/dev/null || echo 0)
-        
-case $key_code in
-27)
-IFS= read -rsn2 key < /dev/tty
-case "$key" in
-'[A'|'OA') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
-'[B'|'OB') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
-esac
-;;
+
+    local key=""
+    IFS= read -rsn1 key < /dev/tty
+    local key_code=$(printf '%d' "'$key" 2>/dev/null || echo 0)
+
+    case $key_code in
+      27)
+        IFS= read -rsn2 key < /dev/tty
+        case "$key" in
+          '[A'|'OA') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
+          '[B'|'OB') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
+        esac
+        ;;
       32)
-        if [[ "${menu_keys[$cursor]}" == "select_all" ]]; then
+        # Space toggle
+        if [[ $cursor -eq 0 ]]; then
+          # back_to_profiles - do nothing
+          :
+        elif [[ $cursor -eq 1 ]]; then
+          # select_all - toggle all but skip installed items
           local new_state=$((1 - checked[$cursor]))
-          for ((i=1; i<num_items; i++)); do
-            checked[$i]=$new_state
+          for ((i=2; i<num_items; i++)); do
+            if [[ ${is_installed_arr[$i]} -eq 0 ]]; then
+              checked[$i]=$new_state
+            fi
           done
           checked[$cursor]=$new_state
         else
-          checked[$cursor]=$((1 - checked[$cursor]))
+          # Software item - only toggle if not installed
+          if [[ ${is_installed_arr[$cursor]} -eq 0 ]]; then
+            checked[$cursor]=$((1 - checked[$cursor]))
+          fi
         fi
         ;;
       10|13|0)
-        break
+        # Enter
+        if [[ $cursor -eq 0 ]]; then
+          # back_to_profiles - return 1 to signal go back
+          tput cnorm 2>/dev/null || true
+          stty echo 2>/dev/null
+          local software_menu_lines=$((8 + num_items))
+          tput cuu "$software_menu_lines" 2>/dev/null || true
+          printf "\033[J"
+          SELECTED_SOFTWARE=()
+          return 1
+        fi
+        running=false
         ;;
     esac
   done
 
   tput cnorm 2>/dev/null || true
   stty echo 2>/dev/null
+  echo ""
 
+  # 退出时清除菜单区域
   local software_menu_lines=$((8 + num_items))
   tput cuu "$software_menu_lines" 2>/dev/null || true
   printf "\033[J"
 
   SELECTED_SOFTWARE=()
-  for ((i=1; i<num_items; i++)); do
+  for ((i=2; i<num_items; i++)); do
     if [[ ${checked[$i]} -eq 1 ]]; then
       SELECTED_SOFTWARE+=("${menu_keys[$i]}")
     fi
   done
+
+  return 0
 }
 
 install_software() {
@@ -1816,176 +1844,6 @@ install_batch() {
       install_software "$json_file" "$os" "$key"
     done
   fi
-}
-
-# 自定义软件选择模式
-custom_select_software() {
-  local json_file=$1
-  local os=$2
-  local profile_key=$3
-
-  # 获取套餐包含的软件
-  local -a sw_keys=()
-  while IFS= read -r key; do
-    [[ -z "$key" ]] && continue
-    sw_keys+=("$key")
-  done < <(json_get_profile_includes "$json_file" "$profile_key")
-
-  local num_sw=${#sw_keys[@]}
-
-  echo ""
-  log_header "$LANG_SELECT_SOFTWARE"
-  echo ""
-  echo -e " ${CYAN}$LANG_NAVIGATE_MULTI${NC}"
-  echo ""
-
-  # 构建菜单项
-  local -a menu_keys=()
-  local -a menu_names=()
-  local -a checked=()
-  local -a is_installed_arr=()
-
-    # back_to_profiles (index 0) and select_all (index 1)
-    menu_keys=("back_to_profiles" "select_all")
-    menu_names=("← $LANG_BACK_TO_PROFILES" "$LANG_SELECT_ALL")
-    checked=(0 0)
-    is_installed_arr=(0 0)
-
-  for key in "${sw_keys[@]}"; do
-    local name=$(json_get_software_field "$json_file" "$key" "name")
-    local desc=$(json_get_software_field "$json_file" "$key" "desc")
-    local sw_icon=$(json_get_software_field "$json_file" "$key" "icon")
-    local display_name="$name"
-    [[ -n "$sw_icon" ]] && display_name="$sw_icon $name"
-    menu_keys+=("$key")
-    if is_installed "$json_file" "$os" "$key"; then
-      menu_names+=("${GRAY}$display_name - $desc $LANG_INSTALLED${NC}")
-      is_installed_arr+=(1)
-    else
-      menu_names+=("$display_name - $desc")
-      is_installed_arr+=(0)
-    fi
-    checked+=(0)
-  done
-
-  local num_items=${#menu_keys[@]}
-  local cursor=1  # Start on select_all
-  local running=true
-
-  tput civis 2>/dev/null || true
-  stty -echo 2>/dev/null
-
-  draw_menu() {
-    for ((i=0; i<num_items; i++)); do
-      printf "\033[2K"
-      local item_text="${menu_names[$i]}"
-      local prefix=""
-      local color=""
-
-      if [[ "${menu_keys[$i]}" == "back_to_profiles" ]]; then
-        prefix=""
-        color="${RED}"
-      elif [[ "${menu_keys[$i]}" == "select_all" ]]; then
-        if [[ ${checked[$i]} -eq 1 ]]; then
-          prefix="${GREEN}${LANG_SELECTED}${NC}"
-        else
-          prefix="${LANG_NOT_SELECTED}"
-        fi
-        color="${ORANGE}"
-      else
-        if [[ ${checked[$i]} -eq 1 ]]; then
-          prefix="${GREEN}${LANG_SELECTED}${NC}"
-        else
-          prefix="${LANG_NOT_SELECTED}"
-        fi
-        color=""
-      fi
-
-      if [[ $i -eq $cursor ]]; then
-        echo -e " ${REVERSE}${prefix}${item_text}${NC}"
-      else
-        if [[ -n "$color" ]]; then
-          echo -e " ${prefix}${color}${item_text}${NC}"
-        else
-          echo -e " ${prefix}${item_text}"
-        fi
-      fi
-    done
-  }
-
-  draw_menu
-
-  while [[ "$running" == "true" ]]; do
-    tput cuu $num_items 2>/dev/null || true
-    draw_menu
-
-    local key=""
-    IFS= read -rsn1 key < /dev/tty
-    local key_code=$(printf '%d' "'$key" 2>/dev/null || echo 0)
-
-    case $key_code in
-      27)
-        IFS= read -rsn2 key < /dev/tty
-        case "$key" in
-          '[A'|'OA') ((cursor--)); [[ $cursor -lt 0 ]] && cursor=$((num_items - 1)) ;;
-          '[B'|'OB') ((cursor++)); [[ $cursor -ge $num_items ]] && cursor=0 ;;
-        esac
-        ;;
-      32)
-        # Space toggle
-        if [[ $cursor -eq 0 ]]; then
-          # back_to_profiles - do nothing
-          :
-        elif [[ $cursor -eq 1 ]]; then
-          # select_all - toggle all but skip installed items
-          local new_state=$((1 - checked[$cursor]))
-          for ((i=2; i<num_items; i++)); do
-            if [[ ${is_installed_arr[$i]} -eq 0 ]]; then
-              checked[$i]=$new_state
-            fi
-          done
-          checked[$cursor]=$new_state
-        else
-          # Software item - only toggle if not installed
-          if [[ ${is_installed_arr[$cursor]} -eq 0 ]]; then
-            checked[$cursor]=$((1 - checked[$cursor]))
-          fi
-        fi
-        ;;
-      10|13|0)
-        # Enter
-        if [[ $cursor -eq 0 ]]; then
-          # back_to_profiles - return 1 to signal go back
-          tput cnorm 2>/dev/null || true
-          stty echo 2>/dev/null
-          local software_menu_lines=$((8 + num_items))
-          tput cuu "$software_menu_lines" 2>/dev/null || true
-          printf "\033[J"
-          SELECTED_SOFTWARE=()
-          return 1
-        fi
-        running=false
-        ;;
-    esac
-  done
-
-  tput cnorm 2>/dev/null || true
-  stty echo 2>/dev/null
-  echo ""
-
-  # 退出时清除菜单区域
-  local software_menu_lines=$((8 + num_items))
-  tput cuu "$software_menu_lines" 2>/dev/null || true
-  printf "\033[J"
-
-  SELECTED_SOFTWARE=()
-  for ((i=2; i<num_items; i++)); do
-    if [[ ${checked[$i]} -eq 1 ]]; then
-      SELECTED_SOFTWARE+=("${menu_keys[$i]}")
-    fi
-  done
-
-  return 0
 }
 
 show_banner() {
@@ -2195,48 +2053,51 @@ main() {
         
 SELECTED_SOFTWARE=("${sw_keys[@]}")
 elif [[ -n "$PROFILE_KEY" ]]; then
-# --profile 参数：跳过菜单，直接选择
-local profile_exists=false
-while IFS= read -r key; do
-if [[ "$key" == "$PROFILE_KEY" ]]; then
-profile_exists=true
-break
-fi
-done < <(json_list_profiles "$CONFIG_FILE")
-
-if [[ "$profile_exists" != "true" ]]; then
-log_error "${LANG_PROFILE_NOT_FOUND/'$PROFILE_KEY'/$PROFILE_KEY}"
-exit 1
-fi
-
-  SELECTED_PROFILES=("$PROFILE_KEY")
-  local profile_name=$(json_get_profile_field "$CONFIG_FILE" "$PROFILE_KEY" "name")
-  echo ""
-  set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
-  if [[ "$CUSTOM_MODE" == "true" ]]; then
-    custom_select_software "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
-  else
-    show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
-  fi
-  else
-    while true; do
-      set_title "QSPC | $LANG_TITLE_SELECT_PROFILE"
-      show_profile_menu "$CONFIG_FILE"
-      [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
-      local profile_name=$(json_get_profile_field "$CONFIG_FILE" "${SELECTED_PROFILES[@]}" "name")
-      echo ""
-      set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
-      if [[ "$CUSTOM_MODE" == "true" ]]; then
-        custom_select_software "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
-        if [[ $? -eq 0 ]]; then
-          break
+    # --profile 参数：跳过套餐菜单，直接选择软件
+    local profile_exists=false
+    while IFS= read -r key; do
+        if [[ "$key" == "$PROFILE_KEY" ]]; then
+            profile_exists=true
+            break
         fi
-      else
+    done < <(json_list_profiles "$CONFIG_FILE")
+
+    if [[ "$profile_exists" != "true" ]]; then
+        log_error "${LANG_PROFILE_NOT_FOUND/'$PROFILE_KEY'/$PROFILE_KEY}"
+        exit 1
+    fi
+
+    SELECTED_PROFILES=("$PROFILE_KEY")
+    local profile_name=$(json_get_profile_field "$CONFIG_FILE" "$PROFILE_KEY" "name")
+
+    while true; do
+        echo ""
+        set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
         show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
-        break
-      fi
+        if [[ $? -eq 0 ]]; then
+            break
+        fi
+        # Back pressed - re-show profile menu
+        set_title "QSPC | $LANG_TITLE_SELECT_PROFILE"
+        show_profile_menu "$CONFIG_FILE"
+        [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
+        PROFILE_KEY="${SELECTED_PROFILES[@]}"
+        profile_name=$(json_get_profile_field "$CONFIG_FILE" "$PROFILE_KEY" "name")
     done
-  fi
+else
+  while true; do
+    set_title "QSPC | $LANG_TITLE_SELECT_PROFILE"
+    show_profile_menu "$CONFIG_FILE"
+    [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
+    local profile_name=$(json_get_profile_field "$CONFIG_FILE" "${SELECTED_PROFILES[@]}" "name")
+    echo ""
+    set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
+    show_software_menu "$CONFIG_FILE" "$os" "${SELECTED_PROFILES[@]}"
+    if [[ $? -eq 0 ]]; then
+      break
+    fi
+  done
+fi
     
     if [[ ${#SELECTED_SOFTWARE[@]} -eq 0 ]]; then
         log_warn "$LANG_NO_SOFTWARE_SELECTED"

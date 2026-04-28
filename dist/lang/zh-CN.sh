@@ -15,10 +15,9 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
  --doctor 运行 QC Doctor 环境诊断
   --yes, -y          自动确认所有提示
   --verbose, -v      显示详细调试信息
-  --log-file FILE    将日志写入文件
-  --export-plan FILE 导出安装计划到文件
-  --custom           自定义软件选择模式
-  --retry-failed     重试之前失败的软件
+  --log-file FILE          将日志写入文件
+  --export-plan FILE       导出安装计划到文件
+  --retry-failed           重试之前失败的软件
   --list-software    列出所有可用软件
   --show-software ID 显示指定软件详情
   --search KEYWORD   搜索软件

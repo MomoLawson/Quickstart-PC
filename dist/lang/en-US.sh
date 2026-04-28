@@ -15,10 +15,9 @@ Options:
   --doctor          Run QC Doctor environment diagnostics
   --yes, -y          Auto-confirm all prompts
   --verbose, -v      Show detailed debug info
-  --log-file FILE    Write logs to file
-  --export-plan FILE Export installation plan to file
-  --custom           Custom software selection mode
-  --retry-failed     Retry previously failed packages
+  --log-file FILE          Write logs to file
+  --export-plan FILE       Export installation plan to file
+  --retry-failed           Retry previously failed packages
   --list-software    List all available software
   --show-software ID Show software details
   --search KEYWORD   Search software

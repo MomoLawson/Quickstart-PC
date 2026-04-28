@@ -13,9 +13,8 @@ param(
     [switch]$yes,
     [switch]$verbose,
     [string]$logFile,
-    [string]$exportPlan,
-    [switch]$custom,
-    [switch]$retryFailed,
+  [string]$exportPlan,
+  [switch]$retryFailed,
     [switch]$listSoftware,
     [string]$showSoftware,
     [string]$search,
@@ -229,7 +228,7 @@ function Initialize-LanguageStrings {
                 "select_all" = "全选"
                 "installed" = "已安装"
                 
-                "custom_title" = "自定义选择软件"
+                
                 "custom_space_toggle" = "空格: 切换选择"
                 "custom_enter_confirm" = "回车: 确认"
                 "custom_a_select_all" = "A: 全选/全不选"
@@ -282,9 +281,8 @@ function Initialize-LanguageStrings {
                 "help_yes" = "自动确认所有提示"
                 "help_verbose" = "显示详细调试信息"
                 "help_log_file" = "将日志写入文件"
-                "help_export_plan" = "导出安装计划到文件"
-                "help_custom" = "自定义软件选择模式"
-                "help_retry_failed" = "重试之前失败的软件"
+  "help_export_plan" = "导出安装计划到文件"
+  "help_retry_failed" = "重试之前失败的软件"
                 "help_list_software" = "列出所有可用软件"
                 "help_show_software" = "显示指定软件详情"
                 "help_search" = "搜索软件"
@@ -375,7 +373,7 @@ function Initialize-LanguageStrings {
                 "select_all" = "全て選択"
                 "installed" = "インストール済み"
                 
-                "custom_title" = "カスタムソフトウェア選択"
+                
                 "custom_space_toggle" = "スペース: 選択切替"
                 "custom_enter_confirm" = "Enter: 確認"
                 "custom_a_select_all" = "A: 全選択/全解除"
@@ -428,9 +426,8 @@ function Initialize-LanguageStrings {
                 "help_yes" = "全てのプロンプトに自動同意"
                 "help_verbose" = "詳細なデバッグ情報を表示"
                 "help_log_file" = "ログをファイルに書き込む"
-                "help_export_plan" = "インストール計画をエクスポート"
-                "help_custom" = "カスタムソフトウェア選択モード"
-                "help_retry_failed" = "以前に失敗したパッケージを再試行"
+  "help_export_plan" = "インストール計画をエクスポート"
+  "help_retry_failed" = "以前に失敗したパッケージを再試行"
                 "help_list_software" = "全ての利用可能なソフトウェアをリスト表示"
                 "help_show_software" = "指定したソフトウェアの詳細を表示"
                 "help_search" = "ソフトウェアを検索"
@@ -521,7 +518,7 @@ $script:LANG = @{
 "select_all" = "모두 선택"
                 "installed" = "설치됨"
                 
-                "custom_title" = "사용자 정의 소프트웨어 선택"
+                
                 "custom_space_toggle" = "스페이스: 선택 전환"
                 "custom_enter_confirm" = "Enter: 확인"
                 "custom_a_select_all" = "A: 모두 선택/해제"
@@ -574,9 +571,8 @@ $script:LANG = @{
 "help_yes" = "모든 프롬프트에 자동 동의"
 "help_verbose" = "詳細한 디버그 정보 표시"
 "help_log_file" = "로그를 파일에 쓰기"
-"help_export_plan" = "설치 계획을 파일로 내보내기"
-"help_custom" = "사용자 정의 소프트웨어 선택 모드"
-"help_retry_failed" = "이전에 실패한 패키지 재시도"
+  "help_export_plan" = "설치 계획을 파일로 내보내기"
+  "help_retry_failed" = "이전에 실패한 패키지 재시도"
 "help_list_software" = "사용 가능한 모든 소프트웨어 나열"
 "help_show_software" = "지정한 소프트웨어 상세 정보 표시"
 "help_search" = "소프트웨어 검색"
@@ -714,9 +710,8 @@ $script:LANG = @{
                 "help_yes" = "自動確認所有提示"
                 "help_verbose" = "顯示詳細調試信息"
                 "help_log_file" = "將日誌寫入文件"
-                "help_export_plan" = "匯出安裝計劃到文件"
-                "help_custom" = "自訂軟件選擇模式"
-                "help_retry_failed" = "重試之前失敗的軟件"
+  "help_export_plan" = "匯出安裝計劃到文件"
+  "help_retry_failed" = "重試之前失敗的軟件"
                 "help_list_software" = "列出所有可用軟件"
                 "help_show_software" = "顯示指定軟件詳情"
                 "help_search" = "搜尋軟件"
@@ -754,7 +749,7 @@ $script:LANG = @{
     "disk_space_low" = "磁碟空間不足: 可用 {0}GB，建議至少 {1}GB"
     "disk_space_warning" = "⚠ 磁碟空間較低，安裝可能失敗"
 "disk_checking" = "檢查磁碟空間..."
-"custom_title" = "自定義選擇軟體"
+
 "custom_space_toggle" = "空格: 切換選擇"
 "custom_enter_confirm" = "回車: 確認"
 "custom_a_select_all" = "A: 全選/全不選"
@@ -859,9 +854,8 @@ $script:LANG = @{
                 "help_yes" = "Alle Prompts automatisch bestätigen"
                 "help_verbose" = "Detaillierte Debug-Infos anzeigen"
                 "help_log_file" = "Logs in Datei schreiben"
-                "help_export_plan" = "Installationsplan exportieren"
-                "help_custom" = "Benutzerdefinierte Software-Auswahl"
-                "help_retry_failed" = "Zuerst fehlgeschlagene Pakete erneut versuchen"
+  "help_export_plan" = "Installationsplan exportieren"
+  "help_retry_failed" = "Zuerst fehlgeschlagene Pakete erneut versuchen"
                 "help_list_software" = "Alle verfügbare Software auflisten"
                 "help_show_software" = "Software-Details anzeigen"
                 "help_search" = "Software suchen"
@@ -899,7 +893,7 @@ $script:LANG = @{
     "disk_space_low" = "Wenig Speicherplatz: {0}GB verfügbar, mindestens {1}GB empfohlen"
     "disk_space_warning" = "⚠ Wenig Speicherplatz, Installation könnte fehlschlagen"
 "disk_checking" = "Speicherplatz wird überprüft..."
-"custom_title" = "Benutzerdefinierte Auswahl"
+
 "custom_space_toggle" = "Leertaste: umschalten"
 "custom_enter_confirm" = "Enter: bestätigen"
 "custom_a_select_all" = "A: alle auswählen/abwählen"
@@ -1004,9 +998,8 @@ $script:LANG = @{
                 "help_yes" = "Confirmer automatiquement toutes les invites"
                 "help_verbose" = "Afficher les infos de débogage détaillées"
                 "help_log_file" = "Écrire les logs dans un fichier"
-                "help_export_plan" = "Exporter le plan d'installation"
-                "help_custom" = "Mode de sélection de logiciels personnalisé"
-                "help_retry_failed" = "Réessayer les paquets précédemment échoués"
+  "help_export_plan" = "Exporter le plan d'installation"
+  "help_retry_failed" = "Réessayer les paquets précédemment échoués"
                 "help_list_software" = "Lister tous les logiciels disponibles"
                 "help_show_software" = "Afficher les détails du logiciel"
                 "help_search" = "Rechercher un logiciel"
@@ -1044,7 +1037,7 @@ $script:LANG = @{
     "disk_space_low" = "Espace disque insuffisant : {0}GB disponible, au moins {1}GB recommandé"
     "disk_space_warning" = "⚠ Espace disque faible, l'installation peut échouer"
 "disk_checking" = "Vérification de l'espace disque..."
-"custom_title" = "Sélection personnalisée"
+
 "custom_space_toggle" = "Espace: basculer"
 "custom_enter_confirm" = "Entrée: confirmer"
 "custom_a_select_all" = "A: tout sélectionner/désélectionner"
@@ -1149,9 +1142,8 @@ $script:LANG = @{
                 "help_yes" = "تأكيد جميع الأسئلة تلقائياً"
                 "help_verbose" = "إظهار معلومات التصحيح التفصيلية"
                 "help_log_file" = "كتابة السجلات في ملف"
-                "help_export_plan" = "تصدير خطة التثبيت"
-                "help_custom" = "وضع اختيار البرامج المخصص"
-                "help_retry_failed" = "إعادة المحاولة للحزم الفاشلة سابقاً"
+  "help_export_plan" = "تصدير خطة التثبيت"
+  "help_retry_failed" = "إعادة المحاولة للحزم الفاشلة سابقاً"
                 "help_list_software" = "سرد جميع البرامج المتاحة"
                 "help_show_software" = "إظهار تفاصيل البرنامج"
                 "help_search" = "البحث عن برنامج"
@@ -1189,7 +1181,7 @@ $script:LANG = @{
     "disk_space_low" = "مساحة قرص غير كافية: {0}GB متاح، يوصى بـ {1}GB على الأقل"
     "disk_space_warning" = "⚠ مساحة القرص منخفضة، قد يفشل التثبيت"
 "disk_checking" = "جاري التحقق من مساحة القرص..."
-"custom_title" = "الاختيار المخصص"
+
 "custom_space_toggle" = "مسافة: تبديل"
 "custom_enter_confirm" = "Enter: تأكيد"
 "custom_a_select_all" = "A: تحديد/إلغاء تحديد الكل"
@@ -1294,9 +1286,8 @@ $script:LANG = @{
                 "help_yes" = "Confirmar automaticamente todos os prompts"
                 "help_verbose" = "Mostrar informações de debug detalhadas"
                 "help_log_file" = "Escrever logs em arquivo"
-                "help_export_plan" = "Exportar plano de instalação"
-                "help_custom" = "Modo de seleção de software personalizado"
-                "help_retry_failed" = "Tentar pacotes que falharam anteriormente"
+  "help_export_plan" = "Exportar plano de instalação"
+  "help_retry_failed" = "Tentar pacotes que falharam anteriormente"
                 "help_list_software" = "Listar todos os softwares disponíveis"
                 "help_show_software" = "Mostrar detalhes do software"
                 "help_search" = "Pesquisar software"
@@ -1334,7 +1325,7 @@ $script:LANG = @{
     "disk_space_low" = "Espaço em disco insuficiente: {0}GB disponível, pelo menos {1}GB recomendado"
     "disk_space_warning" = "⚠ Espaço em disco baixo, a instalação pode falhar"
 "disk_checking" = "Verificando espaço em disco..."
-"custom_title" = "Seleção personalizada"
+
 "custom_space_toggle" = "Espaço: alternar"
 "custom_enter_confirm" = "Enter: confirmar"
 "custom_a_select_all" = "A: selecionar/deselecionar tudo"
@@ -1439,9 +1430,8 @@ $script:LANG = @{
                 "help_yes" = "Conferma automaticamente tutti i prompt"
                 "help_verbose" = "Mostra info di debug dettagliate"
                 "help_log_file" = "Scrivi log su file"
-                "help_export_plan" = "Esporta piano di installazione"
-                "help_custom" = "Modalità selezione software personalizzata"
-                "help_retry_failed" = "Riprova pacchetti precedentemente falliti"
+  "help_export_plan" = "Esporta piano di installazione"
+  "help_retry_failed" = "Riprova pacchetti precedentemente falliti"
                 "help_list_software" = "Elenca tutto il software disponibile"
                 "help_show_software" = "Mostra dettagli software"
                 "help_search" = "Cerca software"
@@ -1479,7 +1469,7 @@ $script:LANG = @{
     "disk_space_low" = "Spazio su disco insufficiente: {0}GB disponibile, almeno {1}GB consigliato"
     "disk_space_warning" = "⚠ Spazio su disco insufficiente, l'installazione potrebbe fallire"
 "disk_checking" = "Verifica dello spazio su disco..."
-"custom_title" = "Selezione personalizzata"
+
 "custom_space_toggle" = "Spazio: alterna"
 "custom_enter_confirm" = "Invio: conferma"
 "custom_a_select_all" = "A: seleziona/deseleziona tutto"
@@ -1584,9 +1574,8 @@ $script:LANG = @{
                 "help_yes" = "Auto-confirm all prompts"
                 "help_verbose" = "Show detailed debug info"
                 "help_log_file" = "Write logs to file"
-                "help_export_plan" = "Export installation plan to file"
-                "help_custom" = "Custom software selection mode"
-                "help_retry_failed" = "Retry previously failed packages"
+  "help_export_plan" = "Export installation plan to file"
+  "help_retry_failed" = "Retry previously failed packages"
                 "help_list_software" = "List all available software"
                 "help_show_software" = "Show software details"
                 "help_search" = "Search software"
@@ -1624,7 +1613,7 @@ $script:LANG = @{
     "disk_space_low" = "Low disk space: {0}GB available, at least {1}GB recommended"
     "disk_space_warning" = "⚠ Low disk space, installation may fail"
 "disk_checking" = "Checking disk space..."
-"custom_title" = "Custom Software Selection"
+
 "custom_space_toggle" = "Space: toggle"
 "custom_enter_confirm" = "Enter: confirm"
 "custom_a_select_all" = "A: select/deselect all"
@@ -2072,8 +2061,7 @@ $($h["help_lang"])
   --verbose, -v      $($h["help_verbose"])
   --log-file FILE    $($h["help_log_file"])
   --export-plan FILE $($h["help_export_plan"])
-  --custom           $($h["help_custom"])
-  --retry-failed     $($h["help_retry_failed"])
+  --retry-failed $($h["help_retry_failed"])
   --list-software    $($h["help_list_software"])
   --show-software ID $($h["help_show_software"])
   --search KEYWORD   $($h["help_search"])
@@ -2903,9 +2891,9 @@ function Show-ProfileMenu {
 }
 
 # ============================================
-# Custom Software Selection (TUI with checkboxes)
+# Software Selection (TUI with checkboxes)
 # ============================================
-function Select-CustomSoftware {
+function Show-SoftwareMenu {
 param([string]$Path, [string]$OS, [string]$ProfileKey)
 
 $h = $script:LANG
@@ -2918,8 +2906,6 @@ if ($swKeys.Count -eq 0) { return @() }
 $menuKeys = @("back_to_profiles", "select_all")
 $menuNames = @("← $($h["back_to_profiles"])", $h["select_all"])
 $checked = @(0, 0)
-
-# Track which software is installed
 $isInstalled = @($false, $false)
 
 foreach ($key in $swKeys) {
@@ -2943,19 +2929,19 @@ $checked += 0
 }
 
 $numItems = $menuNames.Count
-$cursor = 1  # Start at select_all (index 1)
+$cursor = 1 # Start at select_all (index 1)
 $oldCursorVisible = [Console]::CursorVisible
 [Console]::CursorVisible = $false
 
 Write-Host ""
-Write-Log $h["custom_title"] "INFO"
+Write-Log $h["title_select_software"] "INFO"
 Write-Host ""
 Write-Host " $($h["custom_space_toggle"]) | $($h["custom_enter_confirm"]) | $($h["custom_a_select_all"])" -ForegroundColor Cyan
 Write-Host ""
 
 $startRow = [Console]::CursorTop
 
-function Draw-CustomMenu {
+function Draw-SoftwareMenu {
 param([int]$CursorPos, [int]$SelectedCount)
 
 for ($i = 0; $i -lt $numItems; $i++) {
@@ -2968,7 +2954,7 @@ if ($i -eq 0) {
 if ($i -eq $CursorPos) {
 Write-Host " $itemText" -NoNewline -BackgroundColor White -ForegroundColor Red
 } else {
-Write-Host " $itemText" -NoNewline -ForegroundColor Red
+Write-Host " $itemText" -NoNewline -ForegroundColor DarkRed
 }
 } elseif ($i -eq 1) {
 # Select all - checkbox, orange color
@@ -3020,7 +3006,7 @@ if ($checked[$i] -eq 1) { $count++ }
 return $count
 }
 
-Draw-CustomMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
+Draw-SoftwareMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
 
 $running = $true
 while ($running) {
@@ -3030,12 +3016,12 @@ switch ($key.VirtualKeyCode) {
 38 { # Up arrow
 $cursor--
 if ($cursor -lt 0) { $cursor = $numItems - 1 }
-Draw-CustomMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
+Draw-SoftwareMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
 }
 40 { # Down arrow
 $cursor++
 if ($cursor -ge $numItems) { $cursor = 0 }
-Draw-CustomMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
+Draw-SoftwareMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
 }
 32 { # Space - toggle selection
 if ($cursor -eq 0) {
@@ -3055,7 +3041,7 @@ if (-not $isInstalled[$cursor]) {
 $checked[$cursor] = if ($checked[$cursor] -eq 1) { 0 } else { 1 }
 }
 }
-Draw-CustomMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
+Draw-SoftwareMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
 }
 65 { # 'A' key - select/deselect all (except installed)
 $newState = if ($checked[1] -eq 1) { 0 } else { 1 }
@@ -3065,7 +3051,7 @@ if (-not $isInstalled[$i]) {
 $checked[$i] = $newState
 }
 }
-Draw-CustomMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
+Draw-SoftwareMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
 }
 13 { # Enter - confirm
 if ($cursor -eq 0) {
@@ -3096,162 +3082,6 @@ return $null
 # Build result array
 $result = @()
 for ($i = 2; $i -lt $numItems; $i++) {
-if ($checked[$i] -eq 1) {
-$result += $menuKeys[$i]
-}
-}
-
-return $result
-}
-
-# ============================================
-# Normal Software Selection (TUI with checkboxes)
-# ============================================
-function Show-SoftwareMenu {
-param([string]$Path, [string]$OS, [string]$ProfileKey)
-
-$h = $script:LANG
-
-# Get software keys from profile
-$swKeys = Get-ProfileIncludes -Path $Path -Key $ProfileKey
-if ($swKeys.Count -eq 0) { return @() }
-
-# Build menu items - NO back_to_profiles, just select_all
-$menuKeys = @("select_all")
-$menuNames = @($h["select_all"])
-$checked = @(0)
-
-foreach ($key in $swKeys) {
-$name = Get-SoftwareField -Path $Path -Key $key -Field "name"
-$desc = Get-SoftwareField -Path $Path -Key $key -Field "desc"
-$swIcon = Get-SoftwareField -Path $Path -Key $key -Field "icon"
-
-$displayName = $name
-if ($swIcon) { $displayName = "$swIcon $name" }
-
-$menuKeys += $key
-$menuNames += "$displayName - $desc"
-$checked += 0
-}
-
-$numItems = $menuNames.Count
-$cursor = 0  # Start at select_all
-$oldCursorVisible = [Console]::CursorVisible
-[Console]::CursorVisible = $false
-
-Write-Host ""
-Write-Log $h["title_select_software"] "INFO"
-Write-Host ""
-Write-Host " $($h["custom_space_toggle"]) | $($h["custom_enter_confirm"]) | $($h["custom_a_select_all"])" -ForegroundColor Cyan
-Write-Host ""
-
-$startRow = [Console]::CursorTop
-
-function Draw-SoftwareMenu {
-param([int]$CursorPos, [int]$SelectedCount)
-
-for ($i = 0; $i -lt $numItems; $i++) {
-[Console]::SetCursorPosition(0, $startRow + $i)
-
-$prefix = if ($checked[$i] -eq 1) { $h["selected"] } else { $h["not_selected"] }
-$itemText = $menuNames[$i]
-
-if ($i -eq 0) {
-# Select all - orange color
-if ($i -eq $CursorPos) {
-Write-Host " $prefix$itemText" -NoNewline -BackgroundColor White -ForegroundColor DarkYellow
-} else {
-Write-Host " $prefix$itemText" -NoNewline -ForegroundColor DarkYellow
-}
-} else {
-# Software items
-if ($i -eq $CursorPos) {
-if ($checked[$i] -eq 1) {
-Write-Host " $prefix$itemText" -NoNewline -BackgroundColor White -ForegroundColor Green
-} else {
-Write-Host " $prefix$itemText" -NoNewline -BackgroundColor White -ForegroundColor Black
-}
-} else {
-if ($checked[$i] -eq 1) {
-Write-Host " $prefix$itemText" -NoNewline -ForegroundColor Green
-} else {
-Write-Host " $prefix$itemText" -NoNewline
-}
-}
-}
-Write-Host "" # Clear rest of line
-}
-
-# Show selection count
-[Console]::SetCursorPosition(0, $startRow + $numItems + 1)
-$countText = $h["custom_selected"] -f $SelectedCount, ($numItems - 1)
-Write-Host " $countText" -NoNewline
-Write-Host "" # Clear rest of line
-}
-
-function Get-SelectedCount {
-$count = 0
-for ($i = 1; $i -lt $numItems; $i++) {
-if ($checked[$i] -eq 1) { $count++ }
-}
-return $count
-}
-
-Draw-SoftwareMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
-
-$running = $true
-while ($running) {
-$key = [Console]::ReadKey($true)
-
-switch ($key.VirtualKeyCode) {
-38 { # Up arrow
-$cursor--
-if ($cursor -lt 0) { $cursor = $numItems - 1 }
-Draw-SoftwareMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
-}
-40 { # Down arrow
-$cursor++
-if ($cursor -ge $numItems) { $cursor = 0 }
-Draw-SoftwareMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
-}
-32 { # Space - toggle selection
-if ($cursor -eq 0) {
-# Toggle all
-$newState = if ($checked[0] -eq 1) { 0 } else { 1 }
-for ($i = 0; $i -lt $numItems; $i++) {
-$checked[$i] = $newState
-}
-} else {
-$checked[$cursor] = if ($checked[$cursor] -eq 1) { 0 } else { 1 }
-}
-Draw-SoftwareMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
-}
-65 { # 'A' key - select/deselect all
-$newState = if ($checked[0] -eq 1) { 0 } else { 1 }
-for ($i = 0; $i -lt $numItems; $i++) {
-$checked[$i] = $newState
-}
-Draw-SoftwareMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
-}
-13 { # Enter - confirm
-$running = $false
-}
-}
-}
-
-[Console]::CursorVisible = $oldCursorVisible
-
-# Clear menu area
-$totalLines = $numItems + 3
-for ($i = 0; $i -lt $totalLines; $i++) {
-[Console]::SetCursorPosition(0, $startRow + $i)
-Write-Host (" " * [Console]::WindowWidth) -NoNewline
-}
-[Console]::SetCursorPosition(0, $startRow)
-
-# Build result array
-$result = @()
-for ($i = 1; $i -lt $numItems; $i++) {
 if ($checked[$i] -eq 1) {
 $result += $menuKeys[$i]
 }
@@ -3384,12 +3214,6 @@ if ($nonInteractive) {
 
     $script:SELECTED_PROFILES = @($profile)
 
-    if ($custom) {
-        # Custom mode not supported in non-interactive mode
-        Write-Log "Custom mode requires interactive mode" "ERROR"
-        exit 1
-    }
-
     $includes = Get-ProfileIncludes -Path $script:CONFIG_FILE -Key $profile
     $script:SELECTED_SOFTWARE = @()
     foreach ($sw in $includes) {
@@ -3397,69 +3221,62 @@ if ($nonInteractive) {
         if ($skip.Count -gt 0 -and $skip -contains $sw) { continue }
         $script:SELECTED_SOFTWARE += $sw
     }
-}
-elseif ($custom -and $profile) {
-    # Custom selection mode with specified profile
+  }
+  elseif ($profile) {
     $profileKeys = Get-ProfileKeys -Path $script:CONFIG_FILE
     if ($profileKeys -notcontains $profile) {
-        Write-Log "$($h["profile_not_found"]): $profile" "ERROR"
-        exit 1
+      Write-Log "$($h["profile_not_found"]): $profile" "ERROR"
+      exit 1
     }
 
     $script:SELECTED_PROFILES = @($profile)
     $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $profile -Field "name"
-    Set-WindowTitle -Title "QSPC | $profileName | $($h["custom_title"])"
-    $script:SELECTED_SOFTWARE = Select-CustomSoftware -Path $script:CONFIG_FILE -OS $os -ProfileKey $profile
-}
-elseif ($custom) {
-# Custom selection mode without profile - select profile first
-while ($true) {
-Set-WindowTitle -Title "QSPC | $($h["title_select_profile"])"
-$selectedProfile = Show-ProfileMenu -Path $script:CONFIG_FILE
 
-if (-not $selectedProfile) {
-Write-Log $h["no_profile_selected"] "WARN"
-exit 0
-}
+    while ($true) {
+      Set-WindowTitle -Title "QSPC | $profileName | $($h["title_select_software"])"
+      $script:SELECTED_SOFTWARE = Show-SoftwareMenu -Path $script:CONFIG_FILE -OS $os -ProfileKey $profile
 
-$script:SELECTED_PROFILES = @($selectedProfile)
-$profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $selectedProfile -Field "name"
-Set-WindowTitle -Title "QSPC | $profileName | $($h["custom_title"])"
-$script:SELECTED_SOFTWARE = Select-CustomSoftware -Path $script:CONFIG_FILE -OS $os -ProfileKey $selectedProfile
+      if ($null -ne $script:SELECTED_SOFTWARE) {
+        break # Normal confirm, proceed
+      }
+      # $null means back was pressed, re-show profile menu
+      Set-WindowTitle -Title "QSPC | $($h["title_select_profile"])"
+      $selectedProfile = Show-ProfileMenu -Path $script:CONFIG_FILE
 
-if ($null -ne $script:SELECTED_SOFTWARE) {
-break  # Normal confirm, proceed
-}
-# $null means back was pressed, loop to re-show profile menu
-}
-}
-elseif ($profile) {
-    $profileKeys = Get-ProfileKeys -Path $script:CONFIG_FILE
-    if ($profileKeys -notcontains $profile) {
-        Write-Log "$($h["profile_not_found"]): $profile" "ERROR"
-        exit 1
+      if (-not $selectedProfile) {
+        Write-Log $h["no_profile_selected"] "WARN"
+        exit 0
+      }
+
+      $script:SELECTED_PROFILES = @($selectedProfile)
+      $profile = $selectedProfile
+      $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $selectedProfile -Field "name"
     }
+  }
+  else {
+    while ($true) {
+      Set-WindowTitle -Title "QSPC | $($h["title_select_profile"])"
+      $selectedProfile = Show-ProfileMenu -Path $script:CONFIG_FILE
 
-    $script:SELECTED_PROFILES = @($profile)
-    $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $profile -Field "name"
-    Set-WindowTitle -Title "QSPC | $profileName | $($h["title_select_software"])"
-    $script:SELECTED_SOFTWARE = Show-SoftwareMenu -Path $script:CONFIG_FILE -OS $os -ProfileKey $profile
+      if (-not $selectedProfile) {
+        Write-Log $h["no_profile_selected"] "WARN"
+        exit 0
+      }
+
+      $script:SELECTED_PROFILES = @($selectedProfile)
+      $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $selectedProfile -Field "name"
+
+      Set-WindowTitle -Title "QSPC | $profileName | $($h["title_select_software"])"
+      $script:SELECTED_SOFTWARE = Show-SoftwareMenu -Path $script:CONFIG_FILE -OS $os -ProfileKey $selectedProfile
+
+    if ($null -ne $script:SELECTED_SOFTWARE) {
+      break # Normal confirm, proceed
+    }
+    # $null means back was pressed, loop to re-show profile menu
+  }
 }
-else {
-            Set-WindowTitle -Title "QSPC | $($h["title_select_profile"])"
-            $script:SELECTED_PROFILES = @(Show-ProfileMenu -Path $script:CONFIG_FILE)
-            
-            if ($script:SELECTED_PROFILES.Count -eq 0) {
-                Write-Log $h["no_profile_selected"] "WARN"
-                exit 0
-            }
-            
-            $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $script:SELECTED_PROFILES[0] -Field "name"
-            Set-WindowTitle -Title "QSPC | $profileName | $($h["title_select_software"])"
-            $script:SELECTED_SOFTWARE = Show-SoftwareMenu -Path $script:CONFIG_FILE -OS $os -ProfileKey $script:SELECTED_PROFILES[0]
-        }
-        
-        if ($script:SELECTED_SOFTWARE.Count -eq 0) {
+
+if ($script:SELECTED_SOFTWARE.Count -eq 0) {
             Write-Log $h["no_software_selected"] "WARN"
             
             if ($nonInteractive) {

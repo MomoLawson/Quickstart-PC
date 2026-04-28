@@ -15,10 +15,9 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --doctor QC        Doctor環境診断を実行
   --yes, -y         全てのプロンプトに自動同意
   --verbose, -v      詳細なデバッグ情報を表示
-  --log-file FILE    ログをファイルに書き込む
-  --export-plan FILE インストール計画をエクスポート
-  --custom           カスタムソフトウェア選択モード
-  --retry-failed     以前に失敗したパッケージを再試行
+  --log-file FILE          ログをファイルに書き込む
+  --export-plan FILE       インストール計画をエクスポート
+  --retry-failed           以前に失敗したパッケージを再試行
   --list-software    全ての利用可能なソフトウェアをリスト表示
   --show-software ID 指定したソフトウェアの詳細を表示
   --search KEYWORD   ソフトウェアを検索

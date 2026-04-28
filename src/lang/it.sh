@@ -15,10 +15,9 @@ Opzioni:
   --doctor           Esegui diagnosi ambiente QC Doctor
   --yes, -y          Conferma automaticamente tutti i prompt
   --verbose, -v      Mostra informazioni di debug dettagliate
-  --log-file FILE    Scrivi log su file
-  --export-plan FILE Esporta piano di installazione
-  --custom           Modalità selezione software personalizzata
-  --retry-failed     Riprova pacchetti precedentemente falliti
+  --log-file FILE          Scrivi log su file
+  --export-plan FILE       Esporta piano di installazione
+  --retry-failed           Riprova pacchetti precedentemente falliti
   --list-software    Elenca tutti i software disponibili
   --show-software ID Mostra dettagli del software
   --search KEYWORD   Cerca software

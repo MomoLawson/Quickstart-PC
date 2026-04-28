@@ -15,10 +15,9 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --doctor          تشغيل تشخيص بيئة QC Doctor
   --yes, -y          تأكيد جميع المطالبات تلقائياً
   --verbose, -v      عرض معلومات التصحيح التفصيلية
-  --log-file FILE    كتابة السجلات في ملف
-  --export-plan FILE تصدير خطة التثبيت
-  --custom           وضع اختيار البرامج المخصص
-  --retry-failed     إعادة محاولة الحزم التي فشلت سابقاً
+  --log-file FILE          كتابة السجلات في ملف
+  --export-plan FILE       تصدير خطة التثبيت
+  --retry-failed           إعادة محاولة الحزم التي فشلت سابقاً
   --list-software    سرد جميع البرامج المتاحة
   --show-software ID عرض تفاصيل البرنامج
   --search KEYWORD   البحث عن برنامج

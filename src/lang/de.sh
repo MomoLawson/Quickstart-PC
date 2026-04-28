@@ -15,10 +15,9 @@ Optionen:
   --doctor           QC Doctor Umgebungsdiagnose ausführen
   --yes, -y          Alle Bestätigungen automatisch bestätigen
   --verbose, -v      Detaillierte Debug-Infos anzeigen
-  --log-file FILE    Logs in Datei schreiben
-  --export-plan FILE Installationsplan exportieren
-  --custom           Benutzerdefinierter Software-Auswahlmodus
-  --retry-failed     Zuvor fehlgeschlagene Pakete erneut versuchen
+  --log-file FILE          Logs in Datei schreiben
+  --export-plan FILE       Installationsplan exportieren
+  --retry-failed           Zuvor fehlgeschlagene Pakete erneut versuchen
   --list-software    Alle verfügbaren Software auflisten
   --show-software ID Software-Details anzeigen
   --search KEYWORD   Software suchen

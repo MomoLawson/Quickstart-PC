@@ -15,10 +15,9 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --doctor QC Doctor 환경 진단 실행
   --yes, -y          모든 프롬프트에 자동 동의
   --verbose, -v     詳細な 디버그 정보 표시
-  --log-file FILE    로그를 파일에 쓰기
-  --export-plan FILE 설치 계획 내보내기
-  --custom           사용자 정의 소프트웨어 선택 모드
-  --retry-failed     이전에 실패한 패키지 재시도
+  --log-file FILE          로그를 파일에 쓰기
+  --export-plan FILE       설치 계획 내보내기
+  --retry-failed           이전에 실패한 패키지 재시도
   --list-software    사용 가능한 모든 소프트웨어 나열
   --show-software ID 지정한 소프트웨어 상세 정보 표시
   --search KEYWORD   소프트웨어 검색

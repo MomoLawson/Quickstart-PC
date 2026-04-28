@@ -15,10 +15,9 @@ Options :
   --doctor           Exécuter les diagnostics QC Doctor
   --yes, -y          Confirmer automatiquement toutes les invites
   --verbose, -v      Afficher les informations de débogage détaillées
-  --log-file FILE    Écrire les journaux dans un fichier
-  --export-plan FILE Exporter le plan d'installation
-  --custom           Mode de sélection de logiciel personnalisé
-  --retry-failed     Réessayer les paquets précédemment échoués
+  --log-file FILE          Écrire les journaux dans un fichier
+  --export-plan FILE       Exporter le plan d'installation
+  --retry-failed           Réessayer les paquets précédemment échoués
   --list-software    Lister tous les logiciels disponibles
   --show-software ID Afficher les détails du logiciel
   --search KEYWORD   Rechercher un logiciel

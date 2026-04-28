@@ -15,10 +15,9 @@ Opções:
   --doctor           Executar diagnósticos QC Doctor
   --yes, -y          Confirmar automaticamente todos os prompts
   --verbose, -v      Mostrar informações de depuração detalhadas
-  --log-file FILE    Escrever logs em arquivo
-  --export-plan FILE Exportar plano de instalação
-  --custom           Modo de seleção de software personalizado
-  --retry-failed     Tentar novamente pacotes que falharam anteriormente
+  --log-file FILE          Escrever logs em arquivo
+  --export-plan FILE       Exportar plano de instalação
+  --retry-failed           Tentar novamente pacotes que falharam anteriormente
   --list-software    Listar todos os softwares disponíveis
   --show-software ID Mostrar detalhes do software
   --search KEYWORD   Pesquisar software
