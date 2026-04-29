@@ -14,7 +14,7 @@ Opzioni:
   --dry-run          Modalità anteprima: mostra processo senza installare
   --doctor           Esegui diagnosi ambiente QC Doctor
   --yes, -y          Conferma automaticamente tutti i prompt
-  --verbose, -v      Mostra informazioni di debug dettagliate
+  --verbose              Mostra informazioni di debug dettagliate
   --log-file FILE          Scrivi log su file
   --export-plan FILE       Esporta piano di installazione
   --retry-failed           Riprova pacchetti precedentemente falliti

@@ -14,7 +14,7 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --dry-run          미리보기 모드: 설치 과정 표시하지만 실제 설치하지 않음
   --doctor QC Doctor 환경 진단 실행
   --yes, -y          모든 프롬프트에 자동 동의
-  --verbose, -v     詳細な 디버그 정보 표시
+  --verbose              詳細な 디버그 정보 표시
   --log-file FILE          로그를 파일에 쓰기
   --export-plan FILE       설치 계획 내보내기
   --retry-failed           이전에 실패한 패키지 재시도

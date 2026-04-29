@@ -74,7 +74,7 @@ load_language_strings() {
     fi
     
     # 5. Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v0.80.1"
+    LANG_BANNER_TITLE="Quickstart-PC v0.80.2"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -192,7 +192,7 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="0.80.1"
+VERSION="0.80.2"
 FAIL_FAST=false
 PROFILE_KEY=""
 NON_INTERACTIVE=false
@@ -226,7 +226,7 @@ while [[ $# -gt 0 ]]; do
 --dry-run) DRY_RUN=true; shift ;;
 --doctor) DOCTOR=true; shift ;;
         --yes|-y) AUTO_YES=true; shift ;;
-        --version|-v) echo "Quickstart-PC v${VERSION}"; exit 0 ;;
+        --version|-v) tput cnorm 2>/dev/null || true; echo "Quickstart-PC v${VERSION}"; exit 0 ;;
         --verbose) VERBOSE=true; shift ;;
     --log-file) LOG_FILE="$2"; shift 2 ;;
     --export-plan) EXPORT_PLAN="$2"; shift 2 ;;
