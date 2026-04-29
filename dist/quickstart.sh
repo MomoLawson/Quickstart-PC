@@ -1941,12 +1941,14 @@ self_update() {
 main() {
 	if [[ "$CHECK_UPDATE" == "true" ]]; then
 		trap 'tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
+		show_banner
 		check_update
 		exit $?
 	fi
 
 	if [[ "$UPDATE" == "true" ]]; then
 		trap 'tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
+		show_banner
 		self_update
 		exit $?
 	fi
