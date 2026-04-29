@@ -36,6 +36,7 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --update             スクリプトを最新バージョンに更新
   --check-update            更新を確認するのみ（インストールしない）
   --allow-hooks             フックスクリプトの実行を有効化
+  --version, -v             バージョン情報を表示
   --help             このヘルプを表示
 OPTIONS_EOF
 

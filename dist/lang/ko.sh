@@ -36,6 +36,7 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --update             스크립트를 최신 버전으로 업데이트
   --check-update            업데이트 확인만 (설치하지 않음)
   --allow-hooks             후크 스크립트 실행 활성화
+  --version, -v             버전 정보 표시
   --help             이 도움말 표시
 OPTIONS_EOF
 

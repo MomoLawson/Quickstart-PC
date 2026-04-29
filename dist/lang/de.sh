@@ -36,6 +36,7 @@ Optionen:
   --update             Skript auf neueste Version aktualisieren
   --check-update            Nur nach Updates suchen
   --allow-hooks             Hook-Skripte aktivieren
+  --version, -v             Versionsinfo anzeigen
   --help             Diese Hilfe anzeigen
 OPTIONS_EOF
 

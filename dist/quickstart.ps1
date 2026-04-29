@@ -35,10 +35,11 @@ param(
   [switch]$update,
   [switch]$checkUpdate,
   [switch]$allowHooks,
-  [switch]$help
+  [switch]$help,
+  [switch]$showVersion
 )
 
-$VERSION = "0.80.0"
+$VERSION = "0.80.1"
 $DEFAULT_CFG_URL = "https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json"
 
 # Supported languages configuration
@@ -296,6 +297,7 @@ function Initialize-LanguageStrings {
                 "help_fail_fast" = "遇到错误时立即停止"
                 "help_profile" = "直接指定安装套餐（跳过选择菜单）"
                 "help_non_interactive" = "非交互模式（禁止所有 TUI/prompt）"
+                "help_version" = "显示版本信息"
                 "help_help" = "显示此帮助信息"
                 
                 "validating_config" = "正在校验配置文件..."
@@ -441,6 +443,7 @@ function Initialize-LanguageStrings {
                 "help_fail_fast" = "最初のエラーで停止"
                 "help_profile" = "プロファイルを直接指定（スキップメニュー）"
                 "help_non_interactive" = "非インタラクティブモード（TUI/プロンプト全て無効）"
+                "help_version" = "バージョン情報を表示"
                 "help_help" = "このヘルプを表示"
                 
                 "validating_config" = "設定ファイルを検証中..."
@@ -586,7 +589,8 @@ $script:LANG = @{
 "help_fail_fast" = "첫 번째 오류에서 중지"
 "help_profile" = "프로필 직접 선택 (메뉴 건너뛰기)"
 "help_non_interactive" = "비대화형 모드 (TUI/프롬프트 모두 비활성화)"
-"help_help" = "이 도움말 표시"
+"help_version" = "버전 정보 표시"
+                "help_help" = "이 도움말 표시"
 
 "validating_config" = "구성 파일 검증 중..."
 "json_valid" = "JSON 구문 유효함"
@@ -725,6 +729,7 @@ $script:LANG = @{
                 "help_fail_fast" = "遇到錯誤時立即停止"
                 "help_profile" = "直接指定安裝套餐（跳過選擇選單）"
                 "help_non_interactive" = "非互動模式（禁止所有 TUI/prompt）"
+                "help_version" = "顯示版本信息"
                 "help_help" = "顯示此幫助信息"
                 
                 "validating_config" = "正在驗證配置文件..."
@@ -869,6 +874,7 @@ $script:LANG = @{
                 "help_fail_fast" = "Bei erstem Fehler stoppen"
                 "help_profile" = "Profil direkt auswählen (Menü überspringen)"
                 "help_non_interactive" = "Nicht-interaktiver Modus (keine TUI/Prompts)"
+                "help_version" = "Versionsinfo anzeigen"
                 "help_help" = "Diese Hilfemeldung anzeigen"
                 
                 "validating_config" = "Konfiguration wird validiert..."
@@ -1013,6 +1019,7 @@ $script:LANG = @{
                 "help_fail_fast" = "Arrêter à la première erreur"
                 "help_profile" = "Sélectionner le profil directement (passer le menu)"
                 "help_non_interactive" = "Mode non interactif (pas de TUI/prompts)"
+                "help_version" = "Afficher les infos de version"
                 "help_help" = "Afficher ce message d'aide"
                 
                 "validating_config" = "Validation de la configuration..."
@@ -1157,6 +1164,7 @@ $script:LANG = @{
                 "help_fail_fast" = "التوقف عند الخطأ الأول"
                 "help_profile" = "تحديد الملف الشخصي مباشرة (تخطي القائمة)"
                 "help_non_interactive" = "الوضع غير التفاعلي (لا TUI/مطالبات)"
+                "help_version" = "عرض معلومات الإصدار"
                 "help_help" = "إظهار رسالة المساعدة هذه"
                 
                 "validating_config" = "جاري التحقق من ملف التكوين..."
@@ -1301,6 +1309,7 @@ $script:LANG = @{
                 "help_fail_fast" = "Parar no primeiro erro"
                 "help_profile" = "Selecionar perfil diretamente (pular menu)"
                 "help_non_interactive" = "Modo não interativo (sem TUI/prompts)"
+                "help_version" = "Mostrar informações da versão"
                 "help_help" = "Mostrar esta mensagem de ajuda"
                 
                 "validating_config" = "Validando configuração..."
@@ -1445,6 +1454,7 @@ $script:LANG = @{
                 "help_fail_fast" = "Ferma al primo errore"
                 "help_profile" = "Seleziona profilo direttamente (salta menu)"
                 "help_non_interactive" = "Modalità non interattiva (no TUI/prompt)"
+                "help_version" = "Mostra informazioni versione"
                 "help_help" = "Mostra questo messaggio di aiuto"
                 
                 "validating_config" = "Validazione configurazione..."
@@ -1589,6 +1599,7 @@ $script:LANG = @{
                 "help_fail_fast" = "Stop on first error"
                 "help_profile" = "Select profile directly (skip menu)"
                 "help_non_interactive" = "Non-interactive mode (no TUI/prompts)"
+                "help_version" = "Show version information"
                 "help_help" = "Show this help message"
                 
                 "validating_config" = "Validating configuration..."
@@ -2058,7 +2069,8 @@ $($h["help_lang"])
 --dry-run $($h["help_dry_run"])
 --doctor $($h["help_doctor"])
 --yes, -y $($h["help_yes"])
-  --verbose, -v      $($h["help_verbose"])
+  --verbose          $($h["help_verbose"])
+  --version, -v      $($h["help_version"])
   --log-file FILE    $($h["help_log_file"])
   --export-plan FILE $($h["help_export_plan"])
   --retry-failed $($h["help_retry_failed"])
@@ -2080,6 +2092,11 @@ $($h["help_lang"])
 "@ -ForegroundColor White
     
     try { [Console]::CursorVisible = $true } catch {}
+    exit 0
+}
+
+function Show-Version {
+    Write-Host "Quickstart-PC v$VERSION" -ForegroundColor Cyan
     exit 0
 }
 
@@ -3120,7 +3137,11 @@ if ($checkUpdate -or $update) {
     }
 }
 
-  if ($help) {
+  if ($showVersion) {
+        Show-Version
+    }
+    
+    if ($help) {
     $helpLang = if ($lang -and $lang -ne "__NONE__") {
       $mapped = $script:LANGUAGE_MAPPINGS[$lang]
       if ($mapped) { $mapped } else { "en-US" }

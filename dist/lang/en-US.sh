@@ -36,6 +36,7 @@ Options:
   --update             Update script to latest version
   --check-update            Check for updates without installing
   --allow-hooks             Enable hook scripts execution
+  --version, -v             Show version information
   --help             Show this help message
 OPTIONS_EOF
 
