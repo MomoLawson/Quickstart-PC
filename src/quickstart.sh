@@ -226,7 +226,7 @@ while [[ $# -gt 0 ]]; do
 --dry-run) DRY_RUN=true; shift ;;
 --doctor) DOCTOR=true; shift ;;
         --yes|-y) AUTO_YES=true; shift ;;
-        --version|-v) tput cnorm 2>/dev/null || true; printf "\033[0;34mQuickstart-PC v${VERSION}\033[0m\n"; exit 0 ;;
+        --version|-v) tput cnorm 2>/dev/null || true; printf "\033[0;34mQuickstart-PC\033[0m v${VERSION}\n"; exit 0 ;;
         --verbose) VERBOSE=true; shift ;;
     --log-file) LOG_FILE="$2"; shift 2 ;;
     --export-plan) EXPORT_PLAN="$2"; shift 2 ;;

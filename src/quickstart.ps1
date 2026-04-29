@@ -2096,7 +2096,8 @@ $($h["help_lang"])
 }
 
 function Show-Version {
-    Write-Host "Quickstart-PC v$VERSION" -ForegroundColor Blue
+    Write-Host "Quickstart-PC" -ForegroundColor Blue -NoNewline
+    Write-Host " v$VERSION"
     exit 0
 }
 
