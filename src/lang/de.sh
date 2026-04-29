@@ -14,7 +14,7 @@ Optionen:
   --dry-run          Vorschau-Modus: Installationsprozess anzeigen ohne tatsächliche Installation
   --doctor           QC Doctor Umgebungsdiagnose ausführen
   --yes, -y          Alle Bestätigungen automatisch bestätigen
-  --verbose, -v      Detaillierte Debug-Infos anzeigen
+  --verbose              Detaillierte Debug-Infos anzeigen
   --log-file FILE          Logs in Datei schreiben
   --export-plan FILE       Installationsplan exportieren
   --retry-failed           Zuvor fehlgeschlagene Pakete erneut versuchen

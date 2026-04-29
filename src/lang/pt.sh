@@ -14,7 +14,7 @@ Opções:
   --dry-run          Modo visualização: mostrar processo sem instalar
   --doctor           Executar diagnósticos QC Doctor
   --yes, -y          Confirmar automaticamente todos os prompts
-  --verbose, -v      Mostrar informações de depuração detalhadas
+  --verbose              Mostrar informações de depuração detalhadas
   --log-file FILE          Escrever logs em arquivo
   --export-plan FILE       Exportar plano de instalação
   --retry-failed           Tentar novamente pacotes que falharam anteriormente

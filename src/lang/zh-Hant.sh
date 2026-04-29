@@ -14,7 +14,7 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --dry-run          預覽模式：展示安裝過程但不實際安裝
   --doctor           執行 QC Doctor 環境診斷
   --yes, -y          自動確認所有提示
-  --verbose, -v      顯示詳細調試信息
+  --verbose              顯示詳細調試信息
   --log-file FILE          將日誌寫入文件
   --export-plan FILE       導出安裝計劃到文件
   --retry-failed           重試之前失敗的軟體

@@ -14,7 +14,7 @@ Options :
   --dry-run          Mode aperçu : afficher le processus sans installer
   --doctor           Exécuter les diagnostics QC Doctor
   --yes, -y          Confirmer automatiquement toutes les invites
-  --verbose, -v      Afficher les informations de débogage détaillées
+  --verbose              Afficher les informations de débogage détaillées
   --log-file FILE          Écrire les journaux dans un fichier
   --export-plan FILE       Exporter le plan d'installation
   --retry-failed           Réessayer les paquets précédemment échoués
