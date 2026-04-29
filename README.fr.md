@@ -153,7 +153,7 @@ quickstart.sh --cfg-path /chemin/vers/profiles.json
 | `--dev` | Mode développement : afficher les sélections sans installer |
 | `--dry-run` | Installation simulée : afficher le processus sans installer |
 | `--yes` / `-y` | Confirmer automatiquement toutes les invites |
-| `--verbose` / `-v` | Afficher les infos de débogage détaillées |
+| `--verbose` | Afficher les infos de débogage détaillées |
 | `--log-file FILE` | Écrire les logs dans un fichier |
 | `--export-plan FILE` | Exporter le plan d'installation |
 | `--custom` | Mode de sélection de logiciels personnalisé (manuel) |
@@ -167,6 +167,7 @@ quickstart.sh --cfg-path /chemin/vers/profiles.json
 | `--non-interactive` | Mode non interactif (pas de TUI/prompts) |
 | `--cfg-path PATH` | Utiliser profiles.json local |
 | `--cfg-url URL` | Utiliser URL profiles.json distante |
+| `--version` / `-v` | Afficher les infos de version |
 | `--help` | Afficher l'aide |
 
 ## Gestionnaires de paquets supportés

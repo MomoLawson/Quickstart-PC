@@ -146,13 +146,14 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | `--dev` | 開發模式：顯示選擇但不安裝 |
 | `--dry-run` | 假裝安裝：展示過程但不實際安裝 |
 | `--yes` / `-y` | 自動確認所有提示 |
-| `--verbose` / `-v` | 顯示詳細調試資訊 |
+| `--verbose` | 顯示詳細調試資訊 |
 | `--log-file FILE` | 將日誌寫入檔案 |
 | `--export-plan FILE` | 匯出安裝計劃到檔案 |
 | `--custom` | 自訂軟件選擇模式（手動選擇） |
 | `--retry-failed` | 重試之前失敗的軟件 |
 | `--list-profiles` | 列出所有可用套餐 |
 | `--cfg-url URL` | 使用遠程 profiles.json URL |
+| `--version` / `-v` | 顯示版本信息 |
 | `--help` | 顯示說明 |
 
 ## 支援的套件管理器

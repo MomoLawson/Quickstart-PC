@@ -149,7 +149,7 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | `--dev` | 開発モード: 選択を表示但不インストール |
 | `--dry-run` | 假装インストール: 过程を表示但不実際インストール |
 | `--yes` / `-y` | 全てのプロンプトに自動同意 |
-| `--verbose` / `-v` | 詳細なデバッグ情報を表示 |
+| `--verbose` | 詳細なデバッグ情報を表示 |
 | `--log-file FILE` | ログをファイルに書き込む |
 | `--export-plan FILE` | インストール計画をエクスポート |
 | `--custom` | カスタムソフトウェア選択モード |
@@ -163,6 +163,7 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | `--non-interactive` | 非インタラクティブモード |
 | `--cfg-path PATH` | ローカルのprofiles.jsonを使用 |
 | `--cfg-url URL` | リモートのprofiles.json URLを使用 |
+| `--version` / `-v` | バージョン情報を表示 |
 | `--help` | ヘルプを表示 |
 
 ## 対応パッケージマネージャー

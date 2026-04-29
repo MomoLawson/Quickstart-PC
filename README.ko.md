@@ -148,7 +148,7 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | `--dev` | 개발 모드: 선택 표시但不설치 |
 | `--dry-run` | 흉내 설치: 과정 표시，但不실제 설치 |
 | `--yes` / `-y` | 모든 프롬프트에 자동 동의 |
-| `--verbose` / `-v` | 자세한 디버그 정보 표시 |
+| `--verbose` | 자세한 디버그 정보 표시 |
 | `--log-file FILE` | 로그를 파일에 쓰기 |
 | `--export-plan FILE` | 설치 계획 내보내기 |
 | `--custom` | 사용자 정의 소프트웨어 선택 모드 |
@@ -162,6 +162,7 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | `--non-interactive` | 비대화형 모드 |
 | `--cfg-path PATH` | 로컬 profiles.json 사용 |
 | `--cfg-url URL` | 원격 profiles.json URL 사용 |
+| `--version` / `-v` | 버전 정보 표시 |
 | `--help` | 도움말 표시 |
 
 ## 지원되는 패키지 관리자

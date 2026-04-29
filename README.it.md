@@ -153,7 +153,7 @@ quickstart.sh --cfg-path /percorso/a/profiles.json
 | `--dev` | Modalità sviluppo: mostra selezioni senza installare |
 | `--dry-run` | Installazione simulata: mostra processo senza installare |
 | `--yes` / `-y` | Conferma automaticamente tutti i prompt |
-| `--verbose` / `-v` | Mostra info debug dettagliate |
+| `--verbose` | Mostra info debug dettagliate |
 | `--log-file FILE` | Scrivi log su file |
 | `--export-plan FILE` | Esporta piano di installazione |
 | `--custom` | Modalità selezione software personalizzata (manuale) |
@@ -167,6 +167,7 @@ quickstart.sh --cfg-path /percorso/a/profiles.json
 | `--non-interactive` | Modalità non interattiva (no TUI/prompt) |
 | `--cfg-path PATH` | Usa profiles.json locale |
 | `--cfg-url URL` | Usa URL profiles.json remota |
+| `--version` / `-v` | Mostra informazioni versione |
 | `--help` | Mostra aiuto |
 
 ## Gestori Pacchetti Supportati

@@ -154,7 +154,7 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | `--dev` | Dev mode: show selections without installing |
 | `--dry-run` | Fake install: show process without installing |
 | `--yes` / `-y` | Auto-confirm all prompts |
-| `--verbose` / `-v` | Show detailed debug info |
+| `--verbose` | Show detailed debug info |
 | `--log-file FILE` | Write logs to file |
 | `--export-plan FILE` | Export installation plan to file |
 | `--custom` | Custom software selection mode (manual selection) |
@@ -168,6 +168,7 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | `--non-interactive` | Non-interactive mode (no TUI/prompts) |
 | `--cfg-path PATH` | Use local profiles.json |
 | `--cfg-url URL` | Use remote profiles.json URL |
+| `--version` / `-v` | Show version information |
 | `--help` | Show help |
 
 ## Supported Package Managers
