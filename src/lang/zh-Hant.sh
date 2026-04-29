@@ -36,6 +36,7 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --update             更新腳本到最新版本
   --check-update            檢查更新但不安裝
   --allow-hooks             啟用鉤子腳本執行
+  --version, -v             顯示版本信息
   --help             顯示此幫助信息
 OPTIONS_EOF
 

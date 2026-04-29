@@ -36,6 +36,7 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --update             تحديث البرنامج النصي إلى أحدث إصدار
   --check-update            التحقق من التحديثات فقط
   --allow-hooks             تمكين تنفيذ البرامج النصية للخطافات
+  --version, -v             عرض معلومات الإصدار
   --help             عرض رسالة المساعدة هذه
 OPTIONS_EOF
 

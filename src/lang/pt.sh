@@ -36,6 +36,7 @@ Opções:
   --update             Atualizar script para a versão mais recente
   --check-update            Verificar atualizações sem instalar
   --allow-hooks             Ativar execução de scripts hook
+  --version, -v             Mostrar informações da versão
   --help             Mostrar esta mensagem de ajuda
 OPTIONS_EOF
 
