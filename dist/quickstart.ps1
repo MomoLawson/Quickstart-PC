@@ -3141,10 +3141,12 @@ if ($checkUpdate -or $update) {
     Initialize-LanguageStrings -Lang $updateLang
     trap { try { Set-CursorVisible -Visible $true } catch {} }
     if ($checkUpdate) {
+        Show-Banner -Lang $updateLang
         $result = Check-Update
         exit $result
     }
     if ($update) {
+        Show-Banner -Lang $updateLang
         $result = Update-Self
         exit $result
     }
