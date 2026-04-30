@@ -1652,6 +1652,7 @@ $script:LANG = @{
         }
     }
 }
+}
 
 
 # ============================================
@@ -3725,6 +3726,5 @@ if ($reportJson -or $reportTxt) {
         
         continue
     }
-}
 
 Main
