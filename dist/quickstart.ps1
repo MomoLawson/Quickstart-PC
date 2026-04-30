@@ -2104,11 +2104,11 @@ function Show-Version {
 function Show-Banner {
     param([string]$Lang)
     Write-Host ""
-    Write-Host "  ██████╗ ██╗   ██╗████╗ ██████╗██   ▄██╗███████╗████████╗ █████╗ ██████╗ ████████╗      ██████╗  ██████╗" -ForegroundColor Blue
-    Write-Host " ██╔═══██╗██║   ██║╚██╔╝██╔════╝██ ▄██▀╔╝██╔════╝╚══██╔══╝██╔══██╗██╔══██╗╚══██╔══╝      ██╔══██╗██╔════╝" -ForegroundColor Blue
+    Write-Host "  ██████╗ ██╗   ██╗████╗ ██████╗██╗  ▄██╗███████╗████████╗ █████╗ ██████╗ ████████╗      ██████╗  ██████╗" -ForegroundColor Blue
+    Write-Host " ██╔═══██╗██║   ██║╚██╔╝██╔════╝██║▄██▀╔╝██╔════╝╚══██╔══╝██╔══██╗██╔══██╗╚══██╔══╝      ██╔══██╗██╔════╝" -ForegroundColor Blue
     Write-Host " ██║   ██║██║   ██║ ██║ ██║     █████╔═╝ ███████╗   ██║   ███████║██████╔╝   ██║   █████╗██████╔╝██║     " -ForegroundColor Blue
-    Write-Host " ██║▄▄ ██║██║   ██║ ██║ ██║     ██╗▀██▄  ╚════██║   ██║   ██╔══██║██╔══██╗   ██║   ╚════╝██╔═══╝ ██║     " -ForegroundColor Blue
-    Write-Host " ╚██████╔╝╚██████╔╝████╗╚██████╗██║  ▀██╗███████║   ██║   ██║  ██║██║  ██║   ██║         ██║     ╚██████╗" -ForegroundColor Blue
+    Write-Host " ██║▄▄ ██║██║   ██║ ██║ ██║     ██╠▀██▄  ╚════██║   ██║   ██╔══██║██╔══██╗   ██║   ╚════╝██╔═══╝ ██║     " -ForegroundColor Blue
+    Write-Host " ╚██████╔╝╚██████╔╝████╗╚██████╗██║ ╚▀██╗███████║   ██║   ██║  ██║██║  ██║   ██║         ██║     ╚██████╗" -ForegroundColor Blue
     Write-Host "  ╚══▀▀═╝  ╚═════╝ ╚═══╝ ╚═════╝╚═╝   ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝         ╚═╝      ╚═════╝" -ForegroundColor Blue
     Write-Host ""
 }
@@ -2333,7 +2333,7 @@ function Show-Search {
 function Show-Doctor {
     Write-Host ""
     Write-Host "╔════════════════════════════════════════════════════════════╗"
-    Write-Host "║ 🔧 QC Doctor                                                ║"
+    Write-Host "║ 🔧 QC Doctor                                               ║"
     Write-Host "║         Quickstart-PC Environment Diagnostics              ║"
     Write-Host "╚════════════════════════════════════════════════════════════╝"
     Write-Host ""
@@ -3141,12 +3141,10 @@ if ($checkUpdate -or $update) {
     Initialize-LanguageStrings -Lang $updateLang
     trap { try { Set-CursorVisible -Visible $true } catch {} }
     if ($checkUpdate) {
-        Show-Banner -Lang $updateLang
         $result = Check-Update
         exit $result
     }
     if ($update) {
-        Show-Banner -Lang $updateLang
         $result = Update-Self
         exit $result
     }
