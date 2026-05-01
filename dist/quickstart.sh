@@ -78,7 +78,7 @@ load_language_strings() {
     fi
     
     # 5. Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v0.80.9"
+    LANG_BANNER_TITLE="Quickstart-PC v0.80.10"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -196,7 +196,7 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="0.80.9"
+VERSION="0.80.10"
 FAIL_FAST=false
 PROFILE_KEY=""
 NON_INTERACTIVE=false
