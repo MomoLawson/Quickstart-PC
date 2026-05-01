@@ -198,6 +198,9 @@ SKIP_SW=()
 ONLY_SW=()
 VERSION="0.80.10"
 FAIL_FAST=false
+AUTO_UPDATE_LATEST=""
+AUTO_CHECK_PID=""
+AUTO_CHECK_FILE=""
 PROFILE_KEY=""
 NON_INTERACTIVE=false
 DEBUG=false
@@ -1490,6 +1493,7 @@ show_profile_menu() {
                     '[B'|'OB') ((cursor++)); [[ $cursor -ge $num_profiles ]] && cursor=0 ;;
                 esac
                 ;;
+            21) handle_ctrl_u ;;
             10|13|0) break ;;
         esac
     done
@@ -1665,6 +1669,7 @@ for k, v in data['software'].items():
           fi
         fi
         ;;
+      21) handle_ctrl_u ;;
       10|13|0)
         # Enter
         if [[ $cursor -eq 0 ]]; then
@@ -1935,6 +1940,54 @@ self_update() {
   return 0
 }
 
+is_one_liner() {
+    [[ "$0" == "bash" || "$0" == "sh" || "${BASH_SOURCE[0]}" == /dev/fd/* || "${BASH_SOURCE[0]}" == /proc/self/fd/* ]]
+}
+
+auto_check_update() {
+    if is_one_liner; then return; fi
+    AUTO_CHECK_FILE=$(mktemp 2>/dev/null || echo "/tmp/qs-update-$$.tmp")
+    (
+        local latest
+        latest=$(curl -fsSL --connect-timeout 5 --max-time 10 \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases/latest" \
+            2>/dev/null | jq -r '.tag_name // empty')
+        latest="${latest#v}"
+        if [[ -n "$latest" && "$VERSION" != "$latest" ]]; then
+            echo "$latest" > "$AUTO_CHECK_FILE"
+        fi
+    ) &
+    AUTO_CHECK_PID=$!
+}
+
+check_auto_update_result() {
+    [[ -z "$AUTO_CHECK_PID" ]] && return
+    if kill -0 "$AUTO_CHECK_PID" 2>/dev/null; then return; fi
+    wait "$AUTO_CHECK_PID" 2>/dev/null
+    AUTO_CHECK_PID=""
+    if [[ -f "$AUTO_CHECK_FILE" ]]; then
+        AUTO_UPDATE_LATEST=$(cat "$AUTO_CHECK_FILE" 2>/dev/null)
+        rm -f "$AUTO_CHECK_FILE"
+    fi
+}
+
+show_update_hint() {
+    check_auto_update_result
+    if [[ -n "$AUTO_UPDATE_LATEST" ]]; then
+        printf "  \033[33m▶ $(printf "$LANG_UPDATE_CTRL_U" "$AUTO_UPDATE_LATEST")\033[0m\n"
+    fi
+}
+
+handle_ctrl_u() {
+    [[ -z "$AUTO_UPDATE_LATEST" ]] && return 1
+    tput cnorm 2>/dev/null || true
+    stty echo 2>/dev/null || true
+    echo ""
+    self_update
+    exit $?
+}
+
 main() {
 	if [[ "$CHECK_UPDATE" == "true" ]]; then
 		trap 'tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
@@ -1950,7 +2003,8 @@ main() {
 		exit $?
 	fi
 
-	trap 'set_title ""; stty echo 2>/dev/null; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
+	trap 'set_title ""; stty echo 2>/dev/null; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; rm -f "$AUTO_CHECK_FILE" 2>/dev/null' EXIT
+    auto_check_update
     
     while true; do
         clear
@@ -1964,6 +2018,7 @@ main() {
         SELECTED_SOFTWARE=()
         
         show_banner
+        show_update_hint
         
         [[ "$DEV_MODE" == "true" ]] && log_warn "$LANG_DEV_MODE" && echo ""
         [[ "$DRY_RUN" == "true" ]] && log_warn "$LANG_DRY_RUN_MODE" && echo ""
@@ -2124,9 +2179,13 @@ fi
             
             local key=""
             IFS= read -rsn1 key < /dev/tty
+            local key_code=$(printf '%d' "'$key" 2>/dev/null || echo 0)
             
+            # Ctrl+U = 更新
+            if [[ $key_code -eq 21 ]]; then
+                handle_ctrl_u
             # 空字符串 = 回车
-            if [[ -z "$key" ]]; then
+            elif [[ -z "$key" ]]; then
                 tput cnorm 2>/dev/null || true
                 echo ""
                 if [[ $continue_cursor -eq 0 ]]; then
@@ -2224,11 +2283,15 @@ fi
                     printf "    %s    \033[7m ▶ %s \033[0m" "$LANG_CONTINUE" "$LANG_EXIT"
                 fi
                 
-                local key=""
-                IFS= read -rsn1 key < /dev/tty
-                
-                # 空字符串 = 回车
-                if [[ -z "$key" ]]; then
+            local key=""
+            IFS= read -rsn1 key < /dev/tty
+            local key_code=$(printf '%d' "'$key" 2>/dev/null || echo 0)
+            
+            # Ctrl+U = 更新
+            if [[ $key_code -eq 21 ]]; then
+                handle_ctrl_u
+            # 空字符串 = 回车
+            elif [[ -z "$key" ]]; then
                     tput cnorm 2>/dev/null || true
                     echo ""
                     if [[ $cancel_cursor -eq 0 ]]; then
@@ -2609,20 +2672,24 @@ if [[ ${#to_install[@]} -eq 0 ]]; then
             printf "    %s    \033[7m ▶ %s \033[0m" "$LANG_CONTINUE" "$LANG_EXIT"
         fi
         
-        local key=""
-        IFS= read -rsn1 key < /dev/tty
-        
-        # 空字符串 = 回车
-        if [[ -z "$key" ]]; then
-            tput cnorm 2>/dev/null || true
-            echo ""
-            if [[ $continue_cursor -eq 0 ]]; then
-                continue_running=false
-            else
-                exit 0
-            fi
-        # ESC 开头 = 方向键
-        elif [[ "$key" == $'\x1b' ]]; then
+            local key=""
+            IFS= read -rsn1 key < /dev/tty
+            local key_code=$(printf '%d' "'$key" 2>/dev/null || echo 0)
+            
+            # Ctrl+U = 更新
+            if [[ $key_code -eq 21 ]]; then
+                handle_ctrl_u
+            # 空字符串 = 回车
+            elif [[ -z "$key" ]]; then
+                tput cnorm 2>/dev/null || true
+                echo ""
+                if [[ $continue_cursor -eq 0 ]]; then
+                    continue_running=false
+                else
+                    exit 0
+                fi
+            # ESC 开头 = 方向键
+            elif [[ "$key" == $'\x1b' ]]; then
             local seq=""
             IFS= read -rsn2 seq < /dev/tty
             if [[ "$seq" == "[C" || "$seq" == "OC" ]]; then
