@@ -12,7 +12,8 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --cfg-url URL      استخدام عنوان profiles.json البعيد
   --dev              وضع المطور: عرض التحديدات بدون تثبيت
   --dry-run          وضع المعاينة: عرض عملية التثبيت بدون تثبيت فعلي
-  --doctor          تشغيل تشخيص بيئة QC Doctor
+  doctor              تشغيل تشخيص بيئة QC Doctor
+  doctor --fix        إصلاح التبعيات المفقودة تلقائياً
   --yes, -y          تأكيد جميع المطالبات تلقائياً
   --verbose              عرض معلومات التصحيح التفصيلية
   --log-file FILE          كتابة السجلات في ملف

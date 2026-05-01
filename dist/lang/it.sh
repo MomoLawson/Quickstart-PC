@@ -12,7 +12,8 @@ Opzioni:
   --cfg-url URL      Usa URL profiles.json remoto
   --dev              Modalità sviluppatore: mostra selezioni senza installare
   --dry-run          Modalità anteprima: mostra processo senza installare
-  --doctor           Esegui diagnosi ambiente QC Doctor
+  doctor              Esegui diagnosi ambiente QC Doctor
+  doctor --fix        Ripara automaticamente le dipendenze mancanti
   --yes, -y          Conferma automaticamente tutti i prompt
   --verbose              Mostra informazioni di debug dettagliate
   --log-file FILE          Scrivi log su file

@@ -10,6 +10,7 @@ param(
     [switch]$dev,
     [switch]$dryRun,
     [switch]$doctor,
+  [switch]$fix,
     [switch]$yes,
     [switch]$verbose,
     [string]$logFile,
@@ -279,6 +280,7 @@ function Initialize-LanguageStrings {
                 "help_dev" = "开发模式：显示选择的软件但不安装"
                 "help_dry_run" = "预览模式：展示安装过程但不实际安装"
                 "help_doctor" = "运行 QC Doctor 环境诊断"
+                "help_fix" = "自动修复缺失的依赖项"
                 "help_yes" = "自动确认所有提示"
                 "help_verbose" = "显示详细调试信息"
                 "help_log_file" = "将日志写入文件"
@@ -426,6 +428,7 @@ function Initialize-LanguageStrings {
                 "help_dev" = "開発モード：選択したソフトを表示但不インストール"
                 "help_dry_run" = "プレビューモード：インストール過程を表示但不实际インストール"
                 "help_doctor" = "QC Doctor 環境診断を実行"
+                "help_fix" = "不足している依存関係を自動修復"
                 "help_yes" = "全てのプロンプトに自動同意"
                 "help_verbose" = "詳細なデバッグ情報を表示"
                 "help_log_file" = "ログをファイルに書き込む"
@@ -573,6 +576,7 @@ $script:LANG = @{
 "help_dev" = "개발 모드: 선택한 소프트웨어 표시但不설치"
 "help_dry_run" = "미리보기 모드: 설치 과정 표시但不실제 설치"
 "help_doctor" = "QC Doctor 환경 진단 실행"
+                "help_fix" = "누락된 종속성 자동 수정"
 "help_yes" = "모든 프롬프트에 자동 동의"
 "help_verbose" = "詳細한 디버그 정보 표시"
 "help_log_file" = "로그를 파일에 쓰기"
@@ -714,6 +718,7 @@ $script:LANG = @{
                 "help_dev" = "開發模式：顯示選擇的軟件但不實際安裝"
                 "help_dry_run" = "預覽模式：展示安裝過程但不實際安裝"
                 "help_doctor" = "執行 QC Doctor 環境診斷"
+                "help_fix" = "自動修復缺失的依賴項"
                 "help_yes" = "自動確認所有提示"
                 "help_verbose" = "顯示詳細調試信息"
                 "help_log_file" = "將日誌寫入文件"
@@ -860,6 +865,7 @@ $script:LANG = @{
                 "help_dev" = "Entwicklermodus: Auswahl anzeigen ohne zu installieren"
                 "help_dry_run" = "Vorschau-Modus: Installationsprozess anzeigen ohne tatsächliche Installation"
                 "help_doctor" = "QC Doctor Umgebungsdiagnose ausführen"
+                "help_fix" = "Fehlende Abhängigkeiten automatisch reparieren"
                 "help_yes" = "Alle Prompts automatisch bestätigen"
                 "help_verbose" = "Detaillierte Debug-Infos anzeigen"
                 "help_log_file" = "Logs in Datei schreiben"
@@ -1006,6 +1012,7 @@ $script:LANG = @{
                 "help_dev" = "Mode développement: afficher les selections sans installer"
                 "help_dry_run" = "Mode aperçu : afficher le processus sans installer"
                 "help_doctor" = "Exécuter les diagnostics QC Doctor"
+                "help_fix" = "Réparer automatiquement les dépendances manquantes"
                 "help_yes" = "Confirmer automatiquement toutes les invites"
                 "help_verbose" = "Afficher les infos de débogage détaillées"
                 "help_log_file" = "Écrire les logs dans un fichier"
@@ -1152,6 +1159,7 @@ $script:LANG = @{
                 "help_dev" = "وضع التطوير: إظهار التحديدات دون التثبيت"
                 "help_dry_run" = "وضع المعاينة: عرض عملية التثبيت بدون تثبيت فعلي"
                 "help_doctor" = "تشغيل تشخيص بيئة QC Doctor"
+                "help_fix" = "إصلاح التبعيات المفقودة تلقائياً"
                 "help_yes" = "تأكيد جميع الأسئلة تلقائياً"
                 "help_verbose" = "إظهار معلومات التصحيح التفصيلية"
                 "help_log_file" = "كتابة السجلات في ملف"
@@ -1298,6 +1306,7 @@ $script:LANG = @{
                 "help_dev" = "Modo desenvolvimento: mostrar escolhas sem instalar"
                 "help_dry_run" = "Modo visualização: mostrar processo sem instalar"
                 "help_doctor" = "Executar diagnósticos QC Doctor"
+                "help_fix" = "Reparar automaticamente dependências ausentes"
                 "help_yes" = "Confirmar automaticamente todos os prompts"
                 "help_verbose" = "Mostrar informações de debug detalhadas"
                 "help_log_file" = "Escrever logs em arquivo"
@@ -1444,6 +1453,7 @@ $script:LANG = @{
                 "help_dev" = "Modalità sviluppo: mostra selezioni senza installare"
                 "help_dry_run" = "Modalità anteprima: mostra processo senza installare"
                 "help_doctor" = "Esegui diagnosi ambiente QC Doctor"
+                "help_fix" = "Ripara automaticamente le dipendenze mancanti"
                 "help_yes" = "Conferma automaticamente tutti i prompt"
                 "help_verbose" = "Mostra info di debug dettagliate"
                 "help_log_file" = "Scrivi log su file"
@@ -1590,6 +1600,7 @@ $script:LANG = @{
                 "help_dev" = "Dev mode"
                 "help_dry_run" = "Preview mode: Show process without installing"
                 "help_doctor" = "Run QC Doctor environment diagnostics"
+                "help_fix" = "Auto-fix missing dependencies"
                 "help_yes" = "Auto-confirm all prompts"
                 "help_verbose" = "Show detailed debug info"
                 "help_log_file" = "Write logs to file"
@@ -2077,9 +2088,10 @@ $($h["help_lang"])
   --cfg-path PATH    $($h["help_cfg_path"])
   --cfg-url URL      $($h["help_cfg_url"])
   --dev              $($h["help_dev"])
---dry-run $($h["help_dry_run"])
---doctor $($h["help_doctor"])
---yes, -y $($h["help_yes"])
+  --dry-run $($h["help_dry_run"])
+  doctor              $($h["help_doctor"])
+  doctor --fix        $($h["help_fix"])
+  --yes, -y $($h["help_yes"])
   --verbose          $($h["help_verbose"])
   --version, -v      $($h["help_version"])
   --log-file FILE    $($h["help_log_file"])
@@ -2342,6 +2354,10 @@ function Show-Search {
 # QC Doctor - Environment Diagnostics
 # ============================================
 function Show-Doctor {
+    function Hint-Cmd { param([string]$Text); Write-Host "      $Text" -ForegroundColor DarkGray -BackgroundColor Black }
+    $fixCmds = @()
+    function Collect-Fix { param([string]$Cmd); $script:fixCmds += $Cmd }
+    
     Write-Host ""
     Write-Host "╔════════════════════════════════════════════════════════════╗"
     Write-Host "║ 🔧 QC Doctor                                               ║"
@@ -2393,7 +2409,8 @@ function Show-Doctor {
             $passed++
         } else {
             Write-Host " [✗] Homebrew not found" -ForegroundColor Red
-            Write-Host "     → Install: /bin/bash -c `"`$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)`""
+            Hint-Cmd "/bin/bash -c `"`$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)`""
+            Collect-Fix "brew --version || /bin/bash -c `"`$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)`""
             $failed++
         }
     } elseif ($osName -eq "Linux") {
@@ -2421,7 +2438,9 @@ function Show-Doctor {
         $passed++
     } else {
         Write-Host " [✗] jq not found (JSON parser required)" -ForegroundColor Red
-        Write-Host "     → Install: brew install jq (macOS) or apt install jq (Linux)"
+        Hint-Cmd "brew install jq (macOS) | apt install jq (Linux)"
+        if ($osName -eq "macOS") { Collect-Fix "brew install jq" }
+        elseif ($osName -eq "Linux") { Collect-Fix "sudo apt install -y jq" }
         $failed++
     }
     
@@ -2430,7 +2449,20 @@ function Show-Doctor {
         $passed++
     } else {
         Write-Host " [✗] curl not found" -ForegroundColor Red
+        Hint-Cmd "brew install curl (macOS) | apt install curl (Linux)"
+        if ($osName -eq "macOS") { Collect-Fix "brew install curl" }
+        elseif ($osName -eq "Linux") { Collect-Fix "sudo apt install -y curl" }
         $failed++
+    }
+    
+    if (Get-Command python3 -ErrorAction SilentlyContinue -or Get-Command python -ErrorAction SilentlyContinue) {
+        $pyVer = python3 --version 2>&1
+        Write-Host " [✓] python3: $pyVer (optional)" -ForegroundColor Green
+        $passed++
+    } else {
+        Write-Host " [!] python3 not found (optional, fallback JSON parser)" -ForegroundColor Yellow
+        Hint-Cmd "brew install python3 (macOS) | apt install python3 (Linux)"
+        $warnings++
     }
     Write-Host ""
     
@@ -2443,12 +2475,10 @@ function Show-Doctor {
             $passed++
         } else {
             Write-Host " [✗] GitHub raw content: unreachable" -ForegroundColor Red
-            Write-Host "     → Check network connection or proxy settings"
             $failed++
         }
     } catch {
         Write-Host " [✗] GitHub raw content: unreachable" -ForegroundColor Red
-        Write-Host "     → Check network connection or proxy settings"
         $failed++
     }
     
@@ -2532,11 +2562,26 @@ function Show-Doctor {
         Write-Host " Status: ✅ Environment ready for Quickstart-PC" -ForegroundColor Green
         Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         exit 0
+    } elseif ($fix -and $fixCmds.Count -gt 0) {
+        Write-Host " Status: 🔧 Fixing $failed issue(s)..." -ForegroundColor Cyan
+        Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        Write-Host ""
+        foreach ($cmd in $fixCmds) {
+            Write-Host "  → Running: $cmd"
+            try { Invoke-Expression $cmd; Write-Host "  ✓ Done" -ForegroundColor Green }
+            catch { Write-Host "  ✗ Failed: $cmd" -ForegroundColor Red }
+        }
+        Write-Host ""
+        Write-Host " Status: ✅ Fix complete" -ForegroundColor Green
+        Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     } else {
         Write-Host " Status: ⚠️  Some issues need attention before installation" -ForegroundColor Yellow
         Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        exit 1
+        Write-Host ""
+        Write-Host "  Run: doctor -fix  (auto-install missing dependencies)"
+        Write-Host ""
     }
+    exit 1
 }
 
 # ============================================

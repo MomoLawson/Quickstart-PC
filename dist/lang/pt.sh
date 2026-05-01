@@ -12,7 +12,8 @@ Opções:
   --cfg-url URL      Usar URL profiles.json remoto
   --dev              Modo desenvolvedor: mostrar seleções sem instalar
   --dry-run          Modo visualização: mostrar processo sem instalar
-  --doctor           Executar diagnósticos QC Doctor
+  doctor              Executar diagnósticos QC Doctor
+  doctor --fix        Reparar automaticamente dependências ausentes
   --yes, -y          Confirmar automaticamente todos os prompts
   --verbose              Mostrar informações de depuração detalhadas
   --log-file FILE          Escrever logs em arquivo
