@@ -6,6 +6,10 @@ if [[ -t 1 ]]; then
     tput civis 2>/dev/null || true
 fi
 
+# 全局 Ctrl+C 恢复光标（在任何阶段退出都生效）
+trap 'tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; exit 130' INT
+trap 'tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
+
 # 默认配置 URL（优先级最高）
 DEFAULT_CFG_URL="https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json"
 
