@@ -22,19 +22,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup PowerShell
-        uses: actions/setup-powershell@v2
-        with:
-          version: '7.4.x'
+      - name: Install PowerShell
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq wget apt-transport-https software-properties-common
+          wget -q "https://github.com/PowerShell/PowerShell/releases/download/v7.5.1/powershell_7.5.1-1.deb_amd64.deb"
+          sudo dpkg -i powershell_7.5.1-1.deb_amd64.deb || sudo apt-get install -f -y -qq
       - name: Check PowerShell syntax
         run: |
+          pwsh -NoProfile -Command '
           $errors = @()
-          [System.Management.Automation.Language.Parser]::ParseFile("src/quickstart.ps1", [ref]$null, [ref]$errors)
+          $tokens = @()
+          [System.Management.Automation.Language.Parser]::ParseFile("src/quickstart.ps1", [ref]$tokens, [ref]$errors)
           if ($errors.Count -gt 0) {
             $errors | ForEach-Object { Write-Error $_.ToString() }
             exit 1
           }
           Write-Host "PowerShell syntax OK"
+          '
 
   json-validate:
     runs-on: ubuntu-latest
