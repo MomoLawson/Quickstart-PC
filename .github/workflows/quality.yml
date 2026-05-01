@@ -93,7 +93,7 @@ jobs:
       - name: Test --help
         run: bash dist/quickstart.sh --help 2>&1 | grep -q "Quickstart-PC"
       - name: Test --version
-        run: bash dist/quickstart.sh --version 2>&1 | grep -q "Quickstart-PC v"
+        run: bash dist/quickstart.sh --version 2>&1 | sed 's/\x1b\[[0-9;]*m//g' | grep -q "Quickstart-PC v"
       - name: Test doctor
         run: bash dist/quickstart.sh doctor 2>&1 | grep -q "QC Doctor"
       - name: Test --list-profiles
