@@ -201,6 +201,7 @@ FAIL_FAST=false
 AUTO_UPDATE_LATEST=""
 AUTO_CHECK_PID=""
 AUTO_CHECK_FILE=""
+DOCTOR_FIX=false
 PROFILE_KEY=""
 NON_INTERACTIVE=false
 DEBUG=false
@@ -231,7 +232,7 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         --dev) DEV_MODE=true; shift ;;
 --dry-run) DRY_RUN=true; shift ;;
---doctor) DOCTOR=true; shift ;;
+doctor) DOCTOR=true; shift; [[ "$1" == "--fix" ]] && DOCTOR_FIX=true && shift ;;
         --yes|-y) AUTO_YES=true; shift ;;
         --version|-v) tput cnorm 2>/dev/null || true; printf "\033[0;34mQuickstart-PC\033[0m v${VERSION}\n"; exit 0 ;;
         --verbose) VERBOSE=true; shift ;;
@@ -568,8 +569,11 @@ rm -f "$CONFIG_FILE" 2>/dev/null
     exit 0
 fi
 
-# --doctor (QC Doctor) 在语言选择之前处理
+# doctor (QC Doctor) 在语言选择之前处理
 if [[ "$DOCTOR" == "true" ]]; then
+hint_cmd() { printf "      \033[40;90m%s\033[0m\n" "$1"; }
+collect_fix() { FIX_CMDS+=("$1"); }
+
 echo ""
 echo "╔════════════════════════════════════════════════════════════╗"
 echo "║                    🔧 QC Doctor                            ║"
@@ -580,6 +584,7 @@ echo ""
 passed=0
 warnings=0
 failed=0
+FIX_CMDS=()
 
 # 1. 系统检测
 echo "━━━ System Information ━━━"
@@ -606,7 +611,8 @@ echo "  [✓] Homebrew: $brew_ver"
 ((passed++))
 else
 echo "  [✗] Homebrew not found"
-echo "      → Install: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+hint_cmd '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+collect_fix 'brew --version || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
 ((failed++))
 fi
 ;;
@@ -645,7 +651,11 @@ echo "  [✓] jq: $jq_ver"
 ((passed++))
 else
 echo "  [✗] jq not found (JSON parser required)"
-echo "      → Install: brew install jq (macOS) or apt install jq (Linux)"
+hint_cmd 'brew install jq (macOS) | apt install jq (Linux)'
+case "$os_name" in
+Darwin) collect_fix 'brew install jq' ;;
+Linux) collect_fix 'sudo apt install -y jq' ;;
+esac
 ((failed++))
 fi
 
@@ -655,7 +665,22 @@ echo "  [✓] curl: available"
 ((passed++))
 else
 echo "  [✗] curl not found"
+hint_cmd 'brew install curl (macOS) | apt install curl (Linux)'
+case "$os_name" in
+Darwin) collect_fix 'brew install curl' ;;
+Linux) collect_fix 'sudo apt install -y curl' ;;
+esac
 ((failed++))
+fi
+
+if command -v python3 &>/dev/null; then
+python_ver=$(python3 --version 2>/dev/null)
+echo "  [✓] python3: $python_ver (optional)"
+((passed++))
+else
+echo "  [!] python3 not found (optional, fallback JSON parser)"
+hint_cmd 'brew install python3 (macOS) | apt install python3 (Linux)'
+((warnings++))
 fi
 echo ""
 
@@ -740,14 +765,26 @@ echo " Summary: $passed passed, $warnings warnings, $failed failed"
 if [[ $failed -eq 0 ]]; then
 echo " Status: ✅ Environment ready for Quickstart-PC"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-tput cnorm 2>/dev/null || true
-exit 0
+elif [[ "$DOCTOR_FIX" == "true" && ${#FIX_CMDS[@]} -gt 0 ]]; then
+echo " Status: 🔧 Fixing $failed issue(s)..."
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+for cmd in "${FIX_CMDS[@]}"; do
+echo "  → Running: $cmd"
+eval "$cmd" && echo "  ✓ Done" || echo "  ✗ Failed: $cmd"
+done
+echo ""
+echo " Status: ✅ Fix complete"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 else
 echo " Status: ⚠️  Some issues need attention before installation"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-tput cnorm 2>/dev/null || true
-exit 1
+echo ""
+echo "  Run: doctor --fix  (auto-install missing dependencies)"
+echo ""
 fi
+tput cnorm 2>/dev/null || true
+exit 0
 fi
 
 # --validate 在语言选择之前处理

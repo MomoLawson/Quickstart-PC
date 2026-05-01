@@ -12,7 +12,8 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --cfg-url URL      リモートの profiles.json URL を使用
   --dev              開発モード：選択したソフトを表示但不インストール
   --dry-run          プレビューモード：インストール過程を表示但不实际インストール
-  --doctor QC        Doctor環境診断を実行
+  doctor              QC Doctor環境診断を実行
+  doctor --fix        不足している依存関係を自動修復
   --yes, -y         全てのプロンプトに自動同意
   --verbose              詳細なデバッグ情報を表示
   --log-file FILE          ログをファイルに書き込む

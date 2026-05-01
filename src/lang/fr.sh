@@ -12,7 +12,8 @@ Options :
   --cfg-url URL      Utiliser l'URL profiles.json distante
   --dev              Mode développeur : afficher la sélection sans installer
   --dry-run          Mode aperçu : afficher le processus sans installer
-  --doctor           Exécuter les diagnostics QC Doctor
+  doctor              Exécuter les diagnostics QC Doctor
+  doctor --fix        Réparer automatiquement les dépendances manquantes
   --yes, -y          Confirmer automatiquement toutes les invites
   --verbose              Afficher les informations de débogage détaillées
   --log-file FILE          Écrire les journaux dans un fichier
