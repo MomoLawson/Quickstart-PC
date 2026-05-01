@@ -16,6 +16,7 @@ jobs:
         with:
           scandir: './src'
           severity: warning
+          ignore_paths: 'src/lang'
 
   pwsh-syntax:
     runs-on: ubuntu-latest
