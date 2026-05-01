@@ -333,6 +333,7 @@ function Initialize-LanguageStrings {
 "update_success" = "更新成功！请重新运行脚本"
 "update_failed" = "更新失败: {0}"
     "update_prompt" = "是否更新到新版本？[Y/n]"
+    "update_ctrl_u" = "发现新版本 {0}，按 Ctrl+U 更新"
 
 "hook_running" = "执行钩子: {0}"
 "hook_success" = "钩子执行完成"
@@ -479,6 +480,7 @@ function Initialize-LanguageStrings {
 "update_success" = "アップデート成功！スクリプトを再起動してください"
 "update_failed" = "アップデート失敗: {0}"
     "update_prompt" = "新しいバージョンに更新しますか？[Y/n]"
+    "update_ctrl_u" = "新しいバージョン {0} があります。Ctrl+U で更新"
 
 "hook_running" = "フックを実行: {0}"
 "hook_success" = "フックの実行が完了しました"
@@ -625,6 +627,7 @@ $script:LANG = @{
 "update_success" = "업데이트 성공! 스크립트를 다시 실행하세요"
 "update_failed" = "업데이트 실패: {0}"
     "update_prompt" = "새 버전으로 업데이트하시겠습니까？[Y/n]"
+    "update_ctrl_u" = "새 버전 {0} 사용 가능. Ctrl+U로 업데이트"
 
 "hook_running" = "후크 실행: {0}"
 "hook_success" = "후크 실행 완료"
@@ -770,6 +773,7 @@ $script:LANG = @{
 "update_success" = "更新成功！請重新執行腳本"
 "update_failed" = "更新失敗: {0}"
     "update_prompt" = "是否更新到新版本？[Y/n]"
+    "update_ctrl_u" = "發現新版本 {0}，按 Ctrl+U 更新"
 
 "hook_running" = "執行鉤子: {0}"
 "hook_success" = "鉤子執行完成"
@@ -915,6 +919,7 @@ $script:LANG = @{
 "update_success" = "Update erfolgreich! Bitte starten Sie das Skript neu"
 "update_failed" = "Update fehlgeschlagen: {0}"
     "update_prompt" = "Auf neue Version aktualisieren? [Y/n]"
+    "update_ctrl_u" = "Neue Version {0} verfügbar. Strg+U zum Aktualisieren"
 
 "hook_running" = "Hook wird ausgeführt: {0}"
 "hook_success" = "Hook abgeschlossen"
@@ -1060,6 +1065,7 @@ $script:LANG = @{
 "update_success" = "Mise à jour réussie ! Veuillez redémarrer le script"
 "update_failed" = "Échec de la mise à jour : {0}"
     "update_prompt" = "Mettre à jour vers la nouvelle version ? [Y/n]"
+    "update_ctrl_u" = "Nouvelle version {0} disponible. Appuyez sur Ctrl+U pour mettre à jour"
 
 "hook_running" = "Exécution du hook : {0}"
 "hook_success" = "Hook terminé"
@@ -1205,6 +1211,7 @@ $script:LANG = @{
 "update_success" = "تم التحديث بنجاح! يرجى إعادة تشغيل البرنامج النصي"
 "update_failed" = "فشل التحديث: {0}"
     "update_prompt" = "هل تريد التحديث إلى الإصدار الجديد؟ [Y/n]"
+    "update_ctrl_u" = "إصدار جديد {0} متاح. اضغط Ctrl+U للتحديث"
 
 "hook_running" = "تشغيل البرنامج النصي: {0}"
 "hook_success" = "اكتمل البرنامج النصي"
@@ -1350,6 +1357,7 @@ $script:LANG = @{
 "update_success" = "Atualização bem-sucedida! Por favor, reinicie o script"
 "update_failed" = "Falha na atualização: {0}"
     "update_prompt" = "Atualizar para a nova versão? [Y/n]"
+    "update_ctrl_u" = "Nova versão {0} disponível. Pressione Ctrl+U para atualizar"
 
 "hook_running" = "Executando hook: {0}"
 "hook_success" = "Hook concluído"
@@ -1495,6 +1503,7 @@ $script:LANG = @{
 "update_success" = "Aggiornamento riuscito! Riavviare lo script"
 "update_failed" = "Aggiornamento fallito: {0}"
     "update_prompt" = "Aggiornare alla nuova versione? [Y/n]"
+    "update_ctrl_u" = "Nuova versione {0} disponibile. Premi Ctrl+U per aggiornare"
 
 "hook_running" = "Esecuzione hook: {0}"
 "hook_success" = "Hook completato"
@@ -1640,6 +1649,7 @@ $script:LANG = @{
 "update_success" = "Update successful! Please restart the script"
 "update_failed" = "Update failed: {0}"
     "update_prompt" = "Update to new version? [Y/n]"
+    "update_ctrl_u" = "New version {0} available. Press Ctrl+U to update"
 
 "hook_running" = "Running hook: {0}"
 "hook_success" = "Hook completed"
@@ -2826,6 +2836,48 @@ try {
     }
 }
 
+function Test-OneLiner {
+    return ($MyInvocation.ScriptName -eq "" -or $MyInvocation.ScriptName -match "^(bash|sh)$")
+}
+
+function Start-AutoCheckUpdate {
+    if (Test-OneLiner) { return }
+    $script:autoUpdateLatest = $null
+    $script:autoCheckJob = Start-Job -ScriptBlock {
+        try {
+            $release = Invoke-RestMethod -Uri "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases/latest" -TimeoutSec 10 -ErrorAction Stop
+            $latest = $release.tag_name -replace '^v',''
+            $current = $using:VERSION
+            if ($latest -and $current -ne $latest) { return $latest }
+        } catch {}
+        return $null
+    }
+}
+
+function Get-AutoCheckResult {
+    if (-not $script:autoCheckJob) { return }
+    if ($script:autoCheckJob.State -ne "Completed") { return }
+    $result = Receive-Job -Job $script:autoCheckJob -ErrorAction SilentlyContinue
+    Remove-Job -Job $script:autoCheckJob -Force -ErrorAction SilentlyContinue
+    $script:autoCheckJob = $null
+    if ($result) { $script:autoUpdateLatest = $result }
+}
+
+function Show-UpdateHint {
+    Get-AutoCheckResult
+    if ($script:autoUpdateLatest) {
+        $msg = $script:LANG["update_ctrl_u"] -f $script:autoUpdateLatest
+        Write-Host "  $msg" -ForegroundColor Yellow
+    }
+}
+
+function Invoke-CtrlUUpdate {
+    if (-not $script:autoUpdateLatest) { return $false }
+    Write-Host ""
+    Update-Self
+    exit $LASTEXITCODE
+}
+
 # ============================================
 # Profile Menu (TUI)
 # ============================================
@@ -2891,6 +2943,10 @@ function Show-ProfileMenu {
     $running = $true
     while ($running) {
         $key = [Console]::ReadKey($true)
+
+        if ($key.Key -eq [ConsoleKey]::U -and ($key.Modifiers -band [ConsoleModifiers]::Control)) {
+            if (Invoke-CtrlUUpdate) { continue }
+        }
 
         switch ($key.VirtualKeyCode) {
             38 { # Up arrow
@@ -3042,6 +3098,10 @@ Draw-SoftwareMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
 $running = $true
 while ($running) {
 $key = [Console]::ReadKey($true)
+
+if ($key.Key -eq [ConsoleKey]::U -and ($key.Modifiers -band [ConsoleModifiers]::Control)) {
+    if (Invoke-CtrlUUpdate) { continue }
+}
 
 switch ($key.VirtualKeyCode) {
 38 { # Up arrow
@@ -3206,12 +3266,14 @@ if ($validate) {
         Set-WindowTitle -Title ""
         try { Set-CursorVisible -Visible $true } catch {}
     }
+    Start-AutoCheckUpdate
     
     while ($true) {
         Clear-Host
         try { Set-CursorVisible -Visible $false } catch {}
         
         Show-Banner -Lang $script:DETECTED_LANG
+        Show-UpdateHint
         
         if ($dev) { Write-Log $h["dev_mode"] "WARN"; Write-Host "" }
         if ($dryRun) { Write-Log $h["dry_run_mode"] "WARN"; Write-Host "" }
