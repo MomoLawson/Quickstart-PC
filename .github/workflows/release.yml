@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Bump version
+        id: version
+        run: |
+          OLD=$(cat VERSION | tr -d '[:space:]')
+          IFS='.' read -r major minor patch <<< "$OLD"
+          case "${{ inputs.release_type }}" in
+            major) major=$((major + 1)); minor=0; patch=0 ;;
+            minor) minor=$((minor + 1)); patch=0 ;;
+            patch) patch=$((patch + 1)) ;;
+          esac
+          NEW="$major.$minor.$patch"
+          echo "$NEW" > VERSION
+          echo "old=$OLD" >> $GITHUB_OUTPUT
+          echo "new=$NEW" >> $GITHUB_OUTPUT
+          echo "Version: $OLD → $NEW"
+
+      - name: Build
+        run: bash scripts/build.sh
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          OLD="${{ steps.version.outputs.old }}"
+          NEW="${{ steps.version.outputs.new }}"
+          CHANGES=$(git log "v$OLD..HEAD" --pretty=format:"- %s" --no-merges 2>/dev/null || echo "- Initial release")
+          echo "changes<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Commit and tag
+        run: |
+          NEW="${{ steps.version.outputs.new }}"
+          git add -A
+          git commit -m "release: v$NEW"
+          git tag "v$NEW"
+
+      - name: Push
+        run: git push origin main --tags
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.new }}
+          name: v${{ steps.version.outputs.new }}
+          body: |
+            ## Changes
+            ${{ steps.changelog.outputs.changes }}
+          files: |
+            dist/quickstart.sh
+            dist/quickstart.ps1

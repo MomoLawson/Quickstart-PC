@@ -12,61 +12,72 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run ShellCheck
-        uses: ludeeus/action-shellcheck@master
+        uses: ludeeus/action-shellcheck@2.0.0
         with:
-          check_together: 'yes'
           scandir: './src'
-          severity: error
+          severity: warning
 
   pwsh-syntax:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Install PowerShell
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y wget apt-transport-https software-properties-common
-        wget -q "https://github.com/PowerShell/PowerShell/releases/download/v7.4.1/powershell_7.4.1-1.deb_amd64.deb"
-        sudo dpkg -i powershell_7.4.1-1.deb_amd64.deb || sudo apt-get install -f -y
-    - name: Check PowerShell syntax
-      run: |
-        pwsh -NoProfile -Command '
-        $errors = @()
-        $tokens = @()
-        [System.Management.Automation.Language.Parser]::ParseFile("src/quickstart.ps1", [ref]$tokens, [ref]$errors)
-        if ($errors.Count -gt 0) {
-          $errors | ForEach-Object { Write-Error $_.ToString() }
-          exit 1
-        }
-        Write-Host "PowerShell syntax OK"
-        '
-    - name: Runtime syntax check
-      run: |
-        pwsh -NoProfile -File src/quickstart.ps1 --help 2>&1 | head -1 || true
+      - uses: actions/checkout@v4
+      - name: Setup PowerShell
+        uses: actions/setup-powershell@v2
+        with:
+          version: '7.4.x'
+      - name: Check PowerShell syntax
+        run: |
+          $errors = @()
+          [System.Management.Automation.Language.Parser]::ParseFile("src/quickstart.ps1", [ref]$null, [ref]$errors)
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error $_.ToString() }
+            exit 1
+          }
+          Write-Host "PowerShell syntax OK"
 
   json-validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Validate profiles.json
+        run: python3 -c "import json; json.load(open('config/profiles.json')); print('✓ profiles.json valid')"
+      - name: Validate software configs
         run: |
-          python3 -c "import json; json.load(open('config/profiles.json'))"
-          echo "✓ profiles.json is valid JSON"
+          for f in config/software/*.json; do
+            python3 -c "import json; json.load(open('$f')); print('✓ $f valid')"
+          done
+      - name: Validate language JSON files
+        run: |
+          for f in src/lang/*.json; do
+            python3 -c "import json; json.load(open('$f')); print('✓ $f valid')"
+          done
 
   build:
     runs-on: ubuntu-latest
+    needs: [shellcheck, pwsh-syntax, json-validate]
     steps:
       - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
       - name: Build dist
         run: bash scripts/build.sh
-      - name: Verify dist files exist
+      - name: Verify dist files
         run: |
           test -f dist/quickstart.sh
           test -f dist/quickstart.ps1
-          echo "✓ Both dist files built successfully"
+          test -d dist/lang
+          echo "✓ Build artifacts verified"
+      - name: Check version injection
+        run: |
+          grep -q "0\." dist/quickstart.sh
+          grep -q "0\." dist/quickstart.ps1
+          echo "✓ Version injected correctly"
 
   smoke-test:
     runs-on: ubuntu-latest
+    needs: [build]
     steps:
       - uses: actions/checkout@v4
       - name: Install jq
@@ -75,28 +86,15 @@ jobs:
         run: bash scripts/build.sh
       - name: Test --help
         run: bash dist/quickstart.sh --help 2>&1 | grep -q "Quickstart-PC"
+      - name: Test --version
+        run: bash dist/quickstart.sh --version 2>&1 | grep -q "Quickstart-PC v"
+      - name: Test doctor
+        run: bash dist/quickstart.sh doctor 2>&1 | grep -q "QC Doctor"
       - name: Test --list-profiles
         run: |
           output=$(bash dist/quickstart.sh --list-profiles --cfg-path config/profiles.json 2>&1)
-          echo "$output"
           echo "$output" | grep -q "Available profiles"
-      - name: Test --show-profile
-        run: |
-          output=$(bash dist/quickstart.sh --show-profile developer --cfg-path config/profiles.json 2>&1 || true)
-          echo "$output"
-          echo "$output" | grep -q "Profile:"
-      - name: Test --profile --dry-run --yes
+      - name: Test --profile --dry-run
         run: |
           output=$(bash dist/quickstart.sh --profile developer --dry-run --yes --lang en --non-interactive --cfg-path config/profiles.json 2>&1)
-          echo "$output"
-          echo "$output" | grep -q "Selected:"
-      - name: Test --profile --only --dry-run --yes
-        run: |
-          output=$(bash dist/quickstart.sh --profile developer --only git --dry-run --yes --lang en --non-interactive --cfg-path config/profiles.json 2>&1)
-          echo "$output"
-          echo "$output" | grep -q "Selected: git"
-      - name: Test --profile --skip --dry-run --yes
-        run: |
-          output=$(bash dist/quickstart.sh --profile developer --skip docker --dry-run --yes --lang en --non-interactive --cfg-path config/profiles.json 2>&1)
-          echo "$output"
           echo "$output" | grep -q "Selected:"

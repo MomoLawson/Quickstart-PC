@@ -18,9 +18,9 @@ Arguments:
   patch  Bump patch version (0.0.X)
 
 Examples:
-  $(basename "$0") patch  # 0.68.1 → 0.68.2
-  $(basename "$0") minor  # 0.68.1 → 0.69.0
-  $(basename "$0") major  # 0.68.1 → 1.0.0
+  $(basename "$0") patch  # 0.82.1 → 0.82.2
+  $(basename "$0") minor  # 0.82.1 → 0.83.0
+  $(basename "$0") major  # 0.82.1 → 1.0.0
 EOF
 }
 
@@ -29,9 +29,7 @@ bump_version() {
     local type="$2"
     
     local major minor patch
-    IFS='.' read -r major minor patch <<EOF
-$version
-EOF
+    IFS='.' read -r major minor patch <<< "$version"
     
     case "$type" in
         major)
@@ -51,9 +49,12 @@ EOF
     echo "$major.$minor.$patch"
 }
 
-git_push_with_proxy() {
-    export https_proxy=http://127.0.0.1:7897 http_proxy=http://127.0.0.1:7897 all_proxy=socks5://127.0.0.1:7897
-    git push origin main --tags
+validate_version() {
+    local version="$1"
+    if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "[ERROR] Invalid version format: $version"
+        exit 1
+    fi
 }
 
 main() {
@@ -73,6 +74,7 @@ main() {
     local old_version
     old_version=$(cat "$VERSION_FILE" | tr -d '[:space:]')
     echo "[INFO] Current version: $old_version"
+    validate_version "$old_version"
     
     # Bump version
     local new_version
@@ -103,9 +105,9 @@ main() {
     git tag "v$new_version"
     echo "[✓] Tagged: v$new_version"
     
-    # Git push with proxy
+    # Git push (no hardcoded proxy)
     echo "[→] Pushing to remote..."
-    if ! git_push_with_proxy; then
+    if ! git push origin main --tags; then
         echo "[ERROR] Push failed, rolling back..."
         git tag -d "v$new_version"
         git reset --soft HEAD~1
