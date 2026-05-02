@@ -32,7 +32,7 @@ Invoke-WebRequest -Uri "https://github.com/MomoLawson/Quickstart-PC/releases/lat
 powershell -ExecutionPolicy Bypass -File quickstart.ps1
 
 # Méthode 2: Ligne unique
-powershell -ExecutionPolicy Bypass -Command "$bytes = (New-Object System.Net.WebClient).DownloadData('https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.ps1'); iex ([System.Text.Encoding]::UTF8.GetString($bytes))"
+powershell -ExecutionPolicy Bypass -Command "[System.Text.Encoding]::UTF8.GetString((New-Object System.Net.WebClient).DownloadData('https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.ps1'))|iex"
 ```
 
 ## Profils
