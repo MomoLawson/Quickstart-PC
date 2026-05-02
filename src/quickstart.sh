@@ -24,7 +24,7 @@ fi
 
 # 全局 Ctrl+C 恢复光标（在任何阶段退出都生效）
 trap '[[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; IN_ALT_SCREEN=0; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; exit 130' INT
-trap 'ec=$?; [[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; IN_ALT_SCREEN=0; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
+trap 'ec=$?; [[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; IN_ALT_SCREEN=0; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; [[ -n "$LANG_BYE" && "$ec" -eq 130 ]] && echo "" && echo "$LANG_BYE"' EXIT
 
 # 默认配置 URL（优先级最高）
 DEFAULT_CFG_URL="https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json"
@@ -127,6 +127,7 @@ LANG_BACK_TO_PROFILES="Back to Profiles"
     LANG_DEV_MODE="Dev mode: Show selected software without installing"
 LANG_DRY_RUN_MODE="Preview mode: Show process without installing"
 LANG_DRY_RUN_INSTALLING="Simulating install"
+LANG_BYE="Quickstart-PC has exited. Goodbye!"
     LANG_JQ_DETECTED="jq detected, using jq"
     LANG_JQ_NOT_FOUND="jq not found, installing..."
     LANG_JQ_INSTALLED="jq installed successfully"
