@@ -1551,7 +1551,11 @@ function Clear-InstallState {
 
 function Invoke-HookScript {
   param([string]$HookType)
-  $hookScript = jq -r ".hooks.${HookType} // empty" $script:CONFIG_FILE 2>$null
+  $hookScript = ""
+  try {
+    $config = Get-Content $script:CONFIG_FILE -Raw | ConvertFrom-Json
+    $hookScript = $config.hooks.$HookType
+  } catch {}
   if (-not $hookScript) { return }
   if (-not $allowHooks) {
     Write-Host " $($script:LANG["hooks_disabled"])" -ForegroundColor DarkGray
