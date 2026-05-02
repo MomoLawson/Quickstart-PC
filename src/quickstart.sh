@@ -2,13 +2,14 @@
 
 # 只在交互式终端中清屏和隐藏光标
 if [[ -t 1 ]]; then
+    printf '\e[?1049h' 2>/dev/null || true
     clear 2>/dev/null || true
     tput civis 2>/dev/null || true
 fi
 
 # 全局 Ctrl+C 恢复光标（在任何阶段退出都生效）
-trap 'tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; exit 130' INT
-trap 'tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
+trap 'printf "\e[?1049l" 2>/dev/null || true; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; exit 130' INT
+trap 'printf "\e[?1049l" 2>/dev/null || true; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
 
 # 默认配置 URL（优先级最高）
 DEFAULT_CFG_URL="https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json"
@@ -19,7 +20,7 @@ LANG_NAMES=("English" "简体中文" "繁體中文" "日本語" "한국어" "Deu
 
 # Language code mappings (parallel arrays)
 MAP_FROM=("en" "en-US" "en_GB" "zh" "zh-CN" "zh_CN" "zh-TW" "zh-Hant" "zh-HK" "zh_TW" "ja" "ja-JP" "ja_JP" "ko" "ko-KR" "ko_KR" "de" "de-DE" "de_AT" "de_CH" "fr" "fr-FR" "fr_CA" "fr_BE" "ar" "ar-SA" "ar-AE" "ar-EG" "pt" "pt-BR" "pt-PT" "it" "it-IT" "it_CH")
-MAP_TO=("en-US" "en-US" "en-US" "zh-CN" "zh-CN" "zh-CN" "zh-CN" "zh-Hant" "zh-Hant" "zh-Hant" "ja" "ja" "ja" "ko" "ko" "ko" "de" "de" "de" "de" "fr" "fr" "fr" "fr" "ar" "ar" "ar" "ar" "pt" "pt" "pt" "it" "it" "it")
+MAP_TO=("en-US" "en-US" "en-US" "zh-CN" "zh-CN" "zh-CN" "zh-Hant" "zh-Hant" "zh-Hant" "zh-Hant" "ja" "ja" "ja" "ko" "ko" "ko" "de" "de" "de" "de" "fr" "fr" "fr" "fr" "ar" "ar" "ar" "ar" "pt" "pt" "pt" "it" "it" "it")
 
 lang_lookup() {
     local key="$1"
@@ -575,10 +576,10 @@ hint_cmd() { printf "      \033[40;90m%s\033[0m\n" "$1"; }
 collect_fix() { FIX_CMDS+=("$1"); }
 
 echo ""
-echo "╔════════════════════════════════════════════════════════════╗"
-echo "║                    🔧 QC Doctor                            ║"
-echo "║         Quickstart-PC Environment Diagnostics              ║"
-echo "╚════════════════════════════════════════════════════════════╝"
+echo "╔════════════════════════════════════════════════════════╗"
+echo "║                    🔧 QC Doctor                        ║"
+echo "║         Quickstart-PC Environment Diagnostics          ║"
+echo "╚════════════════════════════════════════════════════════╝"
 echo ""
 
 passed=0
@@ -2027,20 +2028,20 @@ handle_ctrl_u() {
 
 main() {
 	if [[ "$CHECK_UPDATE" == "true" ]]; then
-		trap 'tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
+		trap 'printf "\e[?1049l" 2>/dev/null || true; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
 		show_banner
 		check_update
 		exit $?
 	fi
 
 	if [[ "$UPDATE" == "true" ]]; then
-		trap 'tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
+		trap 'printf "\e[?1049l" 2>/dev/null || true; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
 		show_banner
 		self_update
 		exit $?
 	fi
 
-	trap 'set_title ""; stty echo 2>/dev/null; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; rm -f "$AUTO_CHECK_FILE" 2>/dev/null' EXIT
+	trap 'set_title ""; stty echo 2>/dev/null; printf "\e[?1049l" 2>/dev/null || true; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; rm -f "$AUTO_CHECK_FILE" 2>/dev/null' EXIT
     auto_check_update
     
     while true; do
@@ -2741,5 +2742,5 @@ if [[ ${#to_install[@]} -eq 0 ]]; then
     done
 }
 
-trap 'set_title ""; stty echo 2>/dev/null; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
+trap 'set_title ""; stty echo 2>/dev/null; printf "\e[?1049l" 2>/dev/null || true; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
 main "$@"

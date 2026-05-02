@@ -101,6 +101,14 @@ function Set-WindowTitle {
     try { $Host.UI.RawUI.WindowTitle = $Title } catch {}
 }
 
+function Enter-AlternateScreen {
+    try { [Console]::Write("`e[?1049h") } catch {}
+}
+
+function Exit-AlternateScreen {
+    try { [Console]::Write("`e[?1049l") } catch {}
+}
+
 # ============================================
 # Language Detection Functions
 # ============================================
@@ -1957,7 +1965,8 @@ if ($checkUpdate -or $update) {
         "en-US"
     }
     Initialize-LanguageStrings -Lang $updateLang
-    trap { try { Set-CursorVisible -Visible $true } catch {} }
+    trap { Exit-AlternateScreen; try { Set-CursorVisible -Visible $true } catch {} }
+    Enter-AlternateScreen
     if ($checkUpdate) {
         Show-Banner -Lang $updateLang
         $result = Check-Update
@@ -2021,8 +2030,10 @@ if ($validate) {
             Remove-Item $script:CONFIG_FILE -Force -ErrorAction SilentlyContinue
         }
         Set-WindowTitle -Title ""
+        Exit-AlternateScreen
         try { Set-CursorVisible -Visible $true } catch {}
     }
+    Enter-AlternateScreen
     Start-AutoCheckUpdate
     
     while ($true) {
