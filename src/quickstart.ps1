@@ -84,6 +84,7 @@ $script:PKG_MANAGER = "none"
 $script:DEBUG = $debug
 $script:INSTALL_LAST_ERROR = ""
 $script:IN_ALT_SCREEN = $false
+$script:HAS_ERROR = $false
 
 # ============================================
 # Console helpers (cross-platform safe)
@@ -100,6 +101,12 @@ function Get-CursorVisible {
 function Set-WindowTitle {
     param([string]$Title)
     try { $Host.UI.RawUI.WindowTitle = $Title } catch {}
+}
+
+function Exit-Script {
+    param([int]$Code = 0)
+    if ($Code -ne 0) { $script:HAS_ERROR = $true }
+    exit $Code
 }
 
 function Enter-AlternateScreen {
@@ -838,13 +845,13 @@ $($h["help_lang"])
 "@ -ForegroundColor White
     
     try { [Console]::CursorVisible = $true } catch {}
-    exit 0
+    Exit-Script -Code 0
 }
 
 function Show-Version {
     Write-Host "Quickstart-PC" -ForegroundColor Blue -NoNewline
     Write-Host " v$VERSION"
-    exit 0
+    Exit-Script -Code 0
 }
 
 function Show-Banner {
@@ -875,12 +882,12 @@ function Get-ConfigFile {
             } else {
                 Write-Log "$($h["config_invalid"]): $cfgUrl" "ERROR"
                 Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
-                exit 1
+                Exit-Script -Code 1
             }
         } catch {
             Write-Log "$($h["config_not_found"]): $cfgUrl" "ERROR"
             Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
-            exit 1
+            Exit-Script -Code 1
         }
     }
     
@@ -892,11 +899,11 @@ function Get-ConfigFile {
                 return $tempFile
             } else {
                 Write-Log "$($h["config_invalid"]): $cfgPath" "ERROR"
-                exit 1
+                Exit-Script -Code 1
             }
         } else {
             Write-Log "$($h["config_not_found"]): $cfgPath" "ERROR"
-            exit 1
+            Exit-Script -Code 1
         }
     }
     
@@ -909,12 +916,12 @@ function Get-ConfigFile {
     } catch {
         Write-Log "$($h["config_not_found"])" "ERROR"
         Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
-        exit 1
+        Exit-Script -Code 1
     }
     
     Write-Log "$($h["config_not_found"])" "ERROR"
     Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
-    exit 1
+    Exit-Script -Code 1
 }
 
 # ============================================
@@ -937,7 +944,7 @@ function Show-ListProfiles {
     
     Write-Host ""
     Remove-Item $configFile -Force -ErrorAction SilentlyContinue
-    exit 0
+    Exit-Script -Code 0
 }
 
 function Show-ShowProfile {
@@ -949,7 +956,7 @@ function Show-ShowProfile {
     if ($profileKeys -notcontains $Key) {
         Write-Log "Profile '$Key' not found" "ERROR"
         Remove-Item $configFile -Force -ErrorAction SilentlyContinue
-        exit 1
+        Exit-Script -Code 1
     }
     
     $os = Get-CurrentOS
@@ -985,7 +992,7 @@ function Show-ShowProfile {
     Write-Host ""
     
     Remove-Item $configFile -Force -ErrorAction SilentlyContinue
-    exit 0
+    Exit-Script -Code 0
 }
 
 # ============================================
@@ -1009,7 +1016,7 @@ function Show-ListSoftware {
     
     Write-Host ""
     Remove-Item $configFile -Force -ErrorAction SilentlyContinue
-    exit 0
+    Exit-Script -Code 0
 }
 
 function Show-ShowSoftware {
@@ -1023,7 +1030,7 @@ function Show-ShowSoftware {
     if (-not $name) {
         Write-Log "Software '$Key' not found" "ERROR"
         Remove-Item $configFile -Force -ErrorAction SilentlyContinue
-        exit 1
+        Exit-Script -Code 1
     }
     
     Write-Host ""
@@ -1046,7 +1053,7 @@ function Show-ShowSoftware {
     Write-Host ""
     
     Remove-Item $configFile -Force -ErrorAction SilentlyContinue
-    exit 0
+    Exit-Script -Code 0
 }
 
 function Show-Search {
@@ -1070,7 +1077,7 @@ function Show-Search {
     
     Write-Host ""
     Remove-Item $configFile -Force -ErrorAction SilentlyContinue
-    exit 0
+    Exit-Script -Code 0
 }
 
 # ============================================
@@ -1284,7 +1291,7 @@ function Show-Doctor {
     if ($failed -eq 0) {
         Write-Host " Status: ✅ Environment ready for Quickstart-PC" -ForegroundColor Green
         Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        exit 0
+        Exit-Script -Code 0
     } elseif ($fix -and $fixCmds.Count -gt 0) {
         Write-Host " Status: 🔧 Fixing $failed issue(s)..." -ForegroundColor Cyan
         Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -1304,7 +1311,7 @@ function Show-Doctor {
         Write-Host "  Run: doctor -fix  (auto-install missing dependencies)"
         Write-Host ""
     }
-    exit 1
+    Exit-Script -Code 1
 }
 
 # ============================================
@@ -1375,7 +1382,7 @@ function Show-Validate {
     }
     
     Remove-Item $configFile -Force -ErrorAction SilentlyContinue
-    exit 0
+    Exit-Script -Code 0
 }
 
 # ============================================
@@ -1643,7 +1650,7 @@ function Invoke-CtrlUUpdate {
     if (-not $script:autoUpdateLatest) { return $false }
     Write-Host ""
     Update-Self
-    exit $LASTEXITCODE
+    Exit-Script -Code $LASTEXITCODE
 }
 
 # ============================================
@@ -1972,12 +1979,12 @@ if ($checkUpdate -or $update) {
     if ($checkUpdate) {
         Show-Banner -Lang $updateLang
         $result = Check-Update
-        exit $result
+        Exit-Script -Code $result
     }
     if ($update) {
         Show-Banner -Lang $updateLang
         $result = Update-Self
-        exit $result
+        Exit-Script -Code $result
     }
 }
 
@@ -2034,8 +2041,10 @@ if ($validate) {
         Set-WindowTitle -Title ""
         if ($script:IN_ALT_SCREEN) { Exit-AlternateScreen }
         try { Set-CursorVisible -Visible $true } catch {}
-        Write-Host ""
-        Write-Host $h["bye"]
+        if ($LASTEXITCODE -eq 0 -and -not $script:HAS_ERROR) {
+            Write-Host ""
+            Write-Host $h["bye"]
+        }
     }
     Start-AutoCheckUpdate
     Enter-AlternateScreen
@@ -2066,7 +2075,7 @@ if ($validate) {
         
         if ($os -eq "unknown") {
             Write-Log $h["unsupported_os"] "ERROR"
-            exit 1
+            Exit-Script -Code 1
         }
         
         $script:CONFIG_FILE = Get-ConfigFile
@@ -2074,13 +2083,13 @@ if ($validate) {
 if ($nonInteractive) {
     if (-not $profile) {
         Write-Log $h["noninteractive_error"] "ERROR"
-        exit 1
+        Exit-Script -Code 1
     }
 
     $profileKeys = Get-ProfileKeys -Path $script:CONFIG_FILE
     if ($profileKeys -notcontains $profile) {
         Write-Log "$($h["profile_not_found"]): $profile" "ERROR"
-        exit 1
+        Exit-Script -Code 1
     }
 
     $script:SELECTED_PROFILES = @($profile)
@@ -2097,7 +2106,7 @@ if ($nonInteractive) {
     $profileKeys = Get-ProfileKeys -Path $script:CONFIG_FILE
     if ($profileKeys -notcontains $profile) {
       Write-Log "$($h["profile_not_found"]): $profile" "ERROR"
-      exit 1
+      Exit-Script -Code 1
     }
 
     $script:SELECTED_PROFILES = @($profile)
@@ -2116,7 +2125,7 @@ if ($nonInteractive) {
 
       if (-not $selectedProfile) {
         Write-Log $h["no_profile_selected"] "WARN"
-        exit 0
+        Exit-Script -Code 0
       }
 
       $script:SELECTED_PROFILES = @($selectedProfile)
@@ -2131,7 +2140,7 @@ if ($nonInteractive) {
 
       if (-not $selectedProfile) {
         Write-Log $h["no_profile_selected"] "WARN"
-        exit 0
+        Exit-Script -Code 0
       }
 
       $script:SELECTED_PROFILES = @($selectedProfile)
@@ -2151,13 +2160,13 @@ if ($script:SELECTED_SOFTWARE.Count -eq 0) {
             Write-Log $h["no_software_selected"] "WARN"
             
             if ($nonInteractive) {
-                exit 0
+                Exit-Script -Code 0
             }
             
             Write-Host ""
             Write-Log $h["ask_continue"] "INFO"
             $continue = Select-Continue -ContinueText $h["continue_btn"] -ExitText $h["exit_btn"]
-            if ($continue -eq 1) { exit 0 }
+            if ($continue -eq 1) { Exit-Script -Code 0 }
             continue
         }
         
@@ -2209,12 +2218,12 @@ if ($script:SELECTED_SOFTWARE.Count -eq 0) {
             
             Set-Content -Path $exportPlan -Value $planContent -Encoding UTF8
             Write-Log "Installation plan exported to $exportPlan" "INFO"
-            if ($nonInteractive) { exit 0 }
+            if ($nonInteractive) { Exit-Script -Code 0 }
         }
         
         if ($dev) {
             Write-Log "Dev mode: Done" "INFO"
-            exit 0
+            Exit-Script -Code 0
         }
         
 if (-not $yes -and -not $nonInteractive) {
@@ -2225,7 +2234,7 @@ if (-not $yes -and -not $nonInteractive) {
                 Write-Host ""
                 Write-Log $h["ask_continue"] "INFO"
                 $continue = Select-Continue -ContinueText $h["continue_btn"] -ExitText $h["exit_btn"]
-                if ($continue -eq 1) { exit 0 }
+                if ($continue -eq 1) { Exit-Script -Code 0 }
                 continue
             }
         }
@@ -2262,13 +2271,13 @@ Write-Host ""
             Write-Log $h["all_installed"] "INFO"
             
             if ($nonInteractive) {
-                exit 0
+                Exit-Script -Code 0
             }
             
             Write-Host ""
             Write-Log $h["ask_continue"] "INFO"
             $continue = Select-Continue -ContinueText $h["continue_btn"] -ExitText $h["exit_btn"]
-  if ($continue -eq 1) { exit 0 }
+  if ($continue -eq 1) { Exit-Script -Code 0 }
   continue
 }
 
@@ -2549,14 +2558,14 @@ if ($reportJson -or $reportTxt) {
 
   if ($nonInteractive) {
     Set-WindowTitle -Title "QSPC"
-    exit 0
+    Exit-Script -Code 0
   }
         
         Set-WindowTitle -Title "QSPC | $($h["title_ask_continue"])"
         Write-Host ""
         Write-Log $h["ask_continue"] "INFO"
         $continue = Select-Continue -ContinueText $h["continue_btn"] -ExitText $h["exit_btn"]
-        if ($continue -eq 1) { exit 0 }
+        if ($continue -eq 1) { Exit-Script -Code 0 }
         
         continue
     }

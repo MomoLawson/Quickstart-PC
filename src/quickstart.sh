@@ -2042,7 +2042,7 @@ main() {
 		exit $?
 	fi
 
-	trap 'set_title ""; stty echo 2>/dev/null; if [[ "$IN_ALT_SCREEN" == "1" ]]; then printf "\e[?1049l" 2>/dev/null || true; fi; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; rm -f "$AUTO_CHECK_FILE" 2>/dev/null; echo ""; echo "$LANG_BYE"' EXIT
+	trap 'local exit_code=$?; set_title ""; stty echo 2>/dev/null; if [[ "$IN_ALT_SCREEN" == "1" ]]; then printf "\e[?1049l" 2>/dev/null || true; fi; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; rm -f "$AUTO_CHECK_FILE" 2>/dev/null; if [[ "$exit_code" -eq 0 ]]; then echo ""; echo "$LANG_BYE"; fi' EXIT
     auto_check_update
     IN_ALT_SCREEN=1; printf '\e[?1049h' 2>/dev/null || true
     
@@ -2744,5 +2744,5 @@ if [[ ${#to_install[@]} -eq 0 ]]; then
     done
 }
 
-trap 'set_title ""; stty echo 2>/dev/null; if [[ "$IN_ALT_SCREEN" == "1" ]]; then printf "\e[?1049l" 2>/dev/null || true; fi; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; echo ""; echo "$LANG_BYE"' EXIT
+trap 'local exit_code=$?; set_title ""; stty echo 2>/dev/null; if [[ "$IN_ALT_SCREEN" == "1" ]]; then printf "\e[?1049l" 2>/dev/null || true; fi; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; if [[ "$exit_code" -eq 0 ]]; then echo ""; echo "$LANG_BYE"; fi' EXIT
 main "$@"
