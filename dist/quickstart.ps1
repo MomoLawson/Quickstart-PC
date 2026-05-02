@@ -41,6 +41,8 @@ param(
 )
 
 $VERSION = "0.82.1"
+$OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $DEFAULT_CFG_URL = "https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json"
 
 # Supported languages configuration

@@ -32,7 +32,7 @@ Invoke-WebRequest -Uri "https://github.com/MomoLawson/Quickstart-PC/releases/lat
 powershell -ExecutionPolicy Bypass -File quickstart.ps1
 
 # Methode 2: Einzeiler
-powershell -ExecutionPolicy Bypass -Command "iwr https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.ps1 | iex"
+powershell -ExecutionPolicy Bypass -Command "$bytes = (New-Object System.Net.WebClient).DownloadData('https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.ps1'); iex ([System.Text.Encoding]::UTF8.GetString($bytes))"
 ```
 
 ## Profile
