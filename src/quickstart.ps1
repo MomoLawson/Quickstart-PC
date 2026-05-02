@@ -85,6 +85,7 @@ $script:DEBUG = $debug
 $script:INSTALL_LAST_ERROR = ""
 $script:IN_ALT_SCREEN = $false
 $script:HAS_ERROR = $false
+$script:ERROR_MESSAGES = @()
 
 # ============================================
 # Console helpers (cross-platform safe)
@@ -107,7 +108,14 @@ function Exit-Script {
     param([int]$Code = 0)
     if ($Code -ne 0) {
         $script:HAS_ERROR = $true
-        if ($script:IN_ALT_SCREEN) { Exit-AlternateScreen }
+        if ($script:IN_ALT_SCREEN) {
+            Exit-AlternateScreen
+            Show-Banner -Lang $script:DETECTED_LANG
+            foreach ($msg in $script:ERROR_MESSAGES) {
+                Write-Host $msg
+            }
+        }
+        $script:IN_ALT_SCREEN = $false
     }
     exit $Code
 }
@@ -441,6 +449,9 @@ function Write-Log {
     
     if ($logFile) {
         Add-Content -Path $logFile -Value $logEntry -ErrorAction SilentlyContinue
+    }
+    if ($script:IN_ALT_SCREEN -and ($Level -eq "ERROR" -or $Level -eq "INFO")) {
+        $script:ERROR_MESSAGES += $logEntry
     }
 }
 

@@ -1,11 +1,19 @@
 #!/usr/bin/env bash
 
 IN_ALT_SCREEN=0
+ERROR_MESSAGES=()
 
 exit_error() {
-    [[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true
-    IN_ALT_SCREEN=0
-    exit "${1:-1}"
+    local exit_code="${1:-1}"
+    if [[ "$IN_ALT_SCREEN" == "1" ]]; then
+        printf "\e[?1049l" 2>/dev/null || true
+        IN_ALT_SCREEN=0
+        show_banner 2>/dev/null || true
+        for msg in "${ERROR_MESSAGES[@]}"; do
+            echo -e "$msg"
+        done
+    fi
+    exit "$exit_code"
 }
 
 # 只在交互式终端中清屏和隐藏光标
@@ -893,6 +901,7 @@ debug_log() {
 log_info() {
     echo -e "${BLUE}[INFO]${NC} $*"
     log_to_file "[INFO] $*"
+    [[ "$IN_ALT_SCREEN" == "1" ]] && ERROR_MESSAGES+=("${BLUE}[INFO]${NC} $*")
 }
 log_success() {
     echo -e "${GREEN}[✓]${NC} $*"
@@ -905,6 +914,7 @@ log_warn() {
 log_error() {
     echo -e "${RED}[✗]${NC} $*" >&2
     log_to_file "[ERROR] $*"
+    ERROR_MESSAGES+=("${RED}[✗]${NC} $*")
 }
 log_step() {
     echo -e "${CYAN}[→]${NC} $*"
