@@ -119,12 +119,22 @@ main() {
     
     # Create GitHub release
     echo "[→] Creating GitHub release..."
+    local notes="See commit history for changes."
+    if [[ -f "$PROJECT_DIR/changelog.md" ]]; then
+        notes=$(cat "$PROJECT_DIR/changelog.md")
+    fi
     gh release create "v$new_version" \
         --title "v$new_version" \
-        --notes "See commit history for changes." \
+        --notes "$notes" \
         "$PROJECT_DIR/dist/quickstart.sh" \
         "$PROJECT_DIR/dist/quickstart.ps1"
     echo "[✓] GitHub release created: v$new_version"
+    
+    # Clear changelog after release
+    if [[ -f "$PROJECT_DIR/changelog.md" ]]; then
+        echo -n "" > "$PROJECT_DIR/changelog.md"
+        echo "[✓] Changelog cleared for next release"
+    fi
 }
 
 main "$@"
