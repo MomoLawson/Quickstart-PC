@@ -2,7 +2,6 @@
 
 IN_ALT_SCREEN=0
 ERROR_MESSAGES=()
-LANG_BYE="Quickstart-PC has exited. Goodbye!"
 
 exit_error() {
     local exit_code="${1:-1}"
@@ -10,10 +9,12 @@ exit_error() {
         printf "\e[?1049l" 2>/dev/null || true
         IN_ALT_SCREEN=0
         show_banner 2>/dev/null || true
-        for msg in "${ERROR_MESSAGES[@]}"; do
-            echo -e "$msg"
-        done
-        echo ""
+        if [[ ${#ERROR_MESSAGES[@]} -gt 0 ]]; then
+            echo ""
+            for msg in "${ERROR_MESSAGES[@]}"; do
+                echo -e "$msg"
+            done
+        fi
     fi
     exit "$exit_code"
 }
@@ -26,7 +27,7 @@ fi
 
 # 全局 Ctrl+C 恢复光标（在任何阶段退出都生效）
 trap '[[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; IN_ALT_SCREEN=0; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; exit 130' INT
-trap 'ec=$?; if [[ "$IN_ALT_SCREEN" == "1" ]]; then printf "\e[?1049l" 2>/dev/null || true; fi; IN_ALT_SCREEN=0; tput cnorm 2>/dev/null; stty echo 2>/dev/null; if [[ "$ec" -eq 0 ]]; then echo ""; echo "$LANG_BYE"; fi' EXIT
+trap 'local ec=$?; [[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; IN_ALT_SCREEN=0; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; [[ "$ec" -eq 0 ]] && echo "" && echo "$LANG_BYE"' EXIT
 
 # 默认配置 URL（优先级最高）
 DEFAULT_CFG_URL="https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json"
@@ -2079,8 +2080,8 @@ main() {
         show_banner
         show_update_hint
         
-        [[ "$DEV_MODE" == "true" ]] && log_warn "$LANG_DEV_MODE" && echo ""
-        [[ "$DRY_RUN" == "true" ]] && log_warn "$LANG_DRY_RUN_MODE" && echo ""
+        [[ "$DEV_MODE" == "true" ]] && log_warn "$LANG_DEV_MODE" && echo "" && [[ "$IN_ALT_SCREEN" == "1" ]] && ERROR_MESSAGES+=("")
+        [[ "$DRY_RUN" == "true" ]] && log_warn "$LANG_DRY_RUN_MODE" && echo "" && [[ "$IN_ALT_SCREEN" == "1" ]] && ERROR_MESSAGES+=("")
         
         log_info "$LANG_DETECTING_SYSTEM"
         local os=$(detect_os)
@@ -2763,5 +2764,5 @@ if [[ ${#to_install[@]} -eq 0 ]]; then
     done
 }
 
-trap 'exit_code=$?; set_title ""; stty echo 2>/dev/null; if [[ "$IN_ALT_SCREEN" == "1" ]]; then printf "\e[?1049l" 2>/dev/null || true; fi; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; if [[ "$exit_code" -eq 0 ]]; then echo ""; echo "$LANG_BYE"; fi' EXIT
+trap 'local exit_code=$?; set_title ""; stty echo 2>/dev/null; if [[ "$IN_ALT_SCREEN" == "1" ]]; then printf "\e[?1049l" 2>/dev/null || true; fi; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; if [[ "$exit_code" -eq 0 ]]; then echo ""; echo "$LANG_BYE"; fi' EXIT
 main "$@"
