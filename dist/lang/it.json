@@ -121,5 +121,6 @@
   "hooks_enabled": "Hook abilitati",
   "batch_installing": "Installazione batch di {0} pacchetti...",
   "batch_success": "Installazione batch completata: {0}/{1} riusciti",
-  "batch_failed": "Installazione batch parzialmente fallita, ritorno all'installazione individuale..."
+  "batch_failed": "Installazione batch parzialmente fallita, ritorno all'installazione individuale...",
+  "bye": "Quickstart-PC è stato chiuso. Arrivederci!"
 }

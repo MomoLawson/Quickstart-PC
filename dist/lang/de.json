@@ -121,5 +121,6 @@
   "hooks_enabled": "Hooks aktiviert",
   "batch_installing": "Batch-Installation von {0} Paketen...",
   "batch_success": "Batch-Installation abgeschlossen: {0}/{1} erfolgreich",
-  "batch_failed": "Batch-Installation teilweise fehlgeschlagen, Rückgriff auf Einzelinstallation..."
+  "batch_failed": "Batch-Installation teilweise fehlgeschlagen, Rückgriff auf Einzelinstallation...",
+  "bye": "Quickstart-PC wurde beendet. Auf Wiedersehen!"
 }

@@ -2042,8 +2042,9 @@ main() {
 		exit $?
 	fi
 
-	trap 'set_title ""; stty echo 2>/dev/null; [[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; rm -f "$AUTO_CHECK_FILE" 2>/dev/null' EXIT
+	trap 'set_title ""; stty echo 2>/dev/null; if [[ "$IN_ALT_SCREEN" == "1" ]]; then printf "\e[?1049l" 2>/dev/null || true; fi; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; rm -f "$AUTO_CHECK_FILE" 2>/dev/null; echo ""; echo "$LANG_BYE"' EXIT
     auto_check_update
+    IN_ALT_SCREEN=1; printf '\e[?1049h' 2>/dev/null || true
     
     while true; do
         clear
@@ -2164,7 +2165,6 @@ elif [[ -n "$PROFILE_KEY" ]]; then
     SELECTED_PROFILES=("$PROFILE_KEY")
     local profile_name=$(json_get_profile_field "$CONFIG_FILE" "$PROFILE_KEY" "name")
 
-    IN_ALT_SCREEN=1; printf '\e[?1049h' 2>/dev/null || true
     while true; do
         echo ""
         set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
@@ -2175,17 +2175,15 @@ elif [[ -n "$PROFILE_KEY" ]]; then
         # Back pressed - re-show profile menu
         set_title "QSPC | $LANG_TITLE_SELECT_PROFILE"
         show_profile_menu "$CONFIG_FILE"
-        [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && IN_ALT_SCREEN=0; printf '\e[?1049l' 2>/dev/null || true && exit 0
+        [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
         PROFILE_KEY="${SELECTED_PROFILES[@]}"
         profile_name=$(json_get_profile_field "$CONFIG_FILE" "$PROFILE_KEY" "name")
     done
-    IN_ALT_SCREEN=0; printf '\e[?1049l' 2>/dev/null || true
 else
-  IN_ALT_SCREEN=1; printf '\e[?1049h' 2>/dev/null || true
   while true; do
     set_title "QSPC | $LANG_TITLE_SELECT_PROFILE"
     show_profile_menu "$CONFIG_FILE"
-    [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && IN_ALT_SCREEN=0; printf '\e[?1049l' 2>/dev/null || true && exit 0
+    [[ ${#SELECTED_PROFILES[@]} -eq 0 ]] && log_warn "$LANG_NO_PROFILE_SELECTED" && exit 0
     local profile_name=$(json_get_profile_field "$CONFIG_FILE" "${SELECTED_PROFILES[@]}" "name")
     echo ""
     set_title "QSPC | $profile_name | $LANG_TITLE_SELECT_SOFTWARE"
@@ -2194,7 +2192,6 @@ else
       break
     fi
   done
-  IN_ALT_SCREEN=0; printf '\e[?1049l' 2>/dev/null || true
 fi
     
     if [[ ${#SELECTED_SOFTWARE[@]} -eq 0 ]]; then
@@ -2747,5 +2744,5 @@ if [[ ${#to_install[@]} -eq 0 ]]; then
     done
 }
 
-trap 'set_title ""; stty echo 2>/dev/null; [[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null' EXIT
+trap 'set_title ""; stty echo 2>/dev/null; if [[ "$IN_ALT_SCREEN" == "1" ]]; then printf "\e[?1049l" 2>/dev/null || true; fi; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; echo ""; echo "$LANG_BYE"' EXIT
 main "$@"

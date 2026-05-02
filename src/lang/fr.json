@@ -121,5 +121,6 @@
   "hooks_enabled": "Hooks activés",
   "batch_installing": "Installation groupée de {0} paquets...",
   "batch_success": "Installation groupée terminée : {0}/{1} réussis",
-  "batch_failed": "Installation groupée partiellement échouée, retour à l'installation individuelle..."
+  "batch_failed": "Installation groupée partiellement échouée, retour à l'installation individuelle...",
+  "bye": "Quickstart-PC a été arrêté. Au revoir !"
 }

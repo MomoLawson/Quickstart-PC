@@ -121,5 +121,6 @@
   "hooks_enabled": "Hooks enabled",
   "batch_installing": "Batch installing {0} packages...",
   "batch_success": "Batch install complete: {0}/{1} succeeded",
-  "batch_failed": "Batch install partially failed, falling back to individual install..."
+  "batch_failed": "Batch install partially failed, falling back to individual install...",
+  "bye": "Quickstart-PC has exited. Goodbye!"
 }

@@ -121,5 +121,6 @@
   "hooks_enabled": "钩子脚本已启用",
   "batch_installing": "批量安装 {0} 个软件...",
   "batch_success": "批量安装完成: {0}/{1} 成功",
-  "batch_failed": "批量安装部分失败，回退逐个安装..."
+  "batch_failed": "批量安装部分失败，回退逐个安装...",
+  "bye": "Quickstart-PC 已退出，再见！"
 }
