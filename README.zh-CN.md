@@ -4,35 +4,51 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
+[![Version](https://img.shields.io/badge/version-0.82.1-green.svg)](VERSION)
 
 **其他语言**: [English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-Hant.md) | [日本語](README.ja.md) | [한국어](README.ko.md) | [Deutsch](README.de.md) | [Français](README.fr.md) | [العربية](README.ar.md) | [Português](README.pt.md) | [Italiano](README.it.md)
 
 ## 特性
 
 - 🚀 **一键安装** - 一条命令搞定新电脑软件配置
-- 🎯 **预设套餐** - 5 个精选套餐，满足不同需求
+- 🎯 **12 个预设套餐** - 精选套餐满足不同需求
 - 🌐 **全平台支持** - Windows / macOS / Linux 全覆盖
 - ☁️ **云端配置** - 支持从云端获取最新软件配置
 - 📦 **包管理器** - 自动检测并安装包管理器
-- 🌍 **多语言** - 手动选择语言，支持中文/英文
+- 🌍 **多语言** - 10 种语言手动选择
+- 🔧 **环境诊断** - `doctor` 命令检测系统环境
+- 🔄 **自动更新** - 启动时检查更新，Ctrl+U 一键更新
+- 🪝 **钩子脚本** - 安装前后执行自定义脚本
 
 ## 快速开始
 
-### 单行命令（推荐）
+### macOS / Linux（Bash）
 
 ```bash
 bash <(curl -fsSL https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.sh)
 ```
 
-### Windows
+### Windows（PowerShell）
 
 ```powershell
 # 下载脚本
 Invoke-WebRequest -Uri "https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.ps1" -OutFile "quickstart.ps1"
 
 # 运行（需要管理员权限）
-.\quickstart.ps1
+powershell -ExecutionPolicy Bypass -File quickstart.ps1
 ```
+
+## Bash 与 PowerShell 对比
+
+| 功能 | Bash (`quickstart.sh`) | PowerShell (`quickstart.ps1`) |
+|------|----------------------|-------------------------------|
+| 平台 | macOS, Linux | Windows, macOS, Linux |
+| 语言加载 | `source` .sh 文件 | JSON 文件 + `ConvertFrom-Json` |
+| 版本参数 | `--version` / `-v` | `-showVersion` / `-sv` |
+| 环境诊断 | `doctor` / `doctor --fix` | `doctor` / `doctor -fix` |
+| 更新提示 | TUI 中 `Ctrl+U` | TUI 中 `Ctrl+U` |
+| 配置解析 | `jq`（主）/ `python3`（备选） | 原生 `ConvertFrom-Json` |
+| TUI 输入 | `read -rsn1` + 按键码 | `[Console]::ReadKey()` |
 
 ## 预设套餐
 
@@ -43,118 +59,103 @@ Invoke-WebRequest -Uri "https://github.com/MomoLawson/Quickstart-PC/releases/lat
 | 📊 办公套件 | 文档、表格、协作工具 | WPS, Obsidian, Notion |
 | 💻 开发者套餐 | IDE、版本控制、运行时环境 | VS Code, IntelliJ, Git, Node.js, Python, Go, Docker |
 | 🎬 媒体创作 | 音视频处理工具 | VLC, OBS Studio |
+| 💬 通讯社交 | 聊天和即时通讯应用 | Discord, Slack, Telegram |
+| 🔒 安全工具 | 安全和隐私工具 | 1Password, Bitwarden |
+| 🍎 macOS 效率 | macOS 专用效率工具 | Rectangle, Karabiner |
+| 🔧 实用工具 | 通用工具软件 | Notepad++, 7-Zip |
+| 🗄️ 数据库 | 数据库管理工具 | DBeaver, pgAdmin |
+| ⬛ 终端工具 | 终端模拟器和工具 | iTerm2, Windows Terminal |
+| 🇨🇳 国内软件 | 国内常用软件 | 微信, QQ, WPS |
 
 ## 项目结构
 
 ```
 Quickstart-PC/
-├── src/
-│   └── quickstart.sh       # 源代码（在这里开发）
-├── dist/
-│   └── quickstart.sh       # 构建产物（不要直接编辑）
-├── scripts/
-│   └── build.sh            # 构建脚本
+├── src/                        # 源代码（在这里编辑）
+│   ├── quickstart.sh           # Bash 实现
+│   ├── quickstart.ps1          # PowerShell 实现
+│   └── lang/                   # 语言文件
+│       ├── en-US.sh            # Bash：shell 变量（source 加载）
+│       ├── en-US.json          # PS1：JSON 格式（动态加载）
+│       ├── zh-CN.sh / .json    # 10 种语言 × 2 种格式
+│       └── ...
+├── dist/                       # 构建产物（不要直接编辑）
+│   ├── quickstart.sh
+│   ├── quickstart.ps1
+│   └── lang/
 ├── config/
-│   └── profiles.json       # 软件套餐配置（JSON）
-├── README.md               # 英文文档
-└── README.zh-CN.md         # 中文文档
-```
-
-### 开发流程
-
-```bash
-# 编辑源码
-nano src/quickstart.sh
-
-# 构建到 dist
-bash scripts/build.sh
-
-# 本地测试
-bash dist/quickstart.sh --list-profiles
-```
-
-## 多语言支持
-
-手动选择语言，方向键导航：
-
-- 🇺🇸 English (en-US)
-- 🇨🇳 简体中文 (zh-CN)
-- 🧡 繁體中文 (zh-Hant)
-- 🇯🇵 日本語 (ja)
-- 🇰🇷 한국어 (ko)
-- 🇩🇪 Deutsch (de)
-- 🇫🇷 Français (fr)
-- 🇸🇦 العربية (ar)
-- 🇧🇷 Português (pt)
-- 🇮🇹 Italiano (it)
-
-使用 `--lang zh`、`--lang zh-Hant`、`--lang ja`、`--lang ko`、`--lang de`、`--lang fr`、`--lang ar`、`--lang pt`、`--lang it` 或 `--lang en` 跳过语言选择菜单。
-
-## 自定义配置
-
-### 云端配置（默认）
-
-脚本自动从以下地址获取配置：
-```
-https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json
-```
-
-### 自定义远程 URL
-
-```bash
-quickstart.sh --cfg-url https://your-server.com/profiles.json
-```
-
-### 本地配置
-
-```bash
-quickstart.sh --cfg-path /path/to/profiles.json
-```
-
-### JSON 配置格式
-
-```json
-{
-  "profiles": {
-    "my_custom": {
-      "name": "我的套餐",
-      "desc": "自定义软件组合",
-      "icon": "🎮",
-      "includes": ["chrome", "vscode"]
-    }
-  },
-  "software": {
-    "chrome": {
-      "name": "Chrome",
-      "desc": "浏览器",
-      "win": "winget install Google.Chrome",
-      "mac": "brew install --cask google-chrome",
-      "linux": "sudo apt install -y google-chrome-stable",
-      "check_win": "winget list Google.Chrome",
-      "check_mac": "ls /Applications/Google\\ Chrome.app 2>/dev/null",
-      "check_linux": "which google-chrome-stable 2>/dev/null"
-    }
-  }
-}
+│   ├── profiles.json           # 合并后的配置（构建时自动合并）
+│   └── software/               # 分类软件 JSON 文件
+├── scripts/
+│   ├── build.sh                # 合并软件 JSON + 注入版本号
+│   └── release.sh              # 版本升级 → 构建 → 提交 → 标签 → 发布
+├── .github/workflows/
+│   ├── quality.yml             # CI：shellcheck + PS 语法 + JSON + 构建 + 冒烟测试
+│   └── release.yml             # CD：手动触发 → 升版 → 构建 → 发布
+├── VERSION                     # 版本号唯一来源（0.82.1）
+└── AGENTS.md                   # AI 代理知识库
 ```
 
 ## 命令行参数
 
 | 参数 | 说明 |
 |------|------|
-| `--lang LANG` | 设置语言 (en, zh) |
+| `--lang LANG` | 设置语言 (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it) |
+| `doctor` | 运行 QC Doctor 环境诊断 |
+| `doctor --fix` | 自动修复缺失的依赖项 |
 | `--dev` | 开发模式：显示选择但不安装 |
-| `--dry-run` | 假装安装：展示过程但不实际安装 |
+| `--dry-run` | 预览模式：展示过程但不实际安装 |
 | `--yes` / `-y` | 自动确认所有提示 |
 | `--verbose` | 显示详细调试信息 |
+| `--version` / `-v` | 显示版本信息（仅 Bash） |
 | `--log-file FILE` | 将日志写入文件 |
 | `--export-plan FILE` | 导出安装计划到文件 |
-| `--custom` | 自定义软件选择模式（手动选择） |
 | `--retry-failed` | 重试之前失败的软件 |
 | `--list-profiles` | 列出所有可用套餐 |
+| `--show-profile KEY` | 显示指定套餐详情 |
+| `--skip SW` | 跳过指定软件（可多次使用） |
+| `--only SW` | 只安装指定软件（可多次使用） |
+| `--fail-fast` | 遇到错误时立即停止 |
+| `--profile NAME` | 直接指定安装套餐（跳过选择菜单） |
+| `--non-interactive` | 非交互模式（禁止所有 TUI/prompt） |
+| `--cfg-path PATH` | 使用本地 profiles.json 文件 |
 | `--cfg-url URL` | 使用远程 profiles.json URL |
-| `--version` / `-v` | 显示版本信息 |
+| `--check-update` | 检查更新但不安装 |
+| `--update` | 更新脚本到最新版本 |
+| `--allow-hooks` | 启用钩子脚本执行 |
+| `--resume` / `--no-resume` | 恢复中断的安装 |
 | `--help` | 显示帮助 |
+
+## 钩子脚本
+
+钩子允许在安装的不同阶段运行自定义脚本：
+
+```json
+{
+  "hooks": {
+    "pre_install": "/path/to/pre_install.sh",
+    "pre_software": "/path/to/pre_software.sh",
+    "post_software": "/path/to/post_software.sh",
+    "post_install": "/path/to/post_install.sh"
+  }
+}
+```
+
+**钩子类型：**
+- `pre_install` — 开始安装前
+- `pre_software` — 每个软件安装前
+- `post_software` — 每个软件安装后
+- `post_install` — 全部安装完成后
+
+**启用方式：** `--allow-hooks`（默认禁用，安全起见）
+
+## 多语言支持
+
+手动选择语言，方向键导航：
+
+🇺🇸 English · 🇨🇳 简体中文 · 🧡 繁體中文 · 🇯🇵 日本語 · 🇰🇷 한국어 · 🇩🇪 Deutsch · 🇫🇷 Français · 🇸🇦 العربية · 🇧🇷 Português · 🇮🇹 Italiano
+
+使用 `--lang XX` 跳过语言选择菜单。
 
 ## 支持的包管理器
 
@@ -166,64 +167,22 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | Linux | dnf | 系统自带（Fedora/RHEL） |
 | Linux | pacman | 系统自带（Arch/Manjaro） |
 
-## 故障排除
-
-### Windows
-
-**"执行策略" 错误：**
-```powershell
-powershell -ExecutionPolicy Bypass -File quickstart.ps1
-```
-
-或者临时绕过：
-```powershell
-Set-ExecutionPolicy -Scope Process Bypass
-```
-
-**"winget 未找到"：**
-- 从 Microsoft Store 安装 App Installer
-- 安装后需打开新终端才能使用 `winget`
-- 检查版本：`winget --version`
-
-**"PowerShell 版本过低"：**
-- Windows 10+ 默认包含 PowerShell 5.1
-- 检查版本：`$PSVersionTable.PSVersion`
-- 如需升级：安装 [PowerShell 7+](https://github.com/PowerShell/PowerShell)
-
-**中文终端乱码：**
-- 确保 PowerShell 使用 UTF-8 编码
-- 运行：`[Console]::OutputEncoding = [System.Text.Encoding]::UTF8`
-
-### macOS
-
-**"brew 未找到"：**
-- 脚本会自动安装 Homebrew
-- 或手动安装：`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-
-**"Permission denied"：**
-- 使用 `bash` 前缀运行：`bash quickstart.sh`
-
-### Linux
-
-**"apt 未找到"：**
-- 本脚本支持基于 apt 的发行版（Ubuntu/Debian）
-- 其他发行版可使用 `--cfg-path` 自定义命令
-
 ## 贡献
 
 欢迎提交 Issue 和 Pull Request！
 
 ### 添加新软件
 
-1. 编辑 `config/profiles.json`
-2. 在 `"software"` 部分添加软件配置
-3. 在对应套餐的 `"includes"` 数组中添加软件 key
-4. 提交 PR
+1. 编辑 `config/software/<分类>.json`（如 `browsers.json`）
+2. 添加软件配置，包含安装命令和检测命令
+3. 在 `config/profiles.json` 的对应套餐中添加软件 key
+4. 运行 `bash scripts/build.sh` 合并配置
+5. 提交 PR
 
 ### 添加新套餐
 
-1. 编辑 `config/profiles.json`
-2. 在 `"profiles"` 部分添加新套餐
+1. 在 `config/profiles.json` 的 `"profiles"` 部分添加新套餐
+2. 运行 `bash scripts/build.sh`
 3. 提交 PR
 
 ## 许可证
