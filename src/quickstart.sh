@@ -2,6 +2,12 @@
 
 IN_ALT_SCREEN=0
 
+exit_error() {
+    [[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true
+    IN_ALT_SCREEN=0
+    exit "${1:-1}"
+}
+
 # 只在交互式终端中清屏和隐藏光标
 if [[ -t 1 ]]; then
     clear 2>/dev/null || true
@@ -9,7 +15,7 @@ if [[ -t 1 ]]; then
 fi
 
 # 全局 Ctrl+C 恢复光标（在任何阶段退出都生效）
-trap '[[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; exit 130' INT
+trap '[[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; exit_error 130' INT
 trap '[[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
 
 # 默认配置 URL（优先级最高）
@@ -420,7 +426,7 @@ if [[ -n "$SHOW_PROFILE" ]]; then
             echo "[ERROR] Profile '$SHOW_PROFILE' not found"
             rm -f "$CONFIG_FILE" 2>/dev/null
             tput cnorm 2>/dev/null || true
-            exit 1
+            exit_error 1
         fi
         
         echo ""
@@ -510,7 +516,7 @@ if [[ "$LIST_SOFTWARE" == "true" ]]; then
     echo "[ERROR] Software '$SHOW_SOFTWARE' not found"
     rm -f "$CONFIG_FILE" 2>/dev/null
     tput cnorm 2>/dev/null || true
-    exit 1
+    exit_error 1
     fi
 
     echo ""
@@ -1068,7 +1074,7 @@ ensure_json_parser() {
     fi
     
     log_error "$LANG_NO_JSON_PARSER"
-    exit 1
+    exit_error 1
 }
 
 # 统一 JSON 校验函数
@@ -1432,11 +1438,11 @@ load_config() {
                 return 0
             else
                 log_error "$LANG_CONFIG_INVALID: $CFG_URL"
-                exit 1
+                exit_error 1
             fi
         else
             log_error "$LANG_CONFIG_NOT_FOUND: $CFG_URL"
-            exit 1
+            exit_error 1
         fi
     fi
     
@@ -1448,11 +1454,11 @@ load_config() {
                 return 0
             else
                 log_error "$LANG_CONFIG_INVALID: $CFG_PATH"
-                exit 1
+                exit_error 1
             fi
         else
             log_error "$LANG_CONFIG_NOT_FOUND: $CFG_PATH"
-            exit 1
+            exit_error 1
         fi
     fi
     
@@ -1464,7 +1470,7 @@ load_config() {
     fi
     
     log_error "$LANG_CONFIG_NOT_FOUND"
-    exit 1
+    exit_error 1
 }
 
 SELECTED_PROFILES=()
@@ -2100,7 +2106,7 @@ main() {
         
         log_info "$LANG_PACKAGE_MANAGER: $display_pm"
         
-        [[ "$os" == "unknown" ]] && log_error "$LANG_UNSUPPORTED_OS" && exit 1
+        [[ "$os" == "unknown" ]] && log_error "$LANG_UNSUPPORTED_OS" && exit_error 1
         
         ensure_json_parser
         load_config
@@ -2109,7 +2115,7 @@ main() {
     if [[ "$NON_INTERACTIVE" == "true" ]]; then
         if [[ -z "$PROFILE_KEY" ]]; then
             log_error "$LANG_NONINTERACTIVE_ERROR"
-            exit 1
+            exit_error 1
         fi
         
         # 验证 profile 是否存在
@@ -2123,7 +2129,7 @@ main() {
         
         if [[ "$profile_exists" != "true" ]]; then
             log_error "${LANG_PROFILE_NOT_FOUND/'$PROFILE_KEY'/$PROFILE_KEY}"
-            exit 1
+            exit_error 1
         fi
         
         SELECTED_PROFILES=("$PROFILE_KEY")
@@ -2159,7 +2165,7 @@ elif [[ -n "$PROFILE_KEY" ]]; then
 
     if [[ "$profile_exists" != "true" ]]; then
         log_error "${LANG_PROFILE_NOT_FOUND/'$PROFILE_KEY'/$PROFILE_KEY}"
-        exit 1
+        exit_error 1
     fi
 
     SELECTED_PROFILES=("$PROFILE_KEY")
@@ -2431,7 +2437,7 @@ if [[ ${#to_install[@]} -gt 0 ]]; then
   local install_start_time=$(date +%s)
 
   # Trap SIGINT to save state before exit
-  trap 'log_warn "$LANG_CHECKPOINT_SAVED"; save_install_state; exit 130' INT
+  trap 'log_warn "$LANG_CHECKPOINT_SAVED"; save_install_state; exit_error 130' INT
 
   run_hook "pre_install"
 

@@ -105,7 +105,10 @@ function Set-WindowTitle {
 
 function Exit-Script {
     param([int]$Code = 0)
-    if ($Code -ne 0) { $script:HAS_ERROR = $true }
+    if ($Code -ne 0) {
+        $script:HAS_ERROR = $true
+        if ($script:IN_ALT_SCREEN) { Exit-AlternateScreen }
+    }
     exit $Code
 }
 
