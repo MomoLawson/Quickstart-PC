@@ -910,6 +910,7 @@ log_success() {
 log_warn() {
     echo -e "${YELLOW}[!]${NC} $*"
     log_to_file "[WARN] $*"
+    [[ "$IN_ALT_SCREEN" == "1" ]] && ERROR_MESSAGES+=("${YELLOW}[!]${NC} $*")
 }
 log_error() {
     echo -e "${RED}[✗]${NC} $*" >&2

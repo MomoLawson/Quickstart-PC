@@ -450,7 +450,7 @@ function Write-Log {
     if ($logFile) {
         Add-Content -Path $logFile -Value $logEntry -ErrorAction SilentlyContinue
     }
-    if ($script:IN_ALT_SCREEN -and ($Level -eq "ERROR" -or $Level -eq "INFO")) {
+    if ($script:IN_ALT_SCREEN -and ($Level -eq "ERROR" -or $Level -eq "INFO" -or $Level -eq "WARN")) {
         $script:ERROR_MESSAGES += $logEntry
     }
 }
