@@ -83,6 +83,7 @@ $script:DETECTED_LANG = "en-US"
 $script:PKG_MANAGER = "none"
 $script:DEBUG = $debug
 $script:INSTALL_LAST_ERROR = ""
+$script:IN_ALT_SCREEN = $false
 
 # ============================================
 # Console helpers (cross-platform safe)
@@ -102,10 +103,12 @@ function Set-WindowTitle {
 }
 
 function Enter-AlternateScreen {
+    $script:IN_ALT_SCREEN = $true
     try { [Console]::Write("`e[?1049h") } catch {}
 }
 
 function Exit-AlternateScreen {
+    $script:IN_ALT_SCREEN = $false
     try { [Console]::Write("`e[?1049l") } catch {}
 }
 
@@ -1965,7 +1968,7 @@ if ($checkUpdate -or $update) {
         "en-US"
     }
     Initialize-LanguageStrings -Lang $updateLang
-    trap { Exit-AlternateScreen; try { Set-CursorVisible -Visible $true } catch {} }
+    trap { if ($script:IN_ALT_SCREEN) { Exit-AlternateScreen }; try { Set-CursorVisible -Visible $true } catch {} }
     if ($checkUpdate) {
         Show-Banner -Lang $updateLang
         $result = Check-Update
@@ -2029,7 +2032,7 @@ if ($validate) {
             Remove-Item $script:CONFIG_FILE -Force -ErrorAction SilentlyContinue
         }
         Set-WindowTitle -Title ""
-        Exit-AlternateScreen
+        if ($script:IN_ALT_SCREEN) { Exit-AlternateScreen }
         try { Set-CursorVisible -Visible $true } catch {}
     }
     Start-AutoCheckUpdate
