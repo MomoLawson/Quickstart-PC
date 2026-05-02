@@ -250,7 +250,7 @@ while [[ $# -gt 0 ]]; do
 --dry-run) DRY_RUN=true; shift ;;
 doctor) DOCTOR=true; shift; [[ "$1" == "--fix" ]] && DOCTOR_FIX=true && shift ;;
         --yes|-y) AUTO_YES=true; shift ;;
-        --version|-v) printf "\033[0;34mQuickstart-PC\033[0m v${VERSION}"; exit 0 ;;
+        --version|-v) printf "\033[0;34mQuickstart-PC\033[0m v${VERSION}\n"; exit 0 ;;
         --verbose) VERBOSE=true; shift ;;
     --log-file) LOG_FILE="$2"; shift 2 ;;
     --export-plan) EXPORT_PLAN="$2"; shift 2 ;;
