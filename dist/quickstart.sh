@@ -23,8 +23,8 @@ if [[ -t 1 ]]; then
 fi
 
 # 全局 Ctrl+C 恢复光标（在任何阶段退出都生效）
-trap '[[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; exit_error 130' INT
-trap '[[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
+trap '[[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; IN_ALT_SCREEN=0; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; exit 130' INT
+trap '[[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; IN_ALT_SCREEN=0; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true' EXIT
 
 # 默认配置 URL（优先级最高）
 DEFAULT_CFG_URL="https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json"
@@ -2448,7 +2448,7 @@ if [[ ${#to_install[@]} -gt 0 ]]; then
   local install_start_time=$(date +%s)
 
   # Trap SIGINT to save state before exit
-  trap 'log_warn "$LANG_CHECKPOINT_SAVED"; save_install_state; exit_error 130' INT
+  trap 'log_warn "$LANG_CHECKPOINT_SAVED"; save_install_state; exit 130' INT
 
   run_hook "pre_install"
 
