@@ -1381,7 +1381,9 @@ if [[ "$UPDATE" == "true" || "$CHECK_UPDATE" == "true" ]]; then
 		load_language_strings "en-US"
 	fi
 else
+	IN_ALT_SCREEN=1; printf '\e[?1049h' 2>/dev/null || true
 	DETECTED_LANG=$(select_language)
+	IN_ALT_SCREEN=0; printf '\e[?1049l' 2>/dev/null || true
 	load_language_strings "$DETECTED_LANG"
 fi
 
