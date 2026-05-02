@@ -2042,9 +2042,9 @@ main() {
 
 	trap 'set_title ""; stty echo 2>/dev/null; printf "\e[?1049l" 2>/dev/null || true; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; rm -f "$AUTO_CHECK_FILE" 2>/dev/null' EXIT
     auto_check_update
+    printf '\e[?1049h' 2>/dev/null || true
     
     while true; do
-        printf '\e[?1049h' 2>/dev/null || true
         clear
         tput civis 2>/dev/null || true
         stty -echo 2>/dev/null

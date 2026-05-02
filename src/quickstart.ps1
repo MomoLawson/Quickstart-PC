@@ -2033,9 +2033,9 @@ if ($validate) {
         try { Set-CursorVisible -Visible $true } catch {}
     }
     Start-AutoCheckUpdate
+    Enter-AlternateScreen
     
     while ($true) {
-        Enter-AlternateScreen
         Clear-Host
         try { Set-CursorVisible -Visible $false } catch {}
         
