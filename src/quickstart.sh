@@ -2,7 +2,6 @@
 
 # 只在交互式终端中清屏和隐藏光标
 if [[ -t 1 ]]; then
-    printf '\e[?1049h' 2>/dev/null || true
     clear 2>/dev/null || true
     tput civis 2>/dev/null || true
 fi
@@ -2045,6 +2044,7 @@ main() {
     auto_check_update
     
     while true; do
+        printf '\e[?1049h' 2>/dev/null || true
         clear
         tput civis 2>/dev/null || true
         stty -echo 2>/dev/null

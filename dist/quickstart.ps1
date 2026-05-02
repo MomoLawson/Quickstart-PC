@@ -1966,7 +1966,6 @@ if ($checkUpdate -or $update) {
     }
     Initialize-LanguageStrings -Lang $updateLang
     trap { Exit-AlternateScreen; try { Set-CursorVisible -Visible $true } catch {} }
-    Enter-AlternateScreen
     if ($checkUpdate) {
         Show-Banner -Lang $updateLang
         $result = Check-Update
@@ -2033,10 +2032,10 @@ if ($validate) {
         Exit-AlternateScreen
         try { Set-CursorVisible -Visible $true } catch {}
     }
-    Enter-AlternateScreen
     Start-AutoCheckUpdate
     
     while ($true) {
+        Enter-AlternateScreen
         Clear-Host
         try { Set-CursorVisible -Visible $false } catch {}
         
