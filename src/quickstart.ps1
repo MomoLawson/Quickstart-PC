@@ -1408,7 +1408,8 @@ function Export-Report {
         [string]$TxtPath,
         [array]$Installed,
         [array]$Skipped,
-        [array]$Failed
+        [array]$Failed,
+        [array]$Details = @()
     )
     
     $reportTime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
@@ -1425,7 +1426,10 @@ Profile: $($script:SELECTED_PROFILES -join ', ')
 Installed ($($Installed.Count)):
 "@
         foreach ($item in $Installed) {
-            $content += "`n  + $item"
+            $d = $Details | Where-Object { $_.key -eq $item } | Select-Object -First 1
+            $elapsed = if ($d) { "$($d.elapsed)s" } else { "" }
+            $name = if ($d) { "$($d.name)" } else { $item }
+            $content += "`n  + $name ($elapsed)"
         }
         $content += "`n`nSkipped ($($Skipped.Count)):"
         foreach ($item in $Skipped) {
@@ -1433,7 +1437,10 @@ Installed ($($Installed.Count)):
         }
         $content += "`n`nFailed ($($Failed.Count)):"
         foreach ($item in $Failed) {
-            $content += "`n  - $item"
+            $d = $Details | Where-Object { $_.key -eq $item } | Select-Object -First 1
+            $elapsed = if ($d) { " ($($d.elapsed)s)" } else { "" }
+            $name = if ($d) { $d.name } else { $item }
+            $content += "`n  - $name$elapsed"
         }
         $content += "`n`nTotal: $($Installed.Count) installed, $($Skipped.Count) skipped, $($Failed.Count) failed"
         
@@ -1442,6 +1449,16 @@ Installed ($($Installed.Count)):
     }
     
     if ($JsonPath) {
+        $detailsArray = @()
+        foreach ($d in $Details) {
+            $detailsArray += @{
+                key = $d.key
+                name = $d.name
+                elapsed_seconds = $d.elapsed
+                status = $d.status
+                command = $d.command
+            }
+        }
         $jsonObj = @{
             time = $reportTime
             platform = $os
@@ -1455,6 +1472,7 @@ Installed ($($Installed.Count)):
                 skipped = $Skipped.Count
                 failed = $Failed.Count
             }
+            details = $detailsArray
         }
         
         $jsonStr = $jsonObj | ConvertTo-Json -Depth 10
@@ -2338,6 +2356,7 @@ $total = $toInstall.Count
 $current = 0
 $script:installedList = @()
 $script:failedList = @()
+$script:installDetails = @()
 $installStartTime = Get-Date
 
   Invoke-HookScript -HookType "pre_install"
@@ -2359,14 +2378,18 @@ $installStartTime = Get-Date
       $result = Install-Software -Path $script:CONFIG_FILE -OS $os -Key $sw
       $swEnd = Get-Date
       $swElapsed = [math]::Round(($swEnd - $swStart).TotalSeconds)
+      $swCmd = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field $platform
+      $detail = @{ key = $sw; name = $swName; elapsed = $swElapsed; status = "skipped"; command = $swCmd }
 
       if ($result) {
         Write-Host "`r $bar $current/$total $swDisplay - " -NoNewline
         Write-Host "$($h["install_success"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Green
+        $detail.status = "installed"
         $script:installedList += $sw
       } else {
         Write-Host "`r $bar $current/$total $swDisplay - " -NoNewline
         Write-Host "$($h["install_failed"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Red
+        $detail.status = "failed"
         $script:failedList += $sw
         if ($failFast) {
           Write-Host ""
@@ -2375,6 +2398,7 @@ $installStartTime = Get-Date
           break
         }
       }
+      $script:installDetails += $detail
       Invoke-HookScript -HookType "post_software"
       Save-InstallState
     }
@@ -2455,14 +2479,18 @@ $installStartTime = Get-Date
         $result = Install-Software -Path $script:CONFIG_FILE -OS $os -Key $sw
         $swEnd = Get-Date
         $swElapsed = [math]::Round(($swEnd - $swStart).TotalSeconds)
+        $swCmd = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field $platform
+        $detail = @{ key = $sw; name = $swName; elapsed = $swElapsed; status = "skipped"; command = $swCmd }
 
         if ($result) {
           Write-Host "`r $bar $script:current/$script:total $swDisplay - " -NoNewline
           Write-Host "$($h["install_success"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Green
+          $detail.status = "installed"
           $script:installedList += $sw
         } else {
           Write-Host "`r $bar $script:current/$script:total $swDisplay - " -NoNewline
           Write-Host "$($h["install_failed"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Red
+          $detail.status = "failed"
           $script:failedList += $sw
           if ($failFast) {
             Write-Host ""
@@ -2471,6 +2499,7 @@ $installStartTime = Get-Date
             return
           }
         }
+        $script:installDetails += $detail
         Invoke-HookScript -HookType "post_software"
         Save-InstallState
       } else {
@@ -2568,7 +2597,7 @@ Write-Host ""
     }
         
 if ($reportJson -or $reportTxt) {
-    Export-Report -JsonPath $reportJson -TxtPath $reportTxt -Installed $script:installedList -Skipped $skippedList -Failed $script:failedList
+        Export-Report -JsonPath $reportJson -TxtPath $reportTxt -Installed $script:installedList -Skipped $skippedList -Failed $script:failedList -Details $script:installDetails
   }
 
   # Clear state on successful completion
