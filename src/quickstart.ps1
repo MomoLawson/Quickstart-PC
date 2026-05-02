@@ -2033,7 +2033,6 @@ if ($validate) {
         try { Set-CursorVisible -Visible $true } catch {}
     }
     Start-AutoCheckUpdate
-    Enter-AlternateScreen
     
     while ($true) {
         Clear-Host
@@ -2098,6 +2097,7 @@ if ($nonInteractive) {
     $script:SELECTED_PROFILES = @($profile)
     $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $profile -Field "name"
 
+    Enter-AlternateScreen
     while ($true) {
       Set-WindowTitle -Title "QSPC | $profileName | $($h["title_select_software"])"
       $script:SELECTED_SOFTWARE = Show-SoftwareMenu -Path $script:CONFIG_FILE -OS $os -ProfileKey $profile
@@ -2111,6 +2111,7 @@ if ($nonInteractive) {
 
       if (-not $selectedProfile) {
         Write-Log $h["no_profile_selected"] "WARN"
+        Exit-AlternateScreen
         exit 0
       }
 
@@ -2118,14 +2119,17 @@ if ($nonInteractive) {
       $profile = $selectedProfile
       $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $selectedProfile -Field "name"
     }
+    Exit-AlternateScreen
   }
   else {
+    Enter-AlternateScreen
     while ($true) {
       Set-WindowTitle -Title "QSPC | $($h["title_select_profile"])"
       $selectedProfile = Show-ProfileMenu -Path $script:CONFIG_FILE
 
       if (-not $selectedProfile) {
         Write-Log $h["no_profile_selected"] "WARN"
+        Exit-AlternateScreen
         exit 0
       }
 
@@ -2140,6 +2144,7 @@ if ($nonInteractive) {
     }
     # $null means back was pressed, loop to re-show profile menu
   }
+  Exit-AlternateScreen
 }
 
 if ($script:SELECTED_SOFTWARE.Count -eq 0) {
