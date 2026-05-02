@@ -1,0 +1,130 @@
+name: Nightly Snapshot
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:       # Allow manual trigger
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@2.0.0
+        with:
+          scandir: './src'
+          severity: error
+          ignore_paths: 'src/lang'
+
+      - name: Check PowerShell syntax
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq wget apt-transport-https software-properties-common
+          wget -q "https://github.com/PowerShell/PowerShell/releases/download/v7.5.1/powershell_7.5.1-1.deb_amd64.deb"
+          sudo dpkg -i powershell_7.5.1-1.deb_amd64.deb || sudo apt-get install -f -y -qq
+          pwsh -NoProfile -Command '
+          $errors = @()
+          $tokens = @()
+          [System.Management.Automation.Language.Parser]::ParseFile("src/quickstart.ps1", [ref]$tokens, [ref]$errors)
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error $_.ToString() }
+            exit 1
+          }
+          Write-Host "PowerShell syntax OK"
+          '
+
+      - name: Validate JSON configs
+        run: |
+          python3 -c "import json; json.load(open('config/profiles.json')); print('✓ profiles.json')"
+          for f in config/software/*.json src/lang/*.json; do
+            python3 -c "import json; json.load(open('$f')); print('✓ $f')"
+          done
+
+  nightly:
+    needs: [quality]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Check if nightly already exists today
+        id: check
+        run: |
+          YEAR=$(date -u +%Y)
+          MONTH=$(date -u +%-m)
+          DAY=$(date -u +%-d)
+          DATE_DISPLAY="${YEAR}.${MONTH}.${DAY}"
+          DATE_TAG="${YEAR}.${MONTH}.${DAY}"
+          VERSION=$(cat VERSION | tr -d '[:space:]')
+          TAG="nightly-${DATE_TAG}"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "date_display=$DATE_DISPLAY" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "⏭️ Nightly $TAG already exists, skipping"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "📦 Building nightly $TAG"
+          fi
+
+      - name: Build
+        if: steps.check.outputs.exists == 'false'
+        run: bash scripts/build.sh
+
+      - name: Commit dist
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          VERSION="${{ steps.check.outputs.version }}"
+          DATE="${{ steps.check.outputs.date_display }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dist/
+          git commit -m "nightly: Nightly @ ${DATE} (v${VERSION})" || echo "No changes to commit"
+
+      - name: Tag and push
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          TAG="${{ steps.check.outputs.tag }}"
+          git tag "$TAG"
+          git push origin main --tags
+
+      - name: Generate changelog
+        if: steps.check.outputs.exists == 'false'
+        id: changelog
+        run: |
+          VERSION="${{ steps.check.outputs.version }}"
+          CHANGES=$(git log "v$VERSION..HEAD" --pretty=format:"- %s" --no-merges 2>/dev/null || echo "- Nightly snapshot")
+          echo "changes<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub pre-release
+        if: steps.check.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.check.outputs.tag }}
+          name: Nightly @ ${{ steps.check.outputs.date_display }}
+          prerelease: true
+          body: |
+            ## 🌙 Nightly Snapshot
+
+            **Version:** ${{ steps.check.outputs.version }}
+            **Date:** ${{ steps.check.outputs.date_display }}
+            **Warning:** This is an automated pre-release build. May be unstable.
+
+            ## Changes since last release
+            ${{ steps.changelog.outputs.changes }}
+          files: |
+            dist/quickstart.sh
+            dist/quickstart.ps1
