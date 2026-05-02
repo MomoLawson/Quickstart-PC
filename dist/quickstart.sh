@@ -2018,6 +2018,7 @@ auto_check_update() {
         fi
     ) &
     AUTO_CHECK_PID=$!
+    disown "$AUTO_CHECK_PID" 2>/dev/null || true
 }
 
 check_auto_update_result() {
