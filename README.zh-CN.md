@@ -31,11 +31,12 @@ bash <(curl -fsSL https://github.com/MomoLawson/Quickstart-PC/releases/latest/do
 ### Windows（PowerShell）
 
 ```powershell
-# 下载脚本
+# 方式一：下载后运行
 Invoke-WebRequest -Uri "https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.ps1" -OutFile "quickstart.ps1"
-
-# 运行（需要管理员权限）
 powershell -ExecutionPolicy Bypass -File quickstart.ps1
+
+# 方式二：一键运行
+powershell -ExecutionPolicy Bypass -Command "[System.Text.Encoding]::UTF8.GetString((New-Object System.Net.WebClient).DownloadData('https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.ps1'))|iex"
 ```
 
 ## Bash 与 PowerShell 对比

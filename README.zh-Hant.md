@@ -27,11 +27,12 @@ bash <(curl -fsSL https://github.com/MomoLawson/Quickstart-PC/releases/latest/do
 ### Windows
 
 ```powershell
-# 下載腳本
+# 方式一：下載後執行
 Invoke-WebRequest -Uri "https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.ps1" -OutFile "quickstart.ps1"
+powershell -ExecutionPolicy Bypass -File quickstart.ps1
 
-# 執行（需要管理員權限）
-.\quickstart.ps1
+# 方式二：一鍵執行
+powershell -ExecutionPolicy Bypass -Command "[System.Text.Encoding]::UTF8.GetString((New-Object System.Net.WebClient).DownloadData('https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.ps1'))|iex"
 ```
 
 ## 預設套餐
