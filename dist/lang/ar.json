@@ -50,7 +50,7 @@
   "profile_not_found": "الملف الشخصي غير موجود",
   "npm_not_found": "npm غير موجود، جاري التثبيت...",
   "winget_not_found": "winget غير موجود، لا يمكن تثبيت npm تلقائياً",
-  "help_usage": "الاستخدام: quickstart.ps1 [الخيارات]",
+  "help_usage": "الاستخدام: quickstart.sh [خيارات]",
   "help_cfg_path": "استخدام ملف profiles.json المحلي",
   "help_cfg_url": "استخدام عنوان profiles.json البعيد",
   "help_dev": "وضع التطوير: إظهار التحديدات دون التثبيت",

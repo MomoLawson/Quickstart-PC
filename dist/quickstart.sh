@@ -235,7 +235,7 @@ show_help() {
     load_language_strings "$help_lang"
     
     local title="${LANG_HELP_TITLE:-$HELP_TITLE}"
-    local usage="Usage: quickstart.sh [OPTIONS]"
+    local usage="${LANG_HELP_USAGE:-Usage: quickstart.sh [OPTIONS]}"
     local options="${LANG_HELP_OPTIONS:-$HELP_OPTIONS}"
     
     cat << HELPEOF

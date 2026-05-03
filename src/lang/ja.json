@@ -54,7 +54,7 @@
   "profile_not_found": "プロファイルが見つかりません",
   "npm_not_found": "npm がありません、インストール中...",
   "winget_not_found": "winget が見つかりません、npmを自動インストールできません",
-  "help_usage": "使用方法: quickstart.ps1 [オプション]",
+  "help_usage": "使い方: quickstart.sh [オプション]",
   "help_cfg_path": "ローカルの profiles.json を使用",
   "help_cfg_url": "リモート profiles.json URL を使用",
   "help_dev": "開発モード：選択したソフトを表示但不インストール",

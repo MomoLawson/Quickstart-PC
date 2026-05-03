@@ -54,7 +54,7 @@
   "profile_not_found": "Profile 不存在",
   "npm_not_found": "npm 未安装，正在安装...",
   "winget_not_found": "winget 未找到，无法自动安装 npm",
-  "help_usage": "用法：quickstart.ps1 [选项]",
+  "help_usage": "用法: quickstart.sh [选项]",
   "help_cfg_path": "使用本地 profiles.json 文件",
   "help_cfg_url": "使用远程 profiles.json URL",
   "help_dev": "开发模式：显示选择的软件但不安装",

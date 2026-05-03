@@ -50,7 +50,7 @@
   "profile_not_found": "Profil non trouvé",
   "npm_not_found": "npm non trouvé, installation...",
   "winget_not_found": "winget non trouvé, impossible d'installer automatiquement npm",
-  "help_usage": "Utilisation: quickstart.ps1 [OPTIONS]",
+  "help_usage": "Utilisation : quickstart.sh [OPTIONS]",
   "help_cfg_path": "Utiliser le fichier profiles.json local",
   "help_cfg_url": "Utiliser l'URL profiles.json distante",
   "help_dev": "Mode développement: afficher les selections sans installer",

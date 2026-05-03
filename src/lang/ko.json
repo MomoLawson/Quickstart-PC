@@ -54,7 +54,7 @@
   "profile_not_found": "프로필이 존재하지 않습니다",
   "npm_not_found": "npm을 찾을 수 없습니다, 설치 중...",
   "winget_not_found": "winget을 찾을 수 없습니다, npm을 자동 설치할 수 없습니다",
-  "help_usage": "사용법: quickstart.ps1 [옵션]",
+  "help_usage": "사용법: quickstart.sh [옵션]",
   "help_cfg_path": "로컬 profiles.json 파일 사용",
   "help_cfg_url": "원격 profiles.json URL 사용",
   "help_dev": "개발 모드: 선택한 소프트웨어 표시但不설치",

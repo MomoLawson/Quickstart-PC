@@ -50,7 +50,7 @@
   "profile_not_found": "Profile not found",
   "npm_not_found": "npm not found, installing...",
   "winget_not_found": "winget not found, cannot auto-install npm",
-  "help_usage": "Usage: quickstart.ps1 [OPTIONS]",
+  "help_usage": "Usage: quickstart.sh [OPTIONS]",
   "help_cfg_path": "Use local profiles.json file",
   "help_cfg_url": "Use remote profiles.json URL",
   "help_dev": "Dev mode",
