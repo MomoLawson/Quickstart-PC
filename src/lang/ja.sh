@@ -143,7 +143,8 @@ LANG_BATCH_SUCCESS="一括インストール完了: %d/%d 成功"
 LANG_BATCH_FAILED="一括インストールが一部失敗しました、個別インストールにフォールバック..."
 LANG_BYE="Quickstart-PC が終了しました。さようなら！"
 
-LANG_CONFIG_VERIFY_FAILED="Config verification failed"
-LANG_CONFIG_CHECKSUM_NOT_FOUND="Checksum file not found"
-LANG_CONFIG_CHECKSUM_MISMATCH="Checksum mismatch"
-LANG_CONFIG_VERIFY_SUCCESS="Config verification passed"
+
+LANG_CONFIG_VERIFY_FAILED="設定の検証に失敗しました"
+LANG_CONFIG_CHECKSUM_NOT_FOUND="チェックサムファイルが見つかりません"
+LANG_CONFIG_CHECKSUM_MISMATCH="チェックサムが一致しません"
+LANG_CONFIG_VERIFY_SUCCESS="設定の検証に成功しました"

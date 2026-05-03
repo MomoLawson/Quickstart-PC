@@ -143,7 +143,8 @@ LANG_BATCH_SUCCESS="일괄 설치 완료: %d/%d 성공"
 LANG_BATCH_FAILED="일괄 설치가 부분적으로 실패했습니다, 개별 설치로 폴백..."
 LANG_BYE="Quickstart-PC가 종료되었습니다. 안녕히 가세요!"
 
-LANG_CONFIG_VERIFY_FAILED="Config verification failed"
-LANG_CONFIG_CHECKSUM_NOT_FOUND="Checksum file not found"
-LANG_CONFIG_CHECKSUM_MISMATCH="Checksum mismatch"
-LANG_CONFIG_VERIFY_SUCCESS="Config verification passed"
+
+LANG_CONFIG_VERIFY_FAILED="구성 검증 실패"
+LANG_CONFIG_CHECKSUM_NOT_FOUND="체크섬 파일을 찾을 수 없음"
+LANG_CONFIG_CHECKSUM_MISMATCH="체크섬 불일치"
+LANG_CONFIG_VERIFY_SUCCESS="구성 검증 성공"

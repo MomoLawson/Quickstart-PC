@@ -143,7 +143,8 @@ LANG_BATCH_SUCCESS="批量安裝完成: %d/%d 成功"
 LANG_BATCH_FAILED="批量安裝部分失敗，回退逐個安裝..."
 LANG_BYE="Quickstart-PC 已退出，再見！"
 
-LANG_CONFIG_VERIFY_FAILED="Config verification failed"
-LANG_CONFIG_CHECKSUM_NOT_FOUND="Checksum file not found"
-LANG_CONFIG_CHECKSUM_MISMATCH="Checksum mismatch"
-LANG_CONFIG_VERIFY_SUCCESS="Config verification passed"
+
+LANG_CONFIG_VERIFY_FAILED="設定檔校驗失敗"
+LANG_CONFIG_CHECKSUM_NOT_FOUND="校驗檔案不存在"
+LANG_CONFIG_CHECKSUM_MISMATCH="校驗值不匹配"
+LANG_CONFIG_VERIFY_SUCCESS="設定檔校驗成功"

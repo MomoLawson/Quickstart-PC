@@ -1,4 +1,4 @@
-## v0.86.12
+## v0.86.13
 
 ### 🐛 Bug Fixes
-- Add verification keys to .sh fallback language files
+- Translate verification messages in all .sh language files

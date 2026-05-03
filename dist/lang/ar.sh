@@ -143,7 +143,8 @@ LANG_BATCH_SUCCESS="اكتمل التثبيت الدفعي: %d/%d نجح"
 LANG_BATCH_FAILED="فشل التثبيت الدفعي جزئياً، الرجوع إلى التثبيت الفردي..."
 LANG_BYE="تم إيقاف Quickstart-PC. مع السلامة!"
 
-LANG_CONFIG_VERIFY_FAILED="Config verification failed"
-LANG_CONFIG_CHECKSUM_NOT_FOUND="Checksum file not found"
-LANG_CONFIG_CHECKSUM_MISMATCH="Checksum mismatch"
-LANG_CONFIG_VERIFY_SUCCESS="Config verification passed"
+
+LANG_CONFIG_VERIFY_FAILED="فشل التحقق من التكوين"
+LANG_CONFIG_CHECKSUM_NOT_FOUND="ملف التحقق غير موجود"
+LANG_CONFIG_CHECKSUM_MISMATCH="عدم تطابق التحقق"
+LANG_CONFIG_VERIFY_SUCCESS="نجح التحقق من التكوين"

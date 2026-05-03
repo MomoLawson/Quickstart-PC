@@ -143,7 +143,8 @@ LANG_BATCH_SUCCESS="Instalação em lote concluída: %d/%d sucedidos"
 LANG_BATCH_FAILED="Instalação em lote parcialmente falhou, voltando à instalação individual..."
 LANG_BYE="Quickstart-PC foi encerrado. Adeus!"
 
-LANG_CONFIG_VERIFY_FAILED="Config verification failed"
-LANG_CONFIG_CHECKSUM_NOT_FOUND="Checksum file not found"
-LANG_CONFIG_CHECKSUM_MISMATCH="Checksum mismatch"
-LANG_CONFIG_VERIFY_SUCCESS="Config verification passed"
+
+LANG_CONFIG_VERIFY_FAILED="Falha na verificação da configuração"
+LANG_CONFIG_CHECKSUM_NOT_FOUND="Arquivo de checksum não encontrado"
+LANG_CONFIG_CHECKSUM_MISMATCH="Checksum incompatível"
+LANG_CONFIG_VERIFY_SUCCESS="Verificação da configuração bem-sucedida"
