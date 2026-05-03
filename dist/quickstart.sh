@@ -355,7 +355,7 @@ esac
 done
 
 # 参数解析后进入备用屏幕（info命令已退出）
-if [[ -t 1 && "$UPDATE" != "true" && "$CHECK_UPDATE" != "true" && "$DOCTOR" != "true" ]]; then
+if [[ -t 1 && "$UPDATE" != "true" && "$CHECK_UPDATE" != "true" && "$DOCTOR" != "true" && "$NON_INTERACTIVE" != "true" ]]; then
     IN_ALT_SCREEN=1; printf '\e[?1049h' 2>/dev/null || true
 fi
 
