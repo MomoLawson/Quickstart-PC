@@ -397,10 +397,15 @@ done
 
 # Apply proxy settings
 if [[ -n "$PROXY" ]]; then
-    export http_proxy="$PROXY"
-    export https_proxy="$PROXY"
-    export HTTP_PROXY="$PROXY"
-    export HTTPS_PROXY="$PROXY"
+    if [[ "$PROXY" == socks5://* ]]; then
+        export ALL_PROXY="$PROXY"
+        export all_proxy="$PROXY"
+    else
+        export http_proxy="$PROXY"
+        export https_proxy="$PROXY"
+        export HTTP_PROXY="$PROXY"
+        export HTTPS_PROXY="$PROXY"
+    fi
 fi
 
 # 参数解析后进入备用屏幕（info命令已退出）

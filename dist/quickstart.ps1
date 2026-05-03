@@ -42,8 +42,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "0.87.0"
-if ($VERSION -eq "0.87.0") {
+$VERSION = "0.88.0"
+if ($VERSION -eq "0.88.0") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
@@ -63,7 +63,14 @@ $DEFAULT_CFG_URL = "https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/m
 
 # Apply proxy settings
 if ($proxy) {
-    $script:ProxyUrl = $proxy
+    if ($proxy -like "socks5://*") {
+        $script:ProxyUrl = $proxy
+        $env:ALL_PROXY = $proxy
+    } else {
+        $script:ProxyUrl = $proxy
+        $env:http_proxy = $proxy
+        $env:https_proxy = $proxy
+    }
 } else {
     $script:ProxyUrl = $null
 }

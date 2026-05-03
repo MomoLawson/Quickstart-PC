@@ -145,7 +145,7 @@ load_language_strings() {
     fi
     
     # Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v0.87.0"
+    LANG_BANNER_TITLE="Quickstart-PC v0.88.0"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -304,8 +304,8 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="0.87.0"
-if [[ "$VERSION" == "0.87.0" ]]; then
+VERSION="0.88.0"
+if [[ "$VERSION" == "0.88.0" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')
@@ -397,10 +397,15 @@ done
 
 # Apply proxy settings
 if [[ -n "$PROXY" ]]; then
-    export http_proxy="$PROXY"
-    export https_proxy="$PROXY"
-    export HTTP_PROXY="$PROXY"
-    export HTTPS_PROXY="$PROXY"
+    if [[ "$PROXY" == socks5://* ]]; then
+        export ALL_PROXY="$PROXY"
+        export all_proxy="$PROXY"
+    else
+        export http_proxy="$PROXY"
+        export https_proxy="$PROXY"
+        export HTTP_PROXY="$PROXY"
+        export HTTPS_PROXY="$PROXY"
+    fi
 fi
 
 # 参数解析后进入备用屏幕（info命令已退出）
