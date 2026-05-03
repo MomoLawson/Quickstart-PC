@@ -123,11 +123,23 @@ main() {
     if [[ -f "$PROJECT_DIR/changelog.md" ]]; then
         notes=$(cat "$PROJECT_DIR/changelog.md")
     fi
+    
+    # Generate SHA256 checksum for profiles.json
+    echo "[→] Generating SHA256 checksum for profiles.json..."
+    local profiles_json="$PROJECT_DIR/config/profiles.json"
+    if [[ -f "$profiles_json" ]]; then
+        shasum -a 256 "$profiles_json" | awk '{print $1}' > "$PROJECT_DIR/dist/profiles.json.sha256"
+        echo "[✓] SHA256 checksum generated"
+    else
+        echo "[!] profiles.json not found, skipping checksum"
+    fi
+    
     gh release create "v$new_version" \
         --title "v$new_version" \
         --notes "$notes" \
         "$PROJECT_DIR/dist/quickstart.sh" \
-        "$PROJECT_DIR/dist/quickstart.ps1"
+        "$PROJECT_DIR/dist/quickstart.ps1" \
+        "$PROJECT_DIR/dist/profiles.json.sha256"
     echo "[✓] GitHub release created: v$new_version"
     
     # Clear changelog after release

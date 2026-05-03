@@ -36,6 +36,7 @@ param(
   [switch]$update,
   [switch]$checkUpdate,
   [switch]$allowHooks,
+  [switch]$verifyConfig,
   [switch]$help,
   [switch]$showVersion
 )
@@ -883,6 +884,26 @@ function Show-Banner {
 # ============================================
 # Config file functions
 # ============================================
+function Test-ConfigChecksum {
+param([string]$Path, [string]$Url)
+    $sha256Url = "${Url}.sha256"
+    try {
+        $expectedHash = (Invoke-WebRequest -Uri $sha256Url -TimeoutSec 30 -ErrorAction Stop).Content.Trim()
+        $actualHash = (Get-FileHash -Path $Path -Algorithm SHA256).Hash.ToLower()
+        if ($expectedHash -ne $actualHash) {
+            Write-Log "$($h["config_checksum_mismatch"])" "ERROR"
+            Write-Log "  Expected: $expectedHash" "ERROR"
+            Write-Log "  Actual:   $actualHash" "ERROR"
+            return $false
+        }
+        Write-Log "$($h["config_verify_success"])" "INFO"
+        return $true
+    } catch {
+        Write-Log "$($h["config_checksum_not_found"]): $sha256Url" "ERROR"
+        return $false
+    }
+}
+
 function Get-ConfigFile {
     $guid = [System.Guid]::NewGuid().ToString('N').Substring(0,8)
     $tempFile = [System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), "quickstart-config-${guid}.json")
@@ -892,6 +913,13 @@ function Get-ConfigFile {
         try {
             Invoke-WebRequest -Uri $cfgUrl -OutFile $tempFile -TimeoutSec 30 -ErrorAction Stop
             if (Test-JsonValid -Path $tempFile) {
+                if ($verifyConfig) {
+                    if (-not (Test-ConfigChecksum -Path $tempFile -Url $cfgUrl)) {
+                        Write-Log "$($h["config_verify_failed"])" "ERROR"
+                        Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
+                        Exit-Script -Code 1
+                    }
+                }
                 return $tempFile
             } else {
                 Write-Log "$($h["config_invalid"]): $cfgUrl" "ERROR"
@@ -925,6 +953,13 @@ function Get-ConfigFile {
     try {
         Invoke-WebRequest -Uri $DEFAULT_CFG_URL -OutFile $tempFile -TimeoutSec 30 -ErrorAction Stop
         if (Test-JsonValid -Path $tempFile) {
+            if ($verifyConfig) {
+                if (-not (Test-ConfigChecksum -Path $tempFile -Url $DEFAULT_CFG_URL)) {
+                    Write-Log "$($h["config_verify_failed"])" "ERROR"
+                    Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
+                    Exit-Script -Code 1
+                }
+            }
             return $tempFile
         }
     } catch {

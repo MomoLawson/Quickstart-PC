@@ -1,4 +1,8 @@
-## v0.86.8
+## v0.87.0
+
+### ✨ New Features
+- Add `--verify-config` flag to verify config file integrity with SHA256 checksum
+- Release process now generates SHA256 checksum file for profiles.json
 
 ### 🐛 Bug Fixes
-- Use bold white for Select All text to ensure visibility on orange background
+- Add missing language strings for config verification messages

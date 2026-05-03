@@ -131,7 +131,7 @@
   "jq_install_failed": "jq のインストールに失敗、フォールバックを試みます...",
   "using_python3": "python3 をフォールバックとして使用",
   "no_json_parser": "JSON パーサーがありません（jq/python3）",
-  "help_options": "オプション:\n  --lang LANG        言語を設定 (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)\n  --local-lang PATH  ローカル言語スクリプトフォルダを使用\n  --cfg-path PATH    ローカル profiles.json ファイルを使用\n  --cfg-url URL      リモート profiles.json URL を使用\n  --dev              開発モード：選択を表示するがインストールしない\n  --dry-run          プレビューモード：インストール过程を表示\n  doctor             QC Doctor 環境診断を実行\n  doctor --fix       欠落している依存関係を自動修復\n  --yes, -y          すべてのプロンプトを自動確認\n  --verbose          詳細なデバッグ情報を表示\n  --log-file FILE    ログをファイルに書き込む\n  --export-plan FILE インストール計画をファイルにエクスポート\n  --retry-failed     失敗したパッケージを再試行\n  --list-software    利用可能なすべてのソフトウェアを一覧表示\n  --show-software ID ソフトウェアの詳細を表示\n  --search KEYWORD   ソフトウェアを検索\n  --validate         設定ファイルを検証\n  --report-json FILE JSON形式のインストールレポートをエクスポート\n  --report-txt FILE  TXT形式のインストールレポートをエクスポート\n  --list-profiles    利用可能なすべてのプロファイルを一覧表示\n  --show-profile KEY プロファイルの詳細を表示\n  --skip SW          指定したソフトウェアをスキップ（繰り返し可能）\n  --only SW          指定したソフトウェアのみインストール（繰り返し可能）\n  --fail-fast        エラー時に即座に停止\n  --profile NAME     プロファイルを直接選択（メニューをスキップ）\n  --non-interactive  非対話モード（TUI/プロンプトなし）\n  --resume           中断したインストールを再開\n  --no-resume        中断したインストールを再開しない\n  --update           スクリプトを最新バージョンに更新\n  --check-update     更新を確認するがインストールしない\n  --allow-hooks      フックスクリプトの実行を有効にする\n  --version, -v      バージョン情報を表示\n  --help             ヘルプメッセージを表示",
+  "help_options": "オプション:\n  --lang LANG        言語を設定 (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)\n  --local-lang PATH  ローカル言語スクリプトフォルダを使用\n  --cfg-path PATH    ローカル profiles.json ファイルを使用\n  --cfg-url URL      リモート profiles.json URL を使用\n  --verify-config    Verify config file integrity with SHA256\n  --dev              開発モード：選択を表示するがインストールしない\n  --dry-run          プレビューモード：インストール过程を表示\n  doctor             QC Doctor 環境診断を実行\n  doctor --fix       欠落している依存関係を自動修復\n  --yes, -y          すべてのプロンプトを自動確認\n  --verbose          詳細なデバッグ情報を表示\n  --log-file FILE    ログをファイルに書き込む\n  --export-plan FILE インストール計画をファイルにエクスポート\n  --retry-failed     失敗したパッケージを再試行\n  --list-software    利用可能なすべてのソフトウェアを一覧表示\n  --show-software ID ソフトウェアの詳細を表示\n  --search KEYWORD   ソフトウェアを検索\n  --validate         設定ファイルを検証\n  --report-json FILE JSON形式のインストールレポートをエクスポート\n  --report-txt FILE  TXT形式のインストールレポートをエクスポート\n  --list-profiles    利用可能なすべてのプロファイルを一覧表示\n  --show-profile KEY プロファイルの詳細を表示\n  --skip SW          指定したソフトウェアをスキップ（繰り返し可能）\n  --only SW          指定したソフトウェアのみインストール（繰り返し可能）\n  --fail-fast        エラー時に即座に停止\n  --profile NAME     プロファイルを直接選択（メニューをスキップ）\n  --non-interactive  非対話モード（TUI/プロンプトなし）\n  --resume           中断したインストールを再開\n  --no-resume        中断したインストールを再開しない\n  --update           スクリプトを最新バージョンに更新\n  --check-update     更新を確認するがインストールしない\n  --allow-hooks      フックスクリプトの実行を有効にする\n  --version, -v      バージョン情報を表示\n  --help             ヘルプメッセージを表示",
   "continue": "続ける",
   "exit": "終了",
   "back_to_profiles": "プロファイル選択に戻る",
@@ -141,5 +141,9 @@
   "lang_menu_space": "選択",
   "progress_installed": "インストール済み",
   "progress_to_install": "インストール予定",
-  "retry_prompt": "再試行しますか？[Y/n]"
+  "retry_prompt": "再試行しますか？[Y/n]",
+  "config_verify_failed": "Config verification failed",
+  "config_checksum_not_found": "Checksum file not found",
+  "config_checksum_mismatch": "Checksum mismatch",
+  "config_verify_success": "Config verification passed"
 }

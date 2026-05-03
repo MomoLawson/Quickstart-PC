@@ -131,7 +131,7 @@
   "jq_install_failed": "jq 安裝失敗，嘗試備用解析器...",
   "using_python3": "使用 python3 作為備用解析器",
   "no_json_parser": "沒有可用的 JSON 解析器（jq/python3）",
-  "help_options": "選項:\n  --lang LANG        設置語言 (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)\n  --local-lang PATH  使用本地語言腳本資料夾\n  --cfg-path PATH    使用本地 profiles.json 文件\n  --cfg-url URL      使用遠端 profiles.json URL\n  --dev              開發模式：顯示選擇但不安裝\n  --dry-run          預覽模式：展示安裝過程但不安裝\n  doctor             執行 QC Doctor 環境診斷\n  doctor --fix       自動修復缺失的依賴\n  --yes, -y          自動確認所有提示\n  --verbose          顯示詳細偵錯資訊\n  --log-file FILE    將日誌寫入檔案\n  --export-plan FILE 匯出安裝計畫到檔案\n  --retry-failed     重試先前失敗的軟體\n  --list-software    列出所有可用軟體\n  --show-software ID 顯示軟體詳情\n  --search KEYWORD   搜尋軟體\n  --validate         驗證設定檔\n  --report-json FILE 匯出 JSON 格式安裝報告\n  --report-txt FILE  匯出 TXT 格式安裝報告\n  --list-profiles    列出所有可用設定檔\n  --show-profile KEY 顯示設定檔詳情\n  --skip SW          跳過指定軟體（可多次使用）\n  --only SW          只安裝指定軟體（可多次使用）\n  --fail-fast        遇到錯誤立即停止\n  --profile NAME     直接選擇設定檔（跳過選單）\n  --non-interactive  非互動模式（無 TUI/提示）\n  --resume           恢復中斷的安裝\n  --no-resume        不恢復中斷的安裝\n  --update           更新腳本到最新版本\n  --check-update     檢查更新但不安裝\n  --allow-hooks      啟用鉤子腳本執行\n  --version, -v      顯示版本資訊\n  --help             顯示說明",
+  "help_options": "選項:\n  --lang LANG        設置語言 (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)\n  --local-lang PATH  使用本地語言腳本資料夾\n  --cfg-path PATH    使用本地 profiles.json 文件\n  --cfg-url URL      使用遠端 profiles.json URL\n  --verify-config    Verify config file integrity with SHA256\n  --dev              開發模式：顯示選擇但不安裝\n  --dry-run          預覽模式：展示安裝過程但不安裝\n  doctor             執行 QC Doctor 環境診斷\n  doctor --fix       自動修復缺失的依賴\n  --yes, -y          自動確認所有提示\n  --verbose          顯示詳細偵錯資訊\n  --log-file FILE    將日誌寫入檔案\n  --export-plan FILE 匯出安裝計畫到檔案\n  --retry-failed     重試先前失敗的軟體\n  --list-software    列出所有可用軟體\n  --show-software ID 顯示軟體詳情\n  --search KEYWORD   搜尋軟體\n  --validate         驗證設定檔\n  --report-json FILE 匯出 JSON 格式安裝報告\n  --report-txt FILE  匯出 TXT 格式安裝報告\n  --list-profiles    列出所有可用設定檔\n  --show-profile KEY 顯示設定檔詳情\n  --skip SW          跳過指定軟體（可多次使用）\n  --only SW          只安裝指定軟體（可多次使用）\n  --fail-fast        遇到錯誤立即停止\n  --profile NAME     直接選擇設定檔（跳過選單）\n  --non-interactive  非互動模式（無 TUI/提示）\n  --resume           恢復中斷的安裝\n  --no-resume        不恢復中斷的安裝\n  --update           更新腳本到最新版本\n  --check-update     檢查更新但不安裝\n  --allow-hooks      啟用鉤子腳本執行\n  --version, -v      顯示版本資訊\n  --help             顯示說明",
   "continue": "繼續安裝",
   "exit": "退出",
   "back_to_profiles": "返回預設選擇",
@@ -141,5 +141,9 @@
   "lang_menu_space": "選擇",
   "progress_installed": "已安裝",
   "progress_to_install": "待安裝",
-  "retry_prompt": "是否重試？[Y/n]"
+  "retry_prompt": "是否重試？[Y/n]",
+  "config_verify_failed": "Config verification failed",
+  "config_checksum_not_found": "Checksum file not found",
+  "config_checksum_mismatch": "Checksum mismatch",
+  "config_verify_success": "Config verification passed"
 }

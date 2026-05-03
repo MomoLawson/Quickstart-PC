@@ -322,6 +322,7 @@ RESUME_MODE="" # "" = auto, "yes" = --resume, "no" = --no-resume
 UPDATE=false
 CHECK_UPDATE=false
 ALLOW_HOOKS=false
+VERIFY_CONFIG=false
 
 # Safe temp file creation with retry
 safe_mktemp() {
@@ -376,6 +377,7 @@ doctor) DOCTOR=true; shift; [[ "$1" == "--fix" ]] && DOCTOR_FIX=true && shift ;;
   --update) UPDATE=true; shift ;;
   --check-update) CHECK_UPDATE=true; shift ;;
   --allow-hooks) ALLOW_HOOKS=true; shift ;;
+  --verify-config) VERIFY_CONFIG=true; shift ;;
   --help|-h) show_help ;;
   *) shift ;;
 esac
@@ -1537,6 +1539,32 @@ get_linux_field() {
     esac
 }
 
+verify_config_checksum() {
+    local config_file="$1"
+    local config_url="$2"
+    local sha256_url="${config_url}.sha256"
+    local expected_hash
+    local actual_hash
+    
+    if ! expected_hash=$(curl -fsSL --connect-timeout 10 --max-time 30 "$sha256_url" 2>/dev/null); then
+        log_error "$LANG_CONFIG_CHECKSUM_NOT_FOUND: $sha256_url"
+        return 1
+    fi
+    
+    expected_hash=$(echo "$expected_hash" | tr -d '[:space:]')
+    actual_hash=$(shasum -a 256 "$config_file" 2>/dev/null | awk '{print $1}')
+    
+    if [[ "$expected_hash" != "$actual_hash" ]]; then
+        log_error "$LANG_CONFIG_CHECKSUM_MISMATCH"
+        log_error "  Expected: $expected_hash"
+        log_error "  Actual:   $actual_hash"
+        return 1
+    fi
+    
+    log_info "$LANG_CONFIG_VERIFY_SUCCESS"
+    return 0
+}
+
 load_config() {
     CONFIG_FILE="/tmp/quickstart-config-$$.json"
     rm -f "$CONFIG_FILE" 2>/dev/null
@@ -1545,6 +1573,13 @@ load_config() {
         log_info "$LANG_USING_REMOTE_CONFIG: $CFG_URL"
         if curl -fsSL --connect-timeout 10 --max-time 30 "$CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
             if validate_json "$CONFIG_FILE"; then
+                if [[ "$VERIFY_CONFIG" == "true" ]]; then
+                    if ! verify_config_checksum "$CONFIG_FILE" "$CFG_URL"; then
+                        log_error "$LANG_CONFIG_VERIFY_FAILED"
+                        rm -f "$CONFIG_FILE" 2>/dev/null
+                        exit_error 1
+                    fi
+                fi
                 return 0
             else
                 log_error "$LANG_CONFIG_INVALID: $CFG_URL"
@@ -1575,6 +1610,13 @@ load_config() {
     log_info "$LANG_USING_DEFAULT_CONFIG"
     if curl -fsSL --connect-timeout 10 --max-time 30 "$DEFAULT_CFG_URL" -o "$CONFIG_FILE" 2>/dev/null; then
         if validate_json "$CONFIG_FILE"; then
+            if [[ "$VERIFY_CONFIG" == "true" ]]; then
+                if ! verify_config_checksum "$CONFIG_FILE" "$DEFAULT_CFG_URL"; then
+                    log_error "$LANG_CONFIG_VERIFY_FAILED"
+                    rm -f "$CONFIG_FILE" 2>/dev/null
+                    exit_error 1
+                fi
+            fi
             return 0
         fi
     fi
