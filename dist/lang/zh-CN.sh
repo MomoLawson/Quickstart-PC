@@ -25,12 +25,12 @@ read -r -d '' HELP_OPTIONS << 'OPTIONS_EOF'
   --validate         校验配置文件
   --report-json FILE 导出 JSON 格式安装报告
   --report-txt FILE  导出 TXT 格式安装报告
-  --list-profiles    列出所有可用套餐
-  --show-profile KEY 显示指定套餐详情
+  --list-profiles    列出所有可用预设
+  --show-profile KEY 显示指定预设详情
   --skip SW          跳过指定软件（可多次使用）
   --only SW          只安装指定软件（可多次使用）
   --fail-fast        遇到错误时立即停止
-  --profile NAME     直接指定安装套餐（跳过选择菜单）
+  --profile NAME     直接指定安装预设（跳过选择菜单）
   --non-interactive  非交互模式（禁止所有 TUI/prompt）
   --resume                  恢复中断的安装
   --no-resume               不恢复中断的安装
@@ -52,15 +52,15 @@ LANG_USING_CUSTOM_CONFIG="使用本地配置"
 LANG_USING_DEFAULT_CONFIG="使用默认配置"
 LANG_CONFIG_NOT_FOUND="配置文件不存在"
 LANG_CONFIG_INVALID="配置文件格式无效"
-LANG_SELECT_PROFILES="选择安装套餐"
+LANG_SELECT_PROFILES="选择安装预设"
 LANG_SELECT_SOFTWARE="选择要安装的软件"
 LANG_NAVIGATE="↑↓ 移动 | 回车 确认"
 LANG_NAVIGATE_MULTI="↑↓ 移动 | 空格 选择 | 回车 确认"
 LANG_SELECTED="[✓] "
 LANG_NOT_SELECTED="[  ] "
 LANG_SELECT_ALL="全选"
-LANG_BACK_TO_PROFILES="返回套餐选择"
-LANG_NO_PROFILE_SELECTED="未选择任何套餐"
+LANG_BACK_TO_PROFILES="返回预设选择"
+LANG_NO_PROFILE_SELECTED="未选择任何预设"
 LANG_NO_SOFTWARE_SELECTED="未选择任何软件"
 LANG_CONFIRM_INSTALL="确认安装？[Y/n]"
 LANG_CANCELLED="已取消"
@@ -83,10 +83,10 @@ LANG_NO_JSON_PARSER="无可用 JSON 解析器 (jq/python3)"
 LANG_CHECKING_INSTALLATION="正在检测安装情况..."
 LANG_SKIPPING_INSTALLED="已安装，跳过"
 LANG_ALL_INSTALLED="所有软件均已安装，无需操作"
-LANG_ASK_CONTINUE="安装完成，是否继续安装其他套餐？"
+LANG_ASK_CONTINUE="安装完成，是否继续安装其他预设？"
 LANG_CONTINUE="继续安装"
 LANG_EXIT="退出"
-LANG_TITLE_SELECT_PROFILE="选择套餐"
+LANG_TITLE_SELECT_PROFILE="选择预设"
 LANG_TITLE_SELECT_SOFTWARE="选择软件"
 LANG_TITLE_INSTALLING="安装中"
 LANG_TITLE_ASK_CONTINUE="是否继续安装"
