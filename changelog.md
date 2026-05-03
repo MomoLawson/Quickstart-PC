@@ -1,4 +1,4 @@
-## v0.86.7
+## v0.86.8
 
 ### 🐛 Bug Fixes
-- Restore ORANGE_BG color definition for Select All highlight
+- Use bold white for Select All text to ensure visibility on orange background

@@ -1491,7 +1491,7 @@ NC='\033[0m'
 BOLD='\033[1m'
 REVERSE='\033[7m'
 GRAY='\033[0;90m'
-WHITE='\033[97m'
+WHITE='\033[1;37m'
 ORANGE_BG='\033[48;5;208m'
 
 detect_os() {
