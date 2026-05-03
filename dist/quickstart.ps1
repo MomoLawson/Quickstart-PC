@@ -40,7 +40,7 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "0.86.5"
+$VERSION = "0.86.6"
 $OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $DEFAULT_CFG_URL = "https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json"
