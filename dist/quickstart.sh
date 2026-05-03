@@ -307,8 +307,8 @@ ONLY_SW=()
 VERSION="0.86.10"
 if [[ "$VERSION" == "0.86.10" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-    if [[ -f "$SCRIPT_DIR/../../VERSION" ]]; then
-        VERSION=$(cat "$SCRIPT_DIR/../../VERSION" | tr -d '[:space:]')
+    if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
+        VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')
     elif [[ -f "$SCRIPT_DIR/VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/VERSION" | tr -d '[:space:]')
     else

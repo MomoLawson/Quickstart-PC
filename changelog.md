@@ -1,4 +1,4 @@
-## v0.86.10
+## v0.86.11
 
 ### 🐛 Bug Fixes
-- Add fallback to read VERSION from file when running src directly
+- Fix VERSION file path (../VERSION not ../../VERSION)

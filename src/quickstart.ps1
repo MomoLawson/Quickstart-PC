@@ -44,7 +44,7 @@ param(
 $VERSION = "__VERSION__"
 if ($VERSION -eq "__VERSION__") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-    $versionFile = Join-Path $scriptDir "..\..\VERSION"
+    $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
         $VERSION = (Get-Content $versionFile -Raw).Trim()
     } else {
