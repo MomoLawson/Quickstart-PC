@@ -37,6 +37,7 @@ param(
   [switch]$checkUpdate,
   [switch]$allowHooks,
   [switch]$verifyConfig,
+  [string]$proxy,
   [switch]$help,
   [switch]$showVersion
 )
@@ -59,6 +60,13 @@ if ($VERSION -eq "0.86.14") {
 $OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $DEFAULT_CFG_URL = "https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json"
+
+# Apply proxy settings
+if ($proxy) {
+    $script:ProxyUrl = $proxy
+} else {
+    $script:ProxyUrl = $null
+}
 
 # Supported languages configuration
 $script:SUPPORTED_LANGUAGES = @{
@@ -88,7 +96,18 @@ $script:LANGUAGE_MAPPINGS = @{
     "it" = "it"; "it-IT" = "it"; "it_CH" = "it"
 }
 
-
+function Invoke-WebRequestWithProxy {
+param([string]$Uri, [string]$OutFile, [int]$TimeoutSec = 30, [switch]$UseBasicParsing, [System.Management.Automation.ActionPreference]$ErrorAction = [System.Management.Automation.ActionPreference]::Stop)
+    $params = @{
+        Uri = $Uri
+        TimeoutSec = $TimeoutSec
+        ErrorAction = $ErrorAction
+    }
+    if ($OutFile) { $params.OutFile = $OutFile }
+    if ($UseBasicParsing) { $params.UseBasicParsing = $true }
+    if ($script:ProxyUrl) { $params.Proxy = $script:ProxyUrl }
+    Invoke-WebRequest @params
+}
 
 # Script variables
 $script:CONFIG_FILE = ""
@@ -906,7 +925,7 @@ param([string]$Path, [string]$Url)
         $sha256Url = "${Url}.sha256"
     }
     try {
-        $expectedHash = (Invoke-WebRequest -Uri $sha256Url -TimeoutSec 30 -ErrorAction Stop).Content.Trim()
+        $expectedHash = (Invoke-WebRequestWithProxy -Uri $sha256Url -TimeoutSec 30 -ErrorAction Stop).Content.Trim()
         $actualHash = (Get-FileHash -Path $Path -Algorithm SHA256).Hash.ToLower()
         if ($expectedHash -ne $actualHash) {
             Write-Log "$($h["config_checksum_mismatch"])" "ERROR"
@@ -929,7 +948,7 @@ function Get-ConfigFile {
     if ($cfgUrl) {
         Write-Log "$($h["using_remote_config"]): $cfgUrl" "INFO"
         try {
-            Invoke-WebRequest -Uri $cfgUrl -OutFile $tempFile -TimeoutSec 30 -ErrorAction Stop
+            Invoke-WebRequestWithProxy -Uri $cfgUrl -OutFile $tempFile -TimeoutSec 30 -ErrorAction Stop
             if (Test-JsonValid -Path $tempFile) {
                 if ($verifyConfig) {
                     if (-not (Test-ConfigChecksum -Path $tempFile -Url $cfgUrl)) {
@@ -969,7 +988,7 @@ function Get-ConfigFile {
     
     Write-Log "$($h["using_default_config"])" "INFO"
     try {
-        Invoke-WebRequest -Uri $DEFAULT_CFG_URL -OutFile $tempFile -TimeoutSec 30 -ErrorAction Stop
+        Invoke-WebRequestWithProxy -Uri $DEFAULT_CFG_URL -OutFile $tempFile -TimeoutSec 30 -ErrorAction Stop
         if (Test-JsonValid -Path $tempFile) {
             if ($verifyConfig) {
                 if (-not (Test-ConfigChecksum -Path $tempFile -Url $DEFAULT_CFG_URL)) {
@@ -1266,7 +1285,7 @@ function Show-Doctor {
     # 4. Network Connectivity
     Write-Host "━━━ Network Connectivity ━━━"
     try {
-        $response = Invoke-WebRequest -Uri "https://raw.githubusercontent.com" -TimeoutSec 10 -UseBasicParsing 2>&1
+        $response = Invoke-WebRequestWithProxy -Uri "https://raw.githubusercontent.com" -TimeoutSec 10 -UseBasicParsing 2>&1
         if ($response.StatusCode -eq 200) {
             Write-Host " [✓] GitHub raw content: reachable" -ForegroundColor Green
             $passed++
@@ -1280,7 +1299,7 @@ function Show-Doctor {
     }
     
     try {
-        $response = Invoke-WebRequest -Uri "https://github.com" -TimeoutSec 10 -UseBasicParsing 2>&1
+        $response = Invoke-WebRequestWithProxy -Uri "https://github.com" -TimeoutSec 10 -UseBasicParsing 2>&1
         if ($response.StatusCode -eq 200) {
             Write-Host " [✓] GitHub: reachable" -ForegroundColor Green
             $passed++
@@ -1680,7 +1699,7 @@ function Update-Self {
 `$target = "$scriptPath"
 `$tmpFile = "`$env:TEMP\quickstart-update.ps1"
 try {
-  Invoke-WebRequest -Uri `$url -OutFile `$tmpFile -TimeoutSec 60
+  Invoke-WebRequestWithProxy -Uri `$url -OutFile `$tmpFile -TimeoutSec 60
   Copy-Item -Path `$tmpFile -Destination `$target -Force
   Remove-Item -Path `$tmpFile -Force -ErrorAction SilentlyContinue
   Write-Host "Update successful!" -ForegroundColor Green

@@ -1,4 +1,9 @@
-## v0.86.14
+## v0.88.0
+
+### ✨ New Features
+- Add `--proxy` parameter for proxy server support
+- Bash: exports http_proxy/https_proxy environment variables
+- PS1: uses Invoke-WebRequest -Proxy parameter
 
 ### 🐛 Bug Fixes
-- Translate verification messages in JSON language files
+- Add --proxy to help text in all languages

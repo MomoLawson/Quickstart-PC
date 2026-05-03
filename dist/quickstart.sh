@@ -333,6 +333,7 @@ UPDATE=false
 CHECK_UPDATE=false
 ALLOW_HOOKS=false
 VERIFY_CONFIG=false
+PROXY=""
 
 # Safe temp file creation with retry
 safe_mktemp() {
@@ -388,10 +389,19 @@ doctor) DOCTOR=true; shift; [[ "$1" == "--fix" ]] && DOCTOR_FIX=true && shift ;;
   --check-update) CHECK_UPDATE=true; shift ;;
   --allow-hooks) ALLOW_HOOKS=true; shift ;;
   --verify-config) VERIFY_CONFIG=true; shift ;;
+  --proxy) PROXY="$2"; shift 2 ;;
   --help|-h) show_help ;;
   *) shift ;;
 esac
 done
+
+# Apply proxy settings
+if [[ -n "$PROXY" ]]; then
+    export http_proxy="$PROXY"
+    export https_proxy="$PROXY"
+    export HTTP_PROXY="$PROXY"
+    export HTTPS_PROXY="$PROXY"
+fi
 
 # 参数解析后进入备用屏幕（info命令已退出）
 if [[ -t 1 && "$UPDATE" != "true" && "$CHECK_UPDATE" != "true" && "$DOCTOR" != "true" && "$NON_INTERACTIVE" != "true" ]]; then
