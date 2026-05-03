@@ -1,7 +1,7 @@
 {
   "profiles": {
     "recommended": {
-      "name": "推荐套餐/Recommended",
+      "name": "推荐预设/Recommended",
       "desc": "综合均衡，适合大多数用户/Balanced setup for most users",
       "icon": "⭐",
       "includes": [
@@ -59,7 +59,7 @@
       ]
     },
     "developer": {
-      "name": "开发者套餐/Developer",
+      "name": "开发者预设/Developer",
       "desc": "IDE、版本控制、运行时环境/IDEs, version control, runtimes",
       "icon": "💻",
       "includes": [
