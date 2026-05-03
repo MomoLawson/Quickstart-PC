@@ -1,4 +1,4 @@
-## v0.86.6
+## v0.86.7
 
 ### 🐛 Bug Fixes
-- Change "Select All" highlight to orange background with white text
+- Restore ORANGE_BG color definition for Select All highlight
