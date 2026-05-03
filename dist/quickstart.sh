@@ -234,7 +234,40 @@ show_help() {
     
     local title="${LANG_HELP_TITLE:-$HELP_TITLE}"
     local usage="Usage: quickstart.sh [OPTIONS]"
-    local options="${HELP_OPTIONS}"
+    local options="Options:
+  --lang LANG        Set language (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)
+  --local-lang PATH  Use local language script folder
+  --cfg-path PATH    Use local profiles.json file
+  --cfg-url URL      Use remote profiles.json URL
+  --dev              Dev mode: show selections without installing
+  --dry-run          Preview mode: Show process without installing
+  doctor             Run QC Doctor environment diagnostics
+  doctor --fix       Auto-fix missing dependencies
+  --yes, -y          Auto-confirm all prompts
+  --verbose          Show detailed debug info
+  --log-file FILE    Write logs to file
+  --export-plan FILE Export installation plan to file
+  --retry-failed     Retry previously failed packages
+  --list-software    List all available software
+  --show-software ID Show software details
+  --search KEYWORD   Search software
+  --validate         Validate configuration file
+  --report-json FILE Export JSON installation report
+  --report-txt FILE  Export TXT installation report
+  --list-profiles    List all available profiles
+  --show-profile KEY Show profile details
+  --skip SW          Skip specified software (repeatable)
+  --only SW          Only install specified software (repeatable)
+  --fail-fast        Stop on first error
+  --profile NAME     Select profile directly (skip menu)
+  --non-interactive  Non-interactive mode (no TUI/prompts)
+  --resume           Resume interrupted installation
+  --no-resume        Do not resume interrupted installation
+  --update           Update script to latest version
+  --check-update     Check for updates without installing
+  --allow-hooks      Enable hook scripts execution
+  --version, -v      Show version information
+  --help             Show this help message"
     
     cat << HELPEOF
 $title

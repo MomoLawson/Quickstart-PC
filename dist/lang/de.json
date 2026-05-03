@@ -123,7 +123,7 @@
   "batch_success": "Batch-Installation abgeschlossen: {0}/{1} erfolgreich",
   "batch_failed": "Batch-Installation teilweise fehlgeschlagen, Rückgriff auf Einzelinstallation...",
   "bye": "Quickstart-PC wurde beendet. Auf Wiedersehen!",
-  "help_title": "Quickstart-PC - One-click computer setup",
+  "help_title": "Quickstart-PC - Ein-Klick-Setup für neue Computer",
   "npm_auto": "npm",
   "jq_detected": "jq erkannt, verwende jq",
   "jq_not_found": "jq nicht gefunden, installiere...",

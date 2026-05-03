@@ -123,7 +123,7 @@
   "batch_success": "اكتمل التثبيت الدفعي: {0}/{1} نجح",
   "batch_failed": "فشل التثبيت الدفعي جزئياً، الرجوع إلى التثبيت الفردي...",
   "bye": "تم إيقاف Quickstart-PC. مع السلامة!",
-  "help_title": "Quickstart-PC - One-click computer setup",
+  "help_title": "Quickstart-PC - إعداد الكمبيوتر بنقرة واحدة",
   "npm_auto": "npm",
   "jq_detected": "تم اكتشاف jq، استخدام jq",
   "jq_not_found": "jq غير موجود، جارِ التثبيت...",

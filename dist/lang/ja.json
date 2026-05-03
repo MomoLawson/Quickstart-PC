@@ -123,7 +123,7 @@
   "batch_success": "一括インストール完了: {0}/{1} 成功",
   "batch_failed": "一括インストールが一部失敗しました、個別インストールにフォールバック...",
   "bye": "Quickstart-PC が終了しました。さようなら！",
-  "help_title": "Quickstart-PC - One-click computer setup",
+  "help_title": "Quickstart-PC - ワンクリックで新PCをセットアップ",
   "npm_auto": "npm",
   "jq_detected": "jq を検出、jq を使用",
   "jq_not_found": "jq が見つかりません、インストール中...",

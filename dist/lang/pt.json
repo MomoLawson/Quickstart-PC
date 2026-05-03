@@ -123,7 +123,7 @@
   "batch_success": "Instalação em lote concluída: {0}/{1} sucedidos",
   "batch_failed": "Instalação em lote parcialmente falhou, voltando à instalação individual...",
   "bye": "Quickstart-PC foi encerrado. Adeus!",
-  "help_title": "Quickstart-PC - One-click computer setup",
+  "help_title": "Quickstart-PC - Configuração rápida de novo computador",
   "npm_auto": "npm",
   "jq_detected": "jq detectado, usando jq",
   "jq_not_found": "jq não encontrado, instalando...",

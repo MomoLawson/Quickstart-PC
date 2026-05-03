@@ -123,7 +123,7 @@
   "batch_success": "Installation groupée terminée : {0}/{1} réussis",
   "batch_failed": "Installation groupée partiellement échouée, retour à l'installation individuelle...",
   "bye": "Quickstart-PC a été arrêté. Au revoir !",
-  "help_title": "Quickstart-PC - One-click computer setup",
+  "help_title": "Quickstart-PC - Configuration rapide d'un nouvel ordinateur",
   "npm_auto": "npm",
   "jq_detected": "jq détecté, utilisation de jq",
   "jq_not_found": "jq non trouvé, installation...",

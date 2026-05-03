@@ -123,7 +123,7 @@
   "batch_success": "일괄 설치 완료: {0}/{1} 성공",
   "batch_failed": "일괄 설치가 부분적으로 실패했습니다, 개별 설치로 폴백...",
   "bye": "Quickstart-PC가 종료되었습니다. 안녕히 가세요!",
-  "help_title": "Quickstart-PC - One-click computer setup",
+  "help_title": "Quickstart-PC - 원클릭으로 새 컴퓨터 설정",
   "npm_auto": "npm",
   "jq_detected": "jq 감지, jq 사용",
   "jq_not_found": "jq를 찾을 수 없음, 설치 중...",
