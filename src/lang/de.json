@@ -133,5 +133,13 @@
   "no_json_parser": "Kein JSON-Parser verfügbar (jq/python3)",
   "help_options": "Optionen:\n  --lang LANG        Sprache einstellen (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)\n  --local-lang PATH  Lokalen Sprachskriptordner verwenden\n  --cfg-path PATH    Lokale profiles.json-Datei verwenden\n  --cfg-url URL      Remote profiles.json URL verwenden\n  --dev              Entwicklermodus: Auswahl anzeigen, nicht installieren\n  --dry-run          Vorschaumod Installationsprozess anzeigen\n  doctor             QC Doctor Umgebungsdiagnose ausführen\n  doctor --fix       Fehlende Abhängigkeiten automatisch beheben\n  --yes, -y          Alle Bestätigungen automatisch bestätigen\n  --verbose          Detaillierte Debug-Informationen anzeigen\n  --log-file FILE    Protokoll in Datei schreiben\n  --export-plan FILE Installationsplan in Datei exportieren\n  --retry-failed     Fehlgeschlagene Pakete erneut versuchen\n  --list-software    Alle verfügbaren Software auflisten\n  --show-software ID Software-Details anzeigen\n  --search KEYWORD   Software suchen\n  --validate         Konfigurationsdatei validieren\n  --report-json FILE JSON-Installationsbericht exportieren\n  --report-txt FILE  TXT-Installationsbericht exportieren\n  --list-profiles    Alle verfügbaren Profile auflisten\n  --show-profile KEY Profil-Details anzeigen\n  --skip SW          Bestimmte Software überspringen (wiederholbar)\n  --only SW          Nur bestimmte Software installieren (wiederholbar)\n  --fail-fast        Bei Fehler sofort stoppen\n  --profile NAME     Profil direkt auswählen (Menü überspringen)\n  --non-interactive  Nicht-interaktiver Modus (kein TUI/Prompts)\n  --resume           Unterbrochene Installation fortsetzen\n  --no-resume        Unterbrochene Installation nicht fortsetzen\n  --update           Skript auf neueste Version aktualisieren\n  --check-update     Auf Updates prüfen, nicht installieren\n  --allow-hooks      Hook-Skriptausführung aktivieren\n  --version, -v      Versionsinformationen anzeigen\n  --help             Hilfe anzeigen",
   "continue": "Weiter installieren",
-  "exit": "Beenden"
+  "exit": "Beenden",
+  "back_to_profiles": "Zurück zur Profilauswahl",
+  "custom_title": "Benutzerdefinierte Auswahl",
+  "install_failed_list": "Die folgende Software konnte nicht installiert werden",
+  "lang_menu_enter": "Bestätigen",
+  "lang_menu_space": "Auswählen",
+  "progress_installed": "installiert",
+  "progress_to_install": "zu installieren",
+  "retry_prompt": "Erneut versuchen? [Y/n]"
 }

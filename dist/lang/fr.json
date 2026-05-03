@@ -133,5 +133,13 @@
   "no_json_parser": "Aucun analyseur JSON disponible (jq/python3)",
   "help_options": "Options:\n  --lang LANG        Définir la langue (en, zh, zh-Hant, ja, ko, de, fr, ar, pt, it)\n  --local-lang PATH  Utiliser le dossier de scripts de langue local\n  --cfg-path PATH    Utiliser le fichier profiles.json local\n  --cfg-url URL      Utiliser l'URL profiles.json distante\n  --dev              Mode développement : afficher les sélections sans installer\n  --dry-run          Mode aperçu : afficher le processus sans installer\n  doctor             Exécuter le diagnostic d'environnement QC Doctor\n  doctor --fix       Corriger automatiquement les dépendances manquantes\n  --yes, -y          Confirmer automatiquement toutes les invites\n  --verbose          Afficher les informations de débogage détaillées\n  --log-file FILE    Écrire le journal dans un fichier\n  --export-plan FILE Exporter le plan d'installation dans un fichier\n  --retry-failed     Réessayer les paquets échoués\n  --list-software    Lister tous les logiciels disponibles\n  --show-software ID Afficher les détails du logiciel\n  --search KEYWORD   Rechercher des logiciels\n  --validate         Valider le fichier de configuration\n  --report-json FILE Exporter le rapport d'installation JSON\n  --report-txt FILE  Exporter le rapport d'installation TXT\n  --list-profiles    Lister tous les profils disponibles\n  --show-profile KEY Afficher les détails du profil\n  --skip SW          Ignorer les logiciels spécifiés (répétable)\n  --only SW          Installer uniquement les logiciels spécifiés (répétable)\n  --fail-fast        Arrêter dès la première erreur\n  --profile NAME     Sélectionner le profil directement (ignorer le menu)\n  --non-interactive  Mode non interactif (pas de TUI/invites)\n  --resume           Reprendre l'installation interrompue\n  --no-resume        Ne pas reprendre l'installation interrompue\n  --update           Mettre à jour le script vers la dernière version\n  --check-update     Vérifier les mises à jour sans installer\n  --allow-hooks      Activer l'exécution des scripts de hook\n  --version, -v      Afficher les informations de version\n  --help             Afficher l'aide",
   "continue": "Continuer l'installation",
-  "exit": "Quitter"
+  "exit": "Quitter",
+  "back_to_profiles": "Retour à la sélection des profils",
+  "custom_title": "Sélection personnalisée",
+  "install_failed_list": "Les logiciels suivants ont échoué lors de l'installation",
+  "lang_menu_enter": "Confirmer",
+  "lang_menu_space": "Sélectionner",
+  "progress_installed": "installés",
+  "progress_to_install": "à installer",
+  "retry_prompt": "Réessayer ? [Y/n]"
 }
