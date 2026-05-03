@@ -1,4 +1,4 @@
-## v0.86.4
+## v0.86.5
 
 ### 🐛 Bug Fixes
-- Fix "Select All" highlight: prefix `[ ]` should not be orange, only the text
+- Fix "Select All" highlight: prefix color consistent with other items
