@@ -142,8 +142,8 @@
   "progress_installed": "インストール済み",
   "progress_to_install": "インストール予定",
   "retry_prompt": "再試行しますか？[Y/n]",
-  "config_verify_failed": "Config verification failed",
-  "config_checksum_not_found": "Checksum file not found",
-  "config_checksum_mismatch": "Checksum mismatch",
-  "config_verify_success": "Config verification passed"
+  "config_verify_failed": "設定の検証に失敗しました",
+  "config_checksum_not_found": "チェックサムファイルが見つかりません",
+  "config_checksum_mismatch": "チェックサムが一致しません",
+  "config_verify_success": "設定の検証に成功しました"
 }

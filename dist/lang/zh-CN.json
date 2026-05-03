@@ -142,8 +142,8 @@
   "progress_installed": "已安装",
   "progress_to_install": "待安装",
   "retry_prompt": "是否重试？[Y/n]",
-  "config_verify_failed": "Config verification failed",
-  "config_checksum_not_found": "Checksum file not found",
-  "config_checksum_mismatch": "Checksum mismatch",
-  "config_verify_success": "Config verification passed"
+  "config_verify_failed": "配置文件校验失败",
+  "config_checksum_not_found": "校验文件不存在",
+  "config_checksum_mismatch": "校验值不匹配",
+  "config_verify_success": "配置文件校验成功"
 }

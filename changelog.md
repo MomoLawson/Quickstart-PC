@@ -1,4 +1,4 @@
-## v0.86.13
+## v0.86.14
 
 ### 🐛 Bug Fixes
-- Translate verification messages in all .sh language files
+- Translate verification messages in JSON language files

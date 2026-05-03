@@ -142,8 +142,8 @@
   "progress_installed": "مثبت",
   "progress_to_install": "للتثبيت",
   "retry_prompt": "إعادة المحاولة؟ [Y/n]",
-  "config_verify_failed": "Config verification failed",
-  "config_checksum_not_found": "Checksum file not found",
-  "config_checksum_mismatch": "Checksum mismatch",
-  "config_verify_success": "Config verification passed"
+  "config_verify_failed": "فشل التحقق من التكوين",
+  "config_checksum_not_found": "ملف التحقق غير موجود",
+  "config_checksum_mismatch": "عدم تطابق التحقق",
+  "config_verify_success": "نجح التحقق من التكوين"
 }

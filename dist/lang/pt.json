@@ -142,8 +142,8 @@
   "progress_installed": "instalados",
   "progress_to_install": "a instalar",
   "retry_prompt": "Tentar novamente? [Y/n]",
-  "config_verify_failed": "Config verification failed",
-  "config_checksum_not_found": "Checksum file not found",
-  "config_checksum_mismatch": "Checksum mismatch",
-  "config_verify_success": "Config verification passed"
+  "config_verify_failed": "Falha na verificação da configuração",
+  "config_checksum_not_found": "Arquivo de checksum não encontrado",
+  "config_checksum_mismatch": "Checksum incompatível",
+  "config_verify_success": "Verificação da configuração bem-sucedida"
 }

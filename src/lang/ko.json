@@ -142,8 +142,8 @@
   "progress_installed": "설치됨",
   "progress_to_install": "설치 예정",
   "retry_prompt": "재시도하시겠습니까? [Y/n]",
-  "config_verify_failed": "Config verification failed",
-  "config_checksum_not_found": "Checksum file not found",
-  "config_checksum_mismatch": "Checksum mismatch",
-  "config_verify_success": "Config verification passed"
+  "config_verify_failed": "구성 검증 실패",
+  "config_checksum_not_found": "체크섬 파일을 찾을 수 없음",
+  "config_checksum_mismatch": "체크섬 불일치",
+  "config_verify_success": "구성 검증 성공"
 }
