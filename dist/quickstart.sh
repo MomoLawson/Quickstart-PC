@@ -145,7 +145,7 @@ load_language_strings() {
     fi
     
     # Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v0.87.0"
+    LANG_BANNER_TITLE="Quickstart-PC v0.86.8"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -304,7 +304,7 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="0.87.0"
+VERSION="0.86.8"
 FAIL_FAST=false
 AUTO_UPDATE_LATEST=""
 AUTO_CHECK_PID=""
@@ -1542,7 +1542,14 @@ get_linux_field() {
 verify_config_checksum() {
     local config_file="$1"
     local config_url="$2"
-    local sha256_url="${config_url}.sha256"
+    local sha256_url
+    
+    if [[ "$config_url" == "$DEFAULT_CFG_URL" ]]; then
+        sha256_url="https://github.com/MomoLawson/Quickstart-PC/releases/download/v${VERSION}/profiles.json.sha256"
+    else
+        sha256_url="${config_url}.sha256"
+    fi
+    
     local expected_hash
     local actual_hash
     

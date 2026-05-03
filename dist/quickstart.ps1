@@ -41,7 +41,7 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "0.87.0"
+$VERSION = "0.86.8"
 $OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $DEFAULT_CFG_URL = "https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json"
@@ -886,7 +886,11 @@ function Show-Banner {
 # ============================================
 function Test-ConfigChecksum {
 param([string]$Path, [string]$Url)
-    $sha256Url = "${Url}.sha256"
+    if ($Url -eq $DEFAULT_CFG_URL) {
+        $sha256Url = "https://github.com/MomoLawson/Quickstart-PC/releases/download/v${VERSION}/profiles.json.sha256"
+    } else {
+        $sha256Url = "${Url}.sha256"
+    }
     try {
         $expectedHash = (Invoke-WebRequest -Uri $sha256Url -TimeoutSec 30 -ErrorAction Stop).Content.Trim()
         $actualHash = (Get-FileHash -Path $Path -Algorithm SHA256).Hash.ToLower()

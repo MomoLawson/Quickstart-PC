@@ -1542,7 +1542,14 @@ get_linux_field() {
 verify_config_checksum() {
     local config_file="$1"
     local config_url="$2"
-    local sha256_url="${config_url}.sha256"
+    local sha256_url
+    
+    if [[ "$config_url" == "$DEFAULT_CFG_URL" ]]; then
+        sha256_url="https://github.com/MomoLawson/Quickstart-PC/releases/download/v${VERSION}/profiles.json.sha256"
+    else
+        sha256_url="${config_url}.sha256"
+    fi
+    
     local expected_hash
     local actual_hash
     
