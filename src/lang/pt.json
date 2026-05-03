@@ -122,5 +122,6 @@
   "batch_installing": "Instalação em lote de {0} pacotes...",
   "batch_success": "Instalação em lote concluída: {0}/{1} sucedidos",
   "batch_failed": "Instalação em lote parcialmente falhou, voltando à instalação individual...",
-  "bye": "Quickstart-PC foi encerrado. Adeus!"
+  "bye": "Quickstart-PC foi encerrado. Adeus!",
+  "help_title": "Quickstart-PC - One-click computer setup"
 }
