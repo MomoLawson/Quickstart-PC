@@ -22,6 +22,11 @@ if [[ -t 1 ]]; then
     tput civis 2>/dev/null || true
 fi
 
+# 交互型参数一开始就进入备用屏幕
+if [[ -t 1 && "$UPDATE" != "true" && "$CHECK_UPDATE" != "true" ]]; then
+    IN_ALT_SCREEN=1; printf '\e[?1049h' 2>/dev/null || true
+fi
+
 # 全局 Ctrl+C 恢复光标（在任何阶段退出都生效）
 trap '[[ -n "$AUTO_CHECK_PID" ]] && kill "$AUTO_CHECK_PID" 2>/dev/null || true; [[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; IN_ALT_SCREEN=0; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; exit 130' INT
 trap 'ec=$?; [[ -n "$AUTO_CHECK_PID" ]] && kill "$AUTO_CHECK_PID" 2>/dev/null || true; [[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; IN_ALT_SCREEN=0; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; [[ -n "$LANG_BYE" && "$ec" -eq 130 ]] && echo "" && echo "$LANG_BYE"' EXIT
@@ -1403,9 +1408,7 @@ if [[ "$UPDATE" == "true" || "$CHECK_UPDATE" == "true" ]]; then
 		load_language_strings "en-US"
 	fi
 else
-	IN_ALT_SCREEN=1; printf '\e[?1049h' 2>/dev/null || true
 	DETECTED_LANG=$(select_language)
-	IN_ALT_SCREEN=0; printf '\e[?1049l' 2>/dev/null || true
 	load_language_strings "$DETECTED_LANG"
 fi
 
@@ -2087,7 +2090,6 @@ main() {
 
 	trap 'exit_code=$?; [[ -n "$AUTO_CHECK_PID" ]] && kill "$AUTO_CHECK_PID" 2>/dev/null || true; set_title ""; stty echo 2>/dev/null; if [[ "$IN_ALT_SCREEN" == "1" ]]; then printf "\e[?1049l" 2>/dev/null || true; fi; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; rm -f "$AUTO_CHECK_FILE" 2>/dev/null; if [[ "$exit_code" -eq 0 || "$exit_code" -eq 130 ]]; then echo ""; echo "$LANG_BYE"; fi' EXIT
     auto_check_update
-    IN_ALT_SCREEN=1; printf '\e[?1049h' 2>/dev/null || true
     
     while true; do
         clear
