@@ -22,11 +22,6 @@ if [[ -t 1 ]]; then
     tput civis 2>/dev/null || true
 fi
 
-# 交互型参数一开始就进入备用屏幕
-if [[ -t 1 && "$UPDATE" != "true" && "$CHECK_UPDATE" != "true" ]]; then
-    IN_ALT_SCREEN=1; printf '\e[?1049h' 2>/dev/null || true
-fi
-
 # 全局 Ctrl+C 恢复光标（在任何阶段退出都生效）
 trap '[[ -n "$AUTO_CHECK_PID" ]] && kill "$AUTO_CHECK_PID" 2>/dev/null || true; [[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; IN_ALT_SCREEN=0; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; exit 130' INT
 trap 'ec=$?; [[ -n "$AUTO_CHECK_PID" ]] && kill "$AUTO_CHECK_PID" 2>/dev/null || true; [[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; IN_ALT_SCREEN=0; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; [[ -n "$LANG_BYE" && "$ec" -eq 130 ]] && echo "" && echo "$LANG_BYE"' EXIT
@@ -356,6 +351,11 @@ doctor) DOCTOR=true; shift; [[ "$1" == "--fix" ]] && DOCTOR_FIX=true && shift ;;
   *) shift ;;
 esac
 done
+
+# 参数解析后进入备用屏幕（info命令已退出）
+if [[ -t 1 && "$UPDATE" != "true" && "$CHECK_UPDATE" != "true" && "$DOCTOR" != "true" ]]; then
+    IN_ALT_SCREEN=1; printf '\e[?1049h' 2>/dev/null || true
+fi
 
 # ============================================
 # Language System Functions
