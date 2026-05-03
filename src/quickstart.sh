@@ -24,7 +24,7 @@ fi
 
 # 全局 Ctrl+C 恢复光标（在任何阶段退出都生效）
 trap '[[ -n "$AUTO_CHECK_PID" ]] && kill "$AUTO_CHECK_PID" 2>/dev/null || true; [[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; IN_ALT_SCREEN=0; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; exit 130' INT
-trap 'ec=$?; [[ -n "$AUTO_CHECK_PID" ]] && kill "$AUTO_CHECK_PID" 2>/dev/null || true; [[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; IN_ALT_SCREEN=0; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; [[ -n "$LANG_BYE" && "$ec" -eq 130 ]] && echo "" && echo "$LANG_BYE"' EXIT
+trap 'ec=$?; [[ -n "$AUTO_CHECK_PID" ]] && kill "$AUTO_CHECK_PID" 2>/dev/null || true; [[ "$IN_ALT_SCREEN" == "1" ]] && printf "\e[?1049l" 2>/dev/null || true; IN_ALT_SCREEN=0; tput cnorm 2>/dev/null || true; stty echo 2>/dev/null || true; [[ -n "$LANG_BYE" && "$ec" -eq 130 ]] && echo "$LANG_BYE"' EXIT
 
 # 默认配置 URL（优先级最高）
 DEFAULT_CFG_URL="https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json"
@@ -2130,7 +2130,7 @@ main() {
 		exit $?
 	fi
 
-	trap 'exit_code=$?; [[ -n "$AUTO_CHECK_PID" ]] && kill "$AUTO_CHECK_PID" 2>/dev/null || true; set_title ""; stty echo 2>/dev/null; if [[ "$IN_ALT_SCREEN" == "1" ]]; then printf "\e[?1049l" 2>/dev/null || true; fi; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; rm -f "$AUTO_CHECK_FILE" 2>/dev/null; if [[ "$exit_code" -eq 0 || "$exit_code" -eq 130 ]]; then echo ""; echo "$LANG_BYE"; fi' EXIT
+	trap 'exit_code=$?; [[ -n "$AUTO_CHECK_PID" ]] && kill "$AUTO_CHECK_PID" 2>/dev/null || true; set_title ""; stty echo 2>/dev/null; if [[ "$IN_ALT_SCREEN" == "1" ]]; then printf "\e[?1049l" 2>/dev/null || true; fi; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; rm -f "$AUTO_CHECK_FILE" 2>/dev/null; if [[ "$exit_code" -eq 0 || "$exit_code" -eq 130 ]]; then echo "$LANG_BYE"; fi' EXIT
     auto_check_update
     
     while true; do
@@ -2831,5 +2831,5 @@ if [[ ${#to_install[@]} -eq 0 ]]; then
     done
 }
 
-trap 'exit_code=$?; [[ -n "$AUTO_CHECK_PID" ]] && kill "$AUTO_CHECK_PID" 2>/dev/null || true; set_title ""; stty echo 2>/dev/null; if [[ "$IN_ALT_SCREEN" == "1" ]]; then printf "\e[?1049l" 2>/dev/null || true; fi; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; if [[ "$exit_code" -eq 0 || "$exit_code" -eq 130 ]]; then echo ""; echo "$LANG_BYE"; fi' EXIT
+trap 'exit_code=$?; [[ -n "$AUTO_CHECK_PID" ]] && kill "$AUTO_CHECK_PID" 2>/dev/null || true; set_title ""; stty echo 2>/dev/null; if [[ "$IN_ALT_SCREEN" == "1" ]]; then printf "\e[?1049l" 2>/dev/null || true; fi; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; if [[ "$exit_code" -eq 0 || "$exit_code" -eq 130 ]]; then echo "$LANG_BYE"; fi' EXIT
 main "$@"
