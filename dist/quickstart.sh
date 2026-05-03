@@ -2,6 +2,7 @@
 
 IN_ALT_SCREEN=0
 ERROR_MESSAGES=()
+NON_INTERACTIVE=${NON_INTERACTIVE:-false}
 
 exit_error() {
     local exit_code="${1:-1}"
@@ -16,8 +17,34 @@ exit_error() {
     exit "$exit_code"
 }
 
+# 自动检测终端能力，降级到非交互模式
+detect_terminal_capability() {
+    [[ "$NON_INTERACTIVE" == "true" ]] && return
+
+    # 检查 $TERM：dumb/unknown/空 → 非交互
+    case "${TERM:-}" in
+        dumb|unknown|"")
+            NON_INTERACTIVE=true
+            return
+            ;;
+    esac
+
+    # 检查 stdin 是否是 TTY
+    if [[ ! -t 0 ]]; then
+        NON_INTERACTIVE=true
+        return
+    fi
+
+    # 尝试查询 tput 基本能力（sgr0 = 重置属性）
+    if ! tput sgr0 >/dev/null 2>&1; then
+        NON_INTERACTIVE=true
+        return
+    fi
+}
+detect_terminal_capability
+
 # 只在交互式终端中清屏和隐藏光标
-if [[ -t 1 ]]; then
+if [[ -t 1 && "$NON_INTERACTIVE" != "true" ]]; then
     clear 2>/dev/null || true
     tput civis 2>/dev/null || true
 fi

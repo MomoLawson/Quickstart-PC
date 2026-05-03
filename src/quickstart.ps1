@@ -2083,7 +2083,16 @@ if ($validate) {
         }
     }
     Start-AutoCheckUpdate
-    Enter-AlternateScreen
+    if (-not $nonInteractive) {
+        try {
+            if ($null -eq $Host.UI.RawUI -or [Console]::IsOutputRedirected) {
+                $nonInteractive = $true
+            }
+        } catch {
+            $nonInteractive = $true
+        }
+    }
+    if (-not $nonInteractive) { Enter-AlternateScreen }
     
     while ($true) {
         Clear-Host
