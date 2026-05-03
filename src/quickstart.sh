@@ -54,46 +54,67 @@ lang_name() {
 
 load_language_strings() {
     local lang="$1"
-    local lang_file=""
+    local loaded=false
     
-    # 1. Try local lang path if --local-lang is set
-    if [[ -n "$LOCAL_LANG_PATH" ]]; then
-        lang_file="$LOCAL_LANG_PATH/${lang}.sh"
+    # Try loading from JSON files (preferred, consistent with PS1)
+    local json_file=""
+    if [[ -n "$LOCAL_LANG_PATH" ]] && [[ -f "$LOCAL_LANG_PATH/${lang}.json" ]]; then
+        json_file="$LOCAL_LANG_PATH/${lang}.json"
+    else
+        local script_dir
+        script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        if [[ -f "$script_dir/lang/${lang}.json" ]]; then
+            json_file="$script_dir/lang/${lang}.json"
+        fi
+    fi
+    
+    if [[ -n "$json_file" ]] && command -v jq &>/dev/null; then
+        while IFS='=' read -r key value; do
+            [[ -z "$key" ]] && continue
+            declare -g "LANG_$(echo "$key" | tr '[:lower:]' '[:upper:]')"="$value"
+        done < <(jq -r 'to_entries[] | "\(.key)=\(.value)"' "$json_file" 2>/dev/null)
+        loaded=true
+    fi
+    
+    # Fallback: try .sh files if JSON loading failed or jq not available
+    if [[ "$loaded" == "false" ]]; then
+        local lang_file=""
+        if [[ -n "$LOCAL_LANG_PATH" ]]; then
+            lang_file="$LOCAL_LANG_PATH/${lang}.sh"
+            if [[ -f "$lang_file" ]]; then
+                source "$lang_file"
+                return 0
+            fi
+        fi
+        
+        local script_dir
+        script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        lang_file="$script_dir/lang/${lang}.sh"
         if [[ -f "$lang_file" ]]; then
             source "$lang_file"
             return 0
         fi
-    fi
-    
-    # 2. Try embedded lang files (for local/offline use with --local-lang not set but lang/ dir exists)
-    local script_dir
-    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    lang_file="$script_dir/lang/${lang}.sh"
-    if [[ -f "$lang_file" ]]; then
-        source "$lang_file"
-        return 0
-    fi
-    
-    # 3. Try remote loading from GitHub
-    local remote_url="https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/dist/lang/${lang}.sh"
-    local tmp_lang
-    tmp_lang=$(mktemp 2>/dev/null || echo "/tmp/quickstart-lang-$$.tmp")
-    if command -v curl >/dev/null 2>&1; then
-        if curl -fsSL --connect-timeout 5 --max-time 10 "$remote_url" -o "$tmp_lang" 2>/dev/null; then
-            source "$tmp_lang"
-            rm -f "$tmp_lang"
-            return 0
+        
+        local remote_url="https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/dist/lang/${lang}.sh"
+        local tmp_lang
+        tmp_lang=$(mktemp 2>/dev/null || echo "/tmp/quickstart-lang-$$.tmp")
+        if command -v curl >/dev/null 2>&1; then
+            if curl -fsSL --connect-timeout 5 --max-time 10 "$remote_url" -o "$tmp_lang" 2>/dev/null; then
+                source "$tmp_lang"
+                rm -f "$tmp_lang"
+                return 0
+            fi
         fi
+        rm -f "$tmp_lang"
     fi
-    rm -f "$tmp_lang"
     
-    # 4. Fallback: if requested lang is not en-US, try en-US
+    # Fallback: if requested lang is not en-US, try en-US
     if [[ "$lang" != "en-US" ]]; then
         load_language_strings "en-US"
         return $?
     fi
     
-    # 5. Last resort: embedded minimal English strings
+    # Last resort: embedded minimal English strings
     LANG_BANNER_TITLE="Quickstart-PC v__VERSION__"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
@@ -112,7 +133,7 @@ load_language_strings() {
     LANG_SELECTED="[✓] "
     LANG_NOT_SELECTED="[  ] "
     LANG_SELECT_ALL="Select All"
-LANG_BACK_TO_PROFILES="Back to Profiles"
+    LANG_BACK_TO_PROFILES="Back to Profiles"
     LANG_NO_PROFILE_SELECTED="No profile selected"
     LANG_NO_SOFTWARE_SELECTED="No software selected"
     LANG_CONFIRM_INSTALL="Confirm installation? [Y/n]"
@@ -125,9 +146,9 @@ LANG_BACK_TO_PROFILES="Back to Profiles"
     LANG_INSTALLATION_COMPLETE="Installation Complete"
     LANG_TOTAL_INSTALLED="Total installed"
     LANG_DEV_MODE="Dev mode: Show selected software without installing"
-LANG_DRY_RUN_MODE="Preview mode: Show process without installing"
-LANG_DRY_RUN_INSTALLING="Simulating install"
-LANG_BYE="Quickstart-PC has exited. Goodbye!"
+    LANG_DRY_RUN_MODE="Preview mode: Show process without installing"
+    LANG_DRY_RUN_INSTALLING="Simulating install"
+    LANG_BYE="Quickstart-PC has exited. Goodbye!"
     LANG_JQ_DETECTED="jq detected, using jq"
     LANG_JQ_NOT_FOUND="jq not found, installing..."
     LANG_JQ_INSTALLED="jq installed successfully"
