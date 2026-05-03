@@ -74,6 +74,7 @@ load_language_strings() {
             eval "LANG_$(echo "$key" | tr '[:lower:]' '[:upper:]')=\"\$value\""
         done < <(jq -r 'to_entries[] | "\(.key)=\(.value)"' "$json_file" 2>/dev/null)
         loaded=true
+        return 0
     fi
     
     # Fallback: try .sh files if JSON loading failed or jq not available
