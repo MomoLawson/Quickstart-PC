@@ -41,8 +41,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "0.86.12"
-if ($VERSION -eq "0.86.12") {
+$VERSION = "0.86.13"
+if ($VERSION -eq "0.86.13") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
