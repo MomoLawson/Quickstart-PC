@@ -1,4 +1,4 @@
-## v0.86.11
+## v0.86.12
 
 ### 🐛 Bug Fixes
-- Fix VERSION file path (../VERSION not ../../VERSION)
+- Add verification keys to .sh fallback language files

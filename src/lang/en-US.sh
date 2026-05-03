@@ -142,3 +142,8 @@ LANG_BATCH_INSTALLING="Batch installing %d packages..."
 LANG_BATCH_SUCCESS="Batch install complete: %d/%d succeeded"
 LANG_BATCH_FAILED="Batch install partially failed, falling back to individual install..."
 LANG_BYE="Quickstart-PC has exited. Goodbye!"
+
+LANG_CONFIG_VERIFY_FAILED="Config verification failed"
+LANG_CONFIG_CHECKSUM_NOT_FOUND="Checksum file not found"
+LANG_CONFIG_CHECKSUM_MISMATCH="Checksum mismatch"
+LANG_CONFIG_VERIFY_SUCCESS="Config verification passed"

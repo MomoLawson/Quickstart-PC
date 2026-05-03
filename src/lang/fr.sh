@@ -142,3 +142,8 @@ LANG_BATCH_INSTALLING="Installation groupée de %d paquets..."
 LANG_BATCH_SUCCESS="Installation groupée terminée : %d/%d réussis"
 LANG_BATCH_FAILED="Installation groupée partiellement échouée, retour à l'installation individuelle..."
 LANG_BYE="Quickstart-PC a été arrêté. Au revoir !"
+
+LANG_CONFIG_VERIFY_FAILED="Config verification failed"
+LANG_CONFIG_CHECKSUM_NOT_FOUND="Checksum file not found"
+LANG_CONFIG_CHECKSUM_MISMATCH="Checksum mismatch"
+LANG_CONFIG_VERIFY_SUCCESS="Config verification passed"

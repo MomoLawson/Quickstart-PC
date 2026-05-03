@@ -142,3 +142,8 @@ LANG_BATCH_INSTALLING="%d 個のパッケージを一括インストール中...
 LANG_BATCH_SUCCESS="一括インストール完了: %d/%d 成功"
 LANG_BATCH_FAILED="一括インストールが一部失敗しました、個別インストールにフォールバック..."
 LANG_BYE="Quickstart-PC が終了しました。さようなら！"
+
+LANG_CONFIG_VERIFY_FAILED="Config verification failed"
+LANG_CONFIG_CHECKSUM_NOT_FOUND="Checksum file not found"
+LANG_CONFIG_CHECKSUM_MISMATCH="Checksum mismatch"
+LANG_CONFIG_VERIFY_SUCCESS="Config verification passed"
