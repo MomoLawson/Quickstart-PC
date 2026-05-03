@@ -1775,7 +1775,7 @@ for k, v in data['software'].items():
 
       if [[ $i -eq $cursor ]]; then
         if [[ "${menu_keys[$i]}" == "select_all" ]]; then
-          echo -e " ${WHITE_BG}${ORANGE}${prefix}${item_text}${NC}"
+          echo -e " ${WHITE_BG}${prefix}${ORANGE}${item_text}${NC}"
         else
           echo -e " ${REVERSE}${prefix}${item_text}${NC}"
         fi
