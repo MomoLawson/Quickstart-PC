@@ -123,5 +123,12 @@
   "batch_success": "Instalação em lote concluída: {0}/{1} sucedidos",
   "batch_failed": "Instalação em lote parcialmente falhou, voltando à instalação individual...",
   "bye": "Quickstart-PC foi encerrado. Adeus!",
-  "help_title": "Quickstart-PC - One-click computer setup"
+  "help_title": "Quickstart-PC - One-click computer setup",
+  "npm_auto": "npm",
+  "jq_detected": "jq detectado, usando jq",
+  "jq_not_found": "jq não encontrado, instalando...",
+  "jq_installed": "jq instalado com sucesso",
+  "jq_install_failed": "Falha ao instalar jq, tentando alternativa...",
+  "using_python3": "Usando python3 como parser alternativo",
+  "no_json_parser": "Nenhum parser JSON disponível (jq/python3)"
 }

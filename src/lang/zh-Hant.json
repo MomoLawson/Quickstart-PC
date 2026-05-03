@@ -123,5 +123,12 @@
   "batch_success": "批量安裝完成: {0}/{1} 成功",
   "batch_failed": "批量安裝部分失敗，回退逐個安裝...",
   "bye": "Quickstart-PC 已退出，再見！",
-  "help_title": "Quickstart-PC - One-click computer setup"
+  "help_title": "Quickstart-PC - One-click computer setup",
+  "npm_auto": "npm",
+  "jq_detected": "jq 已檢測到，使用 jq",
+  "jq_not_found": "jq 未安裝，正在安裝...",
+  "jq_installed": "jq 安裝成功",
+  "jq_install_failed": "jq 安裝失敗，嘗試備用解析器...",
+  "using_python3": "使用 python3 作為備用解析器",
+  "no_json_parser": "沒有可用的 JSON 解析器（jq/python3）"
 }

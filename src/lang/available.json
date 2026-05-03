@@ -41,5 +41,12 @@
       "name": "Italiano"
     }
   ],
-  "help_title": "Quickstart-PC - One-click computer setup"
+  "help_title": "Quickstart-PC - One-click computer setup",
+  "npm_auto": "npm",
+  "jq_detected": "تم اكتشاف jq، استخدام jq",
+  "jq_not_found": "jq غير موجود، جارِ التثبيت...",
+  "jq_installed": "تم تثبيت jq بنجاح",
+  "jq_install_failed": "فشل تثبيت jq، محاولة استخدام البديل...",
+  "using_python3": "استخدام python3 كبديل",
+  "no_json_parser": "لا يوجد محلل JSON (jq/python3)"
 }

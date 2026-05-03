@@ -123,5 +123,12 @@
   "batch_success": "Batch install complete: {0}/{1} succeeded",
   "batch_failed": "Batch install partially failed, falling back to individual install...",
   "bye": "Quickstart-PC has exited. Goodbye!",
-  "help_title": "Quickstart-PC - One-click computer setup"
+  "help_title": "Quickstart-PC - One-click computer setup",
+  "npm_auto": "npm",
+  "jq_detected": "jq detected, using jq",
+  "jq_not_found": "jq not found, installing...",
+  "jq_installed": "jq installed successfully",
+  "jq_install_failed": "jq installation failed, trying fallback parser...",
+  "using_python3": "Using python3 as fallback parser",
+  "no_json_parser": "No JSON parser available (jq/python3)"
 }

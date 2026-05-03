@@ -123,5 +123,12 @@
   "batch_success": "一括インストール完了: {0}/{1} 成功",
   "batch_failed": "一括インストールが一部失敗しました、個別インストールにフォールバック...",
   "bye": "Quickstart-PC が終了しました。さようなら！",
-  "help_title": "Quickstart-PC - One-click computer setup"
+  "help_title": "Quickstart-PC - One-click computer setup",
+  "npm_auto": "npm",
+  "jq_detected": "jq を検出、jq を使用",
+  "jq_not_found": "jq が見つかりません、インストール中...",
+  "jq_installed": "jq のインストールに成功",
+  "jq_install_failed": "jq のインストールに失敗、フォールバックを試みます...",
+  "using_python3": "python3 をフォールバックとして使用",
+  "no_json_parser": "JSON パーサーがありません（jq/python3）"
 }

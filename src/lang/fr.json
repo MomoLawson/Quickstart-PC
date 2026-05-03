@@ -123,5 +123,12 @@
   "batch_success": "Installation groupée terminée : {0}/{1} réussis",
   "batch_failed": "Installation groupée partiellement échouée, retour à l'installation individuelle...",
   "bye": "Quickstart-PC a été arrêté. Au revoir !",
-  "help_title": "Quickstart-PC - One-click computer setup"
+  "help_title": "Quickstart-PC - One-click computer setup",
+  "npm_auto": "npm",
+  "jq_detected": "jq détecté, utilisation de jq",
+  "jq_not_found": "jq non trouvé, installation...",
+  "jq_installed": "jq installé avec succès",
+  "jq_install_failed": "Échec de l'installation de jq, tentative de secours...",
+  "using_python3": "Utilisation de python3 comme parser de secours",
+  "no_json_parser": "Aucun analyseur JSON disponible (jq/python3)"
 }

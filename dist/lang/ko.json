@@ -123,5 +123,12 @@
   "batch_success": "일괄 설치 완료: {0}/{1} 성공",
   "batch_failed": "일괄 설치가 부분적으로 실패했습니다, 개별 설치로 폴백...",
   "bye": "Quickstart-PC가 종료되었습니다. 안녕히 가세요!",
-  "help_title": "Quickstart-PC - One-click computer setup"
+  "help_title": "Quickstart-PC - One-click computer setup",
+  "npm_auto": "npm",
+  "jq_detected": "jq 감지, jq 사용",
+  "jq_not_found": "jq를 찾을 수 없음, 설치 중...",
+  "jq_installed": "jq 설치 성공",
+  "jq_install_failed": "jq 설치 실패, 대체 파서 시도...",
+  "using_python3": "python3를 대체로 사용",
+  "no_json_parser": "JSON 파서 없음 (jq/python3)"
 }
