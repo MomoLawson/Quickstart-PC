@@ -71,7 +71,7 @@ load_language_strings() {
     if [[ -n "$json_file" ]] && command -v jq &>/dev/null; then
         while IFS='=' read -r key value; do
             [[ -z "$key" ]] && continue
-            declare -g "LANG_$(echo "$key" | tr '[:lower:]' '[:upper:]')"="$value"
+            eval "LANG_$(echo "$key" | tr '[:lower:]' '[:upper:]')=\"\$value\""
         done < <(jq -r 'to_entries[] | "\(.key)=\(.value)"' "$json_file" 2>/dev/null)
         loaded=true
     fi
