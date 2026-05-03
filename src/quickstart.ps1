@@ -1858,7 +1858,7 @@ Write-Host " $itemText" -NoNewline -ForegroundColor DarkRed
 # Select all - checkbox, orange color
 $prefix = if ($checked[$i] -eq 1) { $h["selected"] } else { $h["not_selected"] }
 if ($i -eq $CursorPos) {
-Write-Host " $prefix$itemText" -NoNewline -BackgroundColor White -ForegroundColor DarkYellow
+Write-Host " $prefix$itemText" -NoNewline -BackgroundColor DarkYellow -ForegroundColor White
 } else {
 Write-Host " $prefix$itemText" -NoNewline -ForegroundColor DarkYellow
 }

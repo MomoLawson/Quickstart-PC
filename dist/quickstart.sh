@@ -1491,6 +1491,8 @@ NC='\033[0m'
 BOLD='\033[1m'
 REVERSE='\033[7m'
 GRAY='\033[0;90m'
+WHITE='\033[97m'
+ORANGE_BG='\033[48;5;208m'
 
 detect_os() {
     case "$OSTYPE" in
@@ -1772,7 +1774,11 @@ for k, v in data['software'].items():
       fi
 
       if [[ $i -eq $cursor ]]; then
-        echo -e " ${REVERSE}${prefix}${item_text}${NC}"
+        if [[ "${menu_keys[$i]}" == "select_all" ]]; then
+          echo -e " ${ORANGE_BG}${WHITE}${prefix}${item_text}${NC}"
+        else
+          echo -e " ${REVERSE}${prefix}${item_text}${NC}"
+        fi
       else
         if [[ -n "$color" ]]; then
           echo -e " ${prefix}${color}${item_text}${NC}"
