@@ -1,4 +1,4 @@
-## v0.86.5
+## v0.86.6
 
 ### 🐛 Bug Fixes
-- Fix "Select All" highlight: prefix color consistent with other items
+- Change "Select All" highlight to orange background with white text
