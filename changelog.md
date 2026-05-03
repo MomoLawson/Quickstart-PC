@@ -1,4 +1,4 @@
-## v0.87.1
+## v0.86.10
 
 ### 🐛 Bug Fixes
-- Fix checksum URL to use release asset instead of raw file URL
+- Add fallback to read VERSION from file when running src directly

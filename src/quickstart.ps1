@@ -42,6 +42,20 @@ param(
 )
 
 $VERSION = "__VERSION__"
+if ($VERSION -eq "__VERSION__") {
+    $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+    $versionFile = Join-Path $scriptDir "..\..\VERSION"
+    if (Test-Path $versionFile) {
+        $VERSION = (Get-Content $versionFile -Raw).Trim()
+    } else {
+        $versionFile = Join-Path $scriptDir "VERSION"
+        if (Test-Path $versionFile) {
+            $VERSION = (Get-Content $versionFile -Raw).Trim()
+        } else {
+            $VERSION = "0.0.0"
+        }
+    }
+}
 $OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $DEFAULT_CFG_URL = "https://raw.githubusercontent.com/MomoLawson/Quickstart-PC/main/config/profiles.json"
