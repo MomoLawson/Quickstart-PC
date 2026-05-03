@@ -125,7 +125,7 @@
   "bye": "Quickstart-PC 已退出，再见！",
   "help_title": "Quickstart-PC - One-click computer setup",
   "npm_auto": "npm",
-  "jq_detected": "jq 已检测到，使用 jq",
+  "jq_detected": "检测到 jq，使用 jq",
   "jq_not_found": "jq 未安装，正在安装...",
   "jq_installed": "jq 安装成功",
   "jq_install_failed": "jq 安装失败，尝试备用解析器...",
