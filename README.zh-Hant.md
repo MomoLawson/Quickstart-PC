@@ -10,7 +10,7 @@
 ## 功能
 
 - 🚀 **一鍵安裝** - 一條指令搞定新電腦軟件配置
-- 🎯 **預設套餐** - 5 個精選套餐，滿足不同需求
+- 🎯 **預設預設** - 5 個精選預設，滿足不同需求
 - 🌐 **全平台支援** - Windows / macOS / Linux 全覆蓋
 - ☁️ **雲端配置** - 支援從雲端獲取最新軟件配置
 - 📦 **套件管理器** - 自動偵測並安裝套件管理器
@@ -35,14 +35,14 @@ powershell -ExecutionPolicy Bypass -File quickstart.ps1
 powershell -ExecutionPolicy Bypass -Command "[System.Text.Encoding]::UTF8.GetString((New-Object System.Net.WebClient).DownloadData('https://github.com/MomoLawson/Quickstart-PC/releases/latest/download/quickstart.ps1'))|iex"
 ```
 
-## 預設套餐
+## 預設預設
 
-| 套餐 | 說明 | 包含軟件 |
+| 預設 | 說明 | 包含軟件 |
 |------|------|----------|
-| ⭐ 推薦套餐 | 綜合均衡，適合大多數用戶 | Chrome, Edge, VS Code, Git, Node.js, Python, WPS, VLC |
+| ⭐ 推薦預設 | 綜合均衡，適合大多數用戶 | Chrome, Edge, VS Code, Git, Node.js, Python, WPS, VLC |
 | 🤖 AI 賦能 | AI CLI 工具、智能 IDE | Cursor, Ollama, LM Studio |
 | 📊 辦公套件 | 文件、表格、協作工具 | WPS, Obsidian, Notion |
-| 💻 開發者套餐 | IDE、版本控制、執行環境 | VS Code, IntelliJ, Git, Node.js, Python, Go, Docker |
+| 💻 開發者預設 | IDE、版本控制、執行環境 | VS Code, IntelliJ, Git, Node.js, Python, Go, Docker |
 | 🎬 媒體創作 | 音視訊處理工具 | VLC, OBS Studio |
 
 ## 項目結構
@@ -56,7 +56,7 @@ Quickstart-PC/
 ├── scripts/
 │   └── build.sh            # 建構腳本
 ├── config/
-│   └── profiles.json       # 軟件套餐配置（JSON）
+│   └── profiles.json       # 軟件預設配置（JSON）
 ├── README.md               # 英文文件
 └── README.zh-Hant.md       # 繁體中文文件
 ```
@@ -118,7 +118,7 @@ quickstart.sh --cfg-path /path/to/profiles.json
 {
   "profiles": {
     "my_custom": {
-      "name": "我的套餐",
+      "name": "我的預設",
       "desc": "自訂軟件組合",
       "icon": "🎮",
       "includes": ["chrome", "vscode"]
@@ -152,7 +152,7 @@ quickstart.sh --cfg-path /path/to/profiles.json
 | `--export-plan FILE` | 匯出安裝計劃到檔案 |
 | `--custom` | 自訂軟件選擇模式（手動選擇） |
 | `--retry-failed` | 重試之前失敗的軟件 |
-| `--list-profiles` | 列出所有可用套餐 |
+| `--list-profiles` | 列出所有可用預設 |
 | `--cfg-url URL` | 使用遠程 profiles.json URL |
 | `--version` / `-v` | 顯示版本信息 |
 | `--help` | 顯示說明 |
@@ -214,13 +214,13 @@ Set-ExecutionPolicy -Scope Process Bypass
 
 1. 編輯 `config/profiles.json`
 2. 在 `"software"` 部分新增軟件配置
-3. 在對應套餐的 `"includes"` 陣列中新增軟件 key
+3. 在對應預設的 `"includes"` 陣列中新增軟件 key
 4. 提交 PR
 
-### 新增套餐
+### 新增預設
 
 1. 編輯 `config/profiles.json`
-2. 在 `"profiles"` 部分新增新套餐
+2. 在 `"profiles"` 部分新增新預設
 3. 提交 PR
 
 ## 許可證

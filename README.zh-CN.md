@@ -11,7 +11,7 @@
 ## 特性
 
 - 🚀 **一键安装** - 一条命令搞定新电脑软件配置
-- 🎯 **12 个预设套餐** - 精选套餐满足不同需求
+- 🎯 **12 个预设预设** - 精选预设满足不同需求
 - 🌐 **全平台支持** - Windows / macOS / Linux 全覆盖
 - ☁️ **云端配置** - 支持从云端获取最新软件配置
 - 📦 **包管理器** - 自动检测并安装包管理器
@@ -51,14 +51,14 @@ powershell -ExecutionPolicy Bypass -Command "[System.Text.Encoding]::UTF8.GetStr
 | 配置解析 | `jq`（主）/ `python3`（备选） | 原生 `ConvertFrom-Json` |
 | TUI 输入 | `read -rsn1` + 按键码 | `[Console]::ReadKey()` |
 
-## 预设套餐
+## 预设预设
 
-| 套餐 | 说明 | 包含软件 |
+| 预设 | 说明 | 包含软件 |
 |------|------|----------|
-| ⭐ 推荐套餐 | 综合均衡，适合大多数用户 | Chrome, Edge, VS Code, Git, Node.js, Python, WPS, VLC |
+| ⭐ 推荐预设 | 综合均衡，适合大多数用户 | Chrome, Edge, VS Code, Git, Node.js, Python, WPS, VLC |
 | 🤖 AI 赋能 | AI CLI 工具、智能 IDE | Cursor, Ollama, LM Studio |
 | 📊 办公套件 | 文档、表格、协作工具 | WPS, Obsidian, Notion |
-| 💻 开发者套餐 | IDE、版本控制、运行时环境 | VS Code, IntelliJ, Git, Node.js, Python, Go, Docker |
+| 💻 开发者预设 | IDE、版本控制、运行时环境 | VS Code, IntelliJ, Git, Node.js, Python, Go, Docker |
 | 🎬 媒体创作 | 音视频处理工具 | VLC, OBS Studio |
 | 💬 通讯社交 | 聊天和即时通讯应用 | Discord, Slack, Telegram |
 | 🔒 安全工具 | 安全和隐私工具 | 1Password, Bitwarden |
@@ -112,12 +112,12 @@ Quickstart-PC/
 | `--log-file FILE` | 将日志写入文件 |
 | `--export-plan FILE` | 导出安装计划到文件 |
 | `--retry-failed` | 重试之前失败的软件 |
-| `--list-profiles` | 列出所有可用套餐 |
-| `--show-profile KEY` | 显示指定套餐详情 |
+| `--list-profiles` | 列出所有可用预设 |
+| `--show-profile KEY` | 显示指定预设详情 |
 | `--skip SW` | 跳过指定软件（可多次使用） |
 | `--only SW` | 只安装指定软件（可多次使用） |
 | `--fail-fast` | 遇到错误时立即停止 |
-| `--profile NAME` | 直接指定安装套餐（跳过选择菜单） |
+| `--profile NAME` | 直接指定安装预设（跳过选择菜单） |
 | `--non-interactive` | 非交互模式（禁止所有 TUI/prompt） |
 | `--cfg-path PATH` | 使用本地 profiles.json 文件 |
 | `--cfg-url URL` | 使用远程 profiles.json URL |
@@ -176,13 +176,13 @@ Quickstart-PC/
 
 1. 编辑 `config/software/<分类>.json`（如 `browsers.json`）
 2. 添加软件配置，包含安装命令和检测命令
-3. 在 `config/profiles.json` 的对应套餐中添加软件 key
+3. 在 `config/profiles.json` 的对应预设中添加软件 key
 4. 运行 `bash scripts/build.sh` 合并配置
 5. 提交 PR
 
-### 添加新套餐
+### 添加新预设
 
-1. 在 `config/profiles.json` 的 `"profiles"` 部分添加新套餐
+1. 在 `config/profiles.json` 的 `"profiles"` 部分添加新预设
 2. 运行 `bash scripts/build.sh`
 3. 提交 PR
 

@@ -2235,7 +2235,7 @@ main() {
         
 SELECTED_SOFTWARE=("${sw_keys[@]}")
 elif [[ -n "$PROFILE_KEY" ]]; then
-    # --profile 参数：跳过套餐菜单，直接选择软件
+    # --profile 参数：跳过预设菜单，直接选择软件
     local profile_exists=false
     while IFS= read -r key; do
         if [[ "$key" == "$PROFILE_KEY" ]]; then
