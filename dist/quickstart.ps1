@@ -42,8 +42,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "1.0.0-beta1-build15"
-if ($VERSION -eq "1.0.0-beta1-build15") {
+$VERSION = "1.0.0-beta1-build16"
+if ($VERSION -eq "1.0.0-beta1-build16") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
@@ -1267,7 +1267,7 @@ function Show-Search {
 # ============================================
 function Show-Doctor {
     function Hint-Cmd { param([string]$Text); Write-Host "      $Text" -ForegroundColor DarkGray -BackgroundColor Black }
-    $fixCmds = @()
+    $script:fixCmds = @()
     function Collect-Fix { param([string]$Cmd); $script:fixCmds += $Cmd }
     
     Write-Host ""

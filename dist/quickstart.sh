@@ -148,7 +148,7 @@ load_language_strings() {
     fi
     
     # Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v1.0.0-beta1-build15"
+    LANG_BANNER_TITLE="Quickstart-PC v1.0.0-beta1-build16"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -307,8 +307,8 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="1.0.0-beta1-build15"
-if [[ "$VERSION" == "1.0.0-beta1-build15" ]]; then
+VERSION="1.0.0-beta1-build16"
+if [[ "$VERSION" == "1.0.0-beta1-build16" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')

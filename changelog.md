@@ -1,4 +1,4 @@
-## v1.0.0-beta1-build15
+## v1.0.0-beta1-build16
 
 ### 🐛 Bug Fixes
-- Fix Update-Self to detect available PowerShell host (pwsh or powershell)
+- Fix Show-Doctor to initialize $script:fixCmds for doctor --fix

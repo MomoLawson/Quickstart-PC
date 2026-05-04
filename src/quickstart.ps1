@@ -1267,7 +1267,7 @@ function Show-Search {
 # ============================================
 function Show-Doctor {
     function Hint-Cmd { param([string]$Text); Write-Host "      $Text" -ForegroundColor DarkGray -BackgroundColor Black }
-    $fixCmds = @()
+    $script:fixCmds = @()
     function Collect-Fix { param([string]$Cmd); $script:fixCmds += $Cmd }
     
     Write-Host ""
