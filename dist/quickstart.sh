@@ -304,8 +304,8 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="1.0.0-beta2-build13"
-if [[ "$VERSION" == "1.0.0-beta2-build13" ]]; then
+VERSION="1.0.0-beta2-build14"
+if [[ "$VERSION" == "1.0.0-beta2-build14" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')
@@ -2238,7 +2238,26 @@ auto_check_update() {
             "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases?per_page=1" \
             2>/dev/null | jq -r '.[0].tag_name // empty')
         latest="${latest#v}"
-        if [[ -n "$latest" && "$VERSION" != "$latest" ]]; then
+        
+        if [[ -z "$latest" ]]; then return; fi
+        if [[ "$VERSION" == "$latest" ]]; then return; fi
+        
+        local cur_beta=0 cur_build=0 lat_beta=0 lat_build=0
+        if [[ "$VERSION" =~ beta([0-9]+)-build([0-9]+) ]]; then
+            cur_beta=${BASH_REMATCH[1]}
+            cur_build=${BASH_REMATCH[2]}
+        fi
+        if [[ "$latest" =~ beta([0-9]+)-build([0-9]+) ]]; then
+            lat_beta=${BASH_REMATCH[1]}
+            lat_build=${BASH_REMATCH[2]}
+        fi
+        
+        local newer=false
+        if [[ $lat_beta -gt $cur_beta ]]; then newer=true
+        elif [[ $lat_beta -eq $cur_beta && $lat_build -gt $cur_build ]]; then newer=true
+        fi
+        
+        if $newer; then
             echo "$latest" > "$AUTO_CHECK_FILE"
         fi
     ) &
