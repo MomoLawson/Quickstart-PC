@@ -1193,7 +1193,14 @@ run_hook() {
     return 0
   fi
   log_info "$(printf "$LANG_HOOK_RUNNING" "$hook_type")"
-  if bash "$hook_script" 2>&1; then
+  if [[ -f "$hook_script" ]]; then
+    # It's a file path
+    bash "$hook_script" 2>&1
+  else
+    # It's a command string
+    bash -c "$hook_script" 2>&1
+  fi
+  if [[ $? -eq 0 ]]; then
     log_info "$LANG_HOOK_SUCCESS"
   else
     log_warn "$(printf "$LANG_HOOK_FAILED" "$hook_type")"

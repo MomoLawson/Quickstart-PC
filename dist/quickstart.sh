@@ -172,7 +172,7 @@ print(data.get('help_options', ''))
     fi
     
     # Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v1.0.0-beta2-build5"
+    LANG_BANNER_TITLE="Quickstart-PC v1.0.0-beta2-build6"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -331,8 +331,8 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="1.0.0-beta2-build5"
-if [[ "$VERSION" == "1.0.0-beta2-build5" ]]; then
+VERSION="1.0.0-beta2-build6"
+if [[ "$VERSION" == "1.0.0-beta2-build6" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')
@@ -1193,7 +1193,14 @@ run_hook() {
     return 0
   fi
   log_info "$(printf "$LANG_HOOK_RUNNING" "$hook_type")"
-  if bash "$hook_script" 2>&1; then
+  if [[ -f "$hook_script" ]]; then
+    # It's a file path
+    bash "$hook_script" 2>&1
+  else
+    # It's a command string
+    bash -c "$hook_script" 2>&1
+  fi
+  if [[ $? -eq 0 ]]; then
     log_info "$LANG_HOOK_SUCCESS"
   else
     log_warn "$(printf "$LANG_HOOK_FAILED" "$hook_type")"

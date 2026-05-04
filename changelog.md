@@ -1,4 +1,4 @@
-## v1.0.0-beta2-build5
+## v1.0.0-beta2-build6
 
 ### 🐛 Bug Fixes
-- Add python3 fallback for language loading when jq is unavailable
+- Fix run_hook to handle both file paths and command strings
