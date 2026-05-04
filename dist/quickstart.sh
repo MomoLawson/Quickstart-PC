@@ -148,7 +148,7 @@ load_language_strings() {
     fi
     
     # Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v1.0.0-beta1-build17"
+    LANG_BANNER_TITLE="Quickstart-PC v1.0.0-beta1-build18"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -307,8 +307,8 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="1.0.0-beta1-build17"
-if [[ "$VERSION" == "1.0.0-beta1-build17" ]]; then
+VERSION="1.0.0-beta1-build18"
+if [[ "$VERSION" == "1.0.0-beta1-build18" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')
@@ -1134,7 +1134,14 @@ save_install_state() {
 
 load_install_state() {
   local state_file="$STATE_FILE"
+  local current_profile="$1"
   if [[ -f "$state_file" ]]; then
+    local saved_profile
+    saved_profile=$(jq -r '.profile // empty' "$state_file" 2>/dev/null)
+    if [[ -n "$current_profile" && -n "$saved_profile" && "$current_profile" != "$saved_profile" ]]; then
+      log_warn "State file profile ($saved_profile) doesn't match current profile ($current_profile)"
+      return 1
+    fi
     local remaining
     remaining=$(jq -r '.remaining[]' "$state_file" 2>/dev/null)
     echo "$remaining"
@@ -2594,7 +2601,7 @@ log_info "$LANG_DISK_CHECKING"
   # Check for incomplete installation state
   if [[ "$RESUME_MODE" != "no" ]]; then
     local saved_remaining
-    saved_remaining=$(load_install_state)
+    saved_remaining=$(load_install_state "${SELECTED_PROFILES[0]}")
     if [[ -n "$saved_remaining" ]]; then
       if [[ "$RESUME_MODE" == "yes" || "$NON_INTERACTIVE" == "true" ]]; then
         log_info "$LANG_RESUMING"

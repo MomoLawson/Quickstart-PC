@@ -42,8 +42,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "1.0.0-beta1-build17"
-if ($VERSION -eq "1.0.0-beta1-build17") {
+$VERSION = "1.0.0-beta1-build18"
+if ($VERSION -eq "1.0.0-beta1-build18") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
@@ -1722,9 +1722,14 @@ function Save-InstallState {
 }
 
 function Load-InstallState {
+  param([string]$CurrentProfile)
   if (Test-Path $script:STATE_FILE) {
     try {
       $state = Get-Content $script:STATE_FILE | ConvertFrom-Json
+      if ($CurrentProfile -and $state.profile -and $CurrentProfile -ne $state.profile) {
+        Write-Log "State file profile ($($state.profile)) doesn't match current profile ($CurrentProfile)" "WARN"
+        return $null
+      }
       return $state.remaining
     } catch {
       return $null
@@ -2520,7 +2525,8 @@ Write-Host " $($script:LANG["disk_checking"])" -ForegroundColor Cyan
 
   # Check for incomplete installation state
   if (-not $noResume) {
-    $savedRemaining = Load-InstallState
+    $currentProfile = if ($script:SELECTED_PROFILES.Count -gt 0) { $script:SELECTED_PROFILES[0] } else { "" }
+    $savedRemaining = Load-InstallState -CurrentProfile $currentProfile
     if ($savedRemaining) {
       if ($resume -or $nonInteractive) {
         Write-Host " $($script:LANG["resuming"])" -ForegroundColor Cyan
