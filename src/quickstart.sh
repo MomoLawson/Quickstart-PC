@@ -109,6 +109,30 @@ load_language_strings() {
         return 0
     fi
     
+    # Try loading from JSON with python3 fallback
+    if [[ -n "$json_file" ]] && command -v python3 &>/dev/null; then
+        while IFS=$'\t' read -r key value; do
+            [[ -z "$key" ]] && continue
+            [[ "$key" == "help_options" ]] && continue
+            local escaped_value
+            printf -v escaped_value '%q' "$value"
+            eval "LANG_$(echo "$key" | tr '[:lower:]' '[:upper:]')=$escaped_value"
+        done < <(python3 -c "
+import json, sys
+data = json.load(open('$json_file'))
+for k, v in data.items():
+    if k != 'help_options':
+        print(f'{k}\t{v}')
+" 2>/dev/null)
+        LANG_HELP_OPTIONS=$(python3 -c "
+import json
+data = json.load(open('$json_file'))
+print(data.get('help_options', ''))
+" 2>/dev/null)
+        loaded=true
+        return 0
+    fi
+    
     # Fallback: try .sh files if JSON loading failed or jq not available
     if [[ "$loaded" == "false" ]]; then
         local lang_file=""

@@ -1,4 +1,4 @@
-## v1.0.0-beta2-build4
+## v1.0.0-beta2-build5
 
 ### 🐛 Bug Fixes
-- Add jq fallback for self_update and auto_check_update (use grep/sed when jq unavailable)
+- Add python3 fallback for language loading when jq is unavailable
