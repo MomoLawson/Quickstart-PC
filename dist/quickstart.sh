@@ -172,7 +172,7 @@ print(data.get('help_options', ''))
     fi
     
     # Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v1.0.0-beta2-build7"
+    LANG_BANNER_TITLE="Quickstart-PC v1.0.0-beta2-build8"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -331,8 +331,8 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="1.0.0-beta2-build7"
-if [[ "$VERSION" == "1.0.0-beta2-build7" ]]; then
+VERSION="1.0.0-beta2-build8"
+if [[ "$VERSION" == "1.0.0-beta2-build8" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')
@@ -2070,7 +2070,8 @@ install_batch() {
         pkg_name=$(echo "$cmd" | sed 's/sudo apt install[^ ]* //' | awk '{print $1}')
         ;;
       brew)
-        pkg_name=$(echo "$cmd" | awk '{print $NF}')
+        # Extract package name: remove 'brew install' and any flags/options
+        pkg_name=$(echo "$cmd" | sed 's/brew install//' | sed 's/--[^ ]*//g' | awk '{print $1}')
         ;;
       winget)
         pkg_name=$(echo "$cmd" | sed 's/winget install //' | awk '{print $1}')

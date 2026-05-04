@@ -2070,7 +2070,8 @@ install_batch() {
         pkg_name=$(echo "$cmd" | sed 's/sudo apt install[^ ]* //' | awk '{print $1}')
         ;;
       brew)
-        pkg_name=$(echo "$cmd" | awk '{print $NF}')
+        # Extract package name: remove 'brew install' and any flags/options
+        pkg_name=$(echo "$cmd" | sed 's/brew install//' | sed 's/--[^ ]*//g' | awk '{print $1}')
         ;;
       winget)
         pkg_name=$(echo "$cmd" | sed 's/winget install //' | awk '{print $1}')
