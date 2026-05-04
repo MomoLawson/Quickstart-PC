@@ -1,4 +1,4 @@
-## v1.0.0-beta2-build17
+## v1.0.0-beta2-build18
 
 ### 🐛 Bug Fixes
-- Fix temp file accumulation on abnormal exit: clean stale `AUTO_CHECK_FILE` at startup; make fallback path unique with `$RANDOM` to avoid PID reuse collisions
+- Fix install hang and double Ctrl+C: remove `|| true` in `install_software`/`install_batch` so exit code and SIGINT propagate correctly; show brew batch install output in real-time so user sees progress

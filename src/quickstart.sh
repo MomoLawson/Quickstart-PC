@@ -1978,10 +1978,14 @@ install_software() {
   fi
 
   log_to_file "[STEP] $LANG_INSTALLING: $key"
-  local error_output=""
-  error_output=$(eval "$cmd" 2>&1) || true
+  local error_output
+  error_output=$(eval "$cmd" 2>&1)
   local exit_code=$?
-  if [[ $exit_code -eq 0 ]]; then
+  if [[ $exit_code -eq 130 ]]; then
+    log_to_file "[FAIL] $key interrupted by user"
+    INSTALL_LAST_ERROR=""
+    exit 130
+  elif [[ $exit_code -eq 0 ]]; then
     log_to_file "[SUCCESS] $key $LANG_INSTALL_SUCCESS"
     INSTALL_LAST_ERROR=""
     return 0
@@ -1994,17 +1998,17 @@ install_software() {
         log_warn "$LANG_NETWORK_TIMEOUT"
         log_warn "$LANG_CHECK_NETWORK"
         ;;
-  *"Connection refused"*|*"Network is unreachable"*|*"No route to host"*|*"接続を拒否"*|*"연결 거부"*|*"connexion refusée"*|*"Verbindung verweigert"*)
-      log_warn "$(printf "$LANG_NETWORK_ERROR" "$(echo "$INSTALL_LAST_ERROR" | head -1)")"
-      log_warn "$LANG_CHECK_NETWORK"
-      ;;
-  *"Permission denied"*|*"not allowed"*|*"Operation not permitted"*|*"EACCES"*|*"権限がありません"*|*"권한이 없습니다"*|*"Berechtigung verweigert"*|*"Permission refusée"*|*"تم رفض الإذن"*|*"Permissão negada"*|*"Permesso negato"*|*"权限不足"*|*"權限不足"*)
-      log_warn "$(printf "$LANG_PERMISSION_DENIED" "$(echo "$INSTALL_LAST_ERROR" | head -1)")"
-      log_warn "$LANG_PERMISSION_SUGGESTION"
-      ;;
-  esac
-  return 1
-fi
+      *"Connection refused"*|*"Network is unreachable"*|*"No route to host"*|*"接続を拒否"*|*"연결 거부"*|*"connexion refusée"*|*"Verbindung verweigert"*)
+        log_warn "$(printf "$LANG_NETWORK_ERROR" "$(echo "$INSTALL_LAST_ERROR" | head -1)")"
+        log_warn "$LANG_CHECK_NETWORK"
+        ;;
+      *"Permission denied"*|*"not allowed"*|*"Operation not permitted"*|*"EACCES"*|*"権限がありません"*|*"권한이 없습니다"*|*"Berechtigung verweigert"*|*"Permission refusée"*|*"تم رفض الإذن"*|*"Permissão negada"*|*"Permesso negato"*|*"权限不足"*|*"權限不足"*)
+        log_warn "$(printf "$LANG_PERMISSION_DENIED" "$(echo "$INSTALL_LAST_ERROR" | head -1)")"
+        log_warn "$LANG_PERMISSION_SUGGESTION"
+        ;;
+    esac
+    return 1
+  fi
 }
 
 install_batch() {
@@ -2087,11 +2091,13 @@ install_batch() {
       ;;
   esac
 
-  local error_output
-  error_output=$(eval "$batch_cmd" 2>&1) || true
+  # Show install output in real-time so user sees progress
+  eval "$batch_cmd"
   local exit_code=$?
 
-  if [[ $exit_code -eq 0 ]]; then
+  if [[ $exit_code -eq 130 ]]; then
+    exit 130
+  elif [[ $exit_code -eq 0 ]]; then
     log_info "$(printf "$LANG_BATCH_SUCCESS" "${#packages[@]}" "${#packages[@]}")"
     for key in "${software_keys[@]}"; do
       install_succeeded+=("$key")
