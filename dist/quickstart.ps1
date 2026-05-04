@@ -42,8 +42,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "1.0.0-beta1-build8"
-if ($VERSION -eq "1.0.0-beta1-build8") {
+$VERSION = "1.0.0-beta1-build9"
+if ($VERSION -eq "1.0.0-beta1-build9") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
@@ -171,6 +171,16 @@ function Exit-AlternateScreen {
     try { [Console]::Write("`e[?1049l") } catch {}
 }
 
+function Read-KeySafe {
+    param([bool]$Intercept = $true)
+    if ([Console]::IsInputRedirected -or $script:NON_INTERACTIVE) {
+        # In non-interactive mode, wait for Enter key from stdin
+        $null = [Console]::ReadLine()
+        return [PSCustomObject]@{ Key = [ConsoleKey]::Enter; Modifiers = [ConsoleModifiers]::None; VirtualKeyCode = 13 }
+    }
+    return [Console]::ReadKey($Intercept)
+}
+
 # ============================================
 # Language Detection Functions
 # ============================================
@@ -209,7 +219,7 @@ function Select-Language {
                 Write-Host ""
                 Write-Host "  [↑↓] Select  [Enter] Confirm" -ForegroundColor DarkGray -NoNewline
 
-                $key = [Console]::ReadKey($true)
+                $key = Read-KeySafe -Intercept $true
                 switch ($key.Key) {
                     UpArrow { $cursor--; if ($cursor -lt 0) { $cursor = $numLangs - 1 } }
                     DownArrow { $cursor++; if ($cursor -ge $numLangs) { $cursor = 0 } }
@@ -777,7 +787,7 @@ function Select-Continue {
             Write-Host ""
         }
         
-        $key = [Console]::ReadKey($true)
+        $key = Read-KeySafe -Intercept $true
         switch ($key.Key) {
             "UpArrow" { $cursor = [Math]::Max(0, $cursor - 1) }
             "DownArrow" { $cursor = [Math]::Min($options.Count - 1, $cursor + 1) }
@@ -1915,7 +1925,7 @@ function Show-ProfileMenu {
 
     $running = $true
     while ($running) {
-        $key = [Console]::ReadKey($true)
+        $key = Read-KeySafe -Intercept $true
 
         if ($key.Key -eq [ConsoleKey]::U -and ($key.Modifiers -band [ConsoleModifiers]::Control)) {
             if (Invoke-CtrlUUpdate) { continue }
@@ -2070,7 +2080,7 @@ Draw-SoftwareMenu -CursorPos $cursor -SelectedCount (Get-SelectedCount)
 
 $running = $true
 while ($running) {
-$key = [Console]::ReadKey($true)
+$key = Read-KeySafe -Intercept $true
 
 if ($key.Key -eq [ConsoleKey]::U -and ($key.Modifiers -band [ConsoleModifiers]::Control)) {
     if (Invoke-CtrlUUpdate) { continue }
@@ -2245,6 +2255,7 @@ if ($validate) {
         }
     }
     Start-AutoCheckUpdate
+    $script:NON_INTERACTIVE = $nonInteractive
     if (-not $nonInteractive) {
         try {
             if ($null -eq $Host.UI.RawUI -or [Console]::IsOutputRedirected) {

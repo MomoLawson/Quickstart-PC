@@ -1,7 +1,5 @@
-## v1.0.0-beta1-build8
+## v1.0.0-beta1-build9
 
 ### 🐛 Bug Fixes
-- Fix Show-Doctor for Windows: remove Unix commands (grep, cut, df)
-- Fix Get-CurrentOS property access
-- Fix PowerShell 5.1 compatibility (replace ?? operator)
-- Fix Test-DiskSpace to use Get-PSDrive on all platforms
+- Add Read-KeySafe wrapper for non-interactive environments
+- Initialize $script:NON_INTERACTIVE from parameter
