@@ -1,4 +1,4 @@
-## v1.0.0-beta2-build10
+## v1.0.0-beta2-build11
 
 ### 🐛 Bug Fixes
-- Fix version fallback check: use `__VERSION__` placeholder instead of hardcoded `0.88.1`
+- Fix duplicate update success message on Ctrl+U

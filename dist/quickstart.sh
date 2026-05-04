@@ -304,8 +304,8 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="1.0.0-beta2-build10"
-if [[ "$VERSION" == "1.0.0-beta2-build10" ]]; then
+VERSION="1.0.0-beta2-build11"
+if [[ "$VERSION" == "1.0.0-beta2-build11" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')
@@ -2226,7 +2226,6 @@ handle_ctrl_u() {
     self_update true
     local result=$?
     if [[ $result -eq 0 ]]; then
-        log_info "$LANG_UPDATE_SUCCESS"
         log_info "请重新运行脚本"
     fi
     exit $result

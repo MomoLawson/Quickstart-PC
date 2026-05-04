@@ -2226,7 +2226,6 @@ handle_ctrl_u() {
     self_update true
     local result=$?
     if [[ $result -eq 0 ]]; then
-        log_info "$LANG_UPDATE_SUCCESS"
         log_info "请重新运行脚本"
     fi
     exit $result
