@@ -304,8 +304,8 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="1.0.0-beta2-build11"
-if [[ "$VERSION" == "1.0.0-beta2-build11" ]]; then
+VERSION="1.0.0-beta2-build12"
+if [[ "$VERSION" == "1.0.0-beta2-build12" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')
@@ -2099,8 +2099,8 @@ check_update() {
   local latest_version
   latest_version=$(curl -fsSL --connect-timeout 5 --max-time 10 \
     -H "Accept: application/vnd.github+json" \
-    "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases/latest" \
-    2>/dev/null | jq -r '.tag_name // empty')
+    "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases?per_page=1" \
+    2>/dev/null | jq -r '.[0].tag_name // empty')
   latest_version="${latest_version#v}"
 
   if [[ -z "$latest_version" ]]; then
@@ -2123,8 +2123,8 @@ self_update() {
   local latest_version
   latest_version=$(curl -fsSL --connect-timeout 5 --max-time 10 \
     -H "Accept: application/vnd.github+json" \
-    "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases/latest" \
-    2>/dev/null | jq -r '.tag_name // empty')
+    "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases?per_page=1" \
+    2>/dev/null | jq -r '.[0].tag_name // empty')
   latest_version="${latest_version#v}"
 
   if [[ -z "$latest_version" ]]; then
@@ -2185,8 +2185,8 @@ auto_check_update() {
         local latest
         latest=$(curl -fsSL --connect-timeout 5 --max-time 10 \
             -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases/latest" \
-            2>/dev/null | jq -r '.tag_name // empty')
+            "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases?per_page=1" \
+            2>/dev/null | jq -r '.[0].tag_name // empty')
         latest="${latest#v}"
         if [[ -n "$latest" && "$VERSION" != "$latest" ]]; then
             echo "$latest" > "$AUTO_CHECK_FILE"
@@ -2248,6 +2248,13 @@ main() {
 
 	trap 'exit_code=$?; [[ -n "$AUTO_CHECK_PID" ]] && kill "$AUTO_CHECK_PID" 2>/dev/null || true; set_title ""; stty echo 2>/dev/null; if [[ "$IN_ALT_SCREEN" == "1" ]]; then printf "\e[?1049l" 2>/dev/null || true; fi; tput cnorm 2>/dev/null || true; rm -f "$CONFIG_FILE" 2>/dev/null; rm -f "$AUTO_CHECK_FILE" 2>/dev/null; if [[ "$exit_code" -eq 0 || "$exit_code" -eq 130 ]]; then echo "$LANG_BYE"; fi' EXIT
     auto_check_update
+    # 等待后台更新检查完成（最多 3 秒），确保首次菜单就显示更新提示
+    local wait_seconds=0
+    while [[ -n "$AUTO_CHECK_PID" ]] && kill -0 "$AUTO_CHECK_PID" 2>/dev/null && [[ $wait_seconds -lt 3 ]]; do
+        sleep 0.5
+        wait_seconds=$((wait_seconds + 1))
+    done
+    check_auto_update_result
     
     while true; do
         clear
