@@ -1080,9 +1080,11 @@ check_disk_space() {
   local os_name=$(uname -s)
 
   if [[ "$os_name" == "Darwin" ]]; then
+    # macOS: df -g outputs in GB blocks
     available_gb=$(df -g / 2>/dev/null | tail -1 | awk '{print $4}')
   else
-    available_gb=$(df -BG / 2>/dev/null | tail -1 | awk '{print $4}' | tr -d 'G')
+    # Linux: df -BG outputs in GB blocks, use -P for POSIX format
+    available_gb=$(df -BG -P / 2>/dev/null | tail -1 | awk '{print $4}' | tr -d 'G')
   fi
 
   if [[ -z "$available_gb" ]]; then

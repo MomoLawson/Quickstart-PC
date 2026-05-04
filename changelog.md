@@ -1,4 +1,4 @@
-## v1.0.0-beta1-build18
+## v1.0.0-beta2-build1
 
 ### 🐛 Bug Fixes
-- Add profile check to load_install_state/Load-InstallState to prevent resuming wrong profile
+- Fix check_disk_space to use POSIX format (-P) for consistent df output parsing
