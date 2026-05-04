@@ -728,7 +728,7 @@ function Install-Software {
     
     if (-not $cmd) {
         Write-Log "$($script:LANG['platform_not_supported']): $Key" "WARN"
-        return 1
+        return $false
     }
     
     if ($dryRun) {
@@ -736,7 +736,7 @@ function Install-Software {
         Write-Log "[CMD] $cmd" "FILE"
         Start-Sleep -Seconds 1
         Write-Log "[SUCCESS] $Key $($script:LANG['install_success']) (simulated)" "FILE"
-        return 0
+        return $true
     }
     
     Write-Log "[STEP] $($script:LANG['installing']): $Key" "FILE"
@@ -746,16 +746,16 @@ function Install-Software {
         if ($LASTEXITCODE -eq 0) {
             Write-Log "[SUCCESS] $Key $($script:LANG['install_success'])" "FILE"
             $script:INSTALL_LAST_ERROR = ""
-            return 0
+            return $true
         } else {
             Write-Log "[FAIL] $Key $($script:LANG['install_failed']) (exit $LASTEXITCODE): $errorOutput" "FILE"
             $script:INSTALL_LAST_ERROR = $errorOutput
-            return 1
+            return $false
         }
     } catch {
         Write-Log "[FAIL] $Key $($script:LANG['install_failed']): $($_.Exception.Message)" "FILE"
         $script:INSTALL_LAST_ERROR = $_.Exception.Message
-        return 1
+        return $false
     }
 }
 
