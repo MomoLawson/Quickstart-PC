@@ -1719,8 +1719,11 @@ show_profile_menu() {
     draw_menu
     
     while true; do
+        # Save cursor position and move up to redraw menu
+        printf "\033[s"  # Save cursor position
         tput cuu $num_profiles 2>/dev/null || true
         draw_menu
+        printf "\033[u"  # Restore cursor position
         
         local key
         IFS= read -rsn1 key < /dev/tty
@@ -1878,8 +1881,11 @@ for k, v in data['software'].items():
   draw_menu
 
   while [[ "$running" == "true" ]]; do
+    # Save cursor position and move up to redraw menu
+    printf "\033[s"  # Save cursor position
     tput cuu $num_items 2>/dev/null || true
     draw_menu
+    printf "\033[u"  # Restore cursor position
 
     local key=""
     IFS= read -rsn1 key < /dev/tty

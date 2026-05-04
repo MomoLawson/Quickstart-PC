@@ -1,4 +1,4 @@
-## v1.0.0-beta2-build1
+## v1.0.0-beta2-build3
 
 ### 🐛 Bug Fixes
-- Fix check_disk_space to use POSIX format (-P) for consistent df output parsing
+- Use ANSI save/restore cursor position for menu redrawing to prevent display corruption
