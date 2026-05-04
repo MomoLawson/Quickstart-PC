@@ -42,8 +42,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "1.0.0-beta1-build11"
-if ($VERSION -eq "1.0.0-beta1-build11") {
+$VERSION = "1.0.0-beta1-build12"
+if ($VERSION -eq "1.0.0-beta1-build12") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
@@ -1667,7 +1667,8 @@ function Test-DiskSpace {
   param([int]$MinGB = 5)
   try {
     $tempPath = if ($env:TEMP) { $env:TEMP } elseif ($env:TMPDIR) { $env:TMPDIR } else { "/tmp" }
-    if ($script:OS -eq "windows") {
+    $osName = Get-CurrentOS
+    if ($osName -eq "windows") {
       $driveLetter = Split-Path $tempPath -Qualifier
       $disk = Get-PSDrive -Name ($driveLetter -replace ':', '') -ErrorAction Stop
       $availableGB = [math]::Round($disk.Free / 1GB)
