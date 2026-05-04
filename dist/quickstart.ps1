@@ -42,8 +42,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "1.0.0-beta1-build4"
-if ($VERSION -eq "1.0.0-beta1-build4") {
+$VERSION = "1.0.0-beta1-build5"
+if ($VERSION -eq "1.0.0-beta1-build5") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
@@ -2521,6 +2521,8 @@ Write-Header $script:LANG["start_installing"]
 $script:toInstall = $toInstall
 $total = $toInstall.Count
 $current = 0
+$script:current = 0
+$script:total = $total
 $script:installedList = @()
 $script:failedList = @()
 $script:installDetails = @()

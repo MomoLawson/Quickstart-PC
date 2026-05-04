@@ -2521,6 +2521,8 @@ Write-Header $script:LANG["start_installing"]
 $script:toInstall = $toInstall
 $total = $toInstall.Count
 $current = 0
+$script:current = 0
+$script:total = $total
 $script:installedList = @()
 $script:failedList = @()
 $script:installDetails = @()

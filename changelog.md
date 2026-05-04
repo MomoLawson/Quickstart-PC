@@ -1,4 +1,4 @@
-## v1.0.0-beta1-build4
+## v1.0.0-beta1-build5
 
 ### 🐛 Bug Fixes
-- Fix undefined $h variable - replace with $script:LANG
+- Initialize $script:current and $script:total for batch installation progress
