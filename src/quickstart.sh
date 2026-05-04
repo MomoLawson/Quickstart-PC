@@ -99,36 +99,9 @@ load_language_strings() {
         while IFS=$'\t' read -r key value; do
             [[ -z "$key" ]] && continue
             [[ "$key" == "help_options" ]] && continue
-            # Use printf %q to safely escape special characters
-            local escaped_value
-            printf -v escaped_value '%q' "$value"
-            eval "LANG_$(echo "$key" | tr '[:lower:]' '[:upper:]')=$escaped_value"
+            eval "LANG_$(echo "$key" | tr '[:lower:]' '[:upper:]')=\"\$value\""
         done < <(jq -r 'to_entries[] | select(.key != "help_options") | "\(.key)\t\(.value)"' "$json_file" 2>/dev/null)
         LANG_HELP_OPTIONS=$(jq -r '.help_options // empty' "$json_file" 2>/dev/null)
-        loaded=true
-        return 0
-    fi
-    
-    # Try loading from JSON with python3 fallback
-    if [[ -n "$json_file" ]] && command -v python3 &>/dev/null; then
-        while IFS=$'\t' read -r key value; do
-            [[ -z "$key" ]] && continue
-            [[ "$key" == "help_options" ]] && continue
-            local escaped_value
-            printf -v escaped_value '%q' "$value"
-            eval "LANG_$(echo "$key" | tr '[:lower:]' '[:upper:]')=$escaped_value"
-        done < <(python3 -c "
-import json, sys
-data = json.load(open('$json_file'))
-for k, v in data.items():
-    if k != 'help_options':
-        print(f'{k}\t{v}')
-" 2>/dev/null)
-        LANG_HELP_OPTIONS=$(python3 -c "
-import json
-data = json.load(open('$json_file'))
-print(data.get('help_options', ''))
-" 2>/dev/null)
         loaded=true
         return 0
     fi
@@ -172,7 +145,7 @@ print(data.get('help_options', ''))
     fi
     
     # Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v__VERSION__"
+    LANG_BANNER_TITLE="Quickstart-PC v0.88.1"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -331,8 +304,8 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="__VERSION__"
-if [[ "$VERSION" == "__VERSION__" ]]; then
+VERSION="0.88.1"
+if [[ "$VERSION" == "0.88.1" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')
@@ -1104,11 +1077,9 @@ check_disk_space() {
   local os_name=$(uname -s)
 
   if [[ "$os_name" == "Darwin" ]]; then
-    # macOS: df -g outputs in GB blocks
     available_gb=$(df -g / 2>/dev/null | tail -1 | awk '{print $4}')
   else
-    # Linux: df -BG outputs in GB blocks, use -P for POSIX format
-    available_gb=$(df -BG -P / 2>/dev/null | tail -1 | awk '{print $4}' | tr -d 'G')
+    available_gb=$(df -BG / 2>/dev/null | tail -1 | awk '{print $4}' | tr -d 'G')
   fi
 
   if [[ -z "$available_gb" ]]; then
@@ -1147,7 +1118,7 @@ save_install_state() {
   failed_json=$(printf '%s\n' "${install_failed[@]}" | jq -R . | jq -s .)
 
   jq -n \
-    --arg profile "${SELECTED_PROFILES[0]}" \
+    --arg profile "$SELECTED_PROFILE" \
     --argjson total "${#to_install[@]}" \
     --argjson remaining "$remaining_json" \
     --argjson installed "$installed_json" \
@@ -1160,14 +1131,7 @@ save_install_state() {
 
 load_install_state() {
   local state_file="$STATE_FILE"
-  local current_profile="$1"
   if [[ -f "$state_file" ]]; then
-    local saved_profile
-    saved_profile=$(jq -r '.profile // empty' "$state_file" 2>/dev/null)
-    if [[ -n "$current_profile" && -n "$saved_profile" && "$current_profile" != "$saved_profile" ]]; then
-      log_warn "State file profile ($saved_profile) doesn't match current profile ($current_profile)"
-      return 1
-    fi
     local remaining
     remaining=$(jq -r '.remaining[]' "$state_file" 2>/dev/null)
     echo "$remaining"
@@ -1193,14 +1157,7 @@ run_hook() {
     return 0
   fi
   log_info "$(printf "$LANG_HOOK_RUNNING" "$hook_type")"
-  if [[ -f "$hook_script" ]]; then
-    # It's a file path
-    bash "$hook_script" 2>&1
-  else
-    # It's a command string
-    bash -c "$hook_script" 2>&1
-  fi
-  if [[ $? -eq 0 ]]; then
+  if bash "$hook_script" 2>&1; then
     log_info "$LANG_HOOK_SUCCESS"
   else
     log_warn "$(printf "$LANG_HOOK_FAILED" "$hook_type")"
@@ -1750,11 +1707,8 @@ show_profile_menu() {
     draw_menu
     
     while true; do
-        # Save cursor position and move up to redraw menu
-        printf "\033[s"  # Save cursor position
         tput cuu $num_profiles 2>/dev/null || true
         draw_menu
-        printf "\033[u"  # Restore cursor position
         
         local key
         IFS= read -rsn1 key < /dev/tty
@@ -1912,11 +1866,8 @@ for k, v in data['software'].items():
   draw_menu
 
   while [[ "$running" == "true" ]]; do
-    # Save cursor position and move up to redraw menu
-    printf "\033[s"  # Save cursor position
     tput cuu $num_items 2>/dev/null || true
     draw_menu
-    printf "\033[u"  # Restore cursor position
 
     local key=""
     IFS= read -rsn1 key < /dev/tty
@@ -2070,8 +2021,7 @@ install_batch() {
         pkg_name=$(echo "$cmd" | sed 's/sudo apt install[^ ]* //' | awk '{print $1}')
         ;;
       brew)
-        # Extract package name: remove 'brew install' and any flags/options
-        pkg_name=$(echo "$cmd" | sed 's/brew install//' | sed 's/--[^ ]*//g' | awk '{print $1}')
+        pkg_name=$(echo "$cmd" | awk '{print $NF}')
         ;;
       winget)
         pkg_name=$(echo "$cmd" | sed 's/winget install //' | awk '{print $1}')
@@ -2168,25 +2118,13 @@ check_update() {
 }
 
 self_update() {
+  local skip_confirm="${1:-false}"
   local current_version="$VERSION"
   local latest_version
-  local api_response
-  api_response=$(curl -fsSL --connect-timeout 5 --max-time 10 \
+  latest_version=$(curl -fsSL --connect-timeout 5 --max-time 10 \
     -H "Accept: application/vnd.github+json" \
     "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases/latest" \
-    2>/dev/null)
-  
-  if [[ -z "$api_response" ]]; then
-    log_warn "$(printf "$LANG_UPDATE_FAILED" "GitHub API error")"
-    return 1
-  fi
-  
-  # Parse tag_name with jq fallback to grep/sed
-  if command -v jq &>/dev/null; then
-    latest_version=$(echo "$api_response" | jq -r '.tag_name // empty')
-  else
-    latest_version=$(echo "$api_response" | grep -o '"tag_name":"[^"]*"' | head -1 | sed 's/"tag_name":"//;s/"//')
-  fi
+    2>/dev/null | jq -r '.tag_name // empty')
   latest_version="${latest_version#v}"
 
   if [[ -z "$latest_version" ]]; then
@@ -2201,7 +2139,7 @@ self_update() {
 
   log_info "$(printf "$LANG_UPDATE_AVAILABLE" "$latest_version" "$current_version")"
 
-  if [[ "$NON_INTERACTIVE" != "true" && "$AUTO_YES" != "true" ]]; then
+  if [[ "$skip_confirm" != "true" && "$NON_INTERACTIVE" != "true" && "$AUTO_YES" != "true" ]]; then
 	printf " %s " "$LANG_UPDATE_PROMPT"
 	local update_answer
 	IFS= read -r update_answer < /dev/tty
@@ -2244,20 +2182,11 @@ auto_check_update() {
     if is_one_liner; then return; fi
     AUTO_CHECK_FILE=$(mktemp 2>/dev/null || echo "/tmp/qs-update-$$.tmp")
     (
-        local api_response
-        api_response=$(curl -fsSL --connect-timeout 5 --max-time 10 \
+        local latest
+        latest=$(curl -fsSL --connect-timeout 5 --max-time 10 \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases/latest" \
-            2>/dev/null)
-        
-        if [[ -z "$api_response" ]]; then return; fi
-        
-        local latest
-        if command -v jq &>/dev/null; then
-            latest=$(echo "$api_response" | jq -r '.tag_name // empty')
-        else
-            latest=$(echo "$api_response" | grep -o '"tag_name":"[^"]*"' | head -1 | sed 's/"tag_name":"//;s/"//')
-        fi
+            2>/dev/null | jq -r '.tag_name // empty')
         latest="${latest#v}"
         if [[ -n "$latest" && "$VERSION" != "$latest" ]]; then
             echo "$latest" > "$AUTO_CHECK_FILE"
@@ -2289,9 +2218,18 @@ handle_ctrl_u() {
     [[ -z "$AUTO_UPDATE_LATEST" ]] && return 1
     tput cnorm 2>/dev/null || true
     stty echo 2>/dev/null || true
+    if [[ "$IN_ALT_SCREEN" == "1" ]]; then
+        printf "\e[?1049l" 2>/dev/null || true
+        IN_ALT_SCREEN=0
+    fi
     echo ""
-    self_update
-    exit $?
+    self_update true
+    local result=$?
+    if [[ $result -eq 0 ]]; then
+        log_info "$LANG_UPDATE_SUCCESS"
+        log_info "请重新运行脚本"
+    fi
+    exit $result
 }
 
 main() {
@@ -2663,7 +2601,7 @@ log_info "$LANG_DISK_CHECKING"
   # Check for incomplete installation state
   if [[ "$RESUME_MODE" != "no" ]]; then
     local saved_remaining
-    saved_remaining=$(load_install_state "${SELECTED_PROFILES[0]}")
+    saved_remaining=$(load_install_state)
     if [[ -n "$saved_remaining" ]]; then
       if [[ "$RESUME_MODE" == "yes" || "$NON_INTERACTIVE" == "true" ]]; then
         log_info "$LANG_RESUMING"
@@ -2810,7 +2748,6 @@ if [[ ${#to_install[@]} -gt 0 ]]; then
         save_install_state
       else
         install_batch "$CONFIG_FILE" "$os" "$manager" "${keys[@]}"
-        install_current=$((install_current + ${#keys[@]}))
         for sw in "${keys[@]}"; do
           run_hook "pre_software"
           run_hook "post_software"
