@@ -61,8 +61,8 @@ LANG_KEYS=("en-US" "zh-CN" "zh-Hant" "ja" "ko" "de" "fr" "ar" "pt" "it")
 LANG_NAMES=("English" "简体中文" "繁體中文" "日本語" "한국어" "Deutsch" "Français" "العربية" "Português" "Italiano")
 
 # Language code mappings (parallel arrays)
-MAP_FROM=("en" "en-US" "en_GB" "zh" "zh-CN" "zh_CN" "zh-TW" "zh-Hant" "zh-HK" "zh_TW" "ja" "ja-JP" "ja_JP" "ko" "ko-KR" "ko_KR" "de" "de-DE" "de_AT" "de_CH" "fr" "fr-FR" "fr_CA" "fr_BE" "ar" "ar-SA" "ar-AE" "ar-EG" "pt" "pt-BR" "pt-PT" "it" "it-IT" "it_CH")
-MAP_TO=("en-US" "en-US" "en-US" "zh-CN" "zh-CN" "zh-CN" "zh-Hant" "zh-Hant" "zh-Hant" "zh-Hant" "ja" "ja" "ja" "ko" "ko" "ko" "de" "de" "de" "de" "fr" "fr" "fr" "fr" "ar" "ar" "ar" "ar" "pt" "pt" "pt" "it" "it" "it")
+MAP_FROM=("en" "en-US" "en_GB" "zh" "zh-CN" "zh_CN" "zh-Hans" "zh-Hans-CN" "zh-Hans-HK" "zh-TW" "zh-Hant" "zh-Hant-TW" "zh-Hant-HK" "zh-HK" "zh_TW" "ja" "ja-JP" "ja_JP" "ko" "ko-KR" "ko_KR" "de" "de-DE" "de_AT" "de_CH" "fr" "fr-FR" "fr_CA" "fr_BE" "ar" "ar-SA" "ar-AE" "ar-EG" "pt" "pt-BR" "pt-PT" "it" "it-IT" "it_CH")
+MAP_TO=("en-US" "en-US" "en-US" "zh-CN" "zh-CN" "zh-CN" "zh-CN" "zh-CN" "zh-CN" "zh-Hant" "zh-Hant" "zh-Hant" "zh-Hant" "zh-Hant" "zh-Hant" "ja" "ja" "ja" "ko" "ko" "ko" "de" "de" "de" "de" "fr" "fr" "fr" "fr" "ar" "ar" "ar" "ar" "pt" "pt" "pt" "it" "it" "it")
 
 lang_lookup() {
     local key="$1"
@@ -462,12 +462,23 @@ detect_system_language() {
     
     # 4. Try to detect from system locale (macOS)
     if [[ "$(uname -s)" == "Darwin" ]]; then
-        local system_lang=$(defaults read -g AppleLanguages 2>/dev/null | head -1 | tr -d ' "\n' | cut -c1-5)
+        local system_lang
+        system_lang=$(defaults read -g AppleLanguages 2>/dev/null \
+            | awk 'NR==2{gsub(/^[[:space:]]+|[",[:space:]]+$/,"",$0); print; exit}')
         if [[ -n "$system_lang" ]]; then
             local mapped="$(lang_lookup "$system_lang")"
             if [[ -n "$mapped" ]]; then
                 echo "$mapped"
                 return
+            fi
+            # Fallback: try extracting just the language prefix (e.g. "zh-Hans" from "zh-Hans-CN")
+            local prefix="${system_lang%%-*}"
+            if [[ "$prefix" != "$system_lang" ]]; then
+                mapped="$(lang_lookup "$prefix")"
+                if [[ -n "$mapped" ]]; then
+                    echo "$mapped"
+                    return
+                fi
             fi
         fi
     fi

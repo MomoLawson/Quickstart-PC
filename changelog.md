@@ -1,4 +1,6 @@
-## v1.0.0-beta2-build14
+## v1.0.0-beta2-build15
 
 ### 🐛 Bug Fixes
-- Fix auto_check_update to compare version numerically, not just check difference
+- Fix macOS system language detection: `head -1` was picking `(` instead of the actual language code; `cut -c1-5` truncated codes like `zh-Hans-CN`
+- Add `zh-Hans`/`zh-Hans-CN`/`zh-Hant-TW` etc. to language mapping table
+- Add prefix fallback when exact language code doesn't match (e.g. `zh-Hans-CN` → `zh-Hans` → `zh-CN`)
