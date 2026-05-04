@@ -707,6 +707,85 @@ function Test-SoftwareInstalled {
   }
 }
 
+function Install-Software {
+    param([string]$Path, [string]$OS, [string]$Key)
+    
+    $platform = switch ($OS) {
+        "windows" { "win" }
+        "macos" { "mac" }
+        "linux" {
+            $pkgMgr = Get-PackageManager -OS "linux"
+            switch ($pkgMgr) {
+                "dnf" { "linux_dnf" }
+                "pacman" { "linux_pacman" }
+                default { "linux" }
+            }
+        }
+        default { "" }
+    }
+    
+    $cmd = Get-SoftwareField -Path $Path -Key $Key -Field $platform
+    
+    if (-not $cmd) {
+        Write-Log "$($script:LANG['platform_not_supported']): $Key" "WARN"
+        return 1
+    }
+    
+    if ($dryRun) {
+        Write-Log "[STEP] $($script:LANG['dry_run_installing']): $Key" "FILE"
+        Write-Log "[CMD] $cmd" "FILE"
+        Start-Sleep -Seconds 1
+        Write-Log "[SUCCESS] $Key $($script:LANG['install_success']) (simulated)" "FILE"
+        return 0
+    }
+    
+    Write-Log "[STEP] $($script:LANG['installing']): $Key" "FILE"
+    $errorOutput = ""
+    try {
+        $errorOutput = Invoke-Expression $cmd 2>&1 | Out-String
+        if ($LASTEXITCODE -eq 0) {
+            Write-Log "[SUCCESS] $Key $($script:LANG['install_success'])" "FILE"
+            $script:INSTALL_LAST_ERROR = ""
+            return 0
+        } else {
+            Write-Log "[FAIL] $Key $($script:LANG['install_failed']) (exit $LASTEXITCODE): $errorOutput" "FILE"
+            $script:INSTALL_LAST_ERROR = $errorOutput
+            return 1
+        }
+    } catch {
+        Write-Log "[FAIL] $Key $($script:LANG['install_failed']): $($_.Exception.Message)" "FILE"
+        $script:INSTALL_LAST_ERROR = $_.Exception.Message
+        return 1
+    }
+}
+
+function Select-Continue {
+    param([string]$ContinueText, [string]$ExitText)
+    
+    $options = @($ContinueText, $ExitText)
+    $cursor = 0
+    $startRow = [Console]::CursorTop
+    
+    while ($true) {
+        [Console]::SetCursorPosition(0, $startRow)
+        for ($i = 0; $i -lt $options.Count; $i++) {
+            if ($i -eq $cursor) {
+                Write-Host " > $($options[$i])" -NoNewline -BackgroundColor White -ForegroundColor Black
+            } else {
+                Write-Host "   $($options[$i])" -NoNewline
+            }
+            Write-Host ""
+        }
+        
+        $key = [Console]::ReadKey($true)
+        switch ($key.Key) {
+            "UpArrow" { $cursor = [Math]::Max(0, $cursor - 1) }
+            "DownArrow" { $cursor = [Math]::Min($options.Count - 1, $cursor + 1) }
+            "Enter" { return $cursor }
+        }
+    }
+}
+
 function Install-Batch {
   param([string]$Path, [string]$OS, [string]$Manager, [string[]]$Keys)
 

@@ -1,7 +1,5 @@
-## v0.88.1
-
-### ✨ New Features
-- Add SOCKS5 proxy support (socks5:// protocol)
+## v1.0.0-beta1-build2
 
 ### 🐛 Bug Fixes
-- Update help text to mention http/https/socks5 support
+- Add missing Install-Software function to PS1
+- Add missing Select-Continue function to PS1
