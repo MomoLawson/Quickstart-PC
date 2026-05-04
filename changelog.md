@@ -1,4 +1,4 @@
-## v1.0.0-beta1-build10
+## v1.0.0-beta1-build11
 
 ### 🐛 Bug Fixes
-- Fix Write-Log levels: use STEP/SUCCESS/ERROR instead of FILE
+- Add --accept-package-agreements --accept-source-agreements to batch winget install

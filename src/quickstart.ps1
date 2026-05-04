@@ -861,7 +861,7 @@ function Install-Batch {
   switch ($Manager) {
     "apt" { $batchCmd = "sudo apt install -y $($packages -join ' ')" }
     "brew" { $batchCmd = "brew install $($packages -join ' ')" }
-    "winget" { $batchCmd = "winget install $($packages -join ' ')" }
+    "winget" { $batchCmd = "winget install $($packages -join ' ') --accept-package-agreements --accept-source-agreements" }
     "npm" { $batchCmd = "npm install -g $($packages -join ' ')" }
     "dnf" { $batchCmd = "sudo dnf install -y $($packages -join ' ')" }
     "pacman" { $batchCmd = "sudo pacman -S --noconfirm $($packages -join ' ')" }

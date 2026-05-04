@@ -42,8 +42,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "1.0.0-beta1-build10"
-if ($VERSION -eq "1.0.0-beta1-build10") {
+$VERSION = "1.0.0-beta1-build11"
+if ($VERSION -eq "1.0.0-beta1-build11") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
@@ -861,7 +861,7 @@ function Install-Batch {
   switch ($Manager) {
     "apt" { $batchCmd = "sudo apt install -y $($packages -join ' ')" }
     "brew" { $batchCmd = "brew install $($packages -join ' ')" }
-    "winget" { $batchCmd = "winget install $($packages -join ' ')" }
+    "winget" { $batchCmd = "winget install $($packages -join ' ') --accept-package-agreements --accept-source-agreements" }
     "npm" { $batchCmd = "npm install -g $($packages -join ' ')" }
     "dnf" { $batchCmd = "sudo dnf install -y $($packages -join ' ')" }
     "pacman" { $batchCmd = "sudo pacman -S --noconfirm $($packages -join ' ')" }
