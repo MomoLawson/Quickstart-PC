@@ -304,8 +304,8 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="0.88.1"
-if [[ "$VERSION" == "0.88.1" ]]; then
+VERSION="1.0.0-beta2-build10"
+if [[ "$VERSION" == "1.0.0-beta2-build10" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')
