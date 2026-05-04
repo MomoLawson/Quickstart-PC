@@ -742,28 +742,28 @@ function Install-Software {
     }
     
     if ($dryRun) {
-        Write-Log "[STEP] $($script:LANG['dry_run_installing']): $Key" "FILE"
-        Write-Log "[CMD] $cmd" "FILE"
+        Write-Log "$($script:LANG['dry_run_installing']): $Key" "STEP"
+        Write-Log "CMD: $cmd" "INFO"
         Start-Sleep -Seconds 1
-        Write-Log "[SUCCESS] $Key $($script:LANG['install_success']) (simulated)" "FILE"
+        Write-Log "$Key $($script:LANG['install_success']) (simulated)" "SUCCESS"
         return $true
     }
     
-    Write-Log "[STEP] $($script:LANG['installing']): $Key" "FILE"
+    Write-Log "$($script:LANG['installing']): $Key" "STEP"
     $errorOutput = ""
     try {
         $errorOutput = Invoke-Expression $cmd 2>&1 | Out-String
         if ($LASTEXITCODE -eq 0) {
-            Write-Log "[SUCCESS] $Key $($script:LANG['install_success'])" "FILE"
+            Write-Log "$Key $($script:LANG['install_success'])" "SUCCESS"
             $script:INSTALL_LAST_ERROR = ""
             return $true
         } else {
-            Write-Log "[FAIL] $Key $($script:LANG['install_failed']) (exit $LASTEXITCODE): $errorOutput" "FILE"
+            Write-Log "$Key $($script:LANG['install_failed']) (exit $LASTEXITCODE): $errorOutput" "ERROR"
             $script:INSTALL_LAST_ERROR = $errorOutput
             return $false
         }
     } catch {
-        Write-Log "[FAIL] $Key $($script:LANG['install_failed']): $($_.Exception.Message)" "FILE"
+        Write-Log "$Key $($script:LANG['install_failed']): $($_.Exception.Message)" "ERROR"
         $script:INSTALL_LAST_ERROR = $_.Exception.Message
         return $false
     }
