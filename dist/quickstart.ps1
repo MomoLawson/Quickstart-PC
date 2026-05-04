@@ -42,8 +42,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "1.0.0-beta1-build12"
-if ($VERSION -eq "1.0.0-beta1-build12") {
+$VERSION = "1.0.0-beta1-build13"
+if ($VERSION -eq "1.0.0-beta1-build13") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
@@ -1710,7 +1710,7 @@ function Save-InstallState {
     }
   }
   $state = @{
-    profile = $selectedProfile
+    profile = if ($script:SELECTED_PROFILES.Count -gt 0) { $script:SELECTED_PROFILES[0] } else { "" }
     total = $script:toInstall.Count
     remaining = $remaining
     installed = $script:installedList

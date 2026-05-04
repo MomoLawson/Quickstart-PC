@@ -1,4 +1,4 @@
-## v1.0.0-beta1-build12
+## v1.0.0-beta1-build13
 
 ### 🐛 Bug Fixes
-- Fix Test-DiskSpace to use Get-CurrentOS instead of undefined $script:OS
+- Fix Save-InstallState to use $script:SELECTED_PROFILES[0] instead of undefined $selectedProfile

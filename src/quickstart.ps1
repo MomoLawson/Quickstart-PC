@@ -1710,7 +1710,7 @@ function Save-InstallState {
     }
   }
   $state = @{
-    profile = $selectedProfile
+    profile = if ($script:SELECTED_PROFILES.Count -gt 0) { $script:SELECTED_PROFILES[0] } else { "" }
     total = $script:toInstall.Count
     remaining = $remaining
     installed = $script:installedList
