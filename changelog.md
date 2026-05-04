@@ -1,4 +1,4 @@
-## v1.0.0-beta2-build3
+## v1.0.0-beta2-build4
 
 ### 🐛 Bug Fixes
-- Use ANSI save/restore cursor position for menu redrawing to prevent display corruption
+- Add jq fallback for self_update and auto_check_update (use grep/sed when jq unavailable)

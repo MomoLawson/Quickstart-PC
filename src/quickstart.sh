@@ -2138,10 +2138,23 @@ check_update() {
 self_update() {
   local current_version="$VERSION"
   local latest_version
-  latest_version=$(curl -fsSL --connect-timeout 5 --max-time 10 \
+  local api_response
+  api_response=$(curl -fsSL --connect-timeout 5 --max-time 10 \
     -H "Accept: application/vnd.github+json" \
     "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases/latest" \
-    2>/dev/null | jq -r '.tag_name // empty')
+    2>/dev/null)
+  
+  if [[ -z "$api_response" ]]; then
+    log_warn "$(printf "$LANG_UPDATE_FAILED" "GitHub API error")"
+    return 1
+  fi
+  
+  # Parse tag_name with jq fallback to grep/sed
+  if command -v jq &>/dev/null; then
+    latest_version=$(echo "$api_response" | jq -r '.tag_name // empty')
+  else
+    latest_version=$(echo "$api_response" | grep -o '"tag_name":"[^"]*"' | head -1 | sed 's/"tag_name":"//;s/"//')
+  fi
   latest_version="${latest_version#v}"
 
   if [[ -z "$latest_version" ]]; then
@@ -2199,11 +2212,20 @@ auto_check_update() {
     if is_one_liner; then return; fi
     AUTO_CHECK_FILE=$(mktemp 2>/dev/null || echo "/tmp/qs-update-$$.tmp")
     (
-        local latest
-        latest=$(curl -fsSL --connect-timeout 5 --max-time 10 \
+        local api_response
+        api_response=$(curl -fsSL --connect-timeout 5 --max-time 10 \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases/latest" \
-            2>/dev/null | jq -r '.tag_name // empty')
+            2>/dev/null)
+        
+        if [[ -z "$api_response" ]]; then return; fi
+        
+        local latest
+        if command -v jq &>/dev/null; then
+            latest=$(echo "$api_response" | jq -r '.tag_name // empty')
+        else
+            latest=$(echo "$api_response" | grep -o '"tag_name":"[^"]*"' | head -1 | sed 's/"tag_name":"//;s/"//')
+        fi
         latest="${latest#v}"
         if [[ -n "$latest" && "$VERSION" != "$latest" ]]; then
             echo "$latest" > "$AUTO_CHECK_FILE"
