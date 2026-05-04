@@ -1,5 +1,5 @@
-## v1.0.0-beta2-build12
+## v1.0.0-beta2-build13
 
 ### 🐛 Bug Fixes
-- Fix GitHub API endpoint: use `/releases?per_page=1` instead of `/releases/latest` to include pre-releases
-- Wait up to 3 seconds for background update check to complete before showing menu
+- Fix version comparison for betaX-buildY format (numeric comparison of beta/build numbers)
+- Fix check_update to use same version comparison logic

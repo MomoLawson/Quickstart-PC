@@ -2113,6 +2113,28 @@ check_update() {
     return 0
   fi
 
+  local cur_beta=0 cur_build=0 lat_beta=0 lat_build=0
+  if [[ "$current_version" =~ beta([0-9]+)-build([0-9]+) ]]; then
+    cur_beta=${BASH_REMATCH[1]}
+    cur_build=${BASH_REMATCH[2]}
+  fi
+  if [[ "$latest_version" =~ beta([0-9]+)-build([0-9]+) ]]; then
+    lat_beta=${BASH_REMATCH[1]}
+    lat_build=${BASH_REMATCH[2]}
+  fi
+
+  local newer=false
+  if [[ $lat_beta -gt $cur_beta ]]; then
+    newer=true
+  elif [[ $lat_beta -eq $cur_beta && $lat_build -gt $cur_build ]]; then
+    newer=true
+  fi
+
+  if ! $newer; then
+    log_info "$LANG_UPDATE_LATEST"
+    return 0
+  fi
+
   log_info "$(printf "$LANG_UPDATE_AVAILABLE" "$latest_version" "$current_version")"
   return 2
 }
@@ -2132,7 +2154,35 @@ self_update() {
     return 1
   fi
 
+  if is_one_liner; then
+    log_warn "更新不支持一键运行模式，请下载脚本后重试"
+    return 1
+  fi
+
+  # Compare versions properly accounting for betaX-buildY format
   if [[ "$current_version" == "$latest_version" ]]; then
+    log_info "$LANG_UPDATE_LATEST"
+    return 0
+  fi
+
+  local cur_beta=0 cur_build=0 lat_beta=0 lat_build=0
+  if [[ "$current_version" =~ beta([0-9]+)-build([0-9]+) ]]; then
+    cur_beta=${BASH_REMATCH[1]}
+    cur_build=${BASH_REMATCH[2]}
+  fi
+  if [[ "$latest_version" =~ beta([0-9]+)-build([0-9]+) ]]; then
+    lat_beta=${BASH_REMATCH[1]}
+    lat_build=${BASH_REMATCH[2]}
+  fi
+
+  local newer=false
+  if [[ $lat_beta -gt $cur_beta ]]; then
+    newer=true
+  elif [[ $lat_beta -eq $cur_beta && $lat_build -gt $cur_build ]]; then
+    newer=true
+  fi
+
+  if ! $newer; then
     log_info "$LANG_UPDATE_LATEST"
     return 0
   fi
