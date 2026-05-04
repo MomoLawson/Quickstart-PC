@@ -1,4 +1,4 @@
-## v1.0.0-beta1-build3
+## v1.0.0-beta1-build4
 
 ### 🐛 Bug Fixes
-- Improve language string loading safety with printf %q escaping
+- Fix undefined $h variable - replace with $script:LANG

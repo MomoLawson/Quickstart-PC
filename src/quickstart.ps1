@@ -946,35 +946,35 @@ function Show-Help {
 
 Quickstart-PC - One-click computer setup
 
-$($h["help_usage"])
+$($script:LANG["help_usage"])
 
-$($h["help_lang"])
-  --cfg-path PATH    $($h["help_cfg_path"])
-  --cfg-url URL      $($h["help_cfg_url"])
-  --dev              $($h["help_dev"])
-  --dry-run $($h["help_dry_run"])
-  doctor              $($h["help_doctor"])
-  doctor --fix        $($h["help_fix"])
-  --yes, -y $($h["help_yes"])
-  --verbose          $($h["help_verbose"])
-  --version, -v      $($h["help_version"])
-  --log-file FILE    $($h["help_log_file"])
-  --export-plan FILE $($h["help_export_plan"])
-  --retry-failed $($h["help_retry_failed"])
-  --list-software    $($h["help_list_software"])
-  --show-software ID $($h["help_show_software"])
-  --search KEYWORD   $($h["help_search"])
-  --validate         $($h["help_validate"])
-  --report-json FILE $($h["help_report_json"])
-  --report-txt FILE  $($h["help_report_txt"])
-  --list-profiles    $($h["help_list_profiles"])
-  --show-profile KEY $($h["help_show_profile"])
-  --skip SW          $($h["help_skip"])
-  --only SW          $($h["help_only"])
-  --fail-fast        $($h["help_fail_fast"])
-  --profile NAME     $($h["help_profile"])
-  --non-interactive  $($h["help_non_interactive"])
-  --help             $($h["help_help"])
+$($script:LANG["help_lang"])
+  --cfg-path PATH    $($script:LANG["help_cfg_path"])
+  --cfg-url URL      $($script:LANG["help_cfg_url"])
+  --dev              $($script:LANG["help_dev"])
+  --dry-run $($script:LANG["help_dry_run"])
+  doctor              $($script:LANG["help_doctor"])
+  doctor --fix        $($script:LANG["help_fix"])
+  --yes, -y $($script:LANG["help_yes"])
+  --verbose          $($script:LANG["help_verbose"])
+  --version, -v      $($script:LANG["help_version"])
+  --log-file FILE    $($script:LANG["help_log_file"])
+  --export-plan FILE $($script:LANG["help_export_plan"])
+  --retry-failed $($script:LANG["help_retry_failed"])
+  --list-software    $($script:LANG["help_list_software"])
+  --show-software ID $($script:LANG["help_show_software"])
+  --search KEYWORD   $($script:LANG["help_search"])
+  --validate         $($script:LANG["help_validate"])
+  --report-json FILE $($script:LANG["help_report_json"])
+  --report-txt FILE  $($script:LANG["help_report_txt"])
+  --list-profiles    $($script:LANG["help_list_profiles"])
+  --show-profile KEY $($script:LANG["help_show_profile"])
+  --skip SW          $($script:LANG["help_skip"])
+  --only SW          $($script:LANG["help_only"])
+  --fail-fast        $($script:LANG["help_fail_fast"])
+  --profile NAME     $($script:LANG["help_profile"])
+  --non-interactive  $($script:LANG["help_non_interactive"])
+  --help             $($script:LANG["help_help"])
 
 "@ -ForegroundColor White
     
@@ -1014,15 +1014,15 @@ param([string]$Path, [string]$Url)
         $expectedHash = (Invoke-WebRequestWithProxy -Uri $sha256Url -TimeoutSec 30 -ErrorAction Stop).Content.Trim()
         $actualHash = (Get-FileHash -Path $Path -Algorithm SHA256).Hash.ToLower()
         if ($expectedHash -ne $actualHash) {
-            Write-Log "$($h["config_checksum_mismatch"])" "ERROR"
+            Write-Log "$($script:LANG["config_checksum_mismatch"])" "ERROR"
             Write-Log "  Expected: $expectedHash" "ERROR"
             Write-Log "  Actual:   $actualHash" "ERROR"
             return $false
         }
-        Write-Log "$($h["config_verify_success"])" "INFO"
+        Write-Log "$($script:LANG["config_verify_success"])" "INFO"
         return $true
     } catch {
-        Write-Log "$($h["config_checksum_not_found"]): $sha256Url" "ERROR"
+        Write-Log "$($script:LANG["config_checksum_not_found"]): $sha256Url" "ERROR"
         return $false
     }
 }
@@ -1032,25 +1032,25 @@ function Get-ConfigFile {
     $tempFile = [System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), "quickstart-config-${guid}.json")
     
     if ($cfgUrl) {
-        Write-Log "$($h["using_remote_config"]): $cfgUrl" "INFO"
+        Write-Log "$($script:LANG["using_remote_config"]): $cfgUrl" "INFO"
         try {
             Invoke-WebRequestWithProxy -Uri $cfgUrl -OutFile $tempFile -TimeoutSec 30 -ErrorAction Stop
             if (Test-JsonValid -Path $tempFile) {
                 if ($verifyConfig) {
                     if (-not (Test-ConfigChecksum -Path $tempFile -Url $cfgUrl)) {
-                        Write-Log "$($h["config_verify_failed"])" "ERROR"
+                        Write-Log "$($script:LANG["config_verify_failed"])" "ERROR"
                         Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
                         Exit-Script -Code 1
                     }
                 }
                 return $tempFile
             } else {
-                Write-Log "$($h["config_invalid"]): $cfgUrl" "ERROR"
+                Write-Log "$($script:LANG["config_invalid"]): $cfgUrl" "ERROR"
                 Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
                 Exit-Script -Code 1
             }
         } catch {
-            Write-Log "$($h["config_not_found"]): $cfgUrl" "ERROR"
+            Write-Log "$($script:LANG["config_not_found"]): $cfgUrl" "ERROR"
             Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
             Exit-Script -Code 1
         }
@@ -1059,26 +1059,26 @@ function Get-ConfigFile {
     if ($cfgPath) {
         if (Test-Path $cfgPath) {
             if (Test-JsonValid -Path $cfgPath) {
-                Write-Log "$($h["using_custom_config"]): $cfgPath" "INFO"
+                Write-Log "$($script:LANG["using_custom_config"]): $cfgPath" "INFO"
                 Copy-Item $cfgPath $tempFile -Force
                 return $tempFile
             } else {
-                Write-Log "$($h["config_invalid"]): $cfgPath" "ERROR"
+                Write-Log "$($script:LANG["config_invalid"]): $cfgPath" "ERROR"
                 Exit-Script -Code 1
             }
         } else {
-            Write-Log "$($h["config_not_found"]): $cfgPath" "ERROR"
+            Write-Log "$($script:LANG["config_not_found"]): $cfgPath" "ERROR"
             Exit-Script -Code 1
         }
     }
     
-    Write-Log "$($h["using_default_config"])" "INFO"
+    Write-Log "$($script:LANG["using_default_config"])" "INFO"
     try {
         Invoke-WebRequestWithProxy -Uri $DEFAULT_CFG_URL -OutFile $tempFile -TimeoutSec 30 -ErrorAction Stop
         if (Test-JsonValid -Path $tempFile) {
             if ($verifyConfig) {
                 if (-not (Test-ConfigChecksum -Path $tempFile -Url $DEFAULT_CFG_URL)) {
-                    Write-Log "$($h["config_verify_failed"])" "ERROR"
+                    Write-Log "$($script:LANG["config_verify_failed"])" "ERROR"
                     Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
                     Exit-Script -Code 1
                 }
@@ -1086,12 +1086,12 @@ function Get-ConfigFile {
             return $tempFile
         }
     } catch {
-        Write-Log "$($h["config_not_found"])" "ERROR"
+        Write-Log "$($script:LANG["config_not_found"])" "ERROR"
         Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
         Exit-Script -Code 1
     }
     
-    Write-Log "$($h["config_not_found"])" "ERROR"
+    Write-Log "$($script:LANG["config_not_found"])" "ERROR"
     Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
     Exit-Script -Code 1
 }
@@ -1887,9 +1887,9 @@ function Show-ProfileMenu {
     [Console]::CursorVisible = $false
 
     Write-Host ""
-    Write-Log $h["select_profiles"] "INFO"
+    Write-Log $script:LANG["select_profiles"] "INFO"
     Write-Host ""
-    Write-Host " $($h["navigate"])" -ForegroundColor Cyan
+    Write-Host " $($script:LANG["navigate"])" -ForegroundColor Cyan
     Write-Host ""
 
     $startRow = [Console]::CursorTop
@@ -1960,7 +1960,7 @@ if ($swKeys.Count -eq 0) { return @() }
 
 # Build menu items - back_to_profiles first, then select_all
 $menuKeys = @("back_to_profiles", "select_all")
-$menuNames = @("← $($h["back_to_profiles"])", $h["select_all"])
+$menuNames = @("← $($script:LANG["back_to_profiles"])", $script:LANG["select_all"])
 $checked = @(0, 0)
 $isInstalled = @($false, $false)
 
@@ -1977,7 +1977,7 @@ $installed = Test-SoftwareInstalled -Path $Path -OS $OS -Key $key
 $isInstalled += $installed
 
 if ($installed) {
-$menuNames += "$displayName - $desc $($h["installed"])"
+$menuNames += "$displayName - $desc $($script:LANG["installed"])"
 } else {
 $menuNames += "$displayName - $desc"
 }
@@ -1990,9 +1990,9 @@ $oldCursorVisible = [Console]::CursorVisible
 [Console]::CursorVisible = $false
 
 Write-Host ""
-Write-Log $h["title_select_software"] "INFO"
+Write-Log $script:LANG["title_select_software"] "INFO"
 Write-Host ""
-Write-Host " $($h["custom_space_toggle"]) | $($h["custom_enter_confirm"]) | $($h["custom_a_select_all"])" -ForegroundColor Cyan
+Write-Host " $($script:LANG["custom_space_toggle"]) | $($script:LANG["custom_enter_confirm"]) | $($script:LANG["custom_a_select_all"])" -ForegroundColor Cyan
 Write-Host ""
 
 $startRow = [Console]::CursorTop
@@ -2014,7 +2014,7 @@ Write-Host " $itemText" -NoNewline -ForegroundColor DarkRed
 }
 } elseif ($i -eq 1) {
 # Select all - checkbox, orange color
-$prefix = if ($checked[$i] -eq 1) { $h["selected"] } else { $h["not_selected"] }
+$prefix = if ($checked[$i] -eq 1) { $script:LANG["selected"] } else { $script:LANG["not_selected"] }
 if ($i -eq $CursorPos) {
 Write-Host " $prefix$itemText" -NoNewline -BackgroundColor White -ForegroundColor DarkYellow
 } else {
@@ -2022,7 +2022,7 @@ Write-Host " $prefix$itemText" -NoNewline -ForegroundColor DarkYellow
 }
 } else {
 # Software items - checkbox, gray if installed
-$prefix = if ($checked[$i] -eq 1) { $h["selected"] } else { $h["not_selected"] }
+$prefix = if ($checked[$i] -eq 1) { $script:LANG["selected"] } else { $script:LANG["not_selected"] }
 $installed = $isInstalled[$i]
 
 if ($i -eq $CursorPos) {
@@ -2049,7 +2049,7 @@ Write-Host "" # Clear rest of line
 
 # Show selection count
 [Console]::SetCursorPosition(0, $startRow + $numItems + 1)
-$countText = $h["custom_selected"] -f $SelectedCount, ($numItems - 2)
+$countText = $script:LANG["custom_selected"] -f $SelectedCount, ($numItems - 2)
 Write-Host " $countText" -NoNewline
 Write-Host "" # Clear rest of line
 }
@@ -2237,7 +2237,7 @@ if ($validate) {
         try { Set-CursorVisible -Visible $true } catch {}
         if ($LASTEXITCODE -eq 0 -and -not $script:HAS_ERROR) {
             Write-Host ""
-            Write-Host $h["bye"]
+            Write-Host $script:LANG["bye"]
         }
     }
     Start-AutoCheckUpdate
@@ -2259,25 +2259,25 @@ if ($validate) {
         Show-Banner -Lang $script:DETECTED_LANG
         Show-UpdateHint
         
-        if ($dev) { Write-Log $h["dev_mode"] "WARN"; Write-Host "" }
-        if ($dryRun) { Write-Log $h["dry_run_mode"] "WARN"; Write-Host "" }
+        if ($dev) { Write-Log $script:LANG["dev_mode"] "WARN"; Write-Host "" }
+        if ($dryRun) { Write-Log $script:LANG["dry_run_mode"] "WARN"; Write-Host "" }
         
-        Write-Log $h["detecting_system"] "INFO"
+        Write-Log $script:LANG["detecting_system"] "INFO"
         $os = Get-CurrentOS
         $systemInfo = Get-SystemInfo
         $script:PKG_MANAGER = Get-PackageManager -OS $os
         
-        Write-Log "$($h["system_info"]): $systemInfo" "INFO"
+        Write-Log "$($script:LANG["system_info"]): $systemInfo" "INFO"
         
         $displayPm = $script:PKG_MANAGER
         if (Ensure-NpmInstalled -OS $os) {
             $displayPm += ", npm"
         }
         
-        Write-Log "$($h["package_manager"]): $displayPm" "INFO"
+        Write-Log "$($script:LANG["package_manager"]): $displayPm" "INFO"
         
         if ($os -eq "unknown") {
-            Write-Log $h["unsupported_os"] "ERROR"
+            Write-Log $script:LANG["unsupported_os"] "ERROR"
             Exit-Script -Code 1
         }
         
@@ -2285,13 +2285,13 @@ if ($validate) {
         
 if ($nonInteractive) {
     if (-not $profile) {
-        Write-Log $h["noninteractive_error"] "ERROR"
+        Write-Log $script:LANG["noninteractive_error"] "ERROR"
         Exit-Script -Code 1
     }
 
     $profileKeys = Get-ProfileKeys -Path $script:CONFIG_FILE
     if ($profileKeys -notcontains $profile) {
-        Write-Log "$($h["profile_not_found"]): $profile" "ERROR"
+        Write-Log "$($script:LANG["profile_not_found"]): $profile" "ERROR"
         Exit-Script -Code 1
     }
 
@@ -2308,7 +2308,7 @@ if ($nonInteractive) {
   elseif ($profile) {
     $profileKeys = Get-ProfileKeys -Path $script:CONFIG_FILE
     if ($profileKeys -notcontains $profile) {
-      Write-Log "$($h["profile_not_found"]): $profile" "ERROR"
+      Write-Log "$($script:LANG["profile_not_found"]): $profile" "ERROR"
       Exit-Script -Code 1
     }
 
@@ -2316,18 +2316,18 @@ if ($nonInteractive) {
     $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $profile -Field "name"
 
     while ($true) {
-      Set-WindowTitle -Title "QSPC | $profileName | $($h["title_select_software"])"
+      Set-WindowTitle -Title "QSPC | $profileName | $($script:LANG["title_select_software"])"
       $script:SELECTED_SOFTWARE = Show-SoftwareMenu -Path $script:CONFIG_FILE -OS $os -ProfileKey $profile
 
       if ($null -ne $script:SELECTED_SOFTWARE) {
         break # Normal confirm, proceed
       }
       # $null means back was pressed, re-show profile menu
-      Set-WindowTitle -Title "QSPC | $($h["title_select_profile"])"
+      Set-WindowTitle -Title "QSPC | $($script:LANG["title_select_profile"])"
       $selectedProfile = Show-ProfileMenu -Path $script:CONFIG_FILE
 
       if (-not $selectedProfile) {
-        Write-Log $h["no_profile_selected"] "WARN"
+        Write-Log $script:LANG["no_profile_selected"] "WARN"
         Exit-Script -Code 0
       }
 
@@ -2338,18 +2338,18 @@ if ($nonInteractive) {
   }
   else {
     while ($true) {
-      Set-WindowTitle -Title "QSPC | $($h["title_select_profile"])"
+      Set-WindowTitle -Title "QSPC | $($script:LANG["title_select_profile"])"
       $selectedProfile = Show-ProfileMenu -Path $script:CONFIG_FILE
 
       if (-not $selectedProfile) {
-        Write-Log $h["no_profile_selected"] "WARN"
+        Write-Log $script:LANG["no_profile_selected"] "WARN"
         Exit-Script -Code 0
       }
 
       $script:SELECTED_PROFILES = @($selectedProfile)
       $profileName = Get-ProfileField -Path $script:CONFIG_FILE -Key $selectedProfile -Field "name"
 
-      Set-WindowTitle -Title "QSPC | $profileName | $($h["title_select_software"])"
+      Set-WindowTitle -Title "QSPC | $profileName | $($script:LANG["title_select_software"])"
       $script:SELECTED_SOFTWARE = Show-SoftwareMenu -Path $script:CONFIG_FILE -OS $os -ProfileKey $selectedProfile
 
     if ($null -ne $script:SELECTED_SOFTWARE) {
@@ -2360,15 +2360,15 @@ if ($nonInteractive) {
 }
 
 if ($script:SELECTED_SOFTWARE.Count -eq 0) {
-            Write-Log $h["no_software_selected"] "WARN"
+            Write-Log $script:LANG["no_software_selected"] "WARN"
             
             if ($nonInteractive) {
                 Exit-Script -Code 0
             }
             
             Write-Host ""
-            Write-Log $h["ask_continue"] "INFO"
-            $continue = Select-Continue -ContinueText $h["continue_btn"] -ExitText $h["exit_btn"]
+            Write-Log $script:LANG["ask_continue"] "INFO"
+            $continue = Select-Continue -ContinueText $script:LANG["continue_btn"] -ExitText $script:LANG["exit_btn"]
             if ($continue -eq 1) { Exit-Script -Code 0 }
             continue
         }
@@ -2430,19 +2430,19 @@ if ($script:SELECTED_SOFTWARE.Count -eq 0) {
         }
         
 if (-not $yes -and -not $nonInteractive) {
-    Write-Host "$($h["confirm_install"])" -ForegroundColor Yellow -NoNewline
+    Write-Host "$($script:LANG["confirm_install"])" -ForegroundColor Yellow -NoNewline
     $confirm = Read-Host " "
     if ($confirm -match "^[Nn]") {
-                Write-Log $h["cancelled"] "INFO"
+                Write-Log $script:LANG["cancelled"] "INFO"
                 Write-Host ""
-                Write-Log $h["ask_continue"] "INFO"
-                $continue = Select-Continue -ContinueText $h["continue_btn"] -ExitText $h["exit_btn"]
+                Write-Log $script:LANG["ask_continue"] "INFO"
+                $continue = Select-Continue -ContinueText $script:LANG["continue_btn"] -ExitText $script:LANG["exit_btn"]
                 if ($continue -eq 1) { Exit-Script -Code 0 }
                 continue
             }
         }
         
-        Write-Log $h["checking_installation"] "INFO"
+        Write-Log $script:LANG["checking_installation"] "INFO"
         
         $toInstall = @()
         $alreadyInstalled = @()
@@ -2459,32 +2459,32 @@ foreach ($sw in $script:SELECTED_SOFTWARE) {
 $installedCount = $alreadyInstalled.Count
 $toInstallCount = $toInstall.Count
 $detBar = Draw-ProgressBar -Current $installedCount -Total ($installedCount + $toInstallCount)
-Write-Host " $detBar $installedCount/$($installedCount + $toInstallCount) $($h["installed"]), $toInstallCount $($h["to_install"])" -ForegroundColor Cyan
+Write-Host " $detBar $installedCount/$($installedCount + $toInstallCount) $($script:LANG["installed"]), $toInstallCount $($script:LANG["to_install"])" -ForegroundColor Cyan
 
 # Show already-installed in gray
 foreach ($sw in $alreadyInstalled) {
     $swName = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "name"
     $swIcon = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "icon"
     $swDisplay = if ($swIcon) { "$swIcon $swName" } else { $swName }
-    Write-Host " [✓] $swDisplay - $($h["skipping_installed"])" -ForegroundColor Gray
+    Write-Host " [✓] $swDisplay - $($script:LANG["skipping_installed"])" -ForegroundColor Gray
 }
 Write-Host ""
         
         if ($toInstall.Count -eq 0) {
-            Write-Log $h["all_installed"] "INFO"
+            Write-Log $script:LANG["all_installed"] "INFO"
             
             if ($nonInteractive) {
                 Exit-Script -Code 0
             }
             
             Write-Host ""
-            Write-Log $h["ask_continue"] "INFO"
-            $continue = Select-Continue -ContinueText $h["continue_btn"] -ExitText $h["exit_btn"]
+            Write-Log $script:LANG["ask_continue"] "INFO"
+            $continue = Select-Continue -ContinueText $script:LANG["continue_btn"] -ExitText $script:LANG["exit_btn"]
   if ($continue -eq 1) { Exit-Script -Code 0 }
   continue
 }
 
-Write-Host " $($h["disk_checking"])" -ForegroundColor Cyan
+Write-Host " $($script:LANG["disk_checking"])" -ForegroundColor Cyan
   Test-DiskSpace -MinGB 5 | Out-Null
 
   # Check Windows admin privileges
@@ -2500,13 +2500,13 @@ Write-Host " $($h["disk_checking"])" -ForegroundColor Cyan
     $savedRemaining = Load-InstallState
     if ($savedRemaining) {
       if ($resume -or $nonInteractive) {
-        Write-Host " $($h["resuming"])" -ForegroundColor Cyan
+        Write-Host " $($script:LANG["resuming"])" -ForegroundColor Cyan
         $script:toInstall = $savedRemaining
       } else {
-Write-Host " $($h["resume_found"])" -ForegroundColor Yellow -NoNewline
+Write-Host " $($script:LANG["resume_found"])" -ForegroundColor Yellow -NoNewline
     $resumeAnswer = Read-Host " "
         if ([string]::IsNullOrWhiteSpace($resumeAnswer) -or $resumeAnswer -match "^[Yy]") {
-          Write-Host " $($h["resuming"])" -ForegroundColor Cyan
+          Write-Host " $($script:LANG["resuming"])" -ForegroundColor Cyan
           $script:toInstall = $savedRemaining
         } else {
           Clear-InstallState
@@ -2515,8 +2515,8 @@ Write-Host " $($h["resume_found"])" -ForegroundColor Yellow -NoNewline
     }
   }
 
-Set-WindowTitle -Title "QSPC | $($h["title_installing"])"
-Write-Header $h["start_installing"]
+Set-WindowTitle -Title "QSPC | $($script:LANG["title_installing"])"
+Write-Header $script:LANG["start_installing"]
 
 $script:toInstall = $toInstall
 $total = $toInstall.Count
@@ -2535,7 +2535,7 @@ $installStartTime = Get-Date
       $swIcon = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "icon"
       $swDisplay = if ($swIcon) { "$swIcon $swName" } else { $swName }
       $bar = Draw-ProgressBar -Current $current -Total $total
-      Write-Host "`r $bar $current/$total $swDisplay - $($h["installing"])..." -NoNewline -ForegroundColor Cyan
+      Write-Host "`r $bar $current/$total $swDisplay - $($script:LANG["installing"])..." -NoNewline -ForegroundColor Cyan
 
       $env:SOFTWARE_KEY = $sw
       $env:SOFTWARE_NAME = $swName
@@ -2550,12 +2550,12 @@ $installStartTime = Get-Date
 
       if ($result) {
         Write-Host "`r $bar $current/$total $swDisplay - " -NoNewline
-        Write-Host "$($h["install_success"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Green
+        Write-Host "$($script:LANG["install_success"]) ($swElapsed$($script:LANG["time_seconds"]))" -ForegroundColor Green
         $detail.status = "installed"
         $script:installedList += $sw
       } else {
         Write-Host "`r $bar $current/$total $swDisplay - " -NoNewline
-        Write-Host "$($h["install_failed"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Red
+        Write-Host "$($script:LANG["install_failed"]) ($swElapsed$($script:LANG["time_seconds"]))" -ForegroundColor Red
         $detail.status = "failed"
         $script:failedList += $sw
         if ($failFast) {
@@ -2636,7 +2636,7 @@ $installStartTime = Get-Date
         $swIcon = Get-SoftwareField -Path $script:CONFIG_FILE -Key $sw -Field "icon"
         $swDisplay = if ($swIcon) { "$swIcon $swName" } else { $swName }
         $bar = Draw-ProgressBar -Current $script:current -Total $script:total
-        Write-Host "`r $bar $script:current/$script:total $swDisplay - $($h["installing"])..." -NoNewline -ForegroundColor Cyan
+        Write-Host "`r $bar $script:current/$script:total $swDisplay - $($script:LANG["installing"])..." -NoNewline -ForegroundColor Cyan
 
         $env:SOFTWARE_KEY = $sw
         $env:SOFTWARE_NAME = $swName
@@ -2651,12 +2651,12 @@ $installStartTime = Get-Date
 
         if ($result) {
           Write-Host "`r $bar $script:current/$script:total $swDisplay - " -NoNewline
-          Write-Host "$($h["install_success"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Green
+          Write-Host "$($script:LANG["install_success"]) ($swElapsed$($script:LANG["time_seconds"]))" -ForegroundColor Green
           $detail.status = "installed"
           $script:installedList += $sw
         } else {
           Write-Host "`r $bar $script:current/$script:total $swDisplay - " -NoNewline
-          Write-Host "$($h["install_failed"]) ($swElapsed$($h["time_seconds"]))" -ForegroundColor Red
+          Write-Host "$($script:LANG["install_failed"]) ($swElapsed$($script:LANG["time_seconds"]))" -ForegroundColor Red
           $detail.status = "failed"
           $script:failedList += $sw
           if ($failFast) {
@@ -2692,12 +2692,12 @@ $installStartTime = Get-Date
   $installEndTime = Get-Date
 $totalElapsed = [math]::Round(($installEndTime - $installStartTime).TotalSeconds)
 Write-Host ""
-Write-Host "$($h["time_total"]): $totalElapsed$($h["time_seconds"])" -ForegroundColor Cyan
+Write-Host "$($script:LANG["time_total"]): $totalElapsed$($script:LANG["time_seconds"])" -ForegroundColor Cyan
 Write-Host ""
         
         $skippedList = $alreadyInstalled
         
-        Write-Header $h["installation_complete"]
+        Write-Header $script:LANG["installation_complete"]
         Write-Host ""
         
 Write-Host "Installed:" -ForegroundColor Green
@@ -2775,10 +2775,10 @@ if ($reportJson -or $reportTxt) {
     Exit-Script -Code 0
   }
         
-        Set-WindowTitle -Title "QSPC | $($h["title_ask_continue"])"
+        Set-WindowTitle -Title "QSPC | $($script:LANG["title_ask_continue"])"
         Write-Host ""
-        Write-Log $h["ask_continue"] "INFO"
-        $continue = Select-Continue -ContinueText $h["continue_btn"] -ExitText $h["exit_btn"]
+        Write-Log $script:LANG["ask_continue"] "INFO"
+        $continue = Select-Continue -ContinueText $script:LANG["continue_btn"] -ExitText $script:LANG["exit_btn"]
         if ($continue -eq 1) { Exit-Script -Code 0 }
         
         continue
