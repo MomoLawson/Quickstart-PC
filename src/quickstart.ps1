@@ -1270,25 +1270,26 @@ function Show-Doctor {
     $passed = 0
     $warnings = 0
     $failed = 0
-    $osName = (Get-CurrentOS).OS
+    $osName = Get-CurrentOS
     
     # 1. System Information
     Write-Host "━━━ System Information ━━━"
     Write-Host " OS: $osName"
     $arch = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture
     Write-Host " Arch: $arch"
-    if ($osName -eq "Windows") {
+    if ($osName -eq "windows") {
         $osVersion = [System.Environment]::OSVersion.VersionString
         Write-Host " Version: $osVersion"
-    } elseif ($osName -eq "macOS") {
+    } elseif ($osName -eq "macos") {
         try {
             $osVersion = sw_vers -productVersion 2>&1 | Select-Object -First 1
             Write-Host " Version: $osVersion"
         } catch {}
-    } elseif ($osName -eq "Linux") {
+    } elseif ($osName -eq "linux") {
         try {
-            $distro = Get-Content /etc/os-release 2>/dev/null | grep PRETTY_NAME | cut -d'"' -f2
-            Write-Host " Distro: ${distro}"
+            $osRelease = Get-Content /etc/os-release -ErrorAction Stop
+            $prettyName = ($osRelease | Where-Object { $_ -match 'PRETTY_NAME=' }) -replace 'PRETTY_NAME="', '' -replace '"', ''
+            Write-Host " Distro: $prettyName"
         } catch {}
     }
     Write-Host ""
@@ -1402,7 +1403,9 @@ function Show-Doctor {
     # 5. Disk Space
     Write-Host "━━━ Disk Space ━━━"
     try {
-        $disk = Get-PSDrive -Name (Split-Path $env:TEMP -PathRoot) -ErrorAction Stop
+        $tempPath = if ($env:TEMP) { $env:TEMP } elseif ($env:TMPDIR) { $env:TMPDIR } else { "/tmp" }
+        $driveLetter = if ($osName -eq "windows") { Split-Path $tempPath -Qualifier } else { "/" }
+        $disk = Get-PSDrive -Name ($driveLetter -replace ':', '') -ErrorAction Stop
         $freeGB = [math]::Round($disk.Free / 1GB, 2)
         if ($freeGB -gt 1) {
             Write-Host " [✓] Available: ${freeGB}GB" -ForegroundColor Green
@@ -1419,7 +1422,7 @@ function Show-Doctor {
     
     # 6. Temp Directory
     Write-Host "━━━ Temp Directory ━━━"
-    $tmpDir = $env:TEMP ?? "/tmp"
+    $tmpDir = if ($env:TEMP) { $env:TEMP } elseif ($env:TMPDIR) { $env:TMPDIR } else { "/tmp" }
     if (Test-Path $tmpDir) {
         try {
             $testFile = Join-Path $tmpDir "qc-test-$(Get-Random)"
@@ -1653,13 +1656,14 @@ function Draw-ProgressBar {
 function Test-DiskSpace {
   param([int]$MinGB = 5)
   try {
+    $tempPath = if ($env:TEMP) { $env:TEMP } elseif ($env:TMPDIR) { $env:TMPDIR } else { "/tmp" }
     if ($script:OS -eq "windows") {
-      $driveName = Split-Path $env:TEMP -PathRoot
-      $disk = Get-PSDrive -Name $driveName -ErrorAction Stop
+      $driveLetter = Split-Path $tempPath -Qualifier
+      $disk = Get-PSDrive -Name ($driveLetter -replace ':', '') -ErrorAction Stop
       $availableGB = [math]::Round($disk.Free / 1GB)
     } else {
-      $dfResult = & df -g / 2>$null | Select-Object -Last 1
-      $availableGB = if ($dfResult) { ($dfResult -split '\s+')[3] -as [int] } else { $null }
+      $disk = Get-PSDrive -Name "/" -ErrorAction Stop
+      $availableGB = [math]::Round($disk.Free / 1GB)
     }
     if ($null -eq $availableGB) {
       return $true
