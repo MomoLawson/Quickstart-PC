@@ -99,7 +99,10 @@ load_language_strings() {
         while IFS=$'\t' read -r key value; do
             [[ -z "$key" ]] && continue
             [[ "$key" == "help_options" ]] && continue
-            eval "LANG_$(echo "$key" | tr '[:lower:]' '[:upper:]')=\"\$value\""
+            # Use printf %q to safely escape special characters
+            local escaped_value
+            printf -v escaped_value '%q' "$value"
+            eval "LANG_$(echo "$key" | tr '[:lower:]' '[:upper:]')=$escaped_value"
         done < <(jq -r 'to_entries[] | select(.key != "help_options") | "\(.key)\t\(.value)"' "$json_file" 2>/dev/null)
         LANG_HELP_OPTIONS=$(jq -r '.help_options // empty' "$json_file" 2>/dev/null)
         loaded=true

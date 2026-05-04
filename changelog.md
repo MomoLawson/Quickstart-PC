@@ -1,5 +1,4 @@
-## v1.0.0-beta1-build2
+## v1.0.0-beta1-build3
 
 ### 🐛 Bug Fixes
-- Add missing Install-Software function to PS1
-- Add missing Select-Continue function to PS1
+- Improve language string loading safety with printf %q escaping
