@@ -2236,7 +2236,13 @@ self_update() {
 }
 
 is_one_liner() {
-    [[ "$0" == "bash" || "$0" == "sh" || "${BASH_SOURCE[0]}" == /dev/fd/* || "${BASH_SOURCE[0]}" == /proc/self/fd/* ]]
+    local base
+    base="$(basename "$0" 2>/dev/null)"
+    [[ "$base" == "bash" || "$base" == "sh" \
+        || "$0" == "(stdin)" \
+        || "${BASH_SOURCE[0]}" == "(stdin)" \
+        || "${BASH_SOURCE[0]}" == /dev/fd/* \
+        || "${BASH_SOURCE[0]}" == /proc/self/fd/* ]]
 }
 
 auto_check_update() {

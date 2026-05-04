@@ -304,8 +304,8 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="1.0.0-beta2-build15"
-if [[ "$VERSION" == "1.0.0-beta2-build15" ]]; then
+VERSION="1.0.0-beta2-build16"
+if [[ "$VERSION" == "1.0.0-beta2-build16" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')
@@ -2236,7 +2236,13 @@ self_update() {
 }
 
 is_one_liner() {
-    [[ "$0" == "bash" || "$0" == "sh" || "${BASH_SOURCE[0]}" == /dev/fd/* || "${BASH_SOURCE[0]}" == /proc/self/fd/* ]]
+    local base
+    base="$(basename "$0" 2>/dev/null)"
+    [[ "$base" == "bash" || "$base" == "sh" \
+        || "$0" == "(stdin)" \
+        || "${BASH_SOURCE[0]}" == "(stdin)" \
+        || "${BASH_SOURCE[0]}" == /dev/fd/* \
+        || "${BASH_SOURCE[0]}" == /proc/self/fd/* ]]
 }
 
 auto_check_update() {
