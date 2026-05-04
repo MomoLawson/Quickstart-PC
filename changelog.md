@@ -1,4 +1,4 @@
-## v1.0.0-beta1-build5
+## v1.0.0-beta1-build6
 
 ### 🐛 Bug Fixes
-- Initialize $script:current and $script:total for batch installation progress
+- Fix undefined $platform variable in dry-run mode

@@ -42,8 +42,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "1.0.0-beta1-build5"
-if ($VERSION -eq "1.0.0-beta1-build5") {
+$VERSION = "1.0.0-beta1-build6"
+if ($VERSION -eq "1.0.0-beta1-build6") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
@@ -2530,6 +2530,19 @@ $installStartTime = Get-Date
 
   Invoke-HookScript -HookType "pre_install"
 
+  $platform = switch ($os) {
+    "windows" { "win" }
+    "macos" { "mac" }
+    "linux" {
+      $pkgMgr = Get-PackageManager -OS "linux"
+      switch ($pkgMgr) {
+        "dnf" { "linux_dnf" }
+        "pacman" { "linux_pacman" }
+        default { "linux" }
+      }
+    }
+  }
+
   if ($dryRun) {
     foreach ($sw in $toInstall) {
       $current++
@@ -2572,19 +2585,6 @@ $installStartTime = Get-Date
       Save-InstallState
     }
   } else {
-    $platform = switch ($os) {
-      "windows" { "win" }
-      "macos" { "mac" }
-      "linux" {
-        $pkgMgr = Get-PackageManager -OS "linux"
-        switch ($pkgMgr) {
-          "dnf" { "linux_dnf" }
-          "pacman" { "linux_pacman" }
-          default { "linux" }
-        }
-      }
-    }
-
     $aptPackages = @()
     $brewPackages = @()
     $wingetPackages = @()

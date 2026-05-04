@@ -2530,6 +2530,19 @@ $installStartTime = Get-Date
 
   Invoke-HookScript -HookType "pre_install"
 
+  $platform = switch ($os) {
+    "windows" { "win" }
+    "macos" { "mac" }
+    "linux" {
+      $pkgMgr = Get-PackageManager -OS "linux"
+      switch ($pkgMgr) {
+        "dnf" { "linux_dnf" }
+        "pacman" { "linux_pacman" }
+        default { "linux" }
+      }
+    }
+  }
+
   if ($dryRun) {
     foreach ($sw in $toInstall) {
       $current++
@@ -2572,19 +2585,6 @@ $installStartTime = Get-Date
       Save-InstallState
     }
   } else {
-    $platform = switch ($os) {
-      "windows" { "win" }
-      "macos" { "mac" }
-      "linux" {
-        $pkgMgr = Get-PackageManager -OS "linux"
-        switch ($pkgMgr) {
-          "dnf" { "linux_dnf" }
-          "pacman" { "linux_pacman" }
-          default { "linux" }
-        }
-      }
-    }
-
     $aptPackages = @()
     $brewPackages = @()
     $wingetPackages = @()
