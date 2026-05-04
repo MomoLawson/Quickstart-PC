@@ -1,4 +1,4 @@
-## v1.0.0-beta1-build16
+## v1.0.0-beta1-build17
 
 ### 🐛 Bug Fixes
-- Fix Show-Doctor to initialize $script:fixCmds for doctor --fix
+- Fix save_install_state to use ${SELECTED_PROFILES[0]} instead of undefined $SELECTED_PROFILE

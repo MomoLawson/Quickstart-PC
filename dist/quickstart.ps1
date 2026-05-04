@@ -42,8 +42,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "1.0.0-beta1-build16"
-if ($VERSION -eq "1.0.0-beta1-build16") {
+$VERSION = "1.0.0-beta1-build17"
+if ($VERSION -eq "1.0.0-beta1-build17") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {

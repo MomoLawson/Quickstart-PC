@@ -148,7 +148,7 @@ load_language_strings() {
     fi
     
     # Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v1.0.0-beta1-build16"
+    LANG_BANNER_TITLE="Quickstart-PC v1.0.0-beta1-build17"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -307,8 +307,8 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="1.0.0-beta1-build16"
-if [[ "$VERSION" == "1.0.0-beta1-build16" ]]; then
+VERSION="1.0.0-beta1-build17"
+if [[ "$VERSION" == "1.0.0-beta1-build17" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')
@@ -1121,7 +1121,7 @@ save_install_state() {
   failed_json=$(printf '%s\n' "${install_failed[@]}" | jq -R . | jq -s .)
 
   jq -n \
-    --arg profile "$SELECTED_PROFILE" \
+    --arg profile "${SELECTED_PROFILES[0]}" \
     --argjson total "${#to_install[@]}" \
     --argjson remaining "$remaining_json" \
     --argjson installed "$installed_json" \

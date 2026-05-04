@@ -1121,7 +1121,7 @@ save_install_state() {
   failed_json=$(printf '%s\n' "${install_failed[@]}" | jq -R . | jq -s .)
 
   jq -n \
-    --arg profile "$SELECTED_PROFILE" \
+    --arg profile "${SELECTED_PROFILES[0]}" \
     --argjson total "${#to_install[@]}" \
     --argjson remaining "$remaining_json" \
     --argjson installed "$installed_json" \
