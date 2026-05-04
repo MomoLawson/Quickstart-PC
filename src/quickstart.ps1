@@ -1817,7 +1817,8 @@ try {
     $updateScriptPath = [System.IO.Path]::GetTempFileName() + ".ps1"
     Set-Content -Path $updateScriptPath -Value $updateScript
     Write-Host " $($script:LANG["update_success"])" -ForegroundColor Green
-    Start-Process -FilePath "pwsh" -ArgumentList "-NoProfile", "-File", $updateScriptPath -Wait -NoNewWindow
+    $pwshCmd = if (Get-Command pwsh -ErrorAction SilentlyContinue) { "pwsh" } else { "powershell" }
+    Start-Process -FilePath $pwshCmd -ArgumentList "-NoProfile", "-File", $updateScriptPath -Wait -NoNewWindow
     Remove-Item -Path $updateScriptPath -Force -ErrorAction SilentlyContinue
     return 0
   } catch {

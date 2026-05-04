@@ -42,8 +42,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "1.0.0-beta1-build14"
-if ($VERSION -eq "1.0.0-beta1-build14") {
+$VERSION = "1.0.0-beta1-build15"
+if ($VERSION -eq "1.0.0-beta1-build15") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
@@ -1817,7 +1817,8 @@ try {
     $updateScriptPath = [System.IO.Path]::GetTempFileName() + ".ps1"
     Set-Content -Path $updateScriptPath -Value $updateScript
     Write-Host " $($script:LANG["update_success"])" -ForegroundColor Green
-    Start-Process -FilePath "pwsh" -ArgumentList "-NoProfile", "-File", $updateScriptPath -Wait -NoNewWindow
+    $pwshCmd = if (Get-Command pwsh -ErrorAction SilentlyContinue) { "pwsh" } else { "powershell" }
+    Start-Process -FilePath $pwshCmd -ArgumentList "-NoProfile", "-File", $updateScriptPath -Wait -NoNewWindow
     Remove-Item -Path $updateScriptPath -Force -ErrorAction SilentlyContinue
     return 0
   } catch {
