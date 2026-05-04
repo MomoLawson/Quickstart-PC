@@ -1,4 +1,4 @@
-## v1.0.0-beta2-build6
+## v1.0.0-beta2-build7
 
 ### 🐛 Bug Fixes
-- Fix run_hook to handle both file paths and command strings
+- Update install_current counter after batch installation for correct progress bar

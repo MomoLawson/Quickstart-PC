@@ -172,7 +172,7 @@ print(data.get('help_options', ''))
     fi
     
     # Last resort: embedded minimal English strings
-    LANG_BANNER_TITLE="Quickstart-PC v1.0.0-beta2-build6"
+    LANG_BANNER_TITLE="Quickstart-PC v1.0.0-beta2-build7"
     LANG_BANNER_DESC="Quick setup for new computers"
     LANG_DETECTING_SYSTEM="Detecting system environment..."
     LANG_SYSTEM_INFO="System"
@@ -331,8 +331,8 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="1.0.0-beta2-build6"
-if [[ "$VERSION" == "1.0.0-beta2-build6" ]]; then
+VERSION="1.0.0-beta2-build7"
+if [[ "$VERSION" == "1.0.0-beta2-build7" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')
@@ -2809,6 +2809,7 @@ if [[ ${#to_install[@]} -gt 0 ]]; then
         save_install_state
       else
         install_batch "$CONFIG_FILE" "$os" "$manager" "${keys[@]}"
+        install_current=$((install_current + ${#keys[@]}))
         for sw in "${keys[@]}"; do
           run_hook "pre_software"
           run_hook "post_software"

@@ -2809,6 +2809,7 @@ if [[ ${#to_install[@]} -gt 0 ]]; then
         save_install_state
       else
         install_batch "$CONFIG_FILE" "$os" "$manager" "${keys[@]}"
+        install_current=$((install_current + ${#keys[@]}))
         for sw in "${keys[@]}"; do
           run_hook "pre_software"
           run_hook "post_software"
