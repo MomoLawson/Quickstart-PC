@@ -8,59 +8,62 @@ BUILD_SCRIPT="$PROJECT_DIR/scripts/build.sh"
 
 show_usage() {
     cat <<EOF
-Usage: $(basename "$0") <major|minor|patch>
+Usage: $(basename "$0") <build|beta>
 
-Release automation script for Quickstart-PC.
+Release automation script for Quickstart-PC (v1.0.0-beta phase).
 
 Arguments:
-  major  Bump major version (X.0.0)
-  minor  Bump minor version (0.X.0)
-  patch  Bump patch version (0.0.X)
+    build   Increment build number (Y) and release
+    beta    Increment beta version (X), reset build to 1, and release
+
+Version format: v1.0.0-betaX-buildY
+    X = beta version (only increment when explicitly requested)
+    Y = build count (increment with each build)
 
 Examples:
-  $(basename "$0") patch  # 0.82.1 → 0.82.2
-  $(basename "$0") minor  # 0.82.1 → 0.83.0
-  $(basename "$0") major  # 0.82.1 → 1.0.0
+    $(basename "$0") build   # 1.0.0-beta1-build1 → 1.0.0-beta1-build2
+    $(basename "$0") beta    # 1.0.0-beta1-build5 → 1.0.0-beta2-build1
 EOF
+}
+
+parse_version() {
+    local version="$1"
+    local beta build
+    
+    if [[ "$version" =~ ^1\.0\.0-beta([0-9]+)-build([0-9]+)$ ]]; then
+        beta="${BASH_REMATCH[1]}"
+        build="${BASH_REMATCH[2]}"
+        echo "$beta $build"
+    else
+        echo "[ERROR] Invalid version format: $version (expected 1.0.0-betaX-buildY)"
+        exit 1
+    fi
 }
 
 bump_version() {
     local version="$1"
     local type="$2"
     
-    local major minor patch
-    IFS='.' read -r major minor patch <<< "$version"
+    local beta build
+    read -r beta build <<< "$(parse_version "$version")"
     
     case "$type" in
-        major)
-            major=$((major + 1))
-            minor=0
-            patch=0
+        build)
+            build=$((build + 1))
             ;;
-        minor)
-            minor=$((minor + 1))
-            patch=0
-            ;;
-        patch)
-            patch=$((patch + 1))
+        beta)
+            beta=$((beta + 1))
+            build=1
             ;;
     esac
     
-    echo "$major.$minor.$patch"
-}
-
-validate_version() {
-    local version="$1"
-    if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        echo "[ERROR] Invalid version format: $version"
-        exit 1
-    fi
+    echo "1.0.0-beta${beta}-build${build}"
 }
 
 main() {
     local release_type="$1"
     
-    if [[ -z "$release_type" ]] || [[ ! "$release_type" =~ ^(major|minor|patch)$ ]]; then
+    if [[ -z "$release_type" ]] || [[ ! "$release_type" =~ ^(build|beta)$ ]]; then
         show_usage
         exit 1
     fi
@@ -74,7 +77,7 @@ main() {
     local old_version
     old_version=$(cat "$VERSION_FILE" | tr -d '[:space:]')
     echo "[INFO] Current version: $old_version"
-    validate_version "$old_version"
+    parse_version "$old_version" > /dev/null
     
     # Bump version
     local new_version
@@ -105,7 +108,7 @@ main() {
     git tag "v$new_version"
     echo "[✓] Tagged: v$new_version"
     
-    # Git push (no hardcoded proxy)
+    # Git push
     echo "[→] Pushing to remote..."
     if ! git push origin main --tags; then
         echo "[ERROR] Push failed, rolling back..."
@@ -117,8 +120,8 @@ main() {
     fi
     echo "[✓] Pushed to remote"
     
-    # Create GitHub release
-    echo "[→] Creating GitHub release..."
+    # Create GitHub release (pre-release)
+    echo "[→] Creating GitHub release (pre-release)..."
     local notes="See commit history for changes."
     if [[ -f "$PROJECT_DIR/changelog.md" ]]; then
         notes=$(cat "$PROJECT_DIR/changelog.md")
@@ -137,10 +140,11 @@ main() {
     gh release create "v$new_version" \
         --title "v$new_version" \
         --notes "$notes" \
+        --prerelease \
         "$PROJECT_DIR/dist/quickstart.sh" \
         "$PROJECT_DIR/dist/quickstart.ps1" \
         "$PROJECT_DIR/dist/profiles.json.sha256"
-    echo "[✓] GitHub release created: v$new_version"
+    echo "[✓] GitHub release created: v$new_version (pre-release)"
     
     # Clear changelog after release
     if [[ -f "$PROJECT_DIR/changelog.md" ]]; then
