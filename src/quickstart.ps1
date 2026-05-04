@@ -1754,7 +1754,13 @@ function Invoke-HookScript {
   }
   Write-Host " $($script:LANG["hook_running"] -f $HookType)" -ForegroundColor Cyan
   try {
-    & $hookScript
+    if (Test-Path $hookScript -ErrorAction SilentlyContinue) {
+      # It's a file path
+      & $hookScript
+    } else {
+      # It's script content
+      Invoke-Expression $hookScript
+    }
     Write-Host " $($script:LANG["hook_success"])" -ForegroundColor Green
   } catch {
     Write-Warning "$($script:LANG["hook_failed"] -f $HookType)"
