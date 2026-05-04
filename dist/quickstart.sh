@@ -304,8 +304,8 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="1.0.0-beta2-build16"
-if [[ "$VERSION" == "1.0.0-beta2-build16" ]]; then
+VERSION="1.0.0-beta2-build17"
+if [[ "$VERSION" == "1.0.0-beta2-build17" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')
@@ -2247,7 +2247,9 @@ is_one_liner() {
 
 auto_check_update() {
     if is_one_liner; then return; fi
-    AUTO_CHECK_FILE=$(mktemp 2>/dev/null || echo "/tmp/qs-update-$$.tmp")
+    # 清理上次残留的临时文件（脚本被 SIGKILL 等场景）
+    rm -f "$AUTO_CHECK_FILE" 2>/dev/null || true
+    AUTO_CHECK_FILE=$(mktemp "/tmp/qs-update-XXXXXXXXXX.tmp" 2>/dev/null || echo "/tmp/qs-update-$$-$RANDOM.tmp")
     (
         local latest
         latest=$(curl -fsSL --connect-timeout 5 --max-time 10 \

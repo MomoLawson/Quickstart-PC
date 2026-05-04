@@ -1,4 +1,4 @@
-## v1.0.0-beta2-build16
+## v1.0.0-beta2-build17
 
 ### 🐛 Bug Fixes
-- Fix `is_one_liner` detection: use `basename "$0"` to handle `/bin/bash`, `-bash` etc.; add `(stdin)` match for piped execution in some environments
+- Fix temp file accumulation on abnormal exit: clean stale `AUTO_CHECK_FILE` at startup; make fallback path unique with `$RANDOM` to avoid PID reuse collisions
