@@ -2117,14 +2117,26 @@ install_batch() {
   fi
 }
 
+# Fallback: extract first tag_name from GitHub API response without jq
+parse_github_tag() {
+    if command -v jq &>/dev/null; then
+        jq -r '.[0].tag_name // empty'
+    elif command -v python3 &>/dev/null; then
+        python3 -c "import sys,json; d=json.load(sys.stdin); print(d[0].get('tag_name','') if d else '')" 2>/dev/null
+    else
+        grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"\([^"]*\)".*/\1/'
+    fi
+}
+
 check_update() {
   log_info "$LANG_UPDATE_CHECKING"
+  ensure_json_parser &>/dev/null || true
   local current_version="$VERSION"
   local latest_version
   latest_version=$(curl -fsSL --connect-timeout 5 --max-time 10 \
     -H "Accept: application/vnd.github+json" \
     "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases?per_page=1" \
-    2>/dev/null | jq -r '.[0].tag_name // empty')
+    2>/dev/null | parse_github_tag)
   latest_version="${latest_version#v}"
 
   if [[ -z "$latest_version" ]]; then
@@ -2166,11 +2178,12 @@ check_update() {
 self_update() {
   local skip_confirm="${1:-false}"
   local current_version="$VERSION"
+  ensure_json_parser &>/dev/null || true
   local latest_version
   latest_version=$(curl -fsSL --connect-timeout 5 --max-time 10 \
     -H "Accept: application/vnd.github+json" \
     "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases?per_page=1" \
-    2>/dev/null | jq -r '.[0].tag_name // empty')
+    2>/dev/null | parse_github_tag)
   latest_version="${latest_version#v}"
 
   if [[ -z "$latest_version" ]]; then
@@ -2268,7 +2281,7 @@ auto_check_update() {
         latest=$(curl -fsSL --connect-timeout 5 --max-time 10 \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/MomoLawson/Quickstart-PC/releases?per_page=1" \
-            2>/dev/null | jq -r '.[0].tag_name // empty')
+            2>/dev/null | parse_github_tag)
         latest="${latest#v}"
         
         if [[ -z "$latest" ]]; then return; fi
