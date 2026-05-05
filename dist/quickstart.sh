@@ -306,8 +306,8 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="1.0.0-beta4-build3"
-if [[ "$VERSION" == "1.0.0-beta4-build3" ]]; then
+VERSION="1.0.0-beta4-build4"
+if [[ "$VERSION" == "1.0.0-beta4-build4" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')
@@ -1127,29 +1127,68 @@ save_install_state() {
   done
 
   local remaining_json installed_json failed_json
-  remaining_json=$(printf '%s\n' "${remaining_keys[@]}" | jq -R . | jq -s .)
-  installed_json=$(printf '%s\n' "${install_succeeded[@]}" | jq -R . | jq -s .)
-  failed_json=$(printf '%s\n' "${install_failed[@]}" | jq -R . | jq -s .)
+  if command -v jq &>/dev/null; then
+    remaining_json=$(printf '%s\n' "${remaining_keys[@]}" | jq -R . | jq -s .)
+    installed_json=$(printf '%s\n' "${install_succeeded[@]}" | jq -R . | jq -s .)
+    failed_json=$(printf '%s\n' "${install_failed[@]}" | jq -R . | jq -s .)
 
-  jq -n \
-    --arg profile "$profile" \
-    --argjson total "${#to_install[@]}" \
-    --argjson remaining "$remaining_json" \
-    --argjson installed "$installed_json" \
-    --argjson failed "$failed_json" \
-    --arg ts "$(date -Iseconds 2>/dev/null || date +%Y-%m-%dT%H:%M:%S%z)" \
-    '{profile: $profile, total: $total, remaining: $remaining, installed: $installed, failed: $failed, timestamp: $ts}' \
-    > "$state_file"
-  log_info "$LANG_CHECKPOINT_SAVED"
+    jq -n \
+      --arg profile "$profile" \
+      --argjson total "${#to_install[@]}" \
+      --argjson remaining "$remaining_json" \
+      --argjson installed "$installed_json" \
+      --argjson failed "$failed_json" \
+      --arg ts "$(date -Iseconds 2>/dev/null || date +%Y-%m-%dT%H:%M:%S%z)" \
+      '{profile: $profile, total: $total, remaining: $remaining, installed: $installed, failed: $failed, timestamp: $ts}' \
+      > "$state_file"
+  elif command -v python3 &>/dev/null; then
+    python3 -c "
+import json, sys
+lines = sys.stdin.read().split('\n---\n')
+def parse_list(s):
+    return [x for x in s.strip().split('\n') if x]
+state = {
+    'profile': lines[0] if len(lines) > 0 else '',
+    'total': int(lines[1]) if len(lines) > 1 else 0,
+    'remaining': parse_list(lines[2]) if len(lines) > 2 else [],
+    'installed': parse_list(lines[3]) if len(lines) > 3 else [],
+    'failed': parse_list(lines[4]) if len(lines) > 4 else [],
+    'timestamp': lines[5].strip() if len(lines) > 5 else ''
+}
+with open('$state_file', 'w') as f:
+    json.dump(state, f)
+" <<EOF 2>/dev/null
+$profile
+---
+${#to_install[@]}
+---
+$(printf '%s\n' "${remaining_keys[@]}")
+---
+$(printf '%s\n' "${install_succeeded[@]}")
+---
+$(printf '%s\n' "${install_failed[@]}")
+---
+$(date -Iseconds 2>/dev/null || date +%Y-%m-%dT%H:%M:%S%z)
+EOF
+  fi
+  if [[ -f "$state_file" ]] && [[ -s "$state_file" ]]; then
+    log_info "$LANG_CHECKPOINT_SAVED"
+  fi
 }
 
 load_install_state() {
   local current_profile="${SELECTED_PROFILES[0]:-}"
   local state_file="$STATE_FILE"
   if [[ -f "$state_file" ]]; then
-    local saved_profile remaining
-    saved_profile=$(jq -r '.profile // empty' "$state_file" 2>/dev/null)
-    remaining=$(jq -r '.remaining[]' "$state_file" 2>/dev/null)
+    local saved_profile=""
+    local remaining=""
+    if command -v jq &>/dev/null; then
+      saved_profile=$(jq -r '.profile // empty' "$state_file" 2>/dev/null)
+      remaining=$(jq -r '.remaining[]' "$state_file" 2>/dev/null)
+    elif command -v python3 &>/dev/null; then
+      saved_profile=$(python3 -c "import json; d=json.load(open('$state_file')); print(d.get('profile',''))" 2>/dev/null)
+      remaining=$(python3 -c "import json; d=json.load(open('$state_file')); print('\n'.join(d.get('remaining',[])))" 2>/dev/null)
+    fi
     if [[ -n "$saved_profile" && "$saved_profile" != "$current_profile" ]]; then
       clear_install_state >/dev/null 2>&1
       return 1

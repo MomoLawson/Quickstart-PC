@@ -1,4 +1,5 @@
-## v1.0.0-beta4-build3
+## v1.0.0-beta4-build4
 
 ### 🐛 Bug Fixes
-- Add missing `LANG_DISK_SPACE_LOW` and `LANG_DISK_SPACE_WARNING` to bash embedded fallback English strings (lines 147-206), fixing empty warning message when .sh/.json files fail to load
+- Fix `save_install_state` jq dependency: add python3 fallback for JSON serialization when jq unavailable
+- Fix `load_install_state` jq dependency: add python3 fallback for reading state file when jq unavailable
