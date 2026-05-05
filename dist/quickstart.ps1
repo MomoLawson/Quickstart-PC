@@ -42,8 +42,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "1.0.0-beta3-build1"
-if ($VERSION -eq "1.0.0-beta3-build1") {
+$VERSION = "1.0.0-beta3-build2"
+if ($VERSION -eq "1.0.0-beta3-build2") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
@@ -2702,6 +2702,7 @@ $installStartTime = Get-Date
         Save-InstallState
       } else {
         Install-Batch -Path $script:CONFIG_FILE -OS $os -Manager $Manager -Keys $Keys
+        $script:current += $Keys.Count
         foreach ($sw in $Keys) {
           Invoke-HookScript -HookType "pre_software"
           Invoke-HookScript -HookType "post_software"

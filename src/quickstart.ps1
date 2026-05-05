@@ -2702,6 +2702,7 @@ $installStartTime = Get-Date
         Save-InstallState
       } else {
         Install-Batch -Path $script:CONFIG_FILE -OS $os -Manager $Manager -Keys $Keys
+        $script:current += $Keys.Count
         foreach ($sw in $Keys) {
           Invoke-HookScript -HookType "pre_software"
           Invoke-HookScript -HookType "post_software"

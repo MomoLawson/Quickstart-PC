@@ -304,8 +304,8 @@ LIST_PROFILES=false
 SHOW_PROFILE=""
 SKIP_SW=()
 ONLY_SW=()
-VERSION="1.0.0-beta3-build1"
-if [[ "$VERSION" == "1.0.0-beta3-build1" ]]; then
+VERSION="1.0.0-beta3-build2"
+if [[ "$VERSION" == "1.0.0-beta3-build2" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     if [[ -f "$SCRIPT_DIR/../VERSION" ]]; then
         VERSION=$(cat "$SCRIPT_DIR/../VERSION" | tr -d '[:space:]')
@@ -2848,6 +2848,7 @@ if [[ ${#to_install[@]} -gt 0 ]]; then
         save_install_state
       else
         install_batch "$CONFIG_FILE" "$os" "$manager" "${keys[@]}"
+        install_current=$((install_current + ${#keys[@]}))
         for sw in "${keys[@]}"; do
           run_hook "pre_software"
           run_hook "post_software"
