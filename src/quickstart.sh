@@ -1112,6 +1112,7 @@ save_install_state() {
   local state_file="$STATE_FILE"
   mkdir -p "$(dirname "$state_file")"
 
+  local profile="${SELECTED_PROFILES[0]:-}"
   local -a remaining_keys=()
   for key in "${to_install[@]}"; do
     local already=false
@@ -1129,7 +1130,7 @@ save_install_state() {
   failed_json=$(printf '%s\n' "${install_failed[@]}" | jq -R . | jq -s .)
 
   jq -n \
-    --arg profile "$SELECTED_PROFILE" \
+    --arg profile "$profile" \
     --argjson total "${#to_install[@]}" \
     --argjson remaining "$remaining_json" \
     --argjson installed "$installed_json" \
@@ -1141,10 +1142,16 @@ save_install_state() {
 }
 
 load_install_state() {
+  local current_profile="${SELECTED_PROFILES[0]:-}"
   local state_file="$STATE_FILE"
   if [[ -f "$state_file" ]]; then
-    local remaining
+    local saved_profile remaining
+    saved_profile=$(jq -r '.profile // empty' "$state_file" 2>/dev/null)
     remaining=$(jq -r '.remaining[]' "$state_file" 2>/dev/null)
+    if [[ -n "$saved_profile" && "$saved_profile" != "$current_profile" ]]; then
+      clear_install_state >/dev/null 2>&1
+      return 1
+    fi
     echo "$remaining"
     return 0
   fi
