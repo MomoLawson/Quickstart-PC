@@ -191,6 +191,8 @@ load_language_strings() {
     LANG_ASK_CONTINUE="Installation complete. Continue installing other profiles?"
     LANG_CONTINUE="Continue"
     LANG_EXIT="Exit"
+    LANG_DISK_SPACE_LOW="Low disk space: %sGB available, at least %sGB recommended"
+    LANG_DISK_SPACE_WARNING="Low disk space, installation may fail"
     LANG_TITLE_SELECT_PROFILE="Select Profile"
     LANG_TITLE_SELECT_SOFTWARE="Select Software"
     LANG_TITLE_INSTALLING="Installing"
