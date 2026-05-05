@@ -42,8 +42,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "1.0.0-beta3-build2"
-if ($VERSION -eq "1.0.0-beta3-build2") {
+$VERSION = "1.0.0-beta3-build3"
+if ($VERSION -eq "1.0.0-beta3-build3") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
@@ -464,6 +464,10 @@ function Initialize-LanguageStrings {
             "skipping_installed" = "Already installed, skipping"
             "all_installed" = "All software already installed, nothing to do"
             "ask_continue" = "Installation complete. Continue installing other profiles?"
+            "config_verify_failed" = "Config verification failed"
+            "config_checksum_not_found" = "Checksum file not found"
+            "config_checksum_mismatch" = "Checksum mismatch"
+            "config_verify_success" = "Config verification passed"
         }
     }
 }
