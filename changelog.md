@@ -1,4 +1,4 @@
-## v1.0.0-beta2-build18
+## v1.0.0-beta3-build1
 
 ### 🐛 Bug Fixes
-- Fix install hang and double Ctrl+C: remove `|| true` in `install_software`/`install_batch` so exit code and SIGINT propagate correctly; show brew batch install output in real-time so user sees progress
+- Fix PS1 Test-DiskSpace/Show-Doctor: fallback dictionary keys `disk_low`/`disk_warning` didn't match JSON keys `disk_space_low`/`disk_space_warning`, causing undefined key access when JSON loading failed

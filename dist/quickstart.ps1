@@ -42,8 +42,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "1.0.0-beta2-build18"
-if ($VERSION -eq "1.0.0-beta2-build18") {
+$VERSION = "1.0.0-beta3-build1"
+if ($VERSION -eq "1.0.0-beta3-build1") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
@@ -427,8 +427,8 @@ function Initialize-LanguageStrings {
             "report_json_saved" = "JSON report saved to: {0}"
             "report_txt_saved" = "TXT report saved to: {0}"
             "disk_checking" = "Checking disk space..."
-            "disk_low" = "Low disk space: {0}GB available, at least {1}GB recommended"
-            "disk_warning" = "Low disk space, installation may fail"
+            "disk_space_low" = "Low disk space: {0}GB available, at least {1}GB recommended"
+            "disk_space_warning" = "Low disk space, installation may fail"
             "network_timeout" = "Network connection timed out, please check your network"
             "network_error" = "Network error: {0}"
             "check_network" = "Suggestion: Check network connection or set proxy"
