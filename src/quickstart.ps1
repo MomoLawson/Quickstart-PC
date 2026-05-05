@@ -232,7 +232,7 @@ function Select-Language {
         $totalLines = $numLangs + 3
         for ($i = 0; $i -lt $totalLines; $i++) {
             [Console]::SetCursorPosition(0, $startRow + $i)
-            Write-Host (" " * [Console]::WindowWidth) -NoNewline
+            [Console]::Write("`r{0}" -f (" " * [Console]::WindowWidth))
         }
         [Console]::SetCursorPosition(0, $startRow)
         return $langKeys[$cursor]
@@ -1970,7 +1970,7 @@ function Show-ProfileMenu {
     # Clear menu area
     for ($i = 0; $i -lt $numProfiles; $i++) {
         [Console]::SetCursorPosition(0, $startRow + $i)
-        Write-Host (" " * [Console]::WindowWidth) -NoNewline
+        [Console]::Write("`r{0}" -f (" " * [Console]::WindowWidth))
     }
     [Console]::SetCursorPosition(0, $startRow)
 
@@ -2161,7 +2161,7 @@ $running = $false
 $totalLines = $numItems + 3
 for ($i = 0; $i -lt $totalLines; $i++) {
 [Console]::SetCursorPosition(0, $startRow + $i)
-Write-Host (" " * [Console]::WindowWidth) -NoNewline
+[Console]::Write("`r{0}" -f (" " * [Console]::WindowWidth))
 }
 [Console]::SetCursorPosition(0, $startRow)
 

@@ -1,4 +1,4 @@
-## v1.0.0-beta3-build3
+## v1.0.0-beta3-build4
 
 ### 🐛 Bug Fixes
-- Add missing `config_checksum_mismatch`, `config_verify_success`, `config_checksum_not_found`, `config_verify_failed` keys to PS1 fallback dictionary (JSON and .sh files already had them, but PS1 hardcoded fallback was missing them)
+- Fix PS1 TUI menu clearing: replace `Write-Host (" " * WindowWidth)` with `[Console]::Write("`r{0}"...)` for reliable line clearing with wide characters (Chinese, Japanese, Korean) in Select-Language, Show-ProfileMenu, Show-SoftwareMenu

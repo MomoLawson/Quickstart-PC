@@ -42,8 +42,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "1.0.0-beta3-build3"
-if ($VERSION -eq "1.0.0-beta3-build3") {
+$VERSION = "1.0.0-beta3-build4"
+if ($VERSION -eq "1.0.0-beta3-build4") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
@@ -232,7 +232,7 @@ function Select-Language {
         $totalLines = $numLangs + 3
         for ($i = 0; $i -lt $totalLines; $i++) {
             [Console]::SetCursorPosition(0, $startRow + $i)
-            Write-Host (" " * [Console]::WindowWidth) -NoNewline
+            [Console]::Write("`r{0}" -f (" " * [Console]::WindowWidth))
         }
         [Console]::SetCursorPosition(0, $startRow)
         return $langKeys[$cursor]
@@ -1970,7 +1970,7 @@ function Show-ProfileMenu {
     # Clear menu area
     for ($i = 0; $i -lt $numProfiles; $i++) {
         [Console]::SetCursorPosition(0, $startRow + $i)
-        Write-Host (" " * [Console]::WindowWidth) -NoNewline
+        [Console]::Write("`r{0}" -f (" " * [Console]::WindowWidth))
     }
     [Console]::SetCursorPosition(0, $startRow)
 
@@ -2161,7 +2161,7 @@ $running = $false
 $totalLines = $numItems + 3
 for ($i = 0; $i -lt $totalLines; $i++) {
 [Console]::SetCursorPosition(0, $startRow + $i)
-Write-Host (" " * [Console]::WindowWidth) -NoNewline
+[Console]::Write("`r{0}" -f (" " * [Console]::WindowWidth))
 }
 [Console]::SetCursorPosition(0, $startRow)
 
