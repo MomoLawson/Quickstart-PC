@@ -82,6 +82,10 @@ jobs:
         if: steps.check.outputs.exists == 'false'
         run: bash scripts/build.sh
 
+      - name: Generate SHA256 checksum
+        if: steps.check.outputs.exists == 'false'
+        run: shasum -a 256 config/profiles.json | awk '{print $1}' > dist/profiles.json.sha256
+
       - name: Commit dist
         if: steps.check.outputs.exists == 'false'
         run: |
@@ -128,3 +132,4 @@ jobs:
           files: |
             dist/quickstart.sh
             dist/quickstart.ps1
+            dist/profiles.json.sha256

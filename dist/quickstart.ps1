@@ -42,8 +42,8 @@ param(
   [switch]$showVersion
 )
 
-$VERSION = "1.0.0-beta4-build4"
-if ($VERSION -eq "1.0.0-beta4-build4") {
+$VERSION = "1.0.0-beta4-build5"
+if ($VERSION -eq "1.0.0-beta4-build5") {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     $versionFile = Join-Path $scriptDir "..\VERSION"
     if (Test-Path $versionFile) {
@@ -306,8 +306,12 @@ function Initialize-LanguageStrings {
     if ($localLang) {
         $jsonFile = Join-Path $localLang "$Lang.json"
         if (Test-Path $jsonFile) {
-            $script:LANG = Get-Content $jsonFile -Raw | ConvertFrom-Json -AsHashtable
-            $loaded = $true
+            try {
+                $script:LANG = Get-Content $jsonFile -Raw | ConvertFrom-Json -AsHashtable
+                $loaded = $true
+            } catch {
+                # -AsHashtable unsupported on PS 5.1, fall through
+            }
         }
     }
     
@@ -318,8 +322,12 @@ function Initialize-LanguageStrings {
         if ($scriptDir) {
             $jsonFile = Join-Path $scriptDir "lang\$Lang.json"
             if (Test-Path $jsonFile) {
-                $script:LANG = Get-Content $jsonFile -Raw | ConvertFrom-Json -AsHashtable
-                $loaded = $true
+                try {
+                    $script:LANG = Get-Content $jsonFile -Raw | ConvertFrom-Json -AsHashtable
+                    $loaded = $true
+                } catch {
+                    # -AsHashtable unsupported on PS 5.1, fall through
+                }
             }
         }
     }
