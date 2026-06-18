@@ -77,3 +77,4 @@ jobs:
           files: |
             dist/quickstart.sh
             dist/quickstart.ps1
+            config/profiles.json.sha256

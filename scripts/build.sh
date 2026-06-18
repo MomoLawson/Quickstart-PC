@@ -74,6 +74,12 @@ if [[ -f "$SRC_FILE" ]]; then
     echo "    Size: $(wc -c < "$DIST_FILE") bytes"
 fi
 
+# Generate SHA256 checksum for profiles.json (committed to repo, used by scripts at runtime)
+if [[ -f "$CONFIG_DIR/profiles.json" ]]; then
+    shasum -a 256 "$CONFIG_DIR/profiles.json" | awk '{print $1}' > "$CONFIG_DIR/profiles.json.sha256"
+    echo "[✓] SHA256: $CONFIG_DIR/profiles.json.sha256"
+fi
+
 # Copy language files to dist/lang/
 LANG_SRC="$SRC_DIR/lang"
 LANG_DIST="$DIST_DIR/lang"

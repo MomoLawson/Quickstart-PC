@@ -1027,11 +1027,7 @@ function Show-Banner {
 # ============================================
 function Test-ConfigChecksum {
 param([string]$Path, [string]$Url)
-    if ($Url -eq $DEFAULT_CFG_URL) {
-        $sha256Url = "https://github.com/MomoLawson/Quickstart-PC/releases/download/v${VERSION}/profiles.json.sha256"
-    } else {
-        $sha256Url = "${Url}.sha256"
-    }
+    $sha256Url = "${Url}.sha256"
     try {
         $expectedHash = (Invoke-WebRequestWithProxy -Uri $sha256Url -TimeoutSec 30 -ErrorAction Stop).Content.Trim()
         $actualHash = (Get-FileHash -Path $Path -Algorithm SHA256).Hash.ToLower()
